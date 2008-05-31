@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>Example</title>
+    <authors>
+      <person name="Brice Lambi"/>
+    </authors>
+  </properties>
+  <body>
+    <h1>Running a "main(args: Array[String])"</h1>
+
+    <div class="warning">
+      You must have a well define project, and it must compile your code successfully before (see
+      <a href="usage_compile.html">Compiling</a>
+      ).
+    </div>
+    <section name="Running">
+      <p>
+        So you can now run your scala app by defining the "mainClass" property :
+        <source>mvn scala:run -DmainClass=org.example.MyClass</source>
+      </p>
+    </section>
+    <section name="Predefining mainClass">
+      <p>Adding the mainClass configuration to your plugin definition.</p>
+      <source><![CDATA[
+  <plugin>
+    <groupId>maven</groupId>
+    <artifactId>maven-scala-plugin</artifactId>
+    <configuration>
+      <mainClass>org.example.MyClass</mainClass>
+    </configuration>
+  </plugin>]]>
+      </source>
+      <p>Now you can run the following command to run your scala app.</p>
+      <source>mvn scala:run</source>
+      <p>Set the property maven.scala.displayCmd to true, to display the command line used</p>
+      
+    </section>
+  </body>
+</document>

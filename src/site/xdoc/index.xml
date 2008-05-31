@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>maven-scala-plugin</title>
+        <authors>
+            <person name="Brice Lambi"/>
+            <person name="David Bernard"/>
+        </authors>
+    </properties>
+    <body>
+        <section name="maven-scala-plugin">
+            <p>The maven-scala-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a href="http://liftweb.net"><i>/Lift/</i></a>.</p>
+            <p>If there are problems please let us know.</p>
+        </section>
+        <section name="Requirements">
+            <ul>
+                <li>Maven 2.0.7</li>
+                <li>JDK 1.5</li>
+                <li><bold>No need to install <a href="http://scala-lang.org">scala</a> !</bold></li>
+            </ul>
+        </section>
+       <p>Thanks to Brice Lambi and the team of the version 1.0 of the plugin. (version 2.x is a 95%/full rewrite)</p>
+    </body>
+</document>

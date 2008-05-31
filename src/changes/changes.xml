@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<document>
+  <properties>
+    <title>Changes</title>
+    <author>David Bernard</author>
+  </properties>
+  <body>
+    <release version="2.6" date="2008-05-08" description="upgrade scaladoc 2.7.1">
+      <action dev="David Bernard" type="update">add a schorcut config to use vscaladoc : vscaladocVersion, it's an alias of using the previous scaladocClassName and scalaJars</action>
+      <action dev="David Bernard" type="update">update the doc goal to support scala 2.7.1 (change the way to call scaladoc)</action>
+    </release>
+    <release version="2.5.1" date="2008-03-29" description="vscaladoc support">
+      <action dev="David Bernard" type="add">fix a bug in custom scaladoc and call to "mvn site"</action>
+    </release>
+    <release version="2.5" date="2008-03-19" description="compile only">
+      <action dev="David Bernard" type="add">add the option "once" to scala:cc, if once == true then it is not a continuous compilation but run once = compile only (no check on resources,...)</action>
+    </release>
+    <release version="2.4" date="2008-03-02" description="improve custom scaladoc">
+      <action dev="David Bernard" type="add">add the configuration parameter scaladocClassName to allow custom scaladoc Main</action>
+    </release>
+    <release version="2.3" date="2008-01-17" description="improve custom compilation">
+      <action dev="David Bernard" type="add">add continuous compilation : compilation run in loop and compile only modified file (non-stop)</action>
+      <action dev="David Bernard" type="add">add configuration scalaJars for additionnal jar in the classpath of scalaMainClass (improve support of custom main/compiler)</action>
+    </release>
+    <release version="2.2" date="2007-12-12" description="work with console">
+      <action dev="David Bernard" type="update">compile and testCompile, only compile newer source file modification than the last compilation</action>
+      <action dev="David Bernard" type="add">add basic support of javarebel into the console goal</action>
+      <action dev="David Bernard" type="add">the console goal (with history and line navigation)</action>
+      <action dev="David Bernard" type="update">linksource option of scaladoc, default is now true</action>
+      <action dev="David Bernard" type="update">call "scalac -help -X -Y" for scala:help</action>
+      <action dev="David Bernard" type="fix">location/directory of scaladocs for modules</action>
+    </release>
+    
+    <release version="2.1" date="2007-11-18" description="documentation fix">
+      <action dev="David Bernard" type="fix">scaladoc bottom substitution</action>    
+      <action dev="David Bernard" type="fix">location/directory of scaladocs</action>    
+      <action dev="David Bernard" type="fix">add license to header of source file</action>    
+    </release>
+
+    <release version="2.0" date="2007-11-15" description="first scala-tools version">
+      <action dev="David Bernard" type="update">change groupId to org.scala-tools</action>
+      <action dev="David Bernard" type="add">add reports to the genereted site</action>
+      <action dev="David Bernard" type="add">generate scaladoc like javadoc (as a report)</action>
+      <action dev="David Bernard" type="add">add support for scaladoc's options (footer, windowtitle,...)</action>
+      <action dev="David Bernard" type="add">the help goal to display compiler arguments</action>
+      <action dev="David Bernard" type="add">allow to display the command line used</action>
+      <action dev="David Bernard" type="add">allow to choose the version of scala compiler</action>
+      <action dev="David Bernard" type="add">use 'args' and 'jvmArgs' to provide complementary options to scala</action>
+      <action dev="David Bernard" type="remove">remove configuration entry : memorymax, memorymin, deprected...</action>
+      <action dev="David Bernard" type="fix">support for source code not under src/main/scala</action>
+      <action dev="David Bernard" type="fix">compile test, with the test dependencies</action>
+      <action dev="David Bernard" type="fix">execute the "run" goal with the runtime dependencies</action>
+      <action dev="David Bernard" type="fix">declare scala-compiler as a plugin dependencies,
+      so it is no more needed to declare scala-compiler
+      as a project's dependencies</action>
+      <action dev="David Bernard" type="fix">goals are documented via the standard maven-plugin-report</action>
+    </release>
+    
+    <release version="1.0" date="2007-04-18" description="millstone.iodp.tamu.edu/blambi version"></release>
+  </body>
+</document>

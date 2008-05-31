@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>maven-scala-plugin</title>
+    <authors>
+      <person name="Brice Lambi" />
+      <person name="David Bernard" />
+    </authors>
+  </properties>
+  <body>
+    <h1>Compiling Scala sources</h1>
+    
+    <span>Prerequis : <a href="usage.html">common usages</a></span>
+    
+    <section name="Compiling">
+      <p>
+        Place scala sources files in :
+        <source>src/main/scala</source>
+      </p>
+      <p>
+        Place scala test sources files in :
+        <source>src/test/scala</source>
+      </p>
+      <p>
+        Then use the standard maven phases :
+        <source>
+          <![CDATA[
+# compile only
+mvn compile
+# or compile and test
+mvn test
+# or compile, test and package
+mvn package
+       ]]>
+        </source>
+      </p>
+      <p>
+        Or the plugin specifics goal :
+        <source>
+          <![CDATA[
+# compile source
+mvn scala:compile
+# compile test
+mvn scala:testCompile
+       ]]>
+        </source>
+      </p>
+      <p>
+        Or if you want to compile only source (from main and test) without calling previous phases like check resources, generate-sources,... :
+        <source>
+          <![CDATA[
+# compile source and test with fsc
+mvn scala:cc -Donce=true
+# compile source and test with scalac
+mvn scala:cc -Donce=true -Dfsc=false
+       ]]>
+        </source>
+        WARNING: 
+        <ul>
+        <li>This feature is provide for integration with editor.</li>
+        <li>using once and fsc => reuse server if previously started else start a new one but never stop it (except if you call scala:cc without -Donce=true, or if you kill the process yourself)</li>
+        </ul>
+      </p>
+    </section>
+    <section name="Increasing memory">
+      <source>
+        <![CDATA[
+<project>
+  ...
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <jvmArgs>
+            <jvmArg>-Xms64m</jvmArg>
+            <jvmArg>-Xmx1024m</jvmArg>
+          </jvmArgs>
+        </configuration>
+      </plugin>
+  ...
+</project>
+            ]]>
+      </source>
+    </section>
+
+  </body>
+</document>

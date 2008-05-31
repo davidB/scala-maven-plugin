@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>Example</title>
+    <authors>
+      <person name="David Bernard"/>
+    </authors>
+  </properties>
+  <body>
+    <h1>Running a scala console</h1>
+
+    <section name="Running">
+      <p>
+        You can start a console with a classpath set with the project dependencies (compile, test, runtime) and compiler classes (main and test):
+        <ol>
+        <li>compile your code (running the console doesn't force to compile:
+          <source>mvn test-compile #or mvn test</source>
+        </li>
+        <li>run the console :    
+          <source>mvn scala:console</source>
+        </li>
+        <li>when the scala prompt is shown, play :
+      <source><![CDATA[
+...
+[INFO] [scala:console]
+Welcome to Scala version 2.6.0-final.
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala> print("hello")
+hello
+scala> new bootstrap.liftweb.Boot().boot
+...
+      ]]></source>
+        </li>
+        </ol>
+      </p>
+    </section>
+
+    <section name="pre/post action">
+    <p>If you want to always run some code before use the console or after use it, and don't want to type it at every startup. Then you could wrap the console into a scala main().</p>
+    <p>I'll show an example with the LiftConsole. A good pratice is to put this class in the test directory (it's not part of the main code ;) )</p>
+    <ol>
+    <li>add into the pom.xml the jar with the scala 's console
+    <source><![CDATA[
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-compiler</artifactId>
+        <version>${scala.version}</version>
+        <scope>test</scope>
+      </dependency>
+      ]]></source>
+     </li>
+    <li>create the scala file src/test/scala/LiftConsole.scala (based on liftrepl)
+    <source><![CDATA[
+import bootstrap.liftweb.Boot
+import scala.tools.nsc.MainGenericRunner
+ 
+object LiftConsole {
+   def main(args : Array[String]) {
+     // Instantiate your project's Boot file
+     val b = new Boot();
+     // Boot your project
+     b.boot;
+     // Now run the MainGenericRunner to get your repl
+     MainGenericRunner.main(args)
+     // After the repl exits, then exit the scala script
+     exit(0)
+   }
+}
+      ]]></source>
+     </li>
+     <li>compile: <source><![CDATA[mvn test]]></source></li>
+     <li>run : <source><![CDATA[mvn scala:console -DmainConsole=LiftConsole]]></source></li>
+     <li>if you don't want to always need to set "-DmainConsole=LiftConsole",
+      then edit your pom.xml and add to the configuration of the plugin :
+    <source><![CDATA[
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        ...
+        <configuration>
+          <mainConsole>LiftConsole</mainConsole>
+        </configuration>
+      </plugin>
+      ]]></source>
+      </li>
+  </ol>    
+    
+    </section>
+    
+    <section name="running with JavaRebel">
+    <p>If you want to run the console with <a href="">JavaRebel</a>, you need :
+     <ol>
+     <li>install javarebel somewhere on your disk, javarebel is available on a public maven repository (commercial tool)</li>
+     <li>call the console with the option define where is the javarebel.jar:
+       <source>mvn scala:console -Djavarebel.jar.path=[path_of_javarebel.jar]</source>
+       or through the pom.xml
+    <source><![CDATA[
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        ...
+        <configuration>
+          <javaRebelPath>${user.home}/lib/java/javarebel/javarebel.jar</javaRebelPath>
+        </configuration>
+      </plugin>
+      ]]></source>
+    </li>
+    </ol>       
+    </p>
+    </section>
+  </body>
+</document>

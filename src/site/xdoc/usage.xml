@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>Using the plugin</title>
+    <authors>
+      <person name="David Bernard" />
+    </authors>
+  </properties>
+  <body>
+    <h1>Using the plugin (common)</h1>
+    <section name="Configuration">
+      <p>to use the plugin you need to add into your pom.xml (the first time you use the plugin, if you don't precise the version like in the following example, call maven with the "-U" option)</p>
+      <source>
+        <![CDATA[
+<project>
+  ...
+  <repositories>
+    <repository>
+      <id>scala-tools.org</id>
+      <name>Scala-tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </repository>
+  </repositories>  
+  ...
+  <pluginRepositories>
+    <pluginRepository>
+      <id>scala-tools.org</id>
+      <name>Scala-tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </pluginRepository>
+  </pluginRepositories>
+  ...
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    ...
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        ... (see other usage or goals for details) ...
+      </plugin>
+      ...
+    </plugins>
+    ...
+  </build>
+  ...
+</project>
+            ]]>
+      </source>
+    </section>
+
+    <section name="Displaying scala help and version">
+      <source>mvn scala:help</source>
+    </section>
+
+    <section name="Displaying the command line used">
+      <p>Set the property maven.scala.displayCmd to true</p>
+      <source>
+        <![CDATA[
+$> mvn scala:compile -Dmaven.scala.displayCmd=true
+
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'scala'.
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building fooA
+[INFO]    task-segment: [scala:compile]
+[INFO] ----------------------------------------------------------------------------
+[INFO] [scala:compile]
+[INFO] cmd:  /home/dwayne/bin/soft-linux/jdk-1.5.0_07/jre/bin/java -classpath /home/dwayne/.m2/repository/scala/scala-compiler/2.6.0/scala-compiler-2.6.0.jar:/home/dwayne/.m2/repository/scala/scala-library/2.6.0/scala-library-2.6.0.jar scala.tools.nsc.Main -classpath /home/dwayne/work/oss/liftweb-archetypes/fooA/target/classes:/home/dwayne/.m2/repository/scala/scala-library/2.6.0/scala-library-2.6.0.jar -d /home/dwayne/work/oss/liftweb-archetypes/fooA/target/classes -sourcepath /home/dwayne/work/oss/liftweb-archetypes/fooA/src/main/scala /home/dwayne/work/oss/liftweb-archetypes/fooA/src/main/scala/bar/foog/App.scala
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 5 seconds
+[INFO] Finished at: Sat Nov 10 22:28:54 GMT+01:00 2007
+[INFO] Final Memory: 7M/63M
+[INFO] ------------------------------------------------------------------------
+      ]]>
+      </source>
+    </section>
+    
+    <section name="Changing the scala version">
+      <p>
+        Define the configuration parameter scalaVersion, ex:
+        <source>
+          <![CDATA[    
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <scalaVersion>${scala.version}</scalaVersion>
+        </configuration>
+      </plugin>
+    ]]>
+        </source>
+      </p>
+    </section>
+
+  </body>
+</document>
