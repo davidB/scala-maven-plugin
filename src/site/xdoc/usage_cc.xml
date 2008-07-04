@@ -3,15 +3,14 @@
   <properties>
     <title>maven-scala-plugin</title>
     <authors>
-      <person name="Brice Lambi" />
       <person name="David Bernard" />
     </authors>
   </properties>
   <body>
     <h1>Continuous Compilation of Scala sources</h1>
-    
+
     <span>Prerequis : <a href="usage.html">common usages</a></span>
-    
+
     <section>
       <p>
         If you want a continuous compilation of sources under src/main and src/test (compilation when file are saved) :
@@ -28,15 +27,15 @@ mvn scala:cc
           <![CDATA[
 mvn scala:cc -Dfsc=false
        ]]>
-        </source>      
-      </li> 
+        </source>
+      </li>
       <li>If you want to display command used to run scala :
         <source>
           <![CDATA[
 mvn scala:cc -Dmaven.scala.displayCmd=true
        ]]>
-        </source>      
-      </li> 
+        </source>
+      </li>
       <li style="color:red">WARNING : continius compilation is an infinite loop so, avoid call the goal "cc" in pom.xml or to connect it to a lifecycle's phase.</li>
       </ul>
     </section>

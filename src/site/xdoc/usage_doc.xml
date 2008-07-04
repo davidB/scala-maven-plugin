@@ -10,7 +10,7 @@
     <h1>Generating API with ScalaDoc</h1>
 
     <span>Prerequis : <a href="usage.html">common usages</a></span>
-    
+
     <section name="Configuration">
       <p>to generate apidocs / scaladoc for your scala sources, add this to your pom.xml</p>
       <source><![CDATA[
@@ -67,7 +67,6 @@ mvn scala:doc
               <version>1.0</version>
             </scalaJar>
           </scalaJars>
-          <scalaVersion>${scala.version}</scalaVersion>
         </configuration>
         </source>
       </p>
@@ -82,7 +81,7 @@ mvn scala:doc
        ]]>
         </source>
       </p>
-      <p>See the result under target/site/scaladocs/</p>      
+      <p>See the result under target/site/scaladocs/</p>
     </section>
     <section name="To use vscaladoc">
       <p>
@@ -90,7 +89,6 @@ mvn scala:doc
         <source>
         <configuration>
           <vscalaVersion>1.0</vscalaVersion>
-          <scalaVersion>${scala.version}</scalaVersion>
         </configuration>
         </source>
       </p>
@@ -105,7 +103,7 @@ mvn scala:doc
        ]]>
         </source>
       </p>
-      <p>See the result under target/site/scaladocs/</p>      
+      <p>See the result under target/site/scaladocs/</p>
     </section>
   </body>
 </document>

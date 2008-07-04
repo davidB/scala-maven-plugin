@@ -20,7 +20,7 @@
       <name>Scala-tools Maven2 Repository</name>
       <url>http://scala-tools.org/repo-releases</url>
     </repository>
-  </repositories>  
+  </repositories>
   ...
   <pluginRepositories>
     <pluginRepository>
@@ -79,12 +79,13 @@ $> mvn scala:compile -Dmaven.scala.displayCmd=true
       ]]>
       </source>
     </section>
-    
+
     <section name="Changing the scala version">
       <p>
-        Define the configuration parameter scalaVersion, ex:
+        Since version 2.7 of the plugin, the scala version to use is detected from dependency to scala-library. So it suggested to not use scalaVersion configuration.
+        But if you want to define explicitly the version of scala used to compile,... use 'scalaVersion', ex:
         <source>
-          <![CDATA[    
+          <![CDATA[
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>

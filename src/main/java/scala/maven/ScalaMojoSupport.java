@@ -16,6 +16,7 @@
 package scala.maven;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -35,9 +37,12 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.codehaus.plexus.util.StringUtils;
 
 abstract class ScalaMojoSupport extends AbstractMojo {
 
+	public static final String SCALA_GROUPID= "org.scala-lang";
+	public static final String SCALA_LIBRARY_ARTIFACTID= "scala-library";
     /**
      * @parameter expression="${project}"
      * @required
@@ -112,9 +117,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * Scala 's version to use
-     * @required
      * @parameter expression="${maven.scala.version}"
-     *            default-value="2.6.0"
      */
     protected String scalaVersion;
 
@@ -194,6 +197,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
+        	checkScalaVersion();
             doExecute();
         } catch (MojoExecutionException exc) {
             throw exc;
@@ -206,6 +210,31 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         }
     }
 
+    @SuppressWarnings("unchecked")
+	protected void checkScalaVersion() throws Exception {
+    	String detectedScalaVersion = null;
+    	for (Iterator it = project.getCompileDependencies().iterator(); it.hasNext();) {
+    		Dependency dep = (Dependency) it.next();
+    		if (SCALA_GROUPID.equals(dep.getGroupId()) && SCALA_LIBRARY_ARTIFACTID.equals(dep.getArtifactId())) {
+    			detectedScalaVersion = dep.getVersion();
+    		}
+    	}
+    	if (StringUtils.isEmpty(detectedScalaVersion)) {
+    		getLog().warn("you don't define "+SCALA_GROUPID + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
+    	} else {
+    		if (StringUtils.isNotEmpty(scalaVersion)) {
+    			if (!scalaVersion.equals(detectedScalaVersion)) {
+    				getLog().warn("scala library version define in dependencies doesn't match the scalaVersion of the plugin");
+    			}
+    			getLog().info("suggestion: remove the scalaVersion from pom.xml");
+    		} else {
+    			scalaVersion = detectedScalaVersion;
+    		}
+    	}
+    	if (StringUtils.isEmpty(scalaVersion)) {
+    		throw new MojoFailureException("no scalaVersion detected or set");
+    	}
+    }
     protected abstract void doExecute() throws Exception;
 
     protected JavaCommand getScalaCommand() throws Exception {
@@ -223,9 +252,9 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 
     private String getToolClasspath() throws Exception {
         Set<String> classpath = new HashSet<String>();
-        addToClasspath("org.scala-lang", "scala-compiler", scalaVersion, classpath);
-        addToClasspath("org.scala-lang", "scala-decoder", scalaVersion, classpath);
-        addToClasspath("org.scala-lang", "scala-dbc", scalaVersion, classpath);
+        addToClasspath(SCALA_GROUPID, "scala-compiler", scalaVersion, classpath);
+        addToClasspath(SCALA_GROUPID, "scala-decoder", scalaVersion, classpath);
+        addToClasspath(SCALA_GROUPID, "scala-dbc", scalaVersion, classpath);
         if (scalaJars != null) {
             for(BasicArtifact artifact: scalaJars) {
                 addToClasspath(artifact.groupId, artifact.artifactId, artifact.version, classpath);
@@ -236,7 +265,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 
     private String getBootClasspath() throws Exception {
         Set<String> classpath = new HashSet<String>();
-        addToClasspath("org.scala-lang", "scala-library", scalaVersion, classpath);
+        addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, scalaVersion, classpath);
         return JavaCommand.toMultiPath(classpath.toArray(new String[classpath.size()]));
     }
 
