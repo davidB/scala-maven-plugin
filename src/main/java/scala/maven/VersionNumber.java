@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-@SuppressWarnings("serial")
 public class VersionNumber /*implements Serializable*/ implements Comparable<VersionNumber>{
     private static Pattern regexp_ = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+)?(-\\w+)?");
 

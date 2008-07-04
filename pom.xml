@@ -9,8 +9,13 @@
   <packaging>maven-plugin</packaging>
   <version>2.7-SNAPSHOT</version>
   <name>maven-scala-plugin</name>
-  <url>http://scala-tools.org/mvnsites/${artifactId}</url>
+  <url>http://scala-tools.org/mvnsites/${project.artifactId}</url>
   <description>The maven-scala-plugin is used for compiling/testing/running/documenting scala code in maven.</description>
+  <scm>
+    <connection>scm:git:git://github.com/davidB/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:davidB/${project.artifactId}.git</developerConnection>
+    <url>http://github.com/davidB/${project.artifactId}/</url>
+  </scm>
 
   <developers>
     <developer>
@@ -22,22 +27,7 @@
 
   <contributors>
     <contributor>
-      <name>Brice Lambi</name>
-      <email>bricelambi @ gmail.com</email>
-      <url>http://millstone.iodp.tamu.edu/~blambi/</url>
-    </contributor>
-    <contributor>
-      <name>Ryan Daum</name>
-      <email>ryan @ darksleep.com</email>
-    </contributor>
-    <contributor>
       <name>David Pollak</name>
-    </contributor>
-    <contributor>
-      <name>Paul Reinerfelt</name>
-    </contributor>
-    <contributor>
-      <name>Gary Leavens</name>
     </contributor>
   </contributors>
 

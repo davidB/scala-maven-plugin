@@ -5,6 +5,10 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="2.7-SNAPSHOT" date="" description="">
+      <action dev="David Bernard" type="add">add launchers : predefined configuration for scala:run</action>
+      <action dev="David Bernard" type="update">change the source host from code.google.com to github</action>
+    </release>
     <release version="2.6" date="2008-05-08" description="upgrade scaladoc 2.7.1">
       <action dev="David Bernard" type="update">add a schorcut config to use vscaladoc : vscaladocVersion, it's an alias of using the previous scaladocClassName and scalaJars</action>
       <action dev="David Bernard" type="update">update the doc goal to support scala 2.7.1 (change the way to call scaladoc)</action>
@@ -30,11 +34,11 @@
       <action dev="David Bernard" type="update">call "scalac -help -X -Y" for scala:help</action>
       <action dev="David Bernard" type="fix">location/directory of scaladocs for modules</action>
     </release>
-    
+
     <release version="2.1" date="2007-11-18" description="documentation fix">
-      <action dev="David Bernard" type="fix">scaladoc bottom substitution</action>    
-      <action dev="David Bernard" type="fix">location/directory of scaladocs</action>    
-      <action dev="David Bernard" type="fix">add license to header of source file</action>    
+      <action dev="David Bernard" type="fix">scaladoc bottom substitution</action>
+      <action dev="David Bernard" type="fix">location/directory of scaladocs</action>
+      <action dev="David Bernard" type="fix">add license to header of source file</action>
     </release>
 
     <release version="2.0" date="2007-11-15" description="first scala-tools version">
@@ -55,7 +59,7 @@
       as a project's dependencies</action>
       <action dev="David Bernard" type="fix">goals are documented via the standard maven-plugin-report</action>
     </release>
-    
+
     <release version="1.0" date="2007-04-18" description="millstone.iodp.tamu.edu/blambi version"></release>
   </body>
 </document>

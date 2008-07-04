@@ -219,7 +219,6 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void doExecute() throws Exception {
         // SiteRendererSink sink = siteRenderer.createSink(new
         // File(project.getReporting().getOutputDirectory(), getOutputName() +
