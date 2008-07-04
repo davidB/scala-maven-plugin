@@ -34,7 +34,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
 
     /**
      * Additional parameter to use to call the main class
-     * Using this parameter only from command line (-DaddArgs=...), not from pom.xml.
+     * Using this parameter only from command line ("-DaddArgs=arg1|arg2|arg3|..."), not from pom.xml.
      * @parameter expression="${addArgs}"
      */
     protected String addArgs;
@@ -80,11 +80,17 @@ public class ScalaRunMojo extends ScalaMojoSupport {
     	JavaCommand jcmd = null;
     	if (StringUtils.isNotEmpty(mainClass)) {
     		jcmd = new JavaCommand(this, mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), jvmArgs, args);
-    	} else if (StringUtils.isNotEmpty(launcher) && (launchers != null)) {
-    		for(int i = 0; (i < launchers.length) && (jcmd == null); i++) {
-    			if (launcher.equals(launchers[i].id)) {
-    				jcmd = new JavaCommand(this, launchers[i].mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), launchers[i].jvmArgs, launchers[i].args);
-    			}
+    	} else if ((launchers != null) && (launchers.length > 0)) {
+    		if (StringUtils.isNotEmpty(launcher)) {
+	    		for(int i = 0; (i < launchers.length) && (jcmd == null); i++) {
+	    			if (launcher.equals(launchers[i].id)) {
+	    				getLog().info("launcher '"+ launchers[i].id + "' selected => "+ launchers[i].mainClass );
+	    				jcmd = new JavaCommand(this, launchers[i].mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), launchers[i].jvmArgs, launchers[i].args);
+	    			}
+	    		}
+    		} else {
+				getLog().info("launcher '"+ launchers[0].id + "' selected => "+ launchers[0].mainClass );
+    			jcmd = new JavaCommand(this, launchers[0].mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), launchers[0].jvmArgs, launchers[0].args);
     		}
     	}
     	if (jcmd != null) {
