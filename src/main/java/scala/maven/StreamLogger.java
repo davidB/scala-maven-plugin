@@ -23,8 +23,11 @@ import java.io.PrintWriter;
 
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 
 public class StreamLogger extends Thread {
+	private static final String LS = System.getProperty("line.separator");
+	private static final boolean emacsMode = StringUtils.isNotEmpty(System.getProperty("emacsMode"));
 
     private InputStream in_;
     private Log log_;
@@ -43,12 +46,23 @@ public class StreamLogger extends Thread {
         try {
             reader = new BufferedReader(new InputStreamReader(in_));
             String line = null;
+            StringBuilder sb = null;
             while ((line = reader.readLine()) != null) {
                 if (isErr_) {
-                    log_.warn(line);
+                	if (!emacsMode) {
+                        log_.warn(line);
+                	} else {
+                		if (sb == null) {
+                			sb = new StringBuilder("Compilation failure"+ LS);
+                		}
+                    	sb.append(LS + line);
+                	}
                 } else {
                     log_.info(line);
                 }
+            }
+            if (sb != null) {
+            	log_.warn(sb.toString());
             }
         } catch(IOException exc) {
             throw new RuntimeException("wrap: " + exc.getMessage(), exc);

@@ -6,6 +6,7 @@
   </properties>
   <body>
     <release version="2.7-SNAPSHOT" date="" description="">
+      <action dev="David Bernard" type="add">add an alternate format for compiler output if maven is called with "-DemacsMode=true"</action>
       <action dev="David Bernard" type="add">add launchers : predefined configuration for scala:run</action>
       <action dev="David Bernard" type="update">change the source host from code.google.com to github</action>
     </release>
