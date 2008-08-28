@@ -263,7 +263,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
                 artifact.version = vscaladocVersion;
                 scalaJars = new BasicArtifact[]{artifact};
             }
-            isScala271 = (new VersionNumber("2.7.1").compareTo(new VersionNumber(scalaVersion)) > -1);
+            isScala271 = (new VersionNumber("2.7.1").compareTo(new VersionNumber(scalaVersion)) < 0);
             JavaCommand jcmd = getScalaCommand();
             if  (!isScala271){
                 jcmd.addArgs("-Ydoc");
