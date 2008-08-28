@@ -53,13 +53,4 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     protected File getSourceDir() throws Exception {
         return sourceDir.getAbsoluteFile();
     }
-
-    @Override
-    protected void doExecute() throws Exception {
-    	String path = getSourceDir().getAbsolutePath();
-    	if (project.getCompileSourceRoots().contains(path)) {
-    		project.addCompileSourceRoot(path);
-    	}
-    	super.doExecute();
-    }
 }

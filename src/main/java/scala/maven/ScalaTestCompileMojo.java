@@ -72,14 +72,4 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     protected File getSourceDir() throws Exception {
         return testSourceDir.getAbsoluteFile();
     }
-
-    @Override
-    protected void doExecute() throws Exception {
-    	String path = getSourceDir().getAbsolutePath();
-    	if (project.getTestCompileSourceRoots().contains(path)) {
-    		project.addTestCompileSourceRoot(path);
-    	}
-    	super.doExecute();
-    }
-
 }

@@ -5,13 +5,15 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="2.7-SNAPSHOT" date="" description="">
+    <release version="2.7" date="2008-08-25" description="">
+      <action dev="David Bernard" type="update">no more add scala-dbc and scala-decoder to the classpath when running scaladoc, compiler (to be compatible with 2.7.2)</action>
+      <action dev="David Bernard" type="add">auto-detect the scala-compiler version from the scala-library version declared as dependency</action>
       <action dev="David Bernard" type="add">add an alternate format for compiler output if maven is called with "-DemacsMode=true"</action>
       <action dev="David Bernard" type="add">add launchers : predefined configuration for scala:run</action>
       <action dev="David Bernard" type="update">change the source host from code.google.com to github</action>
     </release>
     <release version="2.6" date="2008-05-08" description="upgrade scaladoc 2.7.1">
-      <action dev="David Bernard" type="update">add a schorcut config to use vscaladoc : vscaladocVersion, it's an alias of using the previous scaladocClassName and scalaJars</action>
+      <action dev="David Bernard" type="update">add a shortcut config to use vscaladoc : vscaladocVersion, it's an alias of using the previous scaladocClassName and scalaJars</action>
       <action dev="David Bernard" type="update">update the doc goal to support scala 2.7.1 (change the way to call scaladoc)</action>
     </release>
     <release version="2.5.1" date="2008-03-29" description="vscaladoc support">
@@ -25,7 +27,7 @@
     </release>
     <release version="2.3" date="2008-01-17" description="improve custom compilation">
       <action dev="David Bernard" type="add">add continuous compilation : compilation run in loop and compile only modified file (non-stop)</action>
-      <action dev="David Bernard" type="add">add configuration scalaJars for additionnal jar in the classpath of scalaMainClass (improve support of custom main/compiler)</action>
+      <action dev="David Bernard" type="add">add configuration scalaJars for additional jar in the classpath of scalaMainClass (improve support of custom main/compiler)</action>
     </release>
     <release version="2.2" date="2007-12-12" description="work with console">
       <action dev="David Bernard" type="update">compile and testCompile, only compile newer source file modification than the last compilation</action>

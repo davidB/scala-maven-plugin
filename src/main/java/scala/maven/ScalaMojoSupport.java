@@ -253,8 +253,8 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     private String getToolClasspath() throws Exception {
         Set<String> classpath = new HashSet<String>();
         addToClasspath(SCALA_GROUPID, "scala-compiler", scalaVersion, classpath);
-        addToClasspath(SCALA_GROUPID, "scala-decoder", scalaVersion, classpath);
-        addToClasspath(SCALA_GROUPID, "scala-dbc", scalaVersion, classpath);
+//        addToClasspath(SCALA_GROUPID, "scala-decoder", scalaVersion, classpath);
+//        addToClasspath(SCALA_GROUPID, "scala-dbc", scalaVersion, classpath);
         if (scalaJars != null) {
             for(BasicArtifact artifact: scalaJars) {
                 addToClasspath(artifact.groupId, artifact.artifactId, artifact.version, classpath);
