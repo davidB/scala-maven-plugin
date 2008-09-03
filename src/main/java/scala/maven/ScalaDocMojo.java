@@ -163,8 +163,6 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
 
 
     private String[] sourceFiles_ = null;
-    private boolean isScala271 = false;
-
     private String[] findSourceFiles() {
         if (sourceFiles_ == null) {
             sourceFiles_ = JavaCommand.findFiles(sourceDir, "**/*.scala");
@@ -230,7 +228,8 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     @Override
     protected JavaCommand getScalaCommand() throws Exception {
         String oldClazz = scalaClassName;
-        if (isScala271) {
+        boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(new VersionNumber(scalaVersion)) > 0);
+        if (!isPreviousScala271) {
             scalaClassName = "scala.tools.nsc.ScalaDoc";
         }
         if (StringUtils.isNotEmpty(scaladocClassName)) {
@@ -239,6 +238,9 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
         JavaCommand cmd = getEmptyScalaCommand(scalaClassName);
         cmd.addArgs(args);
         cmd.addJvmArgs(jvmArgs);
+        if (isPreviousScala271){
+            cmd.addArgs("-Ydoc");
+        }
         scalaClassName = oldClazz;
         return cmd;
     }
@@ -263,11 +265,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
                 artifact.version = vscaladocVersion;
                 scalaJars = new BasicArtifact[]{artifact};
             }
-            isScala271 = (new VersionNumber("2.7.1").compareTo(new VersionNumber(scalaVersion)) < 0);
             JavaCommand jcmd = getScalaCommand();
-            if  (!isScala271){
-                jcmd.addArgs("-Ydoc");
-            }
             jcmd.addOption("-classpath", JavaCommand.toMultiPath(project.getCompileClasspathElements()));
             jcmd.addOption("-d", reportOutputDir.getAbsolutePath());
             jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
