@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-package scala.maven;
+package org.scala_tools.maven;
 
 import java.io.File;
 import java.io.IOException;
@@ -263,7 +263,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
                 artifact.artifactId = "vscaladoc";
                 artifact.groupId = "org.scala-tools";
                 artifact.version = vscaladocVersion;
-                scalaJars = new BasicArtifact[]{artifact};
+                dependencies = new BasicArtifact[]{artifact};
             }
             JavaCommand jcmd = getScalaCommand();
             jcmd.addOption("-classpath", JavaCommand.toMultiPath(project.getCompileClasspathElements()));

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-package scala.maven;
+package org.scala_tools.maven;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -86,11 +86,11 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     protected List<?> remoteRepos;
 
     /**
-     * Additional jar to add to classpath to run "scalaClassName"
+     * Additional dependencies/jar to add to classpath to run "scalaClassName"
      *
      * @parameter
      */
-    protected BasicArtifact[] scalaJars;
+    protected BasicArtifact[] dependencies;
 
     /**
      * Jvm Arguments
@@ -260,8 +260,8 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         addToClasspath(SCALA_GROUPID, "scala-compiler", scalaVersion, classpath);
 //        addToClasspath(SCALA_GROUPID, "scala-decoder", scalaVersion, classpath);
 //        addToClasspath(SCALA_GROUPID, "scala-dbc", scalaVersion, classpath);
-        if (scalaJars != null) {
-            for(BasicArtifact artifact: scalaJars) {
+        if (dependencies != null) {
+            for(BasicArtifact artifact: dependencies) {
                 addToClasspath(artifact.groupId, artifact.artifactId, artifact.version, classpath);
             }
         }

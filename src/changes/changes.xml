@@ -5,7 +5,8 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="2.8" date="2008-09-??" description="">
+    <release version="2.8" date="2008-09-27" description="">
+      <action dev="Jesse Eichar" type="add">add ability to run scala script (from pom.xml or external file)</action>
       <action dev="David Bernard" type="fix">detection of the scala version use the test scope when compiling test classes</action>
     </release>
     <release version="2.7" date="2008-08-25" description="">

@@ -1,4 +1,4 @@
-package scala.maven;
+package org.scala_tools.maven;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,8 +24,8 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.scala_tools.maven.model.MavenProjectAdapter;
 
-import scala.maven.model.MavenProjectAdapter;
 
 /**
  * Run a scala script.

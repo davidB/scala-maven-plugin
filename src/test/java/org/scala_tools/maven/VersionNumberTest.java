@@ -1,6 +1,7 @@
 package org.scala_tools.maven;
 
-import scala.maven.VersionNumber;
+import org.scala_tools.maven.VersionNumber;
+
 import junit.framework.TestCase;
 
 public class VersionNumberTest extends TestCase {

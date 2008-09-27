@@ -1,4 +1,4 @@
-package scala.maven.model;
+package org.scala_tools.maven.model;
 
 import java.io.File;
 import java.io.IOException;

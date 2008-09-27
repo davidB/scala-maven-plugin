@@ -1,4 +1,4 @@
-package scala.maven;
+package org.scala_tools.maven;
 
 
 import java.util.regex.Matcher;

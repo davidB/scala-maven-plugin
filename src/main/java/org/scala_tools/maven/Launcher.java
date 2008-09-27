@@ -1,4 +1,4 @@
-package scala.maven;
+package org.scala_tools.maven;
 
 public class Launcher {
 	protected String id;
