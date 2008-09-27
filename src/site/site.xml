@@ -35,6 +35,7 @@
       <item name="Continuous Compilation" href="usage_cc.html" />
       <item name="Scaladoc" href="usage_doc.html" />
       <item name="Running" href="usage_run.html" />
+      <item name="Scripting" href="usage_script.html" />
       <item name="Scala Console" href="usage_console.html" />
     </menu>
     <menu ref="reports" />
