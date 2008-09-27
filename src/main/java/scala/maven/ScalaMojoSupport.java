@@ -41,8 +41,8 @@ import org.codehaus.plexus.util.StringUtils;
 
 abstract class ScalaMojoSupport extends AbstractMojo {
 
-	public static final String SCALA_GROUPID= "org.scala-lang";
-	public static final String SCALA_LIBRARY_ARTIFACTID= "scala-library";
+    public static final String SCALA_GROUPID= "org.scala-lang";
+    public static final String SCALA_LIBRARY_ARTIFACTID= "scala-library";
     /**
      * @parameter expression="${project}"
      * @required
@@ -197,7 +197,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
-        	checkScalaVersion();
+            checkScalaVersion();
             doExecute();
         } catch (MojoExecutionException exc) {
             throw exc;
@@ -211,29 +211,34 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     @SuppressWarnings("unchecked")
-	protected void checkScalaVersion() throws Exception {
-    	String detectedScalaVersion = null;
-    	for (Iterator it = project.getCompileDependencies().iterator(); it.hasNext();) {
-    		Dependency dep = (Dependency) it.next();
-    		if (SCALA_GROUPID.equals(dep.getGroupId()) && SCALA_LIBRARY_ARTIFACTID.equals(dep.getArtifactId())) {
-    			detectedScalaVersion = dep.getVersion();
-    		}
-    	}
-    	if (StringUtils.isEmpty(detectedScalaVersion)) {
-    		getLog().warn("you don't define "+SCALA_GROUPID + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
-    	} else {
-    		if (StringUtils.isNotEmpty(scalaVersion)) {
-    			if (!scalaVersion.equals(detectedScalaVersion)) {
-    				getLog().warn("scala library version define in dependencies doesn't match the scalaVersion of the plugin");
-    			}
-    			getLog().info("suggestion: remove the scalaVersion from pom.xml");
-    		} else {
-    			scalaVersion = detectedScalaVersion;
-    		}
-    	}
-    	if (StringUtils.isEmpty(scalaVersion)) {
-    		throw new MojoFailureException("no scalaVersion detected or set");
-    	}
+    protected List<Dependency> getDependencies() {
+        return project.getCompileDependencies();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void checkScalaVersion() throws Exception {
+        String detectedScalaVersion = null;
+        for (Iterator it = getDependencies().iterator(); it.hasNext();) {
+            Dependency dep = (Dependency) it.next();
+            if (SCALA_GROUPID.equals(dep.getGroupId()) && SCALA_LIBRARY_ARTIFACTID.equals(dep.getArtifactId())) {
+                detectedScalaVersion = dep.getVersion();
+            }
+        }
+        if (StringUtils.isEmpty(detectedScalaVersion)) {
+            getLog().warn("you don't define "+SCALA_GROUPID + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
+        } else {
+            if (StringUtils.isNotEmpty(scalaVersion)) {
+                if (!scalaVersion.equals(detectedScalaVersion)) {
+                    getLog().warn("scala library version define in dependencies doesn't match the scalaVersion of the plugin");
+                }
+                getLog().info("suggestion: remove the scalaVersion from pom.xml");
+            } else {
+                scalaVersion = detectedScalaVersion;
+            }
+        }
+        if (StringUtils.isEmpty(scalaVersion)) {
+            throw new MojoFailureException("no scalaVersion detected or set");
+        }
     }
     protected abstract void doExecute() throws Exception;
 

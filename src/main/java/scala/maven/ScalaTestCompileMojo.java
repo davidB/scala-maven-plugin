@@ -18,6 +18,7 @@ package scala.maven;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -61,6 +62,12 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     @Override
     protected List<String> getClasspathElements() throws Exception {
         return project.getTestClasspathElements();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected List<Dependency> getDependencies() {
+        return project.getTestDependencies();
     }
 
     @Override

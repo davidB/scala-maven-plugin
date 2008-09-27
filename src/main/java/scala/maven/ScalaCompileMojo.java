@@ -18,6 +18,8 @@
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.model.Dependency;
+
 /**
  * Compiles a directory of Scala source. Corresponds roughly to the compile goal
  * of the maven-compiler-plugin
@@ -42,6 +44,12 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     @Override
     protected List<String> getClasspathElements() throws Exception {
         return project.getCompileClasspathElements();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected List<Dependency> getDependencies() {
+        return project.getCompileDependencies();
     }
 
     @Override
