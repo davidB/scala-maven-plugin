@@ -86,14 +86,21 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     protected List<?> remoteRepos;
 
     /**
-     * Additional dependencies/jar to add to classpath to run "scalaClassName"
-     *
+     * Additional dependencies/jar to add to classpath to run "scalaClassName" (scope and optional field not supported)
+     * ex :
+     *    &lt;dependencies>
+     *      &lt;dependency>
+     *        &lt;groupId>org.scala-tools&lt;/groupId>
+     *        &lt;artifactId>scala-compiler-addon&lt;/artifactId>
+     *        &lt;version>1.0-SNAPSHOT&lt;/version>
+     *      &lt;/dependency>
+     *    &lt;/dependencies>
      * @parameter
      */
     protected BasicArtifact[] dependencies;
 
     /**
-     * Jvm Arguments
+     * Jvm Arguments.
      *
      * @parameter
      */
