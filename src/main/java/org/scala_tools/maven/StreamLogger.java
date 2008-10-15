@@ -15,12 +15,15 @@
  */
 package org.scala_tools.maven;
 
+import com.sun.org.apache.xalan.internal.xsltc.dom.MatchingIterator;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -28,11 +31,13 @@ import org.codehaus.plexus.util.StringUtils;
 public class StreamLogger extends Thread {
 	private static final String LS = System.getProperty("line.separator");
 	private static final boolean emacsMode = StringUtils.isNotEmpty(System.getProperty("emacsMode"));
+	private static final boolean javaMode = StringUtils.isNotEmpty(System.getProperty("javaMode"));
 
     private InputStream in_;
     private Log log_;
     private boolean isErr_;
     private PrintWriter out_;
+    private Pattern pattern_ = Pattern.compile("\\s*((/|\\w:).+?):(\\d+):\\s*(?:Error|error|Warning|warning|Caution|caution):\\s(.+)");
 
     public StreamLogger(InputStream in, Log log, boolean isErr) {
         in_ = in;
@@ -49,12 +54,18 @@ public class StreamLogger extends Thread {
             StringBuilder sb = null;
             while ((line = reader.readLine()) != null) {
                 if (isErr_) {
-                	if (!emacsMode) {
+                	if (!emacsMode && !javaMode) {
                         log_.warn(line);
                 	} else {
                 		if (sb == null) {
                 			sb = new StringBuilder("Compilation failure"+ LS);
                 		}
+                        if (javaMode) {
+                            Matcher matcher = pattern_.matcher(line);
+                            if (matcher.matches()) {
+                                line = matcher.group(1)+":["+matcher.group(3) +",1] " + matcher.group(4);
+                            }
+                        }
                     	sb.append(LS + line);
                 	}
                 } else {

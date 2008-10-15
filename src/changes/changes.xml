@@ -5,8 +5,8 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="2.8" date="2008-09-27" description="">
-      <action dev="David Bernard" type="fix">redefine the run goal at the test-compile phase, to have a correct classpath</action>
+    <release version="2.8" date="2008-10-15" description="scripting with scala">
+      <action dev="David Bernard" type="fix">redefine the 'run' goal at the test-compile phase, to have a correct classpath</action>
       <action dev="Jesse Eichar" type="add">add ability to run scala script (from pom.xml or external file)</action>
       <action dev="David Bernard" type="fix">detection of the scala version use the test scope when compiling test classes</action>
       <action dev="David Bernard" type="update">rename 'scalaJars' configuration attribute to 'dependencies'</action>
