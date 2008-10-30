@@ -77,10 +77,9 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     }
 
     @Override
-    protected File getSourceDir() throws Exception {
-        throw new UnsupportedOperationException("USELESS");
+    protected List<String> getSourceDirectories() throws Exception {
+    	   throw new UnsupportedOperationException("USELESS");
     }
-
     @Override
     protected JavaCommand getScalaCommand() throws Exception {
         JavaCommand jcmd = super.getScalaCommand();

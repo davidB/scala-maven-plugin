@@ -40,6 +40,15 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
      */
     protected File sourceDir;
 
+    protected List<String> getSourceDirectories() throws Exception {
+    	List<String> sources = project.getCompileSourceRoots();
+    	String scalaSourceDir = sourceDir.getAbsolutePath();
+		if(!sources.contains(scalaSourceDir)) {
+    		sources.add(scalaSourceDir);
+    	}
+    	return sources;
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     protected List<String> getClasspathElements() throws Exception {
@@ -55,10 +64,5 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     @Override
     protected File getOutputDir() throws Exception {
         return outputDir.getAbsoluteFile();
-    }
-
-    @Override
-    protected File getSourceDir() throws Exception {
-        return sourceDir.getAbsoluteFile();
     }
 }
