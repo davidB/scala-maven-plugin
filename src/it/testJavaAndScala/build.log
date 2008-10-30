@@ -1,0 +1,32 @@
+OUT: -------------------------------------------------------------------------------
+OUT: TEST BUILD: C:\Projects\Scala-Maven\maven-scala-plugin\src\it\testJavaAndScala\pom.xml
+OUT: Goals: scala:compile compile
+OUT: -------------------------------------------------------------------------------
+OUT: + Error stacktraces are turned on.
+OUT: [INFO] Scanning for projects...
+OUT: [INFO] Searching repository for plugin with prefix: 'scala'.
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] Building Test for Java + Scala compilation
+OUT: [INFO]    task-segment: [scala:compile, compile]
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [WARNING] Attempting to build MavenProject instance for Artifact (org.scala-tools:maven-scala-plugin:testing) of type: maven-plugin; constructing POM artifact instead.
+OUT: [INFO] [scala:compile]
+OUT: [INFO] Compiling 3 source files to C:\Projects\Scala-Maven\maven-scala-plugin\src\it\testJavaAndScala\target\classes
+OUT: [INFO] [resources:resources]
+OUT: [INFO] Using default encoding to copy filtered resources.
+OUT: [INFO] [compiler:compile]
+OUT: [INFO] Compiling 2 source files to C:\Projects\Scala-Maven\maven-scala-plugin\src\it\testJavaAndScala\target\classes
+OUT: [INFO] [scala:compile {execution: scala-compile}]
+OUT: [INFO] Nothing to compile - all classes are up to date
+OUT: [INFO] [compiler:compile {execution: default}]
+OUT: [INFO] Nothing to compile - all classes are up to date
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] BUILD SUCCESSFUL
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] Total time: 5 seconds
+OUT: [INFO] Finished at: Wed Oct 29 23:41:18 EDT 2008
+OUT: [INFO] Final Memory: 7M/14M
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: -------------------------------------------------------------------------------
+OUT: SUCCESS
+OUT: -------------------------------------------------------------------------------
