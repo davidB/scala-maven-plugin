@@ -48,7 +48,9 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
-        
+        for(String directory : getSourceDirectories()) {
+        	getLog().error(directory);
+        }
         int nbFiles = compile(getSourceDirectories(), outputDir, getClasspathElements(), false);
         switch (nbFiles) {
             case -1:
@@ -133,8 +135,8 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
    private List<String> findSource(List<String> sourceRootDirs, String extension) {
 	   List<String> sourceFiles = new ArrayList<String>();
 	   //TODO - Since we're making files anyway, perhaps we should just test for existence here...
-	   for(String rootSourceDir : removeEmptyCompileSourceRoots(sourceRootDirs)) {
-		   File dir = normalize(new File(rootSourceDir));		   
+	   for(String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
+		   File dir = normalize(new File(rootSourceDir));	
 		   String[] tmpFiles = JavaCommand.findFiles(dir, "**/*." + extension);
 		   for(String tmpLocalFile : tmpFiles) {			   
 			   File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
@@ -149,7 +151,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     /**
      * This limits the source directories to only those that exist for real.
      */
-    private static List<String> removeEmptyCompileSourceRoots( List<String> compileSourceRootsList )
+    private List<String> normalizeSourceRoots( List<String> compileSourceRootsList )
     {
         List<String> newCompileSourceRootsList = new ArrayList<String>();
         if ( compileSourceRootsList != null )
@@ -157,9 +159,10 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
             // copy as I may be modifying it
             for ( String srcDir : compileSourceRootsList )
             {
-                if ( !newCompileSourceRootsList.contains( srcDir ) && new File( srcDir ).exists() )
+            	File srcDirFile = normalize(new File(srcDir));
+                if ( !newCompileSourceRootsList.contains( srcDirFile.getAbsolutePath() ) && srcDirFile.exists() )
                 {
-                    newCompileSourceRootsList.add( srcDir );
+                    newCompileSourceRootsList.add( srcDirFile.getAbsolutePath() );
                 }
             }
         }

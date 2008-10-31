@@ -1,1 +1,1 @@
-compile
+clean compile
