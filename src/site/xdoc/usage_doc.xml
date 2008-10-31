@@ -57,18 +57,18 @@ mvn scala:doc
     <section name="To use a custom api generator">
       <p>
         You need to declare the main class to call (with the same parameter as scaladoc). And you need to list the additional artifact(jar) to use :
-        <source>
-        <configuration>
-          <scaladocClassName>org.scala_tools.vscaladoc.Main</scaladocClassName>
-          <scalaJars>
-            <scalaJar>
-              <groupId>org.scala-tools</groupId>
-              <artifactId>vscaladoc</artifactId>
-              <version>1.0</version>
-            </scalaJar>
-          </scalaJars>
-        </configuration>
-        </source>
+        <source><![CDATA[
+<configuration>
+  <scaladocClassName>org.scala_tools.vscaladoc.Main</scaladocClassName>
+  <scalaJars>
+    <scalaJar>
+      <groupId>org.scala-tools</groupId>
+      <artifactId>vscaladoc</artifactId>
+      <version>1.0</version>
+    </scalaJar>
+  </scalaJars>
+</configuration>
+        ]]></source>
       </p>
       <p>
         Then use the standard maven phases :
@@ -87,9 +87,9 @@ mvn scala:doc
       <p>
         vscaladoc have a shortcut way to use it (instead of using the custom way describe above) :        
         <source><![CDATA[
-        <configuration>
-          <vscalaVersion>1.0</vscalaVersion>
-        </configuration>
+<configuration>
+  <vscalaVersion>1.0</vscalaVersion>
+</configuration>
         ]]></source>
       </p>
       <p>
