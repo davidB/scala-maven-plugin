@@ -5,7 +5,7 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="2.9" date="2008-09-27" description="support mixed java/scala projects">
+    <release version="2.9" date="2008-12-03" description="support mixed java/scala projects">
     	<action dev="Josh Suereth" type="add">added support to look in all registered source directories for scala files</action>
     	<action dev="Josh Suereth" type="add">now send all java files to the scala compiler</action>
     	<action dev="Josh Suereth" type="fix">fixed minor issues in documentation xml</action>
