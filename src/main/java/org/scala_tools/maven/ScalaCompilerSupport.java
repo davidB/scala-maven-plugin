@@ -99,8 +99,9 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
            return 0;
        }
        //Add java files to the source, so we make sure we can have nested dependencies
-       //BUT only when not compiling in "loop" fashion
-       if(!compileInLoop) {
+       //BUT only when not compiling in "loop" fashion and when we're not using an older version of scala
+       
+       if(!compileInLoop && isJavaSupportedByCompiler()) {
     	   List<String> javaSourceFiles = findSource(sourceRootDirs,"java");
     	   for(String javaSourceFile : javaSourceFiles) {
     		   files.add(new File(javaSourceFile));
@@ -129,6 +130,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
        }
        return files.size();
    }
+   
    /**
     * Finds all source files in a set of directories with a given extension. 
     */
