@@ -75,7 +75,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     
     
     protected int compile(File sourceDir, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
-    	getLog().warn("Using older form of compile");
+    	//getLog().warn("Using older form of compile");
     	return compile(Arrays.asList(sourceDir.getAbsolutePath()), outputDir, classpathElements, compileInLoop);
     }
     
