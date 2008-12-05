@@ -23,6 +23,7 @@ import java.util.Set;
  * Run the Scala console with all the classes of the projects (dependencies and builded)
  *
  * @goal console
+ * @execute phase="compile"
  * @requiresDependencyResolution test
  */
 public class ScalaConsoleMojo extends ScalaMojoSupport {

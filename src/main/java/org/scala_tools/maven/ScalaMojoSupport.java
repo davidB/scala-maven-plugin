@@ -247,6 +247,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
             throw new MojoFailureException("no scalaVersion detected or set");
         }
     }
+    
     protected abstract void doExecute() throws Exception;
 
     protected JavaCommand getScalaCommand() throws Exception {
@@ -280,5 +281,13 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, scalaVersion, classpath);
         return JavaCommand.toMultiPath(classpath.toArray(new String[classpath.size()]));
     }
+
+	/**
+     * @return
+     *           This returns whether or not the scala version can support having java sent into the compiler
+     */
+	protected boolean isJavaSupportedByCompiler() {
+		return new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.7.2")) >= 0;
+	}
 
 }
