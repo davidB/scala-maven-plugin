@@ -1,4 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>maven-scala-plugin</title>
+    <authors>
+      <person name="Josh Suereth" />
+    </authors>
+  </properties>
+  <body>
+    <h1>Mixed Java/Scala Projects</h1>
+
+    <span>Prerequisites : <a href="usage.html">common usages</a></span>
+
+    <section name="setup">
+      <p>
+        Place java sources files in :
+        <source>src/main/java</source>
+      </p>
+      <p>
+        Place java test sources files in :
+        <source>src/test/java</source>
+      </p>    
+      <p>
+        Place scala sources files in :
+        <source>src/main/scala</source>
+      </p>
+      <p>
+        Place scala test sources files in :
+        <source>src/test/scala</source>
+      </p>
+      <p>Make your pom file look similar to the following (this is what we use for integration testing):
+       <source>
+          <![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -38,7 +71,7 @@
 				<plugin>
 					<groupId>org.scala-tools</groupId>
 					<artifactId>maven-scala-plugin</artifactId>
-					<version>testing</version>
+					<version>2.9.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -85,3 +118,25 @@
 	</build>
 
 </project>
+
+          ]]>
+       </source>
+      </p>
+      <p>
+        Then use the standard maven phases :
+        <source>
+          <![CDATA[
+# compile only
+mvn compile
+# or compile and test
+mvn test
+# or compile, test and package
+mvn package
+       ]]>
+        </source>
+      </p>      
+      
+    </section>    
+
+  </body>
+</document>
