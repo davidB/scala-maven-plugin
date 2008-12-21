@@ -95,7 +95,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
         }
         if (jcmd != null) {
             if (StringUtils.isNotEmpty(addArgs)) {
-                jcmd.addArgs(addArgs.split("|"));
+                jcmd.addArgs(StringUtils.split(addArgs, "|"));
             }
             jcmd.run(displayCmd);
         } else {
