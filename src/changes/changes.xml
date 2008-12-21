@@ -5,6 +5,10 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="2.9.2" date="2008-12-??" description="">
+    	<action dev="Josh Suereth" type="add">Added documentation for Java/Scala combined projects.  Updated integration tests to ensure it works appropriately.</action>
+        <action dev="David Bernard" type="fix">wrong split of -DaddArgs when running 'mvn scala:run -DmainClass=scala.tools.nsc.Main -DaddArgs="scriptName"'</action>
+    </release>
     <release version="2.9.1" date="2008-12-05" description="">
     	<action dev="Josh Suereth" type="fix">Console goal now executes project compile beforehand</action>
     	<action dev="Josh Suereth" type="fix">does *not* send all java files to the scala compiler for versions prior to 2.7.2</action>

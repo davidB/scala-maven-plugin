@@ -1,1 +1,1 @@
-clean scala:compile compile
+clean package
