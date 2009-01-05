@@ -6,6 +6,7 @@
   </properties>
   <body>
   	 <release version="2.10" date="2009-01-04" description="">
+  	 	<action dev="Arnaud Bailly" type="fix">test source directory parameter (testSourceDir) is now added to the testSourceDirectories (instead of compile source directories).</action>
     	<action dev="Josh Suereth" type="add">Added support for executing scalac plugins.</action>
     </release>
     <release version="2.9.2" date="2008-12-??" description="">
