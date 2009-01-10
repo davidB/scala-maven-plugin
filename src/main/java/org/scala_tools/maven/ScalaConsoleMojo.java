@@ -19,6 +19,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.scala_tools.maven.executions.JavaMainCaller;
+
 /**
  * Run the Scala console with all the classes of the projects (dependencies and builded)
  *
@@ -74,7 +76,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
             classpath.addAll(project.getRuntimeClasspathElements());
         }
         String classpathStr = JavaCommand.toMultiPath(classpath.toArray(new String[classpath.size()]));
-        JavaCommand jcmd = new JavaCommand(this, mainConsole, classpathStr, jvmArgs, args);
+        JavaMainCaller jcmd = new JavaCommand(this, mainConsole, classpathStr, jvmArgs, args);
         if (javaRebelPath != null) {
             if (!javaRebelPath.exists()) {
                 getLog().warn("javaRevelPath '"+javaRebelPath.getCanonicalPath()+"' not found");

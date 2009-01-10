@@ -38,6 +38,8 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.StringUtils;
+import org.scala_tools.maven.executions.JavaMainCaller;
+import org.scala_tools.maven.executions.ReflectionJavaMainCaller;
 
 abstract class ScalaMojoSupport extends AbstractMojo {
 
@@ -121,7 +123,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter
      */
     protected String[] jvmArgs;
-
+    
     /**
      * compiler additionnals arguments
      *
@@ -152,7 +154,11 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      *            default-value="false"
      */
     protected boolean displayCmd;
-
+    /**
+     * Forks the execution of scalac into a separate process.
+     * @parameter default-value="true"
+     */
+    protected boolean fork = true;
     /**
      * Artifact factory, needed to download source jars.
      *
@@ -266,16 +272,22 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     
     protected abstract void doExecute() throws Exception;
 
-    protected JavaCommand getScalaCommand() throws Exception {
-        JavaCommand cmd = getEmptyScalaCommand(scalaClassName);
+    protected JavaMainCaller getScalaCommand() throws Exception {
+        JavaMainCaller cmd = getEmptyScalaCommand(scalaClassName);
         cmd.addArgs(args);
         addCompilerPluginOptions(cmd);
         cmd.addJvmArgs(jvmArgs);
         return cmd;
     }
 
-    protected JavaCommand getEmptyScalaCommand(String mainClass) throws Exception {
-        JavaCommand cmd = new JavaCommand(this, mainClass, getToolClasspath(), null, null);
+    protected JavaMainCaller getEmptyScalaCommand(String mainClass) throws Exception {
+    	//TODO - Fork or not depending on configuration?
+        JavaMainCaller cmd;
+        if(fork) {
+        	cmd = new JavaCommand(this, mainClass, getToolClasspath(), null, null);
+        } else  {
+        	cmd = new ReflectionJavaMainCaller(this, mainClass, getToolClasspath(), null, null);
+        }
         cmd.addJvmArgs("-Xbootclasspath/a:"+ getBootClasspath());
         return cmd;
     }
@@ -313,7 +325,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 	 * @param scalac
 	 * @throws Exception
 	 */
-	private void addCompilerPluginOptions(JavaCommand scalac) throws Exception {
+	private void addCompilerPluginOptions(JavaMainCaller scalac) throws Exception {
 		for (String plugin : getCompilerPlugins()) {
 			scalac.addArgs("-Xplugin:" + plugin);
 		}

@@ -24,6 +24,7 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
+import org.scala_tools.maven.executions.JavaMainCaller;
 
 /**
  * Produces Scala API documentation.
@@ -226,7 +227,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
 
 
     @Override
-    protected JavaCommand getScalaCommand() throws Exception {
+    protected JavaMainCaller getScalaCommand() throws Exception {
         String oldClazz = scalaClassName;
         boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(new VersionNumber(scalaVersion)) > 0);
         if (!isPreviousScala271) {
@@ -235,7 +236,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
         if (StringUtils.isNotEmpty(scaladocClassName)) {
             scalaClassName = scaladocClassName;
         }
-        JavaCommand cmd = getEmptyScalaCommand(scalaClassName);
+        JavaMainCaller cmd = getEmptyScalaCommand(scalaClassName);
         cmd.addArgs(args);
         cmd.addJvmArgs(jvmArgs);
         if (isPreviousScala271){
@@ -265,7 +266,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
                 artifact.version = vscaladocVersion;
                 dependencies = new BasicArtifact[]{artifact};
             }
-            JavaCommand jcmd = getScalaCommand();
+            JavaMainCaller jcmd = getScalaCommand();
             jcmd.addOption("-classpath", JavaCommand.toMultiPath(project.getCompileClasspathElements()));
             jcmd.addOption("-d", reportOutputDir.getAbsolutePath());
             jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());

@@ -24,6 +24,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.scala_tools.maven.executions.JavaMainCaller;
 import org.scala_tools.maven.model.MavenProjectAdapter;
 
 
@@ -237,7 +238,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
 	private void compileScript(File scriptDir, File destFile,
 			Set<String> classpath) throws Exception {
-		JavaCommand jcmd = getScalaCommand();
+		JavaMainCaller jcmd = getScalaCommand();
 		jcmd.addArgs("-classpath", JavaCommand
 				.toMultiPath(new ArrayList<String>(classpath)));
 		jcmd.addArgs("-d", scriptDir.getAbsolutePath());

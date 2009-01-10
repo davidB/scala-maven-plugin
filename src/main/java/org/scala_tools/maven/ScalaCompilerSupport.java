@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.scala_tools.maven.executions.JavaMainCaller;
 
 /**
  * Abstract parent of all Scala Mojo
@@ -112,7 +113,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
            getLog().info(String.format("Compiling %d source files to %s", files.size(), outputDir.getAbsolutePath()));
        }
        long now = System.currentTimeMillis();
-       JavaCommand jcmd = getScalaCommand();
+       JavaMainCaller jcmd = getScalaCommand();
        jcmd.addArgs("-classpath", JavaCommand.toMultiPath(classpathElements));
        jcmd.addArgs("-d", outputDir.getAbsolutePath());
        //jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
