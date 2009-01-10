@@ -31,10 +31,10 @@ public class ReflectionJavaMainCaller extends AbstractJavaMainCaller {
 		ArrayList<URL> urls = new ArrayList<URL>();
 		for(String path : classpath.split(File.pathSeparator)) {
 			try {
-				urls.add(new URL("file://" + path));
+				urls.add(new File(path).toURI().toURL());
 			} catch (MalformedURLException e) {
-				//TODO - Do something here...
-				e.printStackTrace();
+				//TODO - Do something usefull here...
+				requester.getLog().error(e);
 			}
 		}
 		cl = new URLClassLoader(urls.toArray(new URL[urls.size()]));
