@@ -25,6 +25,9 @@ import java.util.Set;
  * @goal console
  * @execute phase="compile"
  * @requiresDependencyResolution test
+ * @inheritByDefault false
+ * @requiresDirectInvocation true
+ * @executionStrategy once-per-session
  */
 public class ScalaConsoleMojo extends ScalaMojoSupport {
 
