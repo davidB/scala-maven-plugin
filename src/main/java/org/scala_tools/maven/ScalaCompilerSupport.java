@@ -34,6 +34,12 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
      */
     protected long loopSleep = 2500;
 
+    /**
+     * Enables/Disables sending java source to the scala compiler.
+     * 
+     * @parameter default-value="true" 
+     */
+    protected boolean sendJavaToScalac = true;
 
     abstract protected File getOutputDir() throws Exception;
 
@@ -102,7 +108,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
        //Add java files to the source, so we make sure we can have nested dependencies
        //BUT only when not compiling in "loop" fashion and when we're not using an older version of scala
        
-       if(!compileInLoop && isJavaSupportedByCompiler()) {
+       if(!compileInLoop && sendJavaToScalac && isJavaSupportedByCompiler()) {
     	   List<String> javaSourceFiles = findSource(sourceRootDirs,"java");
     	   for(String javaSourceFile : javaSourceFiles) {
     		   files.add(new File(javaSourceFile));

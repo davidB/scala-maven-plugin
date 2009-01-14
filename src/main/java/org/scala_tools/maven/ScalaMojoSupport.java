@@ -156,6 +156,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     protected boolean displayCmd;
     /**
      * Forks the execution of scalac into a separate process.
+     * 
      * @parameter default-value="true"
      */
     protected boolean fork = true;
