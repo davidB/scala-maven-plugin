@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.scala_tools.maven.executions.JavaMainCaller;
 
 /**
  * Abstract parent of all Scala Mojo
@@ -33,6 +34,12 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
      */
     protected long loopSleep = 2500;
 
+    /**
+     * Enables/Disables sending java source to the scala compiler.
+     * 
+     * @parameter default-value="true" 
+     */
+    protected boolean sendJavaToScalac = true;
 
     abstract protected File getOutputDir() throws Exception;
 
@@ -103,7 +110,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
        //Add java files to the source, so we make sure we can have nested dependencies
        //BUT only when not compiling in "loop" fashion and when we're not using an older version of scala
        
-       if(!compileInLoop && isJavaSupportedByCompiler()) {
+       if(!compileInLoop && sendJavaToScalac && isJavaSupportedByCompiler()) {
     	   List<String> javaSourceFiles = findSource(sourceRootDirs,"java");
     	   for(String javaSourceFile : javaSourceFiles) {
     		   files.add(new File(javaSourceFile));
@@ -114,7 +121,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
            getLog().info(String.format("Compiling %d source files to %s", files.size(), outputDir.getAbsolutePath()));
        }
        long now = System.currentTimeMillis();
-       JavaCommand jcmd = getScalaCommand();
+       JavaMainCaller jcmd = getScalaCommand();
        jcmd.addArgs("-classpath", JavaCommand.toMultiPath(classpathElements));
        jcmd.addArgs("-d", outputDir.getAbsolutePath());
        //jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());

@@ -25,11 +25,12 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
+import org.scala_tools.maven.executions.JavaMainCaller;
 
 /**
  * Helper class use to call a java Main in an external process.
  */
-public class JavaCommand {
+public class JavaCommand implements JavaMainCaller {
     // //////////////////////////////////////////////////////////////////////////
     // Class
     // //////////////////////////////////////////////////////////////////////////
@@ -105,10 +106,16 @@ public class JavaCommand {
         addArgs(args);
     }
 
+    /* (non-Javadoc)
+	 * @see org.scala_tools.maven.JavaMainCaller#addEnvVar(java.lang.String, java.lang.String)
+	 */
     public void addEnvVar(String key, String value) {
         env_.add(key + "=" + value);
     }
 
+    /* (non-Javadoc)
+	 * @see org.scala_tools.maven.JavaMainCaller#addJvmArgs(java.lang.String)
+	 */
     public void addJvmArgs(String... args) {
         if (args == null) {
             return;
@@ -118,6 +125,9 @@ public class JavaCommand {
         }
     }
 
+    /* (non-Javadoc)
+	 * @see org.scala_tools.maven.JavaMainCaller#addArgs(java.lang.String)
+	 */
     public void addArgs(String... args) {
         if (args == null) {
             return;
@@ -127,6 +137,9 @@ public class JavaCommand {
         }
     }
 
+    /* (non-Javadoc)
+	 * @see org.scala_tools.maven.JavaMainCaller#addOption(java.lang.String, java.lang.String)
+	 */
     public void addOption(String key, String value) {
         if ((value == null) || (key == null)) {
             return;
@@ -135,6 +148,9 @@ public class JavaCommand {
         args_.add(value);
     }
 
+    /* (non-Javadoc)
+	 * @see org.scala_tools.maven.JavaMainCaller#addOption(java.lang.String, java.io.File)
+	 */
     public void addOption(String key, File value) {
         if ((value == null) || (key == null)) {
             return;
@@ -143,6 +159,9 @@ public class JavaCommand {
         args_.add(value.getAbsolutePath());
     }
 
+    /* (non-Javadoc)
+	 * @see org.scala_tools.maven.JavaMainCaller#addOption(java.lang.String, boolean)
+	 */
     public void addOption(String key, boolean value) {
         if ((!value) || (key == null)) {
             return;
@@ -150,6 +169,9 @@ public class JavaCommand {
         args_.add(key);
     }
 
+    /* (non-Javadoc)
+	 * @see org.scala_tools.maven.JavaMainCaller#setLogOnly(boolean)
+	 */
     public void setLogOnly(boolean v) {
         logOnly_ = v;
     }
@@ -165,10 +187,16 @@ public class JavaCommand {
 
     // TODO: avoid to have several Thread to pipe stream
     // TODO: add support to inject startup command and shutdown command (on :quit)
+    /* (non-Javadoc)
+	 * @see org.scala_tools.maven.JavaMainCaller#run(boolean)
+	 */
     public void run(boolean displayCmd) throws Exception {
         run(displayCmd, true);
     }
 
+    /* (non-Javadoc)
+	 * @see org.scala_tools.maven.JavaMainCaller#run(boolean, boolean)
+	 */
     public void run(boolean displayCmd, boolean throwFailure) throws Exception {
 
         String[] cmd = buildCommand();
@@ -197,12 +225,9 @@ public class JavaCommand {
         }
     }
 
-    /**
-     * run the command without stream redirection nor waiting for exit
-     *
-     * @param displayCmd
-     * @throws Exception
-     */
+    /* (non-Javadoc)
+	 * @see org.scala_tools.maven.JavaMainCaller#spawn(boolean)
+	 */
     public void spawn(boolean displayCmd) throws Exception {
         String[] cmd = buildCommand();
         if (displayCmd) {

@@ -46,7 +46,7 @@ public class AddSourceMojo extends AbstractMojo {
 	        	String path = testSourceDir.getCanonicalPath();
 	        	if (!project.getTestCompileSourceRoots().contains(path)) {
 	        		getLog().info("Add Test Source directory: " + path);
-	        		project.addCompileSourceRoot(path);
+	        		project.addTestCompileSourceRoot(path);
 	        	}
 			}
     	} catch(Exception exc) {

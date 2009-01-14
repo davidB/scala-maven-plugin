@@ -9,7 +9,7 @@
   <version>1.0-SNAPSHOT</version>
   <name>Test compilation pulls version from dependency</name>
   <description>Test compilation pulls version from dependency</description>
-
+  <packaging>jar</packaging>
   <dependencies>
   	<dependency>
   		<groupId>org.scala-lang</groupId>

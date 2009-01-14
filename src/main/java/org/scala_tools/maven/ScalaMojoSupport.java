@@ -38,6 +38,8 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.StringUtils;
+import org.scala_tools.maven.executions.JavaMainCaller;
+import org.scala_tools.maven.executions.ReflectionJavaMainCaller;
 
 abstract class ScalaMojoSupport extends AbstractMojo {
 
@@ -98,6 +100,22 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter
      */
     protected BasicArtifact[] dependencies;
+    
+    /**
+     * Compiler plugin dependencies to use when compiling.
+     * ex:
+     * @parameter
+     * <xmp>
+     * <compilerPlugins>
+     * <dependency>
+     * <groupId>my.scala.plugin</groupId>
+     * <artifactId>amazingPlugin</artifactId>
+     * <version>1.0-SNAPSHOT</version>
+     * </dependency>
+     * </compilerPlugins>
+     * </xmp>
+     */
+    protected BasicArtifact[] compilerPlugins;
 
     /**
      * Jvm Arguments.
@@ -105,7 +123,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter
      */
     protected String[] jvmArgs;
-
+    
     /**
      * compiler additionnals arguments
      *
@@ -136,7 +154,12 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      *            default-value="false"
      */
     protected boolean displayCmd;
-
+    /**
+     * Forks the execution of scalac into a separate process.
+     * 
+     * @parameter default-value="true"
+     */
+    protected boolean fork = true;
     /**
      * Artifact factory, needed to download source jars.
      *
@@ -250,15 +273,22 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     
     protected abstract void doExecute() throws Exception;
 
-    protected JavaCommand getScalaCommand() throws Exception {
-        JavaCommand cmd = getEmptyScalaCommand(scalaClassName);
+    protected JavaMainCaller getScalaCommand() throws Exception {
+        JavaMainCaller cmd = getEmptyScalaCommand(scalaClassName);
         cmd.addArgs(args);
+        addCompilerPluginOptions(cmd);
         cmd.addJvmArgs(jvmArgs);
         return cmd;
     }
 
-    protected JavaCommand getEmptyScalaCommand(String mainClass) throws Exception {
-        JavaCommand cmd = new JavaCommand(this, mainClass, getToolClasspath(), null, null);
+    protected JavaMainCaller getEmptyScalaCommand(String mainClass) throws Exception {
+    	//TODO - Fork or not depending on configuration?
+        JavaMainCaller cmd;
+        if(fork) {
+        	cmd = new JavaCommand(this, mainClass, getToolClasspath(), null, null);
+        } else  {
+        	cmd = new ReflectionJavaMainCaller(this, mainClass, getToolClasspath(), null, null);
+        }
         cmd.addJvmArgs("-Xbootclasspath/a:"+ getBootClasspath());
         return cmd;
     }
@@ -290,4 +320,44 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 		return new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.7.2")) >= 0;
 	}
 
+	
+	/**
+	 * Adds appropriate compiler plugins to the scalac command.
+	 * @param scalac
+	 * @throws Exception
+	 */
+	private void addCompilerPluginOptions(JavaMainCaller scalac) throws Exception {
+		for (String plugin : getCompilerPlugins()) {
+			scalac.addArgs("-Xplugin:" + plugin);
+		}
+	}
+	/**
+	 * Retrieves a list of paths to scala compiler plugins.
+	 * @return
+	 *      The list of plugins
+	 * @throws Exception
+	 */
+	private Set<String> getCompilerPlugins() throws Exception {
+		Set<String> plugins = new HashSet<String>();
+		if (compilerPlugins != null) {
+			Set<String> ignoreClasspath = new HashSet<String>();
+			addToClasspath(SCALA_GROUPID, "scala-compiler", scalaVersion,
+					ignoreClasspath);
+			addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID,
+					scalaVersion, ignoreClasspath);
+			for (BasicArtifact artifact : compilerPlugins) {
+				//TODO - Ensure proper scala versin for plugins
+				Set<String> pluginClassPath = new HashSet<String>();
+				addToClasspath(artifact.groupId, artifact.artifactId,
+						artifact.version, pluginClassPath);
+				// TODO - Ensure only one item on classpath, or that we pull the
+				// *CORRECT* item.
+				pluginClassPath.removeAll(ignoreClasspath);
+				plugins.add(pluginClassPath.iterator().next());
+			}
+		}
+		return plugins;
+	}
+	
+	
 }

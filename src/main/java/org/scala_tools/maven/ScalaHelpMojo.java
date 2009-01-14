@@ -15,6 +15,8 @@
  */
 package org.scala_tools.maven;
 
+import org.scala_tools.maven.executions.JavaMainCaller;
+
 
 /**
  * Display the Scala Compiler help
@@ -29,7 +31,7 @@ public class ScalaHelpMojo extends ScalaMojoSupport {
 
     @Override
     public void doExecute() throws Exception {
-        JavaCommand jcmd = null;
+        JavaMainCaller jcmd = null;
         if (!versionOnly) {
             jcmd = getScalaCommand();
             jcmd.addArgs("-help");

@@ -38,6 +38,7 @@
       <item name="Scripting" href="usage_script.html" />
       <item name="Scala Console" href="usage_console.html" />
       <item name="Mixed Java/Scala Projects" href="usage_java.html" />
+      <item name="Creating Scalac Plugins" href="usage_scalac_plugins.html" />
     </menu>
     <menu ref="reports" />
     <menu ref="modules" />

@@ -16,6 +16,7 @@
 package org.scala_tools.maven;
 
 import org.codehaus.plexus.util.StringUtils;
+import org.scala_tools.maven.executions.JavaMainCaller;
 
 
 /**
@@ -77,7 +78,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
     @Override
     @SuppressWarnings("unchecked")
     protected void doExecute() throws Exception {
-        JavaCommand jcmd = null;
+        JavaMainCaller jcmd = null;
         if (StringUtils.isNotEmpty(mainClass)) {
             jcmd = new JavaCommand(this, mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), jvmArgs, args);
         } else if ((launchers != null) && (launchers.length > 0)) {

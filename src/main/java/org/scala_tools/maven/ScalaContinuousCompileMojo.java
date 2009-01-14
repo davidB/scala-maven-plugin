@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.scala_tools.maven.executions.JavaMainCaller;
 
 /**
  * Compile the main and test scala source directory in continuous (infinite loop). !! This is an util goal for commandline usage only (Do not use or call it in a pom) !!!
@@ -81,8 +82,8 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     	   throw new UnsupportedOperationException("USELESS");
     }
     @Override
-    protected JavaCommand getScalaCommand() throws Exception {
-        JavaCommand jcmd = super.getScalaCommand();
+    protected JavaMainCaller getScalaCommand() throws Exception {
+        JavaMainCaller jcmd = super.getScalaCommand();
         if (useFsc) {
             jcmd.addOption("verbose", verbose);
         }
@@ -144,7 +145,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
             return;
         }
         getLog().info("start server...");
-        JavaCommand jcmd = getEmptyScalaCommand("scala.tools.nsc.MainGenericRunner");
+        JavaMainCaller jcmd = getEmptyScalaCommand("scala.tools.nsc.MainGenericRunner");
         jcmd.addArgs("scala.tools.nsc.CompileServer");
         jcmd.addJvmArgs(jvmArgs);
         jcmd.addArgs(args);
@@ -157,7 +158,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
         public void run() {
             try {
                 getLog().info("stop server(s)...");
-                JavaCommand jcmd = getScalaCommand();
+                JavaMainCaller jcmd = getScalaCommand();
                 jcmd.addArgs("-shutdown");
                 jcmd.run(displayCmd, false);
                 File serverTagFile = new File(mainOutputDir + ".server");
