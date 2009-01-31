@@ -27,6 +27,9 @@ import org.scala_tools.maven.executions.JavaMainCaller;
  * @goal console
  * @execute phase="compile"
  * @requiresDependencyResolution test
+ * @inheritByDefault false
+ * @requiresDirectInvocation true
+ * @executionStrategy once-per-session
  */
 public class ScalaConsoleMojo extends ScalaMojoSupport {
 

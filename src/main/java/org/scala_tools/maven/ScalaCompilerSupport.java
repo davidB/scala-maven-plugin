@@ -55,8 +55,10 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
-        for(String directory : getSourceDirectories()) {
-        	getLog().error(directory);
+        if (getLog().isDebugEnabled()) {
+            for(String directory : getSourceDirectories()) {
+                getLog().debug(directory);
+            }
         }
         int nbFiles = compile(getSourceDirectories(), outputDir, getClasspathElements(), false);
         switch (nbFiles) {
