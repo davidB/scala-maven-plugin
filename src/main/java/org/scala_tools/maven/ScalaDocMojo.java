@@ -229,6 +229,8 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     @Override
     protected JavaMainCaller getScalaCommand() throws Exception {
         String oldClazz = scalaClassName;
+        //This ensures we have a valid scala version...
+        checkScalaVersion();
         boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(new VersionNumber(scalaVersion)) > 0);
         if (!isPreviousScala271) {
             scalaClassName = "scala.tools.nsc.ScalaDoc";

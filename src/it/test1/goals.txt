@@ -1,1 +1,1 @@
-clean compile
+clean compile site
