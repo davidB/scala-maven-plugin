@@ -12,6 +12,8 @@
     <module>test1</module>
     <module>testJavaAndScala</module>
     <module>liftone</module>
+    <module>testLotsofJavaFiles</module>
+    <module>docTest</module>
   </modules>
 
 </project>
