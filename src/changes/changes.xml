@@ -11,6 +11,7 @@
     	<action dev="Josh Suereth" type="add">Added support for executing scalac plugins.</action>    	
     	<action dev="Josh Suereth" type="add">Added support for optional forking of scalac.</action>
     	<action dev="Josh Suereth" type="add">Added support to turn off sending Java source to scalac.</action>
+    	<action dev="Josh Suereth" type="add">Plugin now detects multiple versions of scala library and issues a warning/fails.</action>
     </release>
     <release version="2.9.2" date="2008-12-??" description="">
     	<action dev="Josh Suereth" type="add">Added documentation for Java/Scala combined projects.  Updated integration tests to ensure it works appropriately.</action>

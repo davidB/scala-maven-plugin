@@ -161,6 +161,12 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      */
     protected boolean fork = true;
     /**
+     * Determines if a detection of multiple scala versions in the dependencies will cause the build to fail.
+     * 
+     * @parameter default-value="true"
+     */
+    protected boolean failOnMultipleScalaVersions = true;
+    /**
      * Artifact factory, needed to download source jars.
      *
      * @component role="org.apache.maven.project.MavenProjectBuilder"
@@ -241,7 +247,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<Dependency> getDependencies() {
+    protected List<Dependency> getDependencies() {    	    	
         return project.getCompileDependencies();
     }
 
@@ -269,10 +275,43 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         if (StringUtils.isEmpty(scalaVersion)) {
             throw new MojoFailureException("no scalaVersion detected or set");
         }
+        checkCorrectVersionsOfScalaLibrary();
+    }
+    /** this method checks to see if there are multiple versions of the scala library 
+     * @throws Exception */
+    private void checkCorrectVersionsOfScalaLibrary() throws Exception {
+    	getLog().info("Checking for multiple versions of scala");    	
+    	//TODO - Use above non-transitive list to pull out transitive dependencies...
+    	for(Object obj : project.getDependencyArtifacts()) {
+    		checkArtifactForScalaVersion((Artifact) obj);
+    	}
     }
     
+    
+    /** Checks a single artifact against the detected version of scala. */
+    private void checkArtifactForScalaVersion(Artifact artifact) throws Exception {
+    	getLog().info("Checking:" + artifact + " to see if it's a mutliple of the scala-lib");
+		if(SCALA_GROUPID.equals(artifact.getGroupId()) && SCALA_LIBRARY_ARTIFACTID.equals(artifact.getArtifactId())) {
+			if(!scalaVersion.equalsIgnoreCase(artifact.getBaseVersion())) {				
+				if(failOnMultipleScalaVersions) {
+					throw new MojoFailureException("Multiple Scala versions detected!");
+				} else {
+					getLog().warn("Multiple Scala versions detected!");
+				}
+			}
+		}
+		Set<Artifact> children = resolveArtifactDependencies(artifact);
+		getLog().info(artifact + " has " + children.size() + " transitive dependencies");
+		for(Artifact child : children) {
+			checkArtifactForScalaVersion(child);
+		}
+    }
+    
+    
+    
     protected abstract void doExecute() throws Exception;
-
+    
+    
     protected JavaMainCaller getScalaCommand() throws Exception {
         JavaMainCaller cmd = getEmptyScalaCommand(scalaClassName);
         cmd.addArgs(args);
