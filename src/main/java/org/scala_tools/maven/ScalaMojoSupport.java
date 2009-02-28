@@ -100,7 +100,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter
      */
     protected BasicArtifact[] dependencies;
-    
+
     /**
      * Compiler plugin dependencies to use when compiling.
      * ex:
@@ -123,7 +123,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter
      */
     protected String[] jvmArgs;
-    
+
     /**
      * compiler additionnals arguments
      *
@@ -156,13 +156,13 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     protected boolean displayCmd;
     /**
      * Forks the execution of scalac into a separate process.
-     * 
+     *
      * @parameter default-value="true"
      */
     protected boolean fork = true;
     /**
      * Determines if a detection of multiple scala versions in the dependencies will cause the build to fail.
-     * 
+     *
      * @parameter default-value="true"
      */
     protected boolean failOnMultipleScalaVersions = true;
@@ -247,7 +247,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<Dependency> getDependencies() {    	    	
+    protected List<Dependency> getDependencies() {
         return project.getCompileDependencies();
     }
 
@@ -277,22 +277,22 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         }
         checkCorrectVersionsOfScalaLibrary();
     }
-    /** this method checks to see if there are multiple versions of the scala library 
+    /** this method checks to see if there are multiple versions of the scala library
      * @throws Exception */
     private void checkCorrectVersionsOfScalaLibrary() throws Exception {
-    	getLog().info("Checking for multiple versions of scala");    	
+    	getLog().info("Checking for multiple versions of scala");
     	//TODO - Use above non-transitive list to pull out transitive dependencies...
     	for(Object obj : project.getDependencyArtifacts()) {
     		checkArtifactForScalaVersion((Artifact) obj);
     	}
     }
-    
-    
+
+
     /** Checks a single artifact against the detected version of scala. */
     private void checkArtifactForScalaVersion(Artifact artifact) throws Exception {
-    	getLog().info("Checking:" + artifact + " to see if it's a mutliple of the scala-lib");
+    	getLog().debug("Checking:" + artifact + " to see if it's a mutliple of the scala-lib");
 		if(SCALA_GROUPID.equals(artifact.getGroupId()) && SCALA_LIBRARY_ARTIFACTID.equals(artifact.getArtifactId())) {
-			if(!scalaVersion.equalsIgnoreCase(artifact.getBaseVersion())) {				
+			if(!scalaVersion.equalsIgnoreCase(artifact.getBaseVersion())) {
 				if(failOnMultipleScalaVersions) {
 					throw new MojoFailureException("Multiple Scala versions detected!");
 				} else {
@@ -301,17 +301,17 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 			}
 		}
 		Set<Artifact> children = resolveArtifactDependencies(artifact);
-		getLog().info(artifact + " has " + children.size() + " transitive dependencies");
+		getLog().debug(artifact + " has " + children.size() + " transitive dependencies");
 		for(Artifact child : children) {
 			checkArtifactForScalaVersion(child);
 		}
     }
-    
-    
-    
+
+
+
     protected abstract void doExecute() throws Exception;
-    
-    
+
+
     protected JavaMainCaller getScalaCommand() throws Exception {
         JavaMainCaller cmd = getEmptyScalaCommand(scalaClassName);
         cmd.addArgs(args);
@@ -359,7 +359,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 		return new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.7.2")) >= 0;
 	}
 
-	
+
 	/**
 	 * Adds appropriate compiler plugins to the scalac command.
 	 * @param scalac
@@ -397,6 +397,6 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 		}
 		return plugins;
 	}
-	
-	
+
+
 }
