@@ -36,8 +36,8 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
 
     /**
      * Enables/Disables sending java source to the scala compiler.
-     * 
-     * @parameter default-value="true" 
+     *
+     * @parameter default-value="true"
      */
     protected boolean sendJavaToScalac = true;
 
@@ -48,7 +48,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
      * Retreives the list of *all* root source directories.  We need to pass all .java and .scala files into the scala compiler
      */
     abstract protected List<String> getSourceDirectories() throws Exception;
-    
+
     @Override
     protected void doExecute() throws Exception {
         File outputDir = normalize(getOutputDir());
@@ -81,13 +81,13 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         }
         return f;
     }
-    
-    
+
+
     protected int compile(File sourceDir, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
-    	//getLog().warn("Using older form of compile");
-    	return compile(Arrays.asList(sourceDir.getAbsolutePath()), outputDir, classpathElements, compileInLoop);
+        //getLog().warn("Using older form of compile");
+        return compile(Arrays.asList(sourceDir.getAbsolutePath()), outputDir, classpathElements, compileInLoop);
     }
-    
+
    protected int compile(List<String> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
        List<String> scalaSourceFiles = findSource(sourceRootDirs, "scala");
        if (scalaSourceFiles.size() == 0) {
@@ -96,7 +96,10 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
 
        // filter uptodate
        File lastCompileAtFile = new File(outputDir + ".timestamp");
-       long lastCompileAt = lastCompileAtFile.lastModified();
+       long lastCompileAt = -1;
+       if (lastCompileAtFile.exists() && outputDir.exists() && (outputDir.list().length > 0)) {
+           lastCompileAt = lastCompileAtFile.lastModified();
+       }
        ArrayList<File> files = new ArrayList<File>(scalaSourceFiles.size());
        for (String x : scalaSourceFiles) {
            File f = new File(x);
@@ -109,14 +112,14 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
        }
        //Add java files to the source, so we make sure we can have nested dependencies
        //BUT only when not compiling in "loop" fashion and when we're not using an older version of scala
-       
+
        if(!compileInLoop && sendJavaToScalac && isJavaSupportedByCompiler()) {
-    	   List<String> javaSourceFiles = findSource(sourceRootDirs,"java");
-    	   for(String javaSourceFile : javaSourceFiles) {
-    		   files.add(new File(javaSourceFile));
-    	   }
+           List<String> javaSourceFiles = findSource(sourceRootDirs,"java");
+           for(String javaSourceFile : javaSourceFiles) {
+               files.add(new File(javaSourceFile));
+           }
        }
-       
+
        if (!compileInLoop) {
            getLog().info(String.format("Compiling %d source files to %s", files.size(), outputDir.getAbsolutePath()));
        }
@@ -139,26 +142,26 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
        }
        return files.size();
    }
-   
+
    /**
-    * Finds all source files in a set of directories with a given extension. 
+    * Finds all source files in a set of directories with a given extension.
     */
    private List<String> findSource(List<String> sourceRootDirs, String extension) {
-	   List<String> sourceFiles = new ArrayList<String>();
-	   //TODO - Since we're making files anyway, perhaps we should just test for existence here...
-	   for(String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
-		   File dir = normalize(new File(rootSourceDir));	
-		   String[] tmpFiles = JavaCommand.findFiles(dir, "**/*." + extension);
-		   for(String tmpLocalFile : tmpFiles) {			   
-			   File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
-			   sourceFiles.add(tmpAbsFile.getAbsolutePath());
-		   }
-	   }
-	   return sourceFiles;
+       List<String> sourceFiles = new ArrayList<String>();
+       //TODO - Since we're making files anyway, perhaps we should just test for existence here...
+       for(String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
+           File dir = normalize(new File(rootSourceDir));
+           String[] tmpFiles = JavaCommand.findFiles(dir, "**/*." + extension);
+           for(String tmpLocalFile : tmpFiles) {
+               File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
+               sourceFiles.add(tmpAbsFile.getAbsolutePath());
+           }
+       }
+       return sourceFiles;
    }
-   
-    
-    
+
+
+
     /**
      * This limits the source directories to only those that exist for real.
      */
@@ -170,7 +173,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
             // copy as I may be modifying it
             for ( String srcDir : compileSourceRootsList )
             {
-            	File srcDirFile = normalize(new File(srcDir));
+                File srcDirFile = normalize(new File(srcDir));
                 if ( !newCompileSourceRootsList.contains( srcDirFile.getAbsolutePath() ) && srcDirFile.exists() )
                 {
                     newCompileSourceRootsList.add( srcDirFile.getAbsolutePath() );
