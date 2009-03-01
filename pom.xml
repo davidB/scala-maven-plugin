@@ -7,7 +7,7 @@
   </parent>
   <artifactId>maven-scala-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>2.10-SNAPSHOT</version>
+  <version>2.11-SNAPSHOT</version>
   <name>maven-scala-plugin</name>
   <url>http://scala-tools.org/mvnsites/${project.artifactId}</url>
   <description>The maven-scala-plugin is used for compiling/testing/running/documenting scala code in maven.</description>
