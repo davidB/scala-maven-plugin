@@ -161,6 +161,13 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      */
     protected boolean fork = true;
     /**
+     * Check if every dependencies use the same version of scala-library.
+     *
+     * @parameter expression="${maven.scala.checkConsistency}" default-value="true"
+     */
+    protected boolean checkMultipleScalaVersions;
+
+    /**
      * Determines if a detection of multiple scala versions in the dependencies will cause the build to fail.
      *
      * @parameter default-value="true"
@@ -194,6 +201,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
                 return !artifact.isOptional();
             }
         });
+        //TODO follow the dependenciesManagement and override rules
         Set<Artifact> artifacts = theProject.createArtifacts(factory, Artifact.SCOPE_RUNTIME, filter);
         for (Artifact artifact : artifacts) {
             resolver.resolve(artifact, remoteRepos, localRepo);
@@ -261,13 +269,15 @@ abstract class ScalaMojoSupport extends AbstractMojo {
             }
         }
         if (StringUtils.isEmpty(detectedScalaVersion)) {
-            getLog().warn("you don't define "+SCALA_GROUPID + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
+            if (!"pom".equals( project.getPackaging().toLowerCase() )) {
+                getLog().warn("you don't define "+SCALA_GROUPID + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
+            }
         } else {
             if (StringUtils.isNotEmpty(scalaVersion)) {
                 if (!scalaVersion.equals(detectedScalaVersion)) {
                     getLog().warn("scala library version define in dependencies doesn't match the scalaVersion of the plugin");
                 }
-                getLog().info("suggestion: remove the scalaVersion from pom.xml");
+                //getLog().info("suggestion: remove the scalaVersion from pom.xml"); //scalaVersion could be define in a parent pom where lib is not required
             } else {
                 scalaVersion = detectedScalaVersion;
             }
@@ -275,7 +285,9 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         if (StringUtils.isEmpty(scalaVersion)) {
             throw new MojoFailureException("no scalaVersion detected or set");
         }
-        checkCorrectVersionsOfScalaLibrary();
+        if (checkMultipleScalaVersions) {
+            checkCorrectVersionsOfScalaLibrary();
+        }
     }
     /** this method checks to see if there are multiple versions of the scala library
      * @throws Exception */
