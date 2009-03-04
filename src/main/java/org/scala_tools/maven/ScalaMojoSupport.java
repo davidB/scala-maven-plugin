@@ -15,6 +15,7 @@
  */
 package org.scala_tools.maven;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,9 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -37,7 +40,17 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.shared.dependency.tree.DependencyNode;
+import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
+import org.apache.maven.shared.dependency.tree.filter.AncestorOrSelfDependencyNodeFilter;
+import org.apache.maven.shared.dependency.tree.filter.AndDependencyNodeFilter;
+import org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter;
+import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
+import org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNodeVisitor;
 import org.codehaus.plexus.util.StringUtils;
+import org.scala_tools.maven.dependency.CheckScalaVersionVisitor;
+import org.scala_tools.maven.dependency.ScalaDistroArtifactFilter;
 import org.scala_tools.maven.executions.JavaMainCaller;
 import org.scala_tools.maven.executions.ReflectionJavaMainCaller;
 
@@ -183,6 +196,51 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     protected MavenProjectBuilder mavenProjectBuilder;
 
     /**
+     * The artifact repository to use.
+     * 
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepository;
+
+    /**
+     * The artifact factory to use.
+     * 
+     * @component
+     * @required
+     * @readonly
+     */
+    private ArtifactFactory artifactFactory;
+
+    /**
+     * The artifact metadata source to use.
+     * 
+     * @component
+     * @required
+     * @readonly
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
+
+    /**
+     * The artifact collector to use.
+     * 
+     * @component
+     * @required
+     * @readonly
+     */
+    private ArtifactCollector artifactCollector;
+
+    /**
+     * The dependency tree builder to use.
+     * 
+     * @component
+     * @required
+     * @readonly
+     */
+    private DependencyTreeBuilder dependencyTreeBuilder;
+    
+    /**
      * This method resolves the dependency artifacts from the project.
      *
      * @param theProject The POM.
@@ -293,32 +351,45 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      * @throws Exception */
     private void checkCorrectVersionsOfScalaLibrary() throws Exception {
     	getLog().info("Checking for multiple versions of scala");
-    	//TODO - Use above non-transitive list to pull out transitive dependencies...
-    	for(Object obj : project.getDependencyArtifacts()) {
-    		checkArtifactForScalaVersion((Artifact) obj);
-    	}
+    	//TODO - Make sure we handle bad artifacts....
+    	// TODO: note that filter does not get applied due to MNG-3236
+    		checkArtifactForScalaVersion(dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
+                    artifactMetadataSource, null, artifactCollector ));
     }
 
 
-    /** Checks a single artifact against the detected version of scala. */
-    private void checkArtifactForScalaVersion(Artifact artifact) throws Exception {
-    	getLog().debug("Checking:" + artifact + " to see if it's a mutliple of the scala-lib");
-		if(SCALA_GROUPID.equals(artifact.getGroupId()) && SCALA_LIBRARY_ARTIFACTID.equals(artifact.getArtifactId())) {
-			if(!scalaVersion.equalsIgnoreCase(artifact.getBaseVersion())) {
-				if(failOnMultipleScalaVersions) {
-					throw new MojoFailureException("Multiple Scala versions detected!");
-				} else {
-					getLog().warn("Multiple Scala versions detected!");
-				}
-			}
-		}
-		Set<Artifact> children = resolveArtifactDependencies(artifact);
-		getLog().debug(artifact + " has " + children.size() + " transitive dependencies");
-		for(Artifact child : children) {
-			checkArtifactForScalaVersion(child);
-		}
-    }
+    /** Visits a node (and all dependencies) to see if it contains duplicate scala versions */
+    private void checkArtifactForScalaVersion(DependencyNode rootNode) throws Exception {
+		final CheckScalaVersionVisitor visitor = new CheckScalaVersionVisitor(scalaVersion, getLog());
+		
+		CollectingDependencyNodeVisitor collectingVisitor = new CollectingDependencyNodeVisitor();
+        DependencyNodeVisitor firstPassVisitor = new FilteringDependencyNodeVisitor( collectingVisitor, createScalaDistroDependencyFilter() );
+        rootNode.accept( firstPassVisitor );
 
+        DependencyNodeFilter secondPassFilter = new AncestorOrSelfDependencyNodeFilter( collectingVisitor.getNodes() );
+        DependencyNodeVisitor filteredVisitor = new FilteringDependencyNodeVisitor( visitor, secondPassFilter );
+		
+        rootNode.accept( filteredVisitor );
+        
+        if(visitor.isFailed()) {
+        	if(failOnMultipleScalaVersions) {
+        		getLog().error("Multiple versions of scala libraries detected!");
+        	} else {
+        		getLog().warn("Multiple versions of scala libraries detected!");
+        	}
+        }
+        
+    }
+    /**
+     * @return
+     *          A filter to only extract artifacts deployed from scala distributions
+     */
+    private DependencyNodeFilter createScalaDistroDependencyFilter() {
+    	List<ArtifactFilter> filters = new ArrayList<ArtifactFilter>();
+    	filters.add(new ScalaDistroArtifactFilter());
+    	return new AndDependencyNodeFilter(filters);
+    }
+    
 
 
     protected abstract void doExecute() throws Exception;

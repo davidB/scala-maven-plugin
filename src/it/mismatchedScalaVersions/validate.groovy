@@ -1,4 +1,4 @@
-def echoString = "OUT: [WARNING] Multiple Scala versions detected!"
+def echoString = "OUT: [WARNING] Multiple versions of scala libraries detected!"
 def logFile = new File(basedir, "build.log")
 //Look for echo string
 def found = false;

@@ -1,0 +1,10 @@
+package org.scala_tools.maven.dependency;
+
+import java.util.Arrays;
+import java.util.List;
+
+public interface ScalaConstants {
+	public static final String SCALA_DISTRO_GROUP="org.scala-lang";
+	public static final List<String> SCALA_DISTRO_ARTIFACTS = Arrays.asList("scala-library", "scala-swing", "scala-dbc", "scala-compiler", "scalap", "partest");
+	
+}
