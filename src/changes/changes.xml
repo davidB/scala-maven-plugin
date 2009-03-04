@@ -5,7 +5,7 @@
     <author>David Bernard</author>
   </properties>
   <body>
-  	<release version="2.10" date="2009-03-05" description="">
+  	<release version="2.10.1" date="2009-03-05" description="">
   	 	<action dev="Josh Suereth &amp; David Bernard" type="fix">No longer using Josh's dumb algorithm when checking for multiple scala versions.</action>
     </release>
   	 <release version="2.10" date="2009-03-01" description="">
