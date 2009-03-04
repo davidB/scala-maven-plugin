@@ -183,9 +183,9 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Determines if a detection of multiple scala versions in the dependencies will cause the build to fail.
      *
-     * @parameter default-value="true"
+     * @parameter default-value="false"
      */
-    protected boolean failOnMultipleScalaVersions = true;
+    protected boolean failOnMultipleScalaVersions = false;
     /**
      * Artifact factory, needed to download source jars.
      *
