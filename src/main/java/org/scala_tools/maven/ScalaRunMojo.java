@@ -98,6 +98,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
             if (StringUtils.isNotEmpty(addArgs)) {
                 jcmd.addArgs(StringUtils.split(addArgs, "|"));
             }
+            jcmd.setLogOnly(false);
             jcmd.run(displayCmd);
         } else {
             getLog().warn("Not mainClass or valid launcher found/define");
