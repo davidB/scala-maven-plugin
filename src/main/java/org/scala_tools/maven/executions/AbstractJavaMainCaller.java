@@ -33,6 +33,15 @@ public abstract class AbstractJavaMainCaller implements JavaMainCaller {
     }
 	
 	
+   public void addJvmArgs(String... args) {
+      if(args != null) {
+         for(String arg : args) {
+            this.jvmArgs.add(arg);
+         }
+      }
+      
+   }
+	
 	public void addOption(String key, String value) {
 		if ((value == null) || (key == null)) {
 			return;

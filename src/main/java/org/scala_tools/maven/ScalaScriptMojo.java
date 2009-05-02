@@ -24,6 +24,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
 import org.scala_tools.maven.model.MavenProjectAdapter;
 

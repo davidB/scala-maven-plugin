@@ -24,6 +24,7 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
+import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
 
 /**

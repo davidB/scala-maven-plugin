@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
 
 /**
