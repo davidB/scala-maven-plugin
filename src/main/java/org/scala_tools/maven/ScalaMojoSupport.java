@@ -410,7 +410,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         JavaMainCaller cmd;
         if(fork) {
            
-           if( new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.8.0")) >= 0) {
+           if( new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.7.4")) >= 0) {
               //TODO - Version 2.8.0 and above support passing arguments in a file via the @ argument.
               cmd = new ScalaCommandWIthArgsInFile(this, mainClass, getToolClasspath(), null, null);
            } else {

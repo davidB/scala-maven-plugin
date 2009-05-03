@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
-			<version>2.7.2</version>
+			<version>2.7.4</version>
 		</dependency>
 	</dependencies>
 	<repositories>
@@ -70,7 +70,6 @@
 					</execution>
 				</executions>
 				<configuration>
-					<fork>false</fork>
 				</configuration>
 			</plugin>
 			<plugin>

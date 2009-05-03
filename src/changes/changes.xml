@@ -5,6 +5,9 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="2.11" date="2009-05-XX" description="">
+      <action dev="Josh Suereth" type="add">For scala version 2.8.0 and above, maven-scala-plugin now uses the @ argument to pass arguments via a file.  This fixes issues on OSes with argument length limitations (like windows)</action>
+    </release>  
   	<release version="2.10.1" date="2009-03-05" description="">
   	 	<action dev="Josh Suereth &amp; David Bernard" type="fix">No longer using Josh's dumb algorithm when checking for multiple scala versions.</action>
     </release>
