@@ -26,6 +26,7 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
+import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
 
 /**
@@ -323,6 +324,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
             throw new MavenReportException("wrap: " + exc.getMessage(), exc);
         }
     }
+    @SuppressWarnings("unchecked")
     protected JavaMainCaller newScalaDocCmd() throws Exception {
         JavaMainCaller jcmd = getScalaCommand();
         jcmd.addOption("-classpath", JavaCommand.toMultiPath(project.getCompileClasspathElements()));
@@ -340,6 +342,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
         return jcmd;
     }
 
+    @SuppressWarnings("unchecked")
     protected void aggregate(MavenProject parent) throws Exception {
         List<MavenProject> modules = parent.getCollectedProjects();
         File dest = new File(parent.getBasedir(), parent.getReporting().getOutputDirectory() +"/" + outputDirectory);

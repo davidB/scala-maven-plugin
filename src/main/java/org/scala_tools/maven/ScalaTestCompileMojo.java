@@ -75,9 +75,7 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
         return testOutputDir.getAbsoluteFile();
     }
 
-    
-    
-
+    @SuppressWarnings("unchecked")
     protected List<String> getSourceDirectories() throws Exception {
     	List<String> sources = project.getTestCompileSourceRoots();
     	String scalaSourceDir = testSourceDir.getAbsolutePath();

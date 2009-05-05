@@ -37,6 +37,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
+@SuppressWarnings("unchecked")
 public class MavenProjectAdapter {
 
 	final MavenProject wrapped;
@@ -45,228 +46,217 @@ public class MavenProjectAdapter {
 		this.wrapped = project;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Profile> getActiveProfiles() {
 		return wrapped.getActiveProfiles();
 	}
 
-	@SuppressWarnings("unchecked")
 	public Map<String, Artifact> getArtifactMap() {
 		return wrapped.getArtifactMap();
 	}
 
-	@SuppressWarnings("unchecked")
 	public Set<Artifact> getArtifacts() {
 		return wrapped.getArtifacts();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Artifact> getAttachedArtifacts() {
 		return wrapped.getAttachedArtifacts();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Plugin> getBuildPlugins() {
 		return wrapped.getBuildPlugins();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<MavenProject> getCollectedProjects() {
 		// TODO Auto-generated method stub
 		return wrapped.getCollectedProjects();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Artifact> getCompileArtifacts() {
 		return wrapped.getCompileArtifacts();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<String> getCompileClasspathElements()
 			throws DependencyResolutionRequiredException {
 		return wrapped.getCompileClasspathElements();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Dependency> getCompileDependencies() {
 		return wrapped.getCompileDependencies();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<String> getCompileSourceRoots() {
 		return wrapped.getCompileSourceRoots();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Contributor> getContributors() {
 		return wrapped.getContributors();
 	}
 
-	@SuppressWarnings("unchecked")
+
 	public List<Dependency> getDependencies() {
 		return wrapped.getDependencies();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Set<Artifact> getDependencyArtifacts() {
 		return wrapped.getDependencyArtifacts();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Developer> getDevelopers() {
 		return wrapped.getDevelopers();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Map<String, Artifact> getExtensionArtifactMap() {
 		return wrapped.getExtensionArtifactMap();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Set<Artifact> getExtensionArtifacts() {
 		return wrapped.getExtensionArtifacts();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<String> getFilters() {
 		return wrapped.getFilters();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<License> getLicenses() {
 		return wrapped.getLicenses();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<MailingList> getMailingLists() {
 		return wrapped.getMailingLists();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Map getManagedVersionMap() {
 		// TODO Figure out what is here
 		return wrapped.getManagedVersionMap();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<String> getModules() {
 		return wrapped.getModules();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Map<String, Artifact> getPluginArtifactMap() {
 		return wrapped.getPluginArtifactMap();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<ArtifactRepository> getPluginArtifactRepositories() {
 		return wrapped.getPluginArtifactRepositories();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Set<Artifact> getPluginArtifacts() {
 		return wrapped.getPluginArtifacts();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Repository> getPluginRepositories() {
 		return wrapped.getPluginRepositories();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Map<String, MavenProject> getProjectReferences() {
 		return wrapped.getProjectReferences();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<ArtifactRepository> getRemoteArtifactRepositories() {
 		return wrapped.getRemoteArtifactRepositories();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Map<String, Artifact> getReportArtifactMap() {
 		return wrapped.getReportArtifactMap();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public Set<Artifact> getReportArtifacts() {
 		return wrapped.getReportArtifacts();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Plugin> getReportPlugins() {
 		return wrapped.getReportPlugins();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Repository> getRepositories() {
 		return wrapped.getRepositories();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Resource> getResources() {
 		return wrapped.getResources();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Artifact> getRuntimeArtifacts() {
 		return wrapped.getRuntimeArtifacts();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<String> getRuntimeClasspathElements()
 			throws DependencyResolutionRequiredException {
 		return wrapped.getRuntimeClasspathElements();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Dependency> getRuntimeDependencies() {
 		return wrapped.getRuntimeDependencies();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<String> getScriptSourceRoots() {
 		return wrapped.getScriptSourceRoots();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Artifact> getSystemArtifacts() {
 		return wrapped.getSystemArtifacts();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<String> getSystemClasspathElements()
 			throws DependencyResolutionRequiredException {
 		return wrapped.getSystemClasspathElements();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Dependency> getSystemDependencies() {
 		return wrapped.getSystemDependencies();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Artifact> getTestArtifacts() {
 		return wrapped.getTestArtifacts();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<String> getTestClasspathElements()
 			throws DependencyResolutionRequiredException {
 		return wrapped.getTestClasspathElements();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<String> getTestCompileSourceRoots() {
 		return wrapped.getTestCompileSourceRoots();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Dependency> getTestDependencies() {
 		return wrapped.getTestDependencies();
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public List<Resource> getTestResources() {
 		return wrapped.getTestResources();
 	}
@@ -518,7 +508,6 @@ public class MavenProjectAdapter {
 		wrapped.addTestResource(testResource);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Set<Artifact> createArtifacts(ArtifactFactory artifactFactory,
 			String inheritedScope, ArtifactFilter dependencyFilter)
 			throws InvalidDependencyVersionException {
@@ -546,7 +535,7 @@ public class MavenProjectAdapter {
 		return wrapped.getBuild();
 	}
 
-	public List getBuildExtensions() {
+    public List getBuildExtensions() {
 		return wrapped.getBuildExtensions();
 	}
 

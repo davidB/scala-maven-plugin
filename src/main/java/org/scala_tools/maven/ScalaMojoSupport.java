@@ -51,8 +51,10 @@ import org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNode
 import org.codehaus.plexus.util.StringUtils;
 import org.scala_tools.maven.dependency.CheckScalaVersionVisitor;
 import org.scala_tools.maven.dependency.ScalaDistroArtifactFilter;
+import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
 import org.scala_tools.maven.executions.ReflectionJavaMainCaller;
+import org.scala_tools.maven.executions.ScalaCommandWIthArgsInFile;
 
 abstract class ScalaMojoSupport extends AbstractMojo {
 
@@ -407,7 +409,13 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     	//TODO - Fork or not depending on configuration?
         JavaMainCaller cmd;
         if(fork) {
-        	cmd = new JavaCommand(this, mainClass, getToolClasspath(), null, null);
+           
+           if( new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.7.4")) >= 0) {
+              //TODO - Version 2.8.0 and above support passing arguments in a file via the @ argument.
+              cmd = new ScalaCommandWIthArgsInFile(this, mainClass, getToolClasspath(), null, null);
+           } else {
+              cmd = new JavaCommand(this, mainClass, getToolClasspath(), null, null);
+           }
         } else  {
         	cmd = new ReflectionJavaMainCaller(this, mainClass, getToolClasspath(), null, null);
         }

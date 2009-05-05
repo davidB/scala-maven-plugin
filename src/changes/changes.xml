@@ -5,34 +5,35 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="2.10.1" date="2009-03-05" description="">
-        <action dev="David Bernard" type="add">allow running vscaladoc aggregation only from command line use "-Dforce-aggregate=true" (avoid using in pom.xml)</action>
-        <action dev="David Bernard" type="fix">disable use of ConsolePiper that generate an echo of command when running scala:console</action>
-    </release>
-    <release version="2.10.1" date="2009-03-05" description="">
-  	 	<action dev="Josh Suereth &amp; David Bernard" type="fix">No longer using Josh's dumb algorithm when checking for multiple scala versions.</action>
+    <release version="2.11" date="2009-05-XX" description="">
+      <action dev="Josh Suereth" type="add">For scala version 2.8.0 and above, maven-scala-plugin now uses the @ argument to pass arguments via a file.  This fixes issues on OSes with argument length limitations (like windows)</action>
+      <action dev="David Bernard" type="add">allow running vscaladoc aggregation only from command line use "-Dforce-aggregate=true" (avoid using in pom.xml)</action>
+      <action dev="David Bernard" type="fix">disable use of ConsolePiper that generate an echo of command when running scala:console</action>
+    </release>  
+  	<release version="2.10.1" date="2009-03-05" description="">
+      <action dev="Josh Suereth &amp; David Bernard" type="fix">No longer using Josh's dumb algorithm when checking for multiple scala versions.</action>
     </release>
   	<release version="2.10" date="2009-03-01" description="">
-  	 	<action dev="Josh Suereth" type="fix">doc goal now behaves like compiler when looking for scala version.</action>
-  	 	<action dev="Arnaud Bailly" type="fix">test source directory parameter (testSourceDir) is now added to the testSourceDirectories (instead of compile source directories).</action>
-    	<action dev="Josh Suereth" type="add">Added support for executing scalac plugins.</action>    	
-    	<action dev="Josh Suereth" type="add">Added support for optional forking of scalac.</action>
-    	<action dev="Josh Suereth" type="add">Added support to turn off sending Java source to scalac.</action>
-    	<action dev="Josh Suereth" type="add">Plugin now detects multiple versions of scala library and issues a warning/fails.</action>
+      <action dev="Josh Suereth" type="fix">doc goal now behaves like compiler when looking for scala version.</action>
+      <action dev="Arnaud Bailly" type="fix">test source directory parameter (testSourceDir) is now added to the testSourceDirectories (instead of compile source directories).</action>
+      <action dev="Josh Suereth" type="add">Added support for executing scalac plugins.</action>    	
+      <action dev="Josh Suereth" type="add">Added support for optional forking of scalac.</action>
+      <action dev="Josh Suereth" type="add">Added support to turn off sending Java source to scalac.</action>
+      <action dev="Josh Suereth" type="add">Plugin now detects multiple versions of scala library and issues a warning/fails.</action>
     </release>
     <release version="2.9.2" date="2008-12-??" description="">
-    	<action dev="Josh Suereth" type="add">Added documentation for Java/Scala combined projects.  Updated integration tests to ensure it works appropriately.</action>
-        <action dev="David Bernard" type="fix">wrong split of -DaddArgs when running 'mvn scala:run -DmainClass=scala.tools.nsc.Main -DaddArgs="scriptName"'</action>
+      <action dev="Josh Suereth" type="add">Added documentation for Java/Scala combined projects.  Updated integration tests to ensure it works appropriately.</action>
+      <action dev="David Bernard" type="fix">wrong split of -DaddArgs when running 'mvn scala:run -DmainClass=scala.tools.nsc.Main -DaddArgs="scriptName"'</action>
     </release>
     <release version="2.9.1" date="2008-12-05" description="">
-    	<action dev="Josh Suereth" type="fix">Console goal now executes project compile beforehand</action>
-    	<action dev="Josh Suereth" type="fix">does *not* send all java files to the scala compiler for versions prior to 2.7.2</action>
+      <action dev="Josh Suereth" type="fix">Console goal now executes project compile beforehand</action>
+      <action dev="Josh Suereth" type="fix">does *not* send all java files to the scala compiler for versions prior to 2.7.2</action>
     </release>
     <release version="2.9" date="2008-12-03" description="support mixed java/scala projects">
-    	<action dev="Josh Suereth" type="add">added support to look in all registered source directories for scala files</action>
-    	<action dev="Josh Suereth" type="add">now send all java files to the scala compiler</action>
-    	<action dev="Josh Suereth" type="fix">fixed minor issues in documentation xml</action>
-    	<action dev="Josh Suereth" type="add">added support for automatic integration tests</action>
+      <action dev="Josh Suereth" type="add">added support to look in all registered source directories for scala files</action>
+      <action dev="Josh Suereth" type="add">now send all java files to the scala compiler</action>
+      <action dev="Josh Suereth" type="fix">fixed minor issues in documentation xml</action>
+      <action dev="Josh Suereth" type="add">added support for automatic integration tests</action>
     </release>
     <release version="2.8" date="2008-09-27" description="">
       <action dev="David Bernard" type="fix">redefine the run goal at the test-compile phase, to have a correct classpath</action>

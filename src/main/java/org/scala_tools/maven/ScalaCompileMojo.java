@@ -40,6 +40,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
      */
     protected File sourceDir;
 
+    @SuppressWarnings("unchecked")
     protected List<String> getSourceDirectories() throws Exception {
     	List<String> sources = project.getCompileSourceRoots();
     	//Quick fix in case the user has not added the "add-source" goal.
