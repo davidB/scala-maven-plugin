@@ -6,6 +6,7 @@
   </properties>
   <body>
     <release version="2.10.1" date="2009-03-05" description="">
+        <action dev="David Bernard" type="add">allow running vscaladoc aggregation only from command line use "-Dforce-aggregate=true" (avoid using in pom.xml)</action>
         <action dev="David Bernard" type="fix">disable use of ConsolePiper that generate an echo of command when running scala:console</action>
     </release>
     <release version="2.10.1" date="2009-03-05" description="">

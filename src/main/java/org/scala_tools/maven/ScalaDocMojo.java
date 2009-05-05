@@ -18,8 +18,10 @@ package org.scala_tools.maven;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
@@ -30,6 +32,7 @@ import org.scala_tools.maven.executions.JavaMainCaller;
  * Produces Scala API documentation.
  *
  * @goal doc
+ * //aggregator
  * @requiresDependencyResolution compile
  */
 public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
@@ -162,6 +165,19 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
      */
     protected String vscaladocVersion;
 
+    /**
+     * To allow running aggregation only from command line use "-Dforce-aggregate=true" (avoid using in pom.xml).
+     *
+     * @parameter expression="${force-aggregate}" default="false"
+     */
+    protected boolean forceAggregate = false;
+
+    /**
+     * If you want to aggregate only direct sub modules.
+     *
+     * @parameter expression="${maven.scaladoc.aggregateDirectOnly}" default="true"
+     */
+    protected boolean aggregateDirectOnly = true;
 
     private String[] sourceFiles_ = null;
     private String[] findSourceFiles() {
@@ -177,7 +193,11 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
         } catch (IOException exc) {
             sourceDir = sourceDir.getAbsoluteFile();
         }
-        return sourceDir.exists() && (findSourceFiles().length != 0);
+        // there is source to compile
+        boolean back = sourceDir.exists() && (findSourceFiles().length != 0);
+        // there is modules to aggregate
+        back = back || ((project.isExecutionRoot() || forceAggregate) && StringUtils.isNotEmpty(vscaladocVersion) && (new VersionNumber(vscaladocVersion).compareTo(new VersionNumber("1.1")) >= 0) && project.getCollectedProjects().size() > 0);
+        return back;
     }
 
     public boolean isExternalReport() {
@@ -208,7 +228,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
 
     public File getReportOutputDirectory() {
         if (reportOutputDirectory == null) {
-            reportOutputDirectory = new File(project.getReporting().getOutputDirectory(), outputDirectory);
+            reportOutputDirectory = new File(project.getBasedir(), project.getReporting().getOutputDirectory() +"/" + outputDirectory).getAbsoluteFile();
         }
         return reportOutputDirectory;
     }
@@ -268,30 +288,84 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
                 artifact.version = vscaladocVersion;
                 dependencies = new BasicArtifact[]{artifact};
             }
-            JavaMainCaller jcmd = getScalaCommand();
-            jcmd.addOption("-classpath", JavaCommand.toMultiPath(project.getCompileClasspathElements()));
-            jcmd.addOption("-d", reportOutputDir.getAbsolutePath());
-            jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
-            jcmd.addOption("-bottom", getBottomText());
-            jcmd.addOption("-charset", charset);
-            jcmd.addOption("-doctitle", doctitle);
-            jcmd.addOption("-footer", footer);
-            jcmd.addOption("-header", header);
-            jcmd.addOption("-linksource", linksource);
-            jcmd.addOption("-nocomment", nocomment);
-            jcmd.addOption("-stylesheetfile", stylesheetfile);
-            jcmd.addOption("-top", top);
-            jcmd.addOption("-windowtitle", windowtitle);
-            for (String x : findSourceFiles()) {
-                jcmd.addArgs(sourceDir + File.separator + x);
+
+            if (sourceDir.exists()) {
+                JavaMainCaller jcmd = newScalaDocCmd();
+                jcmd.addOption("-d", reportOutputDir.getAbsolutePath());
+                String[] sources = findSourceFiles();
+                if (sources.length > 0) {
+                    for (String x : sources) {
+                        jcmd.addArgs(sourceDir + File.separator + x);
+                    }
+                    jcmd.run(displayCmd);
+                }
             }
-            jcmd.run(displayCmd);
+            if (forceAggregate) {
+                aggregate(project);
+            } else {
+                // Mojo could not be run from parent after all its children
+                // So the aggregation will be run after the last child
+                if (project.hasParent()) {
+                    MavenProject parent = project.getParent();
+                    List<MavenProject> modules = parent.getCollectedProjects();
+                    System.out.println(">>> modules size " + modules.size());
+                    if ((modules.size() > 1) && project.equals(modules.get(modules.size() - 1))) {
+                        aggregate(parent);
+                    }
+                }
+            }
+
         } catch (MavenReportException exc) {
             throw exc;
         } catch (RuntimeException exc) {
             throw exc;
         } catch (Exception exc) {
             throw new MavenReportException("wrap: " + exc.getMessage(), exc);
+        }
+    }
+    protected JavaMainCaller newScalaDocCmd() throws Exception {
+        JavaMainCaller jcmd = getScalaCommand();
+        jcmd.addOption("-classpath", JavaCommand.toMultiPath(project.getCompileClasspathElements()));
+        jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
+        jcmd.addOption("-bottom", getBottomText());
+        jcmd.addOption("-charset", charset);
+        jcmd.addOption("-doctitle", doctitle);
+        jcmd.addOption("-footer", footer);
+        jcmd.addOption("-header", header);
+        jcmd.addOption("-linksource", linksource);
+        jcmd.addOption("-nocomment", nocomment);
+        jcmd.addOption("-stylesheetfile", stylesheetfile);
+        jcmd.addOption("-top", top);
+        jcmd.addOption("-windowtitle", windowtitle);
+        return jcmd;
+    }
+
+    protected void aggregate(MavenProject parent) throws Exception {
+        List<MavenProject> modules = parent.getCollectedProjects();
+        File dest = new File(parent.getBasedir(), parent.getReporting().getOutputDirectory() +"/" + outputDirectory);
+        getLog().info("start aggregation into " + dest);
+        StringBuilder mpath = new StringBuilder();
+        for (MavenProject module : modules) {
+            if ( "pom".equals( module.getPackaging().toLowerCase() ) ) {
+                continue;
+            }
+            if (aggregateDirectOnly && module.getParent() != parent) {
+                continue;
+            }
+            File subScaladocPath = new File(module.getBasedir(), module.getReporting().getOutputDirectory() +"/" + outputDirectory).getAbsoluteFile();
+            //System.out.println(" -> " + project.getModulePathAdjustment(module)  +" // " + subScaladocPath + " // " + module.getBasedir() );
+            if (subScaladocPath.exists()) {
+                mpath.append(subScaladocPath).append(File.pathSeparatorChar);
+            }
+        }
+        if (mpath.length() != 0) {
+            getLog().info("aggregate vscaladoc from : " + mpath);
+            JavaMainCaller jcmd = newScalaDocCmd();
+            jcmd.addOption("-d", dest.getAbsolutePath());
+            jcmd.addOption("-aggregate", mpath.toString());
+            jcmd.run(displayCmd);
+        } else {
+            getLog().warn("no vscaladoc to aggregate");
         }
     }
 
