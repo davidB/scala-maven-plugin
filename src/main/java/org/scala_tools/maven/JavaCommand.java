@@ -107,15 +107,15 @@ public class JavaCommand implements JavaMainCaller {
     }
 
     /* (non-Javadoc)
-	 * @see org.scala_tools.maven.JavaMainCaller#addEnvVar(java.lang.String, java.lang.String)
-	 */
+     * @see org.scala_tools.maven.JavaMainCaller#addEnvVar(java.lang.String, java.lang.String)
+     */
     public void addEnvVar(String key, String value) {
         env_.add(key + "=" + value);
     }
 
     /* (non-Javadoc)
-	 * @see org.scala_tools.maven.JavaMainCaller#addJvmArgs(java.lang.String)
-	 */
+     * @see org.scala_tools.maven.JavaMainCaller#addJvmArgs(java.lang.String)
+     */
     public void addJvmArgs(String... args) {
         if (args == null) {
             return;
@@ -126,8 +126,8 @@ public class JavaCommand implements JavaMainCaller {
     }
 
     /* (non-Javadoc)
-	 * @see org.scala_tools.maven.JavaMainCaller#addArgs(java.lang.String)
-	 */
+     * @see org.scala_tools.maven.JavaMainCaller#addArgs(java.lang.String)
+     */
     public void addArgs(String... args) {
         if (args == null) {
             return;
@@ -138,8 +138,8 @@ public class JavaCommand implements JavaMainCaller {
     }
 
     /* (non-Javadoc)
-	 * @see org.scala_tools.maven.JavaMainCaller#addOption(java.lang.String, java.lang.String)
-	 */
+     * @see org.scala_tools.maven.JavaMainCaller#addOption(java.lang.String, java.lang.String)
+     */
     public void addOption(String key, String value) {
         if ((value == null) || (key == null)) {
             return;
@@ -149,8 +149,8 @@ public class JavaCommand implements JavaMainCaller {
     }
 
     /* (non-Javadoc)
-	 * @see org.scala_tools.maven.JavaMainCaller#addOption(java.lang.String, java.io.File)
-	 */
+     * @see org.scala_tools.maven.JavaMainCaller#addOption(java.lang.String, java.io.File)
+     */
     public void addOption(String key, File value) {
         if ((value == null) || (key == null)) {
             return;
@@ -160,8 +160,8 @@ public class JavaCommand implements JavaMainCaller {
     }
 
     /* (non-Javadoc)
-	 * @see org.scala_tools.maven.JavaMainCaller#addOption(java.lang.String, boolean)
-	 */
+     * @see org.scala_tools.maven.JavaMainCaller#addOption(java.lang.String, boolean)
+     */
     public void addOption(String key, boolean value) {
         if ((!value) || (key == null)) {
             return;
@@ -170,8 +170,8 @@ public class JavaCommand implements JavaMainCaller {
     }
 
     /* (non-Javadoc)
-	 * @see org.scala_tools.maven.JavaMainCaller#setLogOnly(boolean)
-	 */
+     * @see org.scala_tools.maven.JavaMainCaller#setLogOnly(boolean)
+     */
     public void setLogOnly(boolean v) {
         logOnly_ = v;
     }
@@ -188,15 +188,15 @@ public class JavaCommand implements JavaMainCaller {
     // TODO: avoid to have several Thread to pipe stream
     // TODO: add support to inject startup command and shutdown command (on :quit)
     /* (non-Javadoc)
-	 * @see org.scala_tools.maven.JavaMainCaller#run(boolean)
-	 */
+     * @see org.scala_tools.maven.JavaMainCaller#run(boolean)
+     */
     public void run(boolean displayCmd) throws Exception {
         run(displayCmd, true);
     }
 
     /* (non-Javadoc)
-	 * @see org.scala_tools.maven.JavaMainCaller#run(boolean, boolean)
-	 */
+     * @see org.scala_tools.maven.JavaMainCaller#run(boolean, boolean)
+     */
     public void run(boolean displayCmd, boolean throwFailure) throws Exception {
 
         String[] cmd = buildCommand();
@@ -216,8 +216,8 @@ public class JavaCommand implements JavaMainCaller {
             new StreamLogger(p.getInputStream(), requester_.getLog(), false).start();
         } else {
             new StreamPiper(p.getInputStream(), System.out).start();
-            //new StreamPiper(System.in, p.getOutputStream()).start();
-            new ConsolePiper(p).start();
+//            new ConsolePiper(p).start();
+            new StreamPiper(System.in, p.getOutputStream()).start();
         }
         int retVal = p.waitFor();
         if (throwFailure && (retVal != 0)) {
@@ -226,8 +226,8 @@ public class JavaCommand implements JavaMainCaller {
     }
 
     /* (non-Javadoc)
-	 * @see org.scala_tools.maven.JavaMainCaller#spawn(boolean)
-	 */
+     * @see org.scala_tools.maven.JavaMainCaller#spawn(boolean)
+     */
     public void spawn(boolean displayCmd) throws Exception {
         String[] cmd = buildCommand();
         if (displayCmd) {

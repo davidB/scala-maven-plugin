@@ -5,10 +5,13 @@
     <author>David Bernard</author>
   </properties>
   <body>
-  	<release version="2.10.1" date="2009-03-05" description="">
+    <release version="2.10.1" date="2009-03-05" description="">
+        <action dev="David Bernard" type="fix">disable use of ConsolePiper that generate an echo of command when running scala:console</action>
+    </release>
+    <release version="2.10.1" date="2009-03-05" description="">
   	 	<action dev="Josh Suereth &amp; David Bernard" type="fix">No longer using Josh's dumb algorithm when checking for multiple scala versions.</action>
     </release>
-  	 <release version="2.10" date="2009-03-01" description="">
+  	<release version="2.10" date="2009-03-01" description="">
   	 	<action dev="Josh Suereth" type="fix">doc goal now behaves like compiler when looking for scala version.</action>
   	 	<action dev="Arnaud Bailly" type="fix">test source directory parameter (testSourceDir) is now added to the testSourceDirectories (instead of compile source directories).</action>
     	<action dev="Josh Suereth" type="add">Added support for executing scalac plugins.</action>    	
