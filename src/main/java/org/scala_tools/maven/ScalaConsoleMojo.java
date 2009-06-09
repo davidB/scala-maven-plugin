@@ -72,6 +72,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         Set<String> classpath = new HashSet<String>();
         addToClasspath("org.scala-lang", "scala-compiler", scalaVersion, classpath);
         addToClasspath("org.scala-lang", "scala-library", scalaVersion, classpath);
+        addToClasspath("jline", "jline", "0.9.94", classpath);
         classpath.addAll(project.getCompileClasspathElements());
         if (useTestClasspath) {
             classpath.addAll(project.getTestClasspathElements());
