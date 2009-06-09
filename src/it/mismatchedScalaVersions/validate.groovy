@@ -1,3 +1,5 @@
+try {
+
 def echoString = "OUT: [WARNING] Multiple versions of scala libraries detected!"
 def logFile = new File(basedir, "build.log")
 //Look for echo string
@@ -9,3 +11,10 @@ logFile.eachLine({ line ->
 });
 
 assert found
+
+true
+
+} catch(e) {
+  e.printStackTrace()
+  false
+}

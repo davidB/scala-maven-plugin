@@ -40,7 +40,7 @@
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
-				<version>testing</version>
+				<version>@project.version@</version>
 				<executions>
 					<execution>
 						<goals>

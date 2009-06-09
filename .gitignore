@@ -22,7 +22,7 @@ temp*
 dist
 test-output
 build.log
-
+TestJavaClass*.java
 # other scm
 .svn
 .CVS

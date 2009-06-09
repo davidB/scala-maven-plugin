@@ -4,32 +4,18 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.scala-tools.maven-scala-plugin</groupId>
-	<artifactId>test1</artifactId>
-	<version>1.0-SNAPSHOT</version>
-	<name>Test compilation pulls version from dependency</name>
-	<description>Test compilation pulls version from dependency</description>
-	<packaging>jar</packaging>
+	<artifactId>it-parent</artifactId>
+	<version>testing</version>
+	<name>Test scaladoc generation+aggregation</name>
+	<packaging>pom</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
-			<version>2.7.1</version>
+			<version>2.7.3</version>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>scala-tools.org</id>
-			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>scala-tools.org</id>
-			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</pluginRepository>
-	</pluginRepositories>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -52,8 +38,16 @@
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
+				<version>@project.version@</version>
+				<configuration>
+				    <vscaladocVersion>1.2-SNAPSHOT</vscaladocVersion>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
 
+	<modules>
+	    <module>m1</module>
+	    <module>m2</module>
+	</modules>
 </project>
