@@ -345,7 +345,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     @SuppressWarnings("unchecked")
     protected void aggregate(MavenProject parent) throws Exception {
         List<MavenProject> modules = parent.getCollectedProjects();
-        File dest = new File(parent.getBasedir(), parent.getReporting().getOutputDirectory() +"/" + outputDirectory);
+        File dest = new File(parent.getReporting().getOutputDirectory() +"/" + outputDirectory);
         getLog().info("start aggregation into " + dest);
         StringBuilder mpath = new StringBuilder();
         for (MavenProject module : modules) {
@@ -355,7 +355,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
             if (aggregateDirectOnly && module.getParent() != parent) {
                 continue;
             }
-            File subScaladocPath = new File(module.getBasedir(), module.getReporting().getOutputDirectory() +"/" + outputDirectory).getAbsoluteFile();
+            File subScaladocPath = new File(module.getReporting().getOutputDirectory() +"/" + outputDirectory).getAbsoluteFile();
             //System.out.println(" -> " + project.getModulePathAdjustment(module)  +" // " + subScaladocPath + " // " + module.getBasedir() );
             if (subScaladocPath.exists()) {
                 mpath.append(subScaladocPath).append(File.pathSeparatorChar);

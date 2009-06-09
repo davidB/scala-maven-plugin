@@ -12,9 +12,10 @@ logFile.eachLine({ line ->
 
 assert found
 
-true
 
-} catch(e) {
+return true
+
+} catch(Throwable e) {
   e.printStackTrace()
-  false
+  return false
 }

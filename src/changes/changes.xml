@@ -6,7 +6,8 @@
   </properties>
   <body>
     <release version="2.11" date="2009-05-XX" description="">
-      <action dev="David Bernard" type="update">replace shitty by maven-invoker-plugin to run integration-test (shitty doesn't work with maven 2.10.0)</action>
+      <action dev="David Bernard" type="fix">fix vscaladoc aggregation to work with maven 2.1.0</action>
+      <action dev="David Bernard" type="update">replace shitty by maven-invoker-plugin to run integration-test (shitty doesn't work with maven 2.1.0)</action>
       <action dev="David Bernard" type="fix">add jline in the classpath of scala:console to enable REPL enhancement when jline is available</action>
       <action dev="Josh Suereth" type="add">For scala version 2.8.0 and above, maven-scala-plugin now uses the @ argument to pass arguments via a file.  This fixes issues on OSes with argument length limitations (like windows)</action>
       <action dev="David Bernard" type="add">allow running vscaladoc aggregation only from command line use "-Dforce-aggregate=true" (avoid using in pom.xml)</action>
