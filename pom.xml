@@ -115,32 +115,6 @@
 
   <build>
     <plugins>
-     <plugin>
-        <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.3</version>
-        <configuration>
-          <debug>false</debug>
-          <!-- localRepositoryPath>target/local-repo</localRepositoryPath -->
-          <projectsDirectory>src/it</projectsDirectory>
-          <pomIncludes>
-            <pomInclude>**/pom.xml</pomInclude>
-          </pomIncludes>
-          <pomExcludes>
-            <pomExclude>**/m*/pom.xml</pomExclude>
-          </pomExcludes>
-          <preBuildHookScript>setup.groovy</preBuildHookScript>
-          <postBuildHookScript>validate.groovy</postBuildHookScript>
-        </configuration>
-        <executions>
-          <execution>
-            <id>integration-test</id>
-            <goals>
-              <goal>install</goal>
-              <goal>run</goal>
-            </goals>
-          </execution>
-       </executions>
-      </plugin>
     </plugins>
   </build>
 </project>
