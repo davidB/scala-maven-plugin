@@ -112,7 +112,7 @@
       </plugin>
     </plugins>
   </reporting>
- 
+<!-- 
   <build>
     <plugins>
       <plugin>
@@ -143,5 +143,5 @@
       </plugin>
     </plugins>
   </build>
-
+ -->
 </project>

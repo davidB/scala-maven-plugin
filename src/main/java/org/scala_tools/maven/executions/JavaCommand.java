@@ -90,6 +90,7 @@ public class JavaCommand extends AbstractForkedJavaCommand {
             back.addAll(args);
         } else {
             File jarPath = new File(MainHelper.locateJar(MainHelper.class));
+            System.out.println("plugin jar to add :" + jarPath);
             addToClasspath(jarPath);
             back.addAll(jvmArgs);
             back.add(MainWithArgsInFile.class.getName());

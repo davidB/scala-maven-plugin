@@ -114,7 +114,7 @@ public class MainHelper {
             location = loader.getResource(classLocation);
         }
         if( location != null ){
-            Pattern p = Pattern.compile( "^.*:(.*)!.*$" ) ;
+            Pattern p = Pattern.compile( "^.*file:(.*)!.*$" ) ;
             Matcher m = p.matcher( location.toString() ) ;
             if( m.find() ) {
                 return m.group( 1 ) ;
