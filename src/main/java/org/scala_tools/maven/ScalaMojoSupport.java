@@ -169,12 +169,21 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      *            default-value="false"
      */
     protected boolean displayCmd;
+
     /**
      * Forks the execution of scalac into a separate process.
      *
      * @parameter default-value="true"
      */
     protected boolean fork = true;
+    
+    /**
+     * Force the use of an external ArgFile to run any forked process.
+     *
+     * @parameter default-value="false"
+     */
+    protected boolean forceUseArgFile = false;
+    
     /**
      * Check if every dependencies use the same version of scala-library.
      *
@@ -409,15 +418,16 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     	//TODO - Fork or not depending on configuration?
         JavaMainCaller cmd;
         if(fork) {
-           
            if( new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.7.4")) >= 0) {
-              //TODO - Version 2.8.0 and above support passing arguments in a file via the @ argument.
-              cmd = new ScalaCommandWIthArgsInFile(this, mainClass, getToolClasspath(), null, null);
+               //TODO - Version 2.8.0 and above support passing arguments in a file via the @ argument.
+               getLog().info("use scala command with args in file");
+               cmd = new ScalaCommandWIthArgsInFile(this, mainClass, getToolClasspath(), null, null);
            } else {
-              cmd = new JavaCommand(this, mainClass, getToolClasspath(), null, null);
+               getLog().info("use java command with args in file forced : " + forceUseArgFile);
+               cmd = new JavaCommand(this, mainClass, getToolClasspath(), null, null, forceUseArgFile);
            }
         } else  {
-        	cmd = new ReflectionJavaMainCaller(this, mainClass, getToolClasspath(), null, null);
+            cmd = new ReflectionJavaMainCaller(this, mainClass, getToolClasspath(), null, null);
         }
         cmd.addJvmArgs("-Xbootclasspath/a:"+ getBootClasspath());
         return cmd;

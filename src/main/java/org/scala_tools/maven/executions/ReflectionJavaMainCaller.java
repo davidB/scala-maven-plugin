@@ -1,8 +1,6 @@
 package org.scala_tools.maven.executions;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -72,25 +70,12 @@ public class ReflectionJavaMainCaller extends AbstractJavaMainCaller {
 	
 	/** Runs the main method of a java class */
 	private void runInternal(boolean displayCmd) throws Exception {
-		if(cl == null) {
-			throw new IllegalStateException("No valid classloader defined for scala compiler!");
-		}
-		Class<?> mainClass = cl.loadClass(mainClassName);
-		Method mainMethod = mainClass.getMethod("main", String[].class);		
-		int mods = mainMethod.getModifiers();
-		if(mainMethod.getReturnType() != void.class || !Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
-			throw new NoSuchMethodException("main");
-		}
-		String[] argArray = args.toArray(new String[args.size()]);
-		
-		if(displayCmd) {
-			requester.getLog().info("cmd : " + mainClass + "(" + StringUtils.join(argArray, ",")+")");
-		}
-		
-		//TODO - Redirect System.in System.err and System.out
-		
-		
-		mainMethod.invoke(null, new Object[] {argArray});
+        String[] argArray = args.toArray(new String[args.size()]);
+        if(displayCmd) {
+            requester.getLog().info("cmd : " + mainClassName + "(" + StringUtils.join(argArray, ",")+")");
+        }
+
+        MainHelper.runMain(mainClassName, args, cl);
 	}
 	
 

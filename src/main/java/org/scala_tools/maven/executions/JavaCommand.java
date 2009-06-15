@@ -70,18 +70,40 @@ public class JavaCommand extends AbstractForkedJavaCommand {
         return back.toString();
     }
 
+    // //////////////////////////////////////////////////////////////////////////
+    // Object
+    // //////////////////////////////////////////////////////////////////////////
 
-    public JavaCommand(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args) throws Exception {
+    private boolean _forceUseArgFile = false;
+    
+    public JavaCommand(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args, boolean forceUseArgFile) throws Exception {
        super(requester, mainClassName, classpath, jvmArgs, args);
+       _forceUseArgFile = forceUseArgFile;
     }
 
     protected String[] buildCommand() throws Exception {
         ArrayList<String> back = new ArrayList<String>(2 + jvmArgs.size() + args.size());
         back.add(javaExec);
-        back.addAll(jvmArgs);
-        back.add(mainClassName);
-        back.addAll(args);
+        if (!_forceUseArgFile && (lengthOf(args, 1) + lengthOf(jvmArgs, 1) < 400)) {
+            back.addAll(jvmArgs);
+            back.add(mainClassName);
+            back.addAll(args);
+        } else {
+            File jarPath = new File(MainHelper.locateJar(MainHelper.class));
+            addToClasspath(jarPath);
+            back.addAll(jvmArgs);
+            back.add(MainWithArgsInFile.class.getName());
+            back.add(mainClassName);
+            back.add(MainHelper.createArgFile(args).getCanonicalPath());
+        }
         return back.toArray(new String[back.size()]);
     }
 
+    private long lengthOf(List<String> l, long sepLength) throws Exception {
+        long back = 0;
+        for(String str : l) {
+            back += str.length() + sepLength;
+        }
+        return back;
+    }
 }

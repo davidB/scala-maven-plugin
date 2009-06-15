@@ -39,7 +39,25 @@ public abstract class AbstractJavaMainCaller implements JavaMainCaller {
             }
         }
     }
-
+    
+    public void addToClasspath(File entry) throws Exception {
+        if ((entry == null) || !entry.exists()) {
+            return;
+        }
+        boolean isClasspath = false;
+        for (int i = 0; i < jvmArgs.size(); i++) {
+            String item = jvmArgs.get(i);
+            if (isClasspath) {
+                item = item + File.pathSeparator + entry.getCanonicalPath();
+                jvmArgs.set(i, item);
+                isClasspath = false;
+                break;
+            } else {
+                isClasspath = "-classpath".equals(item);
+            }
+        }
+    }
+    
     public void addOption(String key, String value) {
         if ((value == null) || (key == null)) {
             return;

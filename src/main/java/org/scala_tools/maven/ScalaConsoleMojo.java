@@ -81,7 +81,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
             classpath.addAll(project.getRuntimeClasspathElements());
         }
         String classpathStr = JavaCommand.toMultiPath(classpath.toArray(new String[classpath.size()]));
-        JavaMainCaller jcmd = new JavaCommand(this, mainConsole, classpathStr, jvmArgs, args);
+        JavaMainCaller jcmd = new JavaCommand(this, mainConsole, classpathStr, jvmArgs, args, forceUseArgFile);
         if (javaRebelPath != null) {
             if (!javaRebelPath.exists()) {
                 getLog().warn("javaRevelPath '"+javaRebelPath.getCanonicalPath()+"' not found");

@@ -76,5 +76,4 @@ public abstract class AbstractForkedJavaCommand extends AbstractJavaMainCaller {
       ProcessBuilder pb = new ProcessBuilder(cmd);
       pb.start();
    }
-
 }

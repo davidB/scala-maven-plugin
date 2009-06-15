@@ -81,18 +81,18 @@ public class ScalaRunMojo extends ScalaMojoSupport {
     protected void doExecute() throws Exception {
         JavaMainCaller jcmd = null;
         if (StringUtils.isNotEmpty(mainClass)) {
-            jcmd = new JavaCommand(this, mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), jvmArgs, args);
+            jcmd = new JavaCommand(this, mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), jvmArgs, args, forceUseArgFile);
         } else if ((launchers != null) && (launchers.length > 0)) {
             if (StringUtils.isNotEmpty(launcher)) {
                 for(int i = 0; (i < launchers.length) && (jcmd == null); i++) {
                     if (launcher.equals(launchers[i].id)) {
                         getLog().info("launcher '"+ launchers[i].id + "' selected => "+ launchers[i].mainClass );
-                        jcmd = new JavaCommand(this, launchers[i].mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), launchers[i].jvmArgs, launchers[i].args);
+                        jcmd = new JavaCommand(this, launchers[i].mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), launchers[i].jvmArgs, launchers[i].args, forceUseArgFile);
                     }
                 }
             } else {
                 getLog().info("launcher '"+ launchers[0].id + "' selected => "+ launchers[0].mainClass );
-                jcmd = new JavaCommand(this, launchers[0].mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), launchers[0].jvmArgs, launchers[0].args);
+                jcmd = new JavaCommand(this, launchers[0].mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), launchers[0].jvmArgs, launchers[0].args, forceUseArgFile);
             }
         }
         if (jcmd != null) {
