@@ -54,7 +54,7 @@ public class MainHelper {
      */
     public static File createArgFile(List<String> args) throws IOException {
        final File argFile = File.createTempFile("scala-maven-", ".args");
-       argFile.deleteOnExit();
+       //argFile.deleteOnExit();
        final PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(argFile)));
        try {
           for(String arg : args) {
