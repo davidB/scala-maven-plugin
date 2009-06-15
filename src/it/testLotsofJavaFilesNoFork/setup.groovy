@@ -22,3 +22,4 @@ makeJavaClass("TestJavaClass");
 });
 
 assert true
+true
