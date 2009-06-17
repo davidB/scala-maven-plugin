@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -104,7 +105,7 @@ public class MainHelper {
         mainMethod.invoke(null, new Object[] {argArray});
     }
     
-    public static String locateJar(Class<?> c ) throws ClassNotFoundException {
+    public static String locateJar(Class<?> c) throws Exception {
         final URL location;
         final String classLocation = c.getName().replace('.', '/') + ".class";
         final ClassLoader loader = c.getClassLoader();
@@ -117,7 +118,7 @@ public class MainHelper {
             Pattern p = Pattern.compile( "^.*file:(.*)!.*$" ) ;
             Matcher m = p.matcher( location.toString() ) ;
             if( m.find() ) {
-                return m.group( 1 ) ;
+                return URLDecoder.decode(m.group( 1 ), "UTF-8") ;
             } else {
                 throw new ClassNotFoundException( "Cannot parse location of '" + location + "'.  Probably not loaded from a Jar" ) ;
             }
