@@ -20,6 +20,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -90,7 +91,7 @@ public class JavaCommand extends AbstractForkedJavaCommand {
             back.addAll(args);
         } else {
             File jarPath = new File(MainHelper.locateJar(MainHelper.class));
-            System.out.println("plugin jar to add :" + jarPath);
+            requester.getLog().debug("plugin jar to add :" + jarPath);
             addToClasspath(jarPath);
             back.addAll(jvmArgs);
             back.add(MainWithArgsInFile.class.getName());
