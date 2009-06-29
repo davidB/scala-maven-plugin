@@ -5,7 +5,7 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="2.11" date="2009-05-XX" description="">
+    <release version="2.11" date="2009-06-29" description="">
       <action dev="David Bernard" type="fix">fix vscaladoc aggregation to work with maven 2.1.0</action>
       <action dev="David Bernard" type="update">replace shitty by maven-invoker-plugin to run integration-test (shitty doesn't work with maven 2.1.0)</action>
       <action dev="David Bernard" type="fix">add jline in the classpath of scala:console to enable REPL enhancement when jline is available</action>
