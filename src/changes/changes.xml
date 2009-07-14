@@ -5,6 +5,9 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="2.12" date="" description="">
+      <action dev="David Bernard" type="add">use Yaml to manage pom (thanks to maven-yamlpom-plugin http://wiki.github.com/mrdon/maven-yamlpom-plugin)</action>
+    </release>
     <release version="2.11" date="2009-06-29" description="">
       <action dev="David Bernard" type="fix">fix vscaladoc aggregation to work with maven 2.1.0</action>
       <action dev="David Bernard" type="update">replace shitty by maven-invoker-plugin to run integration-test (shitty doesn't work with maven 2.1.0)</action>
