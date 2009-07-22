@@ -42,14 +42,19 @@ public class JavaCommand extends AbstractForkedJavaCommand {
     }
 
     public static String[] findFiles(File dir, String pattern) {
+        return findFiles(dir, new String[] { pattern }, new String[0]);
+    }
+    
+    public static String[] findFiles(File dir, String[] includes, String[] excludes) {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(dir);
-        scanner.setIncludes(new String[] { pattern });
+        scanner.setIncludes(includes);
+        scanner.setExcludes(excludes);
         scanner.addDefaultExcludes();
         scanner.scan();
         return scanner.getIncludedFiles();
     }
-
+    
     public static String toClasspathString(ClassLoader cl) throws Exception {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();

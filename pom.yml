@@ -50,20 +50,18 @@ build:
         - goals: [ sync ]
     - artifactId: maven-invoker-plugin
       version: 1.3
-      configuration : |
-
-        <debug>false</debug>
-        <projectsDirectory>src/it</projectsDirectory>
-        <pomIncludes>  <pomInclude>**/pom.xml</pomInclude></pomIncludes>
-        <pomExcludes>  <pomExclude>**/vscaladocOnMultiModules/pom.xml</pomExclude>  <pomExclude>**/m*/pom.xml</pomExclude></pomExcludes>
-        <preBuildHookScript>setup.groovy</preBuildHookScript>
-        <postBuildHookScript>validate.groovy</postBuildHookScript>
+      configuration:
+        debug: false
+        projectsDirectory: src/it
+        pomIncludes: [ "**/pom.xml" ]
+        pomExcludes: [ "**/vscaladocOnMultiModules/pom.xml", "**/m*/pom.xml" ]
+        preBuildHookScript: setup.groovy
+        postBuildHookScript: validate.groovy
       executions:
         - id: integration-test
           goals: [ install, run ]
     - artifactId: maven-release-plugin
       version: 2.0-beta-9
-      configuration : |
-
-        <releaseProfiles>release</releaseProfiles>
-        <goals>deploy site-deploy assembly:assembly</goals>
+      configuration:
+        releaseProfiles: release
+        goals: "deploy site-deploy assembly:assembly"

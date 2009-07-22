@@ -7,6 +7,7 @@
   <body>
     <release version="2.12" date="" description="">
       <action dev="David Bernard" type="add">use Yaml to manage pom (thanks to maven-yamlpom-plugin http://wiki.github.com/mrdon/maven-yamlpom-plugin)</action>
+      <action dev="Josh Suereth" type="add">compile and doc mojo now use includes and excludes configuration.</action>
     </release>
     <release version="2.11" date="2009-06-29" description="">
       <action dev="David Bernard" type="fix">fix vscaladoc aggregation to work with maven 2.1.0</action>

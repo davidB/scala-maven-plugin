@@ -18,8 +18,10 @@ package org.scala_tools.maven;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
@@ -181,9 +183,28 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     protected boolean aggregateDirectOnly = true;
 
     private String[] sourceFiles_ = null;
+    
+    /**
+     * A list of inclusion filters for the compiler.
+     *
+     * @parameter
+     */
+    private Set<String> includes = new HashSet();
+
+    /**
+     * A list of exclusion filters for the compiler.
+     *
+     * @parameter
+     */
+    private Set<String> excludes = new HashSet();
+    
+    
     private String[] findSourceFiles() {
         if (sourceFiles_ == null) {
-            sourceFiles_ = JavaCommand.findFiles(sourceDir, "**/*.scala");
+        	if(includes.isEmpty()) {
+        		includes.add("**/*.scala");
+        	}
+            sourceFiles_ = JavaCommand.findFiles(sourceDir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
         }
         return sourceFiles_;
     }
