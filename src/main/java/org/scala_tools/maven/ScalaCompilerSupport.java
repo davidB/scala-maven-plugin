@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
