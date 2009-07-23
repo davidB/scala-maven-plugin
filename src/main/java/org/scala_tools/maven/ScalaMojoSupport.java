@@ -70,7 +70,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Used to look up Artifacts in the remote repository.
      *
-     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
+     * @component
      * @required
      * @readonly
      */
@@ -79,7 +79,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Used to look up Artifacts in the remote repository.
      *
-     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
+     * @component
      * @required
      * @readonly
      */
@@ -105,6 +105,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Additional dependencies/jar to add to classpath to run "scalaClassName" (scope and optional field not supported)
      * ex :
+     * <pre>
      *    &lt;dependencies>
      *      &lt;dependency>
      *        &lt;groupId>org.scala-tools&lt;/groupId>
@@ -112,6 +113,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      *        &lt;version>1.0-SNAPSHOT&lt;/version>
      *      &lt;/dependency>
      *    &lt;/dependencies>
+     * </pre>
      * @parameter
      */
     protected BasicArtifact[] dependencies;
@@ -200,7 +202,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Artifact factory, needed to download source jars.
      *
-     * @component role="org.apache.maven.project.MavenProjectBuilder"
+     * @component
      * @required
      * @readonly
      */

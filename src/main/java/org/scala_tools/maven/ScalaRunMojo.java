@@ -30,6 +30,8 @@ import org.scala_tools.maven.executions.JavaMainCaller;
 public class ScalaRunMojo extends ScalaMojoSupport {
 
     /**
+     * The class to use when launching a scala program
+     * 
      * @parameter expression="${launcher}"
      */
     protected String launcher;

@@ -47,9 +47,12 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     /**
      * A list of inclusion filters for the compiler.
      * ex :
+     * <pre>
      *    &lt;includes&gt;
      *      &lt;include&gt;SomeFile.scala&lt;/include&gt;
      *    &lt;/includes&gt;
+     * </pre>   
+     *    
      * @parameter
      */
     private Set<String> includes = new HashSet();
@@ -57,10 +60,12 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     /**
      * A list of exclusion filters for the compiler.
      * ex :
+     * <pre>
      *    &lt;excludes&gt;
      *      &lt;exclude&gt;SomeBadFile.scala&lt;/exclude&gt;
      *    &lt;/excludes&gt;
-    
+     * </pre>
+     * 
      * @parameter
      */
     private Set<String> excludes = new HashSet();

@@ -35,7 +35,6 @@ import org.scala_tools.maven.executions.JavaMainCaller;
  * Produces Scala API documentation.
  *
  * @goal doc
- * //aggregator
  * @requiresDependencyResolution compile
  */
 public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
@@ -116,6 +115,8 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     protected String top;
 
     /**
+     * The directory in which to find scala source
+     * 
      * @parameter expression="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;
