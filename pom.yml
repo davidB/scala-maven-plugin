@@ -54,7 +54,7 @@ build:
         debug: false
         projectsDirectory: src/it
         pomIncludes: [ "**/pom.xml" ]
-        pomExcludes: [ "**/vscaladocOnMultiModules/pom.xml", "**/m*/pom.xml" ]
+        pomExcludes: [ "**/vscaladocOnMultiModules/pom.xml", "**/m*/pom.xml", "**/src/it/**/pom.xml" ]
         preBuildHookScript: setup.groovy
         postBuildHookScript: validate.groovy
       executions:

@@ -139,6 +139,7 @@
                     <pomExcludes>
                         <pomExclude>**/vscaladocOnMultiModules/pom.xml</pomExclude>
                         <pomExclude>**/m*/pom.xml</pomExclude>
+                        <pomExclude>**/src/it/**/pom.xml</pomExclude>
                     </pomExcludes>
                     <preBuildHookScript>setup.groovy</preBuildHookScript>
                     <postBuildHookScript>validate.groovy</postBuildHookScript>
