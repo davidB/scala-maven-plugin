@@ -35,7 +35,7 @@ public class ReflectionJavaMainCaller extends AbstractJavaMainCaller {
 				requester.getLog().error(e);
 			}
 		}
-		cl = new URLClassLoader(urls.toArray(new URL[urls.size()]));
+		cl = new URLClassLoader(urls.toArray(new URL[urls.size()]), (ClassLoader)null);
 	}
 
 	

@@ -16,17 +16,20 @@
 package org.scala_tools.maven;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
+import org.scala_tools.maven.executions.ReflectionJavaMainCaller;
 
 /**
  * Run the Scala console with all the classes of the projects (dependencies and builded)
  *
  * @goal console
- * @execute phase="compile"
  * @requiresDependencyResolution test
  * @inheritByDefault false
  * @requiresDirectInvocation true
@@ -81,7 +84,25 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
             classpath.addAll(project.getRuntimeClasspathElements());
         }
         String classpathStr = JavaCommand.toMultiPath(classpath.toArray(new String[classpath.size()]));
-        JavaMainCaller jcmd = new JavaCommand(this, mainConsole, classpathStr, jvmArgs, args, forceUseArgFile);
+        JavaMainCaller jcmd = null;
+        if(interpreterNeedsToBeLocal()) {
+        	List<String> list = new ArrayList<String>(args != null ? args.length + 3 : 3);
+        	boolean noJline = false;
+        	if(args != null) {
+	        	for(String arg : args) {
+	        		list.add(arg);
+	        		if(args.equals("-Ynojline")) {
+	        			noJline = true;
+	        		}
+	        	}
+        	}
+        	list.add("-cp");
+        	list.add(classpathStr);
+        	
+        	jcmd = new ReflectionJavaMainCaller(this, mainConsole, classpathStr, jvmArgs, list.toArray(new String[list.size()]));
+        } else {
+        	jcmd = new JavaCommand(this, mainConsole, classpathStr, jvmArgs, args, forceUseArgFile);
+        }
         if (javaRebelPath != null) {
             if (!javaRebelPath.exists()) {
                 getLog().warn("javaRevelPath '"+javaRebelPath.getCanonicalPath()+"' not found");
@@ -92,4 +113,8 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         jcmd.setLogOnly(false);
         jcmd.run(displayCmd);
     }
+
+	private boolean interpreterNeedsToBeLocal() {
+		return System.getProperty("os.name").toLowerCase().contains("windows");
+	}
 }
