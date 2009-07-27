@@ -251,13 +251,18 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
 
     public File getReportOutputDirectory() {
         if (reportOutputDirectory == null) {
-            reportOutputDirectory = new File(project.getBasedir(), project.getReporting().getOutputDirectory() +"/" + outputDirectory).getAbsoluteFile();
+            reportOutputDirectory = new File(project.getBasedir(), project.getReporting().getOutputDirectory() + "/" + outputDirectory).getAbsoluteFile();
         }
         return reportOutputDirectory;
     }
 
     public void setReportOutputDirectory(File reportOutputDirectory) {
-        this.reportOutputDirectory = new File(reportOutputDirectory, outputDirectory);
+        if (reportOutputDirectory != null && !reportOutputDirectory.getAbsolutePath().endsWith(outputDirectory)) {
+            this.reportOutputDirectory = new File(reportOutputDirectory, outputDirectory);
+        }
+        else {
+            this.reportOutputDirectory = reportOutputDirectory;
+        }
     }
 
     @Override
