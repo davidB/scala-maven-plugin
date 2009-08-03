@@ -17,11 +17,11 @@ package org.scala_tools.maven;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -178,14 +178,14 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter default-value="true"
      */
     protected boolean fork = true;
-    
+
     /**
      * Force the use of an external ArgFile to run any forked process.
      *
      * @parameter default-value="false"
      */
     protected boolean forceUseArgFile = false;
-    
+
     /**
      * Check if every dependencies use the same version of scala-library.
      *
@@ -210,7 +210,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * The artifact repository to use.
-     * 
+     *
      * @parameter expression="${localRepository}"
      * @required
      * @readonly
@@ -219,7 +219,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * The artifact factory to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -228,7 +228,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * The artifact metadata source to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -237,7 +237,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * The artifact collector to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
@@ -246,13 +246,13 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * The dependency tree builder to use.
-     * 
+     *
      * @component
      * @required
      * @readonly
      */
     private DependencyTreeBuilder dependencyTreeBuilder;
-    
+
     /**
      * This method resolves the dependency artifacts from the project.
      *
@@ -302,20 +302,20 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         addToClasspath(groupId, artifactId, version, classpath, true);
     }
 
-    
+
     protected void addToClasspath(String groupId, String artifactId, String version, Set<String> classpath, boolean addDependencies) throws Exception {
         addToClasspath(factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar"), classpath, addDependencies);
     }
 
     protected void addToClasspath(Artifact artifact, Set<String> classpath, boolean addDependencies) throws Exception {
-		resolver.resolve(artifact, remoteRepos, localRepo);
-		classpath.add(artifact.getFile().getCanonicalPath());
-		if (addDependencies) {
-			for (Artifact dep : resolveArtifactDependencies(artifact)) {
-				classpath.add(dep.getFile().getCanonicalPath());
-			}
-		}
-	}
+        resolver.resolve(artifact, remoteRepos, localRepo);
+        classpath.add(artifact.getFile().getCanonicalPath());
+        if (addDependencies) {
+            for (Artifact dep : resolveArtifactDependencies(artifact)) {
+                classpath.add(dep.getFile().getCanonicalPath());
+            }
+        }
+    }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -340,17 +340,37 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     @SuppressWarnings("unchecked")
     protected void checkScalaVersion() throws Exception {
         String detectedScalaVersion = null;
-        for (Iterator it = getDependencies().iterator(); it.hasNext();) {
-            Dependency dep = (Dependency) it.next();
+        for (Dependency dep : getDependencies()) {
             if (SCALA_GROUPID.equals(dep.getGroupId()) && SCALA_LIBRARY_ARTIFACTID.equals(dep.getArtifactId())) {
                 detectedScalaVersion = dep.getVersion();
             }
         }
         if (StringUtils.isEmpty(detectedScalaVersion)) {
+            List<Dependency> deps = new ArrayList<Dependency>();
+            deps.addAll(project.getModel().getDependencies());
+            if (project.getModel().getDependencyManagement() != null) {
+                deps.addAll(project.getModel().getDependencyManagement().getDependencies());
+            }
+            for (Dependency dep : deps) {
+                if (SCALA_GROUPID.equals(dep.getGroupId()) && SCALA_LIBRARY_ARTIFACTID.equals(dep.getArtifactId())) {
+                    detectedScalaVersion = dep.getVersion();
+                }
+            }
+        }
+
+        if (StringUtils.isEmpty(detectedScalaVersion)) {
             if (!"pom".equals( project.getPackaging().toLowerCase() )) {
                 getLog().warn("you don't define "+SCALA_GROUPID + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
             }
         } else {
+            // grappy hack to retrieve the SNAPSHOT version without timestamp,...
+            // because if version is -SNAPSHOT and artifact is deploy with uniqueValue then the version
+            // get from dependency is with the timestamp and a build number (the resolved version)
+            // but scala-compiler with the same version could have different resolved version (timestamp,...)
+            boolean isSnapshot = ArtifactUtils.isSnapshot(detectedScalaVersion);
+            if (isSnapshot && !detectedScalaVersion.endsWith("-SNAPSHOT")) {
+                detectedScalaVersion = detectedScalaVersion.substring(0, detectedScalaVersion.lastIndexOf('-', detectedScalaVersion.lastIndexOf('-')-1)) + "-SNAPSHOT";
+            }
             if (StringUtils.isNotEmpty(scalaVersion)) {
                 if (!scalaVersion.equals(detectedScalaVersion)) {
                     getLog().warn("scala library version define in dependencies doesn't match the scalaVersion of the plugin");
@@ -370,47 +390,47 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     /** this method checks to see if there are multiple versions of the scala library
      * @throws Exception */
     private void checkCorrectVersionsOfScalaLibrary() throws Exception {
-    	getLog().info("Checking for multiple versions of scala");
-    	//TODO - Make sure we handle bad artifacts....
-    	// TODO: note that filter does not get applied due to MNG-3236
-    		checkArtifactForScalaVersion(dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
+        getLog().info("Checking for multiple versions of scala");
+        //TODO - Make sure we handle bad artifacts....
+        // TODO: note that filter does not get applied due to MNG-3236
+            checkArtifactForScalaVersion(dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
                     artifactMetadataSource, null, artifactCollector ));
     }
 
 
     /** Visits a node (and all dependencies) to see if it contains duplicate scala versions */
     private void checkArtifactForScalaVersion(DependencyNode rootNode) throws Exception {
-		final CheckScalaVersionVisitor visitor = new CheckScalaVersionVisitor(scalaVersion, getLog());
-		
-		CollectingDependencyNodeVisitor collectingVisitor = new CollectingDependencyNodeVisitor();
+        final CheckScalaVersionVisitor visitor = new CheckScalaVersionVisitor(scalaVersion, getLog());
+
+        CollectingDependencyNodeVisitor collectingVisitor = new CollectingDependencyNodeVisitor();
         DependencyNodeVisitor firstPassVisitor = new FilteringDependencyNodeVisitor( collectingVisitor, createScalaDistroDependencyFilter() );
         rootNode.accept( firstPassVisitor );
 
         DependencyNodeFilter secondPassFilter = new AncestorOrSelfDependencyNodeFilter( collectingVisitor.getNodes() );
         DependencyNodeVisitor filteredVisitor = new FilteringDependencyNodeVisitor( visitor, secondPassFilter );
-		
+
         rootNode.accept( filteredVisitor );
-        
+
         if(visitor.isFailed()) {
-        	if(failOnMultipleScalaVersions) {
-        		getLog().error("Multiple versions of scala libraries detected!");
-        		throw new MojoFailureException("Multiple versions of scala libraries detected!");
-        	} else {
-        		getLog().warn("Multiple versions of scala libraries detected!");
-        	}
+            if(failOnMultipleScalaVersions) {
+                getLog().error("Multiple versions of scala libraries detected!");
+                throw new MojoFailureException("Multiple versions of scala libraries detected!");
+            } else {
+                getLog().warn("Multiple versions of scala libraries detected!");
+            }
         }
-        
+
     }
     /**
      * @return
      *          A filter to only extract artifacts deployed from scala distributions
      */
     private DependencyNodeFilter createScalaDistroDependencyFilter() {
-    	List<ArtifactFilter> filters = new ArrayList<ArtifactFilter>();
-    	filters.add(new ScalaDistroArtifactFilter());
-    	return new AndDependencyNodeFilter(filters);
+        List<ArtifactFilter> filters = new ArrayList<ArtifactFilter>();
+        filters.add(new ScalaDistroArtifactFilter());
+        return new AndDependencyNodeFilter(filters);
     }
-    
+
 
 
     protected abstract void doExecute() throws Exception;
@@ -425,7 +445,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected JavaMainCaller getEmptyScalaCommand(String mainClass) throws Exception {
-    	//TODO - Fork or not depending on configuration?
+        //TODO - Fork or not depending on configuration?
         JavaMainCaller cmd;
         if(fork) {
            if( new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.8.0")) >= 0) {
@@ -462,51 +482,51 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         return JavaCommand.toMultiPath(classpath.toArray(new String[classpath.size()]));
     }
 
-	/**
+    /**
      * @return
      *           This returns whether or not the scala version can support having java sent into the compiler
      */
-	protected boolean isJavaSupportedByCompiler() {
-		return new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.7.2")) >= 0;
-	}
+    protected boolean isJavaSupportedByCompiler() {
+        return new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.7.2")) >= 0;
+    }
 
 
-	/**
-	 * Adds appropriate compiler plugins to the scalac command.
-	 * @param scalac
-	 * @throws Exception
-	 */
-	private void addCompilerPluginOptions(JavaMainCaller scalac) throws Exception {
-		for (String plugin : getCompilerPlugins()) {
-			scalac.addArgs("-Xplugin:" + plugin);
-		}
-	}
-	/**
-	 * Retrieves a list of paths to scala compiler plugins.
-	 * 
-	 * @return The list of plugins
-	 * @throws Exception
-	 */
-	private Set<String> getCompilerPlugins() throws Exception {
-		Set<String> plugins = new HashSet<String>();
-		if (compilerPlugins != null) {
-			Set<String> ignoreClasspath = new HashSet<String>();
-			addToClasspath(SCALA_GROUPID, "scala-compiler", scalaVersion,
-					ignoreClasspath);
-			addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID,
-					scalaVersion, ignoreClasspath);
-			for (BasicArtifact artifact : compilerPlugins) {
-				System.out.println("compiler plugin: " + artifact.toString());
-				// TODO - Ensure proper scala version for plugins
-				Set<String> pluginClassPath = new HashSet<String>();
-				//TODO - Pull in transitive dependencies.
-				addToClasspath(artifact.groupId, artifact.artifactId, artifact.version, pluginClassPath, false);
-				pluginClassPath.removeAll(ignoreClasspath);
-				plugins.addAll(pluginClassPath);
-			}
-		}
-		return plugins;
-	}
+    /**
+     * Adds appropriate compiler plugins to the scalac command.
+     * @param scalac
+     * @throws Exception
+     */
+    private void addCompilerPluginOptions(JavaMainCaller scalac) throws Exception {
+        for (String plugin : getCompilerPlugins()) {
+            scalac.addArgs("-Xplugin:" + plugin);
+        }
+    }
+    /**
+     * Retrieves a list of paths to scala compiler plugins.
+     *
+     * @return The list of plugins
+     * @throws Exception
+     */
+    private Set<String> getCompilerPlugins() throws Exception {
+        Set<String> plugins = new HashSet<String>();
+        if (compilerPlugins != null) {
+            Set<String> ignoreClasspath = new HashSet<String>();
+            addToClasspath(SCALA_GROUPID, "scala-compiler", scalaVersion,
+                    ignoreClasspath);
+            addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID,
+                    scalaVersion, ignoreClasspath);
+            for (BasicArtifact artifact : compilerPlugins) {
+                System.out.println("compiler plugin: " + artifact.toString());
+                // TODO - Ensure proper scala version for plugins
+                Set<String> pluginClassPath = new HashSet<String>();
+                //TODO - Pull in transitive dependencies.
+                addToClasspath(artifact.groupId, artifact.artifactId, artifact.version, pluginClassPath, false);
+                pluginClassPath.removeAll(ignoreClasspath);
+                plugins.addAll(pluginClassPath);
+            }
+        }
+        return plugins;
+    }
 
 
 }

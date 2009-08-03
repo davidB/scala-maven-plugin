@@ -10,8 +10,10 @@
       <action dev="Josh Suereth" type="add">compile and doc mojo now use includes and excludes configuration.</action>
       <action dev="Josh Suereth" type="fix">fixed documentation errors from 2.11.  Added start of FAQ section</action>
       <action dev="Nicholas Tung" type="fix">compilerPlugin configuration now pulls in transitive dependencies.</action>
-      <action dev="Josh Suereth + David Bernard + Kevin Wright" type="fix">mvn scala:console now works from windows</action>
+      <action dev="Josh Suereth + Kevin Wright" type="fix">mvn scala:console now works from windows</action>
       <action dev="Josh Suereth" type="fix">Once again mvn scala:console does *not* compile the project.  See the FAQ</action>
+      <action dev="David Bernard" type="fix">the plugin work with snapshot version of scala-library and scala-compiler</action>
+      <action dev="Heiko Seeberger" type="update">now failOnMultipleScalaVersions == true stop the build</action>
     </release>
     <release version="2.11" date="2009-06-29" description="">
       <action dev="David Bernard" type="fix">fix vscaladoc aggregation to work with maven 2.1.0</action>
@@ -21,14 +23,14 @@
       <action dev="Josh Suereth" type="add">For scala version 2.8.0 and above, maven-scala-plugin now uses the @ argument to pass arguments via a file.  This fixes issues on OSes with argument length limitations (like windows)</action>
       <action dev="David Bernard" type="add">allow running vscaladoc aggregation only from command line use "-Dforce-aggregate=true" (avoid using in pom.xml)</action>
       <action dev="David Bernard" type="fix">disable use of ConsolePiper that generate an echo of command when running scala:console</action>
-    </release>  
-  	<release version="2.10.1" date="2009-03-05" description="">
+    </release>
+    <release version="2.10.1" date="2009-03-05" description="">
       <action dev="Josh Suereth &amp; David Bernard" type="fix">No longer using Josh's dumb algorithm when checking for multiple scala versions.</action>
     </release>
-  	<release version="2.10" date="2009-03-01" description="">
+    <release version="2.10" date="2009-03-01" description="">
       <action dev="Josh Suereth" type="fix">doc goal now behaves like compiler when looking for scala version.</action>
       <action dev="Arnaud Bailly" type="fix">test source directory parameter (testSourceDir) is now added to the testSourceDirectories (instead of compile source directories).</action>
-      <action dev="Josh Suereth" type="add">Added support for executing scalac plugins.</action>    	
+      <action dev="Josh Suereth" type="add">Added support for executing scalac plugins.</action>
       <action dev="Josh Suereth" type="add">Added support for optional forking of scalac.</action>
       <action dev="Josh Suereth" type="add">Added support to turn off sending Java source to scalac.</action>
       <action dev="Josh Suereth" type="add">Plugin now detects multiple versions of scala library and issues a warning/fails.</action>
