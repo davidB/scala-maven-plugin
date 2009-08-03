@@ -31,11 +31,15 @@ import org.apache.maven.model.Dependency;
 public class ScalaCompileMojo extends ScalaCompilerSupport {
 
     /**
+     * The directory in which to place compilation output 
+     * 
      * @parameter expression="${project.build.outputDirectory}"
      */
     protected File outputDir;
 
     /**
+     * The directory which contains scala/java source files
+     * 
      * @parameter expression="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;

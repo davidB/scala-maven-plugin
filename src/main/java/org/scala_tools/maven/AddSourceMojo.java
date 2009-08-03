@@ -24,11 +24,15 @@ public class AddSourceMojo extends AbstractMojo {
 	private MavenProject project;
 
     /**
+     * The directory in which scala source is found
+     * 
      * @parameter expression="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;
 
     /**
+     * The directory in which testing scala source is found
+     * 
      * @parameter expression="${project.build.testSourceDirectory}/../scala"
      */
     protected File testSourceDir;

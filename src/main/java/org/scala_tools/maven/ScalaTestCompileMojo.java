@@ -41,11 +41,15 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     protected boolean skip;
 
     /**
+     * The directory in which to place test compilation output
+     * 
      * @parameter expression="${project.build.testOutputDirectory}
      */
     protected File testOutputDir;
 
     /**
+     * The directory in which to find test scala source code
+     * 
      * @parameter expression="${project.build.testSourceDirectory}/../scala"
      */
     protected File testSourceDir;

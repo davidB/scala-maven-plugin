@@ -290,7 +290,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 					.getGroupId(), dependency.getArtifactId(), VersionRange
 					.createFromVersion(dependency.getVersion()), dependency
 					.getType(), dependency.getClassifier(), dependency
-					.getScope(), dependency.isOptional()), classpath);
+					.getScope(), dependency.isOptional()), classpath, true);
 		}
 
 

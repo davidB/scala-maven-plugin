@@ -30,21 +30,29 @@ import org.scala_tools.maven.executions.JavaMainCaller;
 public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
 
     /**
+     * The output directory for compilation.
+     * 
      * @parameter expression="${project.build.outputDirectory}"
      */
     protected File mainOutputDir;
 
     /**
+     * The main directory containing scala source for compilation
+     * 
      * @parameter expression="${project.build.sourceDirectory}/../scala"
      */
     protected File mainSourceDir;
 
     /**
+     * The directory to place test compilation output in
+     * 
      * @parameter expression="${project.build.testOutputDirectory}
      */
     protected File testOutputDir;
 
     /**
+     * The directory containing test source for compilation
+     * 
      * @parameter expression="${project.build.testSourceDirectory}/../scala"
      */
     protected File testSourceDir;
@@ -52,6 +60,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     /**
      * Define if fsc should be used, else scalac is used.
      * fsc => scala.tools.nsc.CompileClient, scalac => scala.tools.nsc.Main.
+     * 
      * @parameter expression="${fsc}" default="true"
      */
     protected boolean useFsc = true;
@@ -63,6 +72,8 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     protected boolean once = false;
 
     /**
+     * Turns verbose output on.
+     * 
      * @parameter expression="${verbose}" default="false"
      */
     protected boolean verbose = false;

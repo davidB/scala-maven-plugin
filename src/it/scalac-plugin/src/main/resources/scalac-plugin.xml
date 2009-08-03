@@ -1,0 +1,4 @@
+<plugin>
+  <name>test-scalac-plugin</name>
+  <classname>TestPlugin</classname>
+</plugin>

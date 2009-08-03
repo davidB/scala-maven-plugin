@@ -19,7 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.plexus.util.FileUtils;
 import org.scala_tools.maven.executions.JavaCommand;
@@ -41,6 +43,32 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
      * @parameter default-value="true"
      */
     protected boolean sendJavaToScalac = true;
+    
+    /**
+     * A list of inclusion filters for the compiler.
+     * ex :
+     * <pre>
+     *    &lt;includes&gt;
+     *      &lt;include&gt;SomeFile.scala&lt;/include&gt;
+     *    &lt;/includes&gt;
+     * </pre>   
+     *    
+     * @parameter
+     */
+    private Set<String> includes = new HashSet();
+
+    /**
+     * A list of exclusion filters for the compiler.
+     * ex :
+     * <pre>
+     *    &lt;excludes&gt;
+     *      &lt;exclude&gt;SomeBadFile.scala&lt;/exclude&gt;
+     *    &lt;/excludes&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private Set<String> excludes = new HashSet();
 
     abstract protected File getOutputDir() throws Exception;
 
@@ -89,36 +117,60 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         return compile(Arrays.asList(sourceDir.getAbsolutePath()), outputDir, classpathElements, compileInLoop);
     }
 
-   protected int compile(List<String> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
-       List<String> scalaSourceFiles = findSource(sourceRootDirs, "scala");
+    protected List<File> getFilesToCompile(List<String> sourceRootDirs, boolean compilingInLoop, long lastCompileTime) {
+    	//TODO - Rather than mutate, pass to the function!
+       if(includes.isEmpty()) {
+    	   includes.add("**/*.scala");
+    	   if(sendJavaToScalac && !compilingInLoop && isJavaSupportedByCompiler() ) {
+    		   includes.add("**/*.java");
+    	   }
+       }
+    	
+       if(getLog().isInfoEnabled()) {
+    	   StringBuilder builder = new StringBuilder("includes = [");
+    	   for(String include : includes) {
+    		   builder.append(include).append(",");
+    	   }
+    	   builder.append("]");
+    	   getLog().info(builder.toString());
+    	   
+    	   builder = new StringBuilder("excludes = [");
+    	   for(String exclude : excludes) {
+    		   builder.append(exclude).append(",");
+    	   }
+    	   builder.append("]");
+    	   getLog().info(builder.toString());
+       }
+       
+       
+       
+	   List<String> scalaSourceFiles = findSourceWithFilters(sourceRootDirs);
        if (scalaSourceFiles.size() == 0) {
-           return -1;
+           return null;
        }
 
        // filter uptodate
-       File lastCompileAtFile = new File(outputDir + ".timestamp");
+       ArrayList<File> files = new ArrayList<File>(scalaSourceFiles.size());
+       for (String x : scalaSourceFiles) {
+           File f = new File(x);
+           if (f.lastModified() >= lastCompileTime) {
+               files.add(f);
+           }
+       }
+       return files;	   
+   }
+    
+   protected int compile(List<String> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
+       final File lastCompileAtFile = new File(outputDir + ".timestamp");
        long lastCompileAt = -1;
        if (lastCompileAtFile.exists() && outputDir.exists() && (outputDir.list().length > 0)) {
            lastCompileAt = lastCompileAtFile.lastModified();
        }
-       ArrayList<File> files = new ArrayList<File>(scalaSourceFiles.size());
-       for (String x : scalaSourceFiles) {
-           File f = new File(x);
-           if (f.lastModified() >= lastCompileAt) {
-               files.add(f);
-           }
-       }
-       if (files.size() == 0) {
-           return 0;
-       }
-       //Add java files to the source, so we make sure we can have nested dependencies
-       //BUT only when not compiling in "loop" fashion and when we're not using an older version of scala
 
-       if(!compileInLoop && sendJavaToScalac && isJavaSupportedByCompiler()) {
-           List<String> javaSourceFiles = findSource(sourceRootDirs,"java");
-           for(String javaSourceFile : javaSourceFiles) {
-               files.add(new File(javaSourceFile));
-           }
+	   List<File> files = getFilesToCompile(sourceRootDirs, compileInLoop, lastCompileAt);
+	   
+       if (files == null) {
+           return -1;
        }
 
        if (!compileInLoop) {
@@ -160,7 +212,23 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
        }
        return sourceFiles;
    }
-
+   
+   /**
+    * Finds all source files in a set of directories with a given extension.
+    */
+   private List<String> findSourceWithFilters(List<String> sourceRootDirs) {
+       List<String> sourceFiles = new ArrayList<String>();
+       //TODO - Since we're making files anyway, perhaps we should just test for existence here...
+       for(String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
+           File dir = normalize(new File(rootSourceDir));
+           String[] tmpFiles = JavaCommand.findFiles(dir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
+           for(String tmpLocalFile : tmpFiles) {
+               File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
+               sourceFiles.add(tmpAbsFile.getAbsolutePath());
+           }
+       }
+       return sourceFiles;
+   }
 
 
     /**

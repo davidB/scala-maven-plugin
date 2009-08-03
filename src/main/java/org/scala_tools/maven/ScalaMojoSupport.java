@@ -70,7 +70,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Used to look up Artifacts in the remote repository.
      *
-     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
+     * @component
      * @required
      * @readonly
      */
@@ -79,7 +79,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Used to look up Artifacts in the remote repository.
      *
-     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
+     * @component
      * @required
      * @readonly
      */
@@ -105,6 +105,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Additional dependencies/jar to add to classpath to run "scalaClassName" (scope and optional field not supported)
      * ex :
+     * <pre>
      *    &lt;dependencies>
      *      &lt;dependency>
      *        &lt;groupId>org.scala-tools&lt;/groupId>
@@ -112,6 +113,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      *        &lt;version>1.0-SNAPSHOT&lt;/version>
      *      &lt;/dependency>
      *    &lt;/dependencies>
+     * </pre>
      * @parameter
      */
     protected BasicArtifact[] dependencies;
@@ -122,11 +124,11 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter
      * <xmp>
      * <compilerPlugins>
-     * <dependency>
+     * <compilerPlugin>
      * <groupId>my.scala.plugin</groupId>
      * <artifactId>amazingPlugin</artifactId>
      * <version>1.0-SNAPSHOT</version>
-     * </dependency>
+     * </compilerPlugin>
      * </compilerPlugins>
      * </xmp>
      */
@@ -200,7 +202,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Artifact factory, needed to download source jars.
      *
-     * @component role="org.apache.maven.project.MavenProjectBuilder"
+     * @component
      * @required
      * @readonly
      */
@@ -297,16 +299,23 @@ abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected void addToClasspath(String groupId, String artifactId, String version, Set<String> classpath) throws Exception {
-        addToClasspath(factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar"), classpath);
+        addToClasspath(groupId, artifactId, version, classpath, true);
     }
 
-    protected void addToClasspath(Artifact artifact, Set<String> classpath) throws Exception {
-        resolver.resolve(artifact, remoteRepos, localRepo);
-        classpath.add(artifact.getFile().getCanonicalPath());
-        for(Artifact dep: resolveArtifactDependencies(artifact)) {
-            classpath.add(dep.getFile().getCanonicalPath());
-        }
+    
+    protected void addToClasspath(String groupId, String artifactId, String version, Set<String> classpath, boolean addDependencies) throws Exception {
+        addToClasspath(factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar"), classpath, addDependencies);
     }
+
+    protected void addToClasspath(Artifact artifact, Set<String> classpath, boolean addDependencies) throws Exception {
+		resolver.resolve(artifact, remoteRepos, localRepo);
+		classpath.add(artifact.getFile().getCanonicalPath());
+		if (addDependencies) {
+			for (Artifact dep : resolveArtifactDependencies(artifact)) {
+				classpath.add(dep.getFile().getCanonicalPath());
+			}
+		}
+	}
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -473,8 +482,8 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 	}
 	/**
 	 * Retrieves a list of paths to scala compiler plugins.
-	 * @return
-	 *      The list of plugins
+	 * 
+	 * @return The list of plugins
 	 * @throws Exception
 	 */
 	private Set<String> getCompilerPlugins() throws Exception {
@@ -486,14 +495,13 @@ abstract class ScalaMojoSupport extends AbstractMojo {
 			addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID,
 					scalaVersion, ignoreClasspath);
 			for (BasicArtifact artifact : compilerPlugins) {
-				//TODO - Ensure proper scala versin for plugins
+				System.out.println("compiler plugin: " + artifact.toString());
+				// TODO - Ensure proper scala version for plugins
 				Set<String> pluginClassPath = new HashSet<String>();
-				addToClasspath(artifact.groupId, artifact.artifactId,
-						artifact.version, pluginClassPath);
-				// TODO - Ensure only one item on classpath, or that we pull the
-				// *CORRECT* item.
+				//TODO - Pull in transitive dependencies.
+				addToClasspath(artifact.groupId, artifact.artifactId, artifact.version, pluginClassPath, false);
 				pluginClassPath.removeAll(ignoreClasspath);
-				plugins.add(pluginClassPath.iterator().next());
+				plugins.addAll(pluginClassPath);
 			}
 		}
 		return plugins;
