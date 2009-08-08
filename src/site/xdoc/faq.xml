@@ -9,6 +9,18 @@
 	<body>
 		<h1>Frequently Asked Questions</h1>
 		
+		<section name="Read-Eval-Print-Loop (aka scala:console)">
+			<dl>
+				<dt>Why does the mvn scala:console goal not compile the project?</dt>
+				<dd>The authors of the plugin felt it was much more flexible to allow a REPL to be started during the coding of a project.
+				The REPL is mostly used for experimenting with APIs and therefore users should not need a functioning project to test out potential code paths.
+				Users who want to make use of their latest changes should type "mvn compile scala:console" or "mvn test-compile scala:console" rather than just "mvn scala:console"</dd>
+				<dt>Does the REPL support auto-complete?</dt>
+				<dd>As of Scala 2.8.0 the REPL supports auto-complete features.</dd>
+				
+			</dl>
+		</section>
+		
 		<section name="Eclipse Integration">
 			<dl>
 				<dt>Is there a wiki detailing Scala/Eclipse/Maven integration</dt>
