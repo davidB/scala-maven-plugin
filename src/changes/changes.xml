@@ -10,6 +10,7 @@
       <action dev="Josh Suereth" type="add">compile and doc mojo now use includes and excludes configuration.</action>
       <action dev="Josh Suereth" type="fix">fixed documentation errors from 2.11.  Added start of FAQ section</action>
       <action dev="Nicholas Tung" type="fix">compilerPlugin configuration now pulls in transitive dependencies.</action>
+      <action dev="Sean Griffin" type="fix">Ensure doc is written to site/scaladoc directory with both scala:doc and site goals</action>
     </release>
     <release version="2.11" date="2009-06-29" description="">
       <action dev="David Bernard" type="fix">fix vscaladoc aggregation to work with maven 2.1.0</action>

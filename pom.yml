@@ -25,6 +25,7 @@ contributors:
   - { name: David Pollak }
   - { name: Arnaud Bailly }
   - { name: Jesse Eichar }
+  - { name: Sean Griffin }
 properties:
   maven.version: 2.0.9
 prerequisites:
