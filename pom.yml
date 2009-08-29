@@ -1,7 +1,7 @@
 parent:
   groupId: org.scala-tools
   artifactId: scala-tools-parent
-  version: 1.4
+  version: 1.5
 artifactId: maven-scala-plugin
 packaging: maven-plugin
 version: 2.12-SNAPSHOT
@@ -15,7 +15,11 @@ scm:
 distributionManagement:
   repository:
     id: scala-tools.org
-    url: "http://nexus.scala-tools.org/content/repositories/releases"
+    url: "http://nexus-direct.scala-tools.org/content/repositories/releases"
+  snapshotRepository:
+    id: scala-tools.org
+    url: "http://nexus-direct.scala-tools.org/content/repositories/snapshots"
+    uniqueVersion: false
 pluginRepositories:
   - { id: twdata-m2-repository, name: twdata.org Maven 2 Repository, url: "http://twdata-m2-repository.googlecode.com/svn/" }
 developers:
@@ -49,18 +53,6 @@ build:
       artifactId: maven-yamlpom-plugin
       executions:
         - goals: [ sync ]
-    - artifactId: maven-invoker-plugin
-      version: 1.3
-      configuration:
-        debug: false
-        projectsDirectory: src/it
-        pomIncludes: [ "**/pom.xml" ]
-        pomExcludes: [ "**/m*/pom.xml", "scalac-plugin/src/it/**/pom.xml" ]
-        preBuildHookScript: setup.groovy
-        postBuildHookScript: validate.groovy
-      executions:
-        - id: integration-test
-          goals: [ install, run ]
     - artifactId: maven-invoker-plugin
       version: 1.3
       configuration:

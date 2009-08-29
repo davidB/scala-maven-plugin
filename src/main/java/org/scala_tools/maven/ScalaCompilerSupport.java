@@ -43,7 +43,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
      * @parameter default-value="true"
      */
     protected boolean sendJavaToScalac = true;
-    
+
     /**
      * A list of inclusion filters for the compiler.
      * ex :
@@ -51,11 +51,11 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
      *    &lt;includes&gt;
      *      &lt;include&gt;SomeFile.scala&lt;/include&gt;
      *    &lt;/includes&gt;
-     * </pre>   
-     *    
+     * </pre>
+     *
      * @parameter
      */
-    private Set<String> includes = new HashSet();
+    private Set<String> includes = new HashSet<String>();
 
     /**
      * A list of exclusion filters for the compiler.
@@ -65,10 +65,10 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
      *      &lt;exclude&gt;SomeBadFile.scala&lt;/exclude&gt;
      *    &lt;/excludes&gt;
      * </pre>
-     * 
+     *
      * @parameter
      */
-    private Set<String> excludes = new HashSet();
+    private Set<String> excludes = new HashSet<String>();
 
     abstract protected File getOutputDir() throws Exception;
 
@@ -118,33 +118,33 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     }
 
     protected List<File> getFilesToCompile(List<String> sourceRootDirs, boolean compilingInLoop, long lastCompileTime) {
-    	//TODO - Rather than mutate, pass to the function!
+        //TODO - Rather than mutate, pass to the function!
        if(includes.isEmpty()) {
-    	   includes.add("**/*.scala");
-    	   if(sendJavaToScalac && !compilingInLoop && isJavaSupportedByCompiler() ) {
-    		   includes.add("**/*.java");
-    	   }
+           includes.add("**/*.scala");
+           if(sendJavaToScalac && !compilingInLoop && isJavaSupportedByCompiler() ) {
+               includes.add("**/*.java");
+           }
        }
-    	
+
        if(getLog().isInfoEnabled()) {
-    	   StringBuilder builder = new StringBuilder("includes = [");
-    	   for(String include : includes) {
-    		   builder.append(include).append(",");
-    	   }
-    	   builder.append("]");
-    	   getLog().info(builder.toString());
-    	   
-    	   builder = new StringBuilder("excludes = [");
-    	   for(String exclude : excludes) {
-    		   builder.append(exclude).append(",");
-    	   }
-    	   builder.append("]");
-    	   getLog().info(builder.toString());
+           StringBuilder builder = new StringBuilder("includes = [");
+           for(String include : includes) {
+               builder.append(include).append(",");
+           }
+           builder.append("]");
+           getLog().info(builder.toString());
+
+           builder = new StringBuilder("excludes = [");
+           for(String exclude : excludes) {
+               builder.append(exclude).append(",");
+           }
+           builder.append("]");
+           getLog().info(builder.toString());
        }
-       
-       
-       
-	   List<String> scalaSourceFiles = findSourceWithFilters(sourceRootDirs);
+
+
+
+       List<String> scalaSourceFiles = findSourceWithFilters(sourceRootDirs);
        if (scalaSourceFiles.size() == 0) {
            return null;
        }
@@ -157,9 +157,9 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
                files.add(f);
            }
        }
-       return files;	   
+       return files;
    }
-    
+
    protected int compile(List<String> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
        final File lastCompileAtFile = new File(outputDir + ".timestamp");
        long lastCompileAt = -1;
@@ -167,8 +167,8 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
            lastCompileAt = lastCompileAtFile.lastModified();
        }
 
-	   List<File> files = getFilesToCompile(sourceRootDirs, compileInLoop, lastCompileAt);
-	   
+       List<File> files = getFilesToCompile(sourceRootDirs, compileInLoop, lastCompileAt);
+
        if (files == null) {
            return -1;
        }
@@ -196,23 +196,23 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
        return files.size();
    }
 
-   /**
-    * Finds all source files in a set of directories with a given extension.
-    */
-   private List<String> findSource(List<String> sourceRootDirs, String extension) {
-       List<String> sourceFiles = new ArrayList<String>();
-       //TODO - Since we're making files anyway, perhaps we should just test for existence here...
-       for(String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
-           File dir = normalize(new File(rootSourceDir));
-           String[] tmpFiles = JavaCommand.findFiles(dir, "**/*." + extension);
-           for(String tmpLocalFile : tmpFiles) {
-               File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
-               sourceFiles.add(tmpAbsFile.getAbsolutePath());
-           }
-       }
-       return sourceFiles;
-   }
-   
+//   /**
+//    * Finds all source files in a set of directories with a given extension.
+//    */
+//   private List<String> findSource(List<String> sourceRootDirs, String extension) {
+//       List<String> sourceFiles = new ArrayList<String>();
+//       //TODO - Since we're making files anyway, perhaps we should just test for existence here...
+//       for(String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
+//           File dir = normalize(new File(rootSourceDir));
+//           String[] tmpFiles = JavaCommand.findFiles(dir, "**/*." + extension);
+//           for(String tmpLocalFile : tmpFiles) {
+//               File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
+//               sourceFiles.add(tmpAbsFile.getAbsolutePath());
+//           }
+//       }
+//       return sourceFiles;
+//   }
+
    /**
     * Finds all source files in a set of directories with a given extension.
     */

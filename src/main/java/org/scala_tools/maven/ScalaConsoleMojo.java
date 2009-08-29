@@ -17,7 +17,6 @@ package org.scala_tools.maven;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -86,22 +85,18 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         String classpathStr = JavaCommand.toMultiPath(classpath.toArray(new String[classpath.size()]));
         JavaMainCaller jcmd = null;
         if(interpreterNeedsToBeLocal()) {
-        	List<String> list = new ArrayList<String>(args != null ? args.length + 3 : 3);
-        	boolean noJline = false;
-        	if(args != null) {
-	        	for(String arg : args) {
-	        		list.add(arg);
-	        		if(args.equals("-Ynojline")) {
-	        			noJline = true;
-	        		}
-	        	}
-        	}
-        	list.add("-cp");
-        	list.add(classpathStr);
-        	
-        	jcmd = new ReflectionJavaMainCaller(this, mainConsole, classpathStr, jvmArgs, list.toArray(new String[list.size()]));
+            List<String> list = new ArrayList<String>(args != null ? args.length + 3 : 3);
+            if(args != null) {
+                for(String arg : args) {
+                    list.add(arg);
+                }
+            }
+            list.add("-cp");
+            list.add(classpathStr);
+
+            jcmd = new ReflectionJavaMainCaller(this, mainConsole, classpathStr, jvmArgs, list.toArray(new String[list.size()]));
         } else {
-        	jcmd = new JavaCommand(this, mainConsole, classpathStr, jvmArgs, args, forceUseArgFile);
+            jcmd = new JavaCommand(this, mainConsole, classpathStr, jvmArgs, args, forceUseArgFile);
         }
         if (javaRebelPath != null) {
             if (!javaRebelPath.exists()) {
@@ -114,7 +109,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         jcmd.run(displayCmd);
     }
 
-	private boolean interpreterNeedsToBeLocal() {
-		return System.getProperty("os.name").toLowerCase().contains("windows");
-	}
+    private boolean interpreterNeedsToBeLocal() {
+        return System.getProperty("os.name").toLowerCase().contains("windows");
+    }
 }

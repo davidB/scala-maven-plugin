@@ -20,7 +20,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -44,7 +43,7 @@ public class JavaCommand extends AbstractForkedJavaCommand {
     public static String[] findFiles(File dir, String pattern) {
         return findFiles(dir, new String[] { pattern }, new String[0]);
     }
-    
+
     public static String[] findFiles(File dir, String[] includes, String[] excludes) {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(dir);
@@ -54,7 +53,7 @@ public class JavaCommand extends AbstractForkedJavaCommand {
         scanner.scan();
         return scanner.getIncludedFiles();
     }
-    
+
     public static String toClasspathString(ClassLoader cl) throws Exception {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
@@ -81,7 +80,7 @@ public class JavaCommand extends AbstractForkedJavaCommand {
     // //////////////////////////////////////////////////////////////////////////
 
     private boolean _forceUseArgFile = false;
-    
+
     public JavaCommand(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args, boolean forceUseArgFile) throws Exception {
        super(requester, mainClassName, classpath, jvmArgs, args);
        _forceUseArgFile = forceUseArgFile;

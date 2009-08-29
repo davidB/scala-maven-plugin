@@ -54,7 +54,6 @@ import org.scala_tools.maven.dependency.ScalaDistroArtifactFilter;
 import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
 import org.scala_tools.maven.executions.ReflectionJavaMainCaller;
-import org.scala_tools.maven.executions.ScalaCommandWIthArgsInFile;
 
 abstract class ScalaMojoSupport extends AbstractMojo {
 
@@ -448,14 +447,17 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         //TODO - Fork or not depending on configuration?
         JavaMainCaller cmd;
         if(fork) {
-           if( new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.8.0")) >= 0) {
-               //TODO - Version 2.8.0 and above support passing arguments in a file via the @ argument.
-               getLog().info("use scala command with args in file");
-               cmd = new ScalaCommandWIthArgsInFile(this, mainClass, getToolClasspath(), null, null);
-           } else {
-               getLog().info("use java command with args in file forced : " + forceUseArgFile);
+           // scalac with args in files
+           // * works only since 2.8.0
+           // * is buggy (don't manage space in path on windows)
+//           if( new VersionNumber(scalaVersion).compareTo(new VersionNumber("2.8.0")) >= 0) {
+//               //TODO - Version 2.8.0 and above support passing arguments in a file via the @ argument.
+//               getLog().info("use scala command with args in file");
+//               cmd = new ScalaCommandWIthArgsInFile(this, mainClass, getToolClasspath(), null, null);
+//           } else {
+               getLog().debug("use java command with args in file forced : " + forceUseArgFile);
                cmd = new JavaCommand(this, mainClass, getToolClasspath(), null, null, forceUseArgFile);
-           }
+//           }
         } else  {
             cmd = new ReflectionJavaMainCaller(this, mainClass, getToolClasspath(), null, null);
         }

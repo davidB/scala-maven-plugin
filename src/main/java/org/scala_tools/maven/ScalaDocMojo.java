@@ -116,7 +116,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
 
     /**
      * The directory in which to find scala source
-     * 
+     *
      * @parameter expression="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;
@@ -184,27 +184,27 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     protected boolean aggregateDirectOnly = true;
 
     private String[] sourceFiles_ = null;
-    
+
     /**
      * A list of inclusion filters for the compiler.
      *
      * @parameter
      */
-    private Set<String> includes = new HashSet();
+    private Set<String> includes = new HashSet<String>();
 
     /**
      * A list of exclusion filters for the compiler.
      *
      * @parameter
      */
-    private Set<String> excludes = new HashSet();
-    
-    
+    private Set<String> excludes = new HashSet<String>();
+
+
     private String[] findSourceFiles() {
         if (sourceFiles_ == null) {
-        	if(includes.isEmpty()) {
-        		includes.add("**/*.scala");
-        	}
+            if(includes.isEmpty()) {
+                includes.add("**/*.scala");
+            }
             sourceFiles_ = JavaCommand.findFiles(sourceDir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
         }
         return sourceFiles_;

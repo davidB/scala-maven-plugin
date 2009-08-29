@@ -8,6 +8,19 @@
 	<version>testing</version>
 	<name>Test scaladoc generation+aggregation</name>
 	<packaging>pom</packaging>
+	<repositories>
+		<repository>
+			<id>scala-tools.org</id>
+			<name>Scala Tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</repository>
+		<repository>
+			<id>scala-tools.org.snapshots</id>
+			<name>Scala Tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-snapshots</url>
+			<snapshots />
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
