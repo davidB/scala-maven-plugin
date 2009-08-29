@@ -336,7 +336,6 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
                 if (project.hasParent()) {
                     MavenProject parent = project.getParent();
                     List<MavenProject> modules = parent.getCollectedProjects();
-                    System.out.println(">>> modules size " + modules.size());
                     if ((modules.size() > 1) && project.equals(modules.get(modules.size() - 1))) {
                         aggregate(parent);
                     }

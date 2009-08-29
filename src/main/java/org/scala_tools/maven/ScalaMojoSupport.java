@@ -513,12 +513,10 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         Set<String> plugins = new HashSet<String>();
         if (compilerPlugins != null) {
             Set<String> ignoreClasspath = new HashSet<String>();
-            addToClasspath(SCALA_GROUPID, "scala-compiler", scalaVersion,
-                    ignoreClasspath);
-            addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID,
-                    scalaVersion, ignoreClasspath);
+            addToClasspath(SCALA_GROUPID, "scala-compiler", scalaVersion, ignoreClasspath);
+            addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, scalaVersion, ignoreClasspath);
             for (BasicArtifact artifact : compilerPlugins) {
-                System.out.println("compiler plugin: " + artifact.toString());
+                getLog().info("compiler plugin: " + artifact.toString());
                 // TODO - Ensure proper scala version for plugins
                 Set<String> pluginClassPath = new HashSet<String>();
                 //TODO - Pull in transitive dependencies.
