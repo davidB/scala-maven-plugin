@@ -13,7 +13,6 @@ import org.apache.maven.plugin.AbstractMojo;
  */
 public abstract class AbstractJavaMainCaller implements JavaMainCaller {
 
-    protected boolean logOnly = false;
     protected AbstractMojo requester;
     protected List<String> env  = new ArrayList<String>();
     protected String mainClassName;
@@ -31,7 +30,7 @@ public abstract class AbstractJavaMainCaller implements JavaMainCaller {
         addJvmArgs(jvmArgs);
         addArgs(args);
     }
-	
+
     public void addJvmArgs(String... args) {
         if(args != null) {
             for(String arg : args) {
@@ -39,7 +38,7 @@ public abstract class AbstractJavaMainCaller implements JavaMainCaller {
             }
         }
     }
-    
+
     public void addToClasspath(File entry) throws Exception {
         if ((entry == null) || !entry.exists()) {
             return;
@@ -57,7 +56,7 @@ public abstract class AbstractJavaMainCaller implements JavaMainCaller {
             }
         }
     }
-    
+
     public void addOption(String key, String value) {
         if ((value == null) || (key == null)) {
             return;
@@ -91,12 +90,4 @@ public abstract class AbstractJavaMainCaller implements JavaMainCaller {
     public void run(boolean displayCmd) throws Exception {
         run(displayCmd, true);
     }
-
-    public void setLogOnly(boolean v) {
-        logOnly = v;
-    }
-    public boolean getLogOnly() {
-        return logOnly;
-    }
-
 }

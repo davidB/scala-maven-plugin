@@ -7,9 +7,15 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.StringUtils;
 import org.scala_tools.maven.StreamLogger;
 import org.scala_tools.maven.StreamPiper;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.LogOutputStream;
+import org.apache.commons.exec.PumpStreamHandler;
+
 /**
  * Abstract "process builder" object for forked java commands.
- * 
+ *
  * @author J. Suereth
  */
 public abstract class AbstractForkedJavaCommand extends AbstractJavaMainCaller {
@@ -17,7 +23,7 @@ public abstract class AbstractForkedJavaCommand extends AbstractJavaMainCaller {
     * Location of java executable.
     */
    protected String javaExec;
-   
+
    public AbstractForkedJavaCommand(AbstractMojo requester,
          String mainClassName, String classpath, String[] jvmArgs, String[] args)
          throws Exception {
@@ -46,23 +52,30 @@ public abstract class AbstractForkedJavaCommand extends AbstractJavaMainCaller {
       } else if (requester.getLog().isDebugEnabled()) {
           requester.getLog().debug("cmd: " + " " + StringUtils.join(cmd, " "));
       }
-      ProcessBuilder pb = new ProcessBuilder(cmd);
-      //pb.directory("myDir");
-      if (!logOnly) {
-          pb = pb.redirectErrorStream(true);
+//      ProcessBuilder pb = new ProcessBuilder(cmd);
+//      //pb.directory("myDir");
+//      if (!logOnly) {
+//          pb = pb.redirectErrorStream(true);
+//      }
+//      Process p = pb.start();
+//      if (logOnly) {
+//          new StreamLogger(p.getErrorStream(), requester.getLog(), true).start();
+//          new StreamLogger(p.getInputStream(), requester.getLog(), false).start();
+//      } else {
+//          new StreamPiper(p.getInputStream(), System.out).start();
+//          new StreamPiper(System.in, p.getOutputStream()).start();
+//          //new ConsolePiper(p).start();
+//      }
+//      int retVal = p.waitFor();
+      Executor exec = new DefaultExecutor();
+      CommandLine cl = new CommandLine(cmd[0]);
+      for(int i = 1; i < cmd.length; i++) {
+          cl.addArgument(cmd[i]);
       }
-      Process p = pb.start();
-      if (logOnly) {
-          new StreamLogger(p.getErrorStream(), requester.getLog(), true).start();
-          new StreamLogger(p.getInputStream(), requester.getLog(), false).start();
-      } else {
-          new StreamPiper(p.getInputStream(), System.out).start();
-          new StreamPiper(System.in, p.getOutputStream()).start();
-          //new ConsolePiper(p).start();
-      }
-      int retVal = p.waitFor();
-      if (throwFailure && (retVal != 0)) {
-          throw new MojoFailureException("command line returned non-zero value:" + retVal);
+      int exitValue = exec.execute(cl);
+
+      if (throwFailure && (exitValue != 0)) {
+          throw new MojoFailureException("command line returned non-zero value:" + exitValue);
       }
    }
 

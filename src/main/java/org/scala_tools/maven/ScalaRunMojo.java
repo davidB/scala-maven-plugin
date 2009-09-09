@@ -31,7 +31,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
 
     /**
      * The class to use when launching a scala program
-     * 
+     *
      * @parameter expression="${launcher}"
      */
     protected String launcher;
@@ -101,7 +101,6 @@ public class ScalaRunMojo extends ScalaMojoSupport {
             if (StringUtils.isNotEmpty(addArgs)) {
                 jcmd.addArgs(StringUtils.split(addArgs, "|"));
             }
-            jcmd.setLogOnly(false);
             jcmd.run(displayCmd);
         } else {
             getLog().warn("Not mainClass or valid launcher found/define");

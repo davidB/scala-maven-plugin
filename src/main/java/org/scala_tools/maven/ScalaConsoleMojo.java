@@ -105,7 +105,6 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
                 jcmd.addJvmArgs("-noverify", "-javaagent:" + javaRebelPath.getCanonicalPath());
             }
         }
-        jcmd.setLogOnly(false);
         jcmd.run(displayCmd);
     }
 
