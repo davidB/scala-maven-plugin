@@ -12,40 +12,40 @@ import static org.scala_tools.maven.dependency.ScalaConstants.*;
  *
  */
 public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
-	private VersionNumber version;
-	private boolean failed = false;
-	private Log log;
-	
-	public boolean endVisit(DependencyNode node) {
-		return !failed;
-	}
-	
-	public CheckScalaVersionVisitor(String projectVerison, Log log) {
-		this.version = new VersionNumber(projectVerison);
-		this.log = log;
-	}
+    private VersionNumber _version;
+    private boolean _failed = false;
+    private Log _log;
 
-	public boolean isScalaDistroArtifact(Artifact artifact) {
-		return SCALA_DISTRO_GROUP.equalsIgnoreCase(artifact.getGroupId()) &&
-		SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId());
-	}
-	public boolean visit(DependencyNode node) {
-		//TODO - Do we care about provided scope?
-		Artifact artifact = node.getArtifact();
-		log.debug("checking ["+artifact+"] for scala version");
-		//TODO - Handle version ranges???? does that make sense given scala's binary incompatability!
-		if(isScalaDistroArtifact(artifact) && artifact.getVersion() != null) {
-			VersionNumber originalVersion = new VersionNumber(artifact.getVersion());			
-			if(originalVersion.compareTo(version) != 0) {
-				failed = true;
-			}
-		} else {
-			//TODO - What now?
-		}
-		return !failed;
-	}
+    public boolean endVisit(DependencyNode node) {
+        return !_failed;
+    }
 
-	public boolean isFailed() {
-		return failed;
-	}
+    public CheckScalaVersionVisitor(String projectVerison, Log log) {
+        this._version = new VersionNumber(projectVerison);
+        this._log = log;
+    }
+
+    public boolean isScalaDistroArtifact(Artifact artifact) {
+        return SCALA_DISTRO_GROUP.equalsIgnoreCase(artifact.getGroupId()) &&
+        SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId());
+    }
+    public boolean visit(DependencyNode node) {
+        //TODO - Do we care about provided scope?
+        Artifact artifact = node.getArtifact();
+        _log.debug("checking ["+artifact+"] for scala version");
+        //TODO - Handle version ranges???? does that make sense given scala's binary incompatability!
+        if(isScalaDistroArtifact(artifact) && artifact.getVersion() != null) {
+            VersionNumber originalVersion = new VersionNumber(artifact.getVersion());
+            if(originalVersion.compareTo(_version) != 0) {
+                _failed = true;
+            }
+        } else {
+            //TODO - What now?
+        }
+        return !_failed;
+    }
+
+    public boolean isFailed() {
+        return _failed;
+    }
 }

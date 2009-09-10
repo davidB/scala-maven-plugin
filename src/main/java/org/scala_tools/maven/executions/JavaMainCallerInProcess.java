@@ -20,9 +20,7 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
 
     private ClassLoader cl = null;
 
-    public JavaMainCallerInProcess(AbstractMojo requester,
-            String mainClassName, String classpath, String[] jvmArgs,
-            String[] args) throws Exception {
+    public JavaMainCallerInProcess(AbstractMojo requester,  String mainClassName, String classpath, String[] jvmArgs, String[] args) throws Exception {
         super(requester, mainClassName, "", jvmArgs, args);
 
         //Pull out classpath and create class loader
@@ -42,6 +40,9 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
 
     public void addJvmArgs(String... args) {
         //TODO - Ignore classpath
+        for (String arg : args) {
+            requester.getLog().warn("jvmArgs are ignored when run in process :" + arg);
+        }
     }
 
     public void run(boolean displayCmd, boolean throwFailure) throws Exception {
@@ -74,7 +75,6 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
         if(displayCmd) {
             requester.getLog().info("cmd : " + mainClassName + "(" + StringUtils.join(argArray, ",")+")");
         }
-
         MainHelper.runMain(mainClassName, args, cl);
     }
 
