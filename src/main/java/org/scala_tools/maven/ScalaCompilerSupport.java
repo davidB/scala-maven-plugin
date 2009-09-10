@@ -73,6 +73,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     abstract protected File getOutputDir() throws Exception;
 
     abstract protected List<String> getClasspathElements() throws Exception;
+
     /**
      * Retreives the list of *all* root source directories.  We need to pass all .java and .scala files into the scala compiler
      */
@@ -117,135 +118,115 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         return compile(Arrays.asList(sourceDir.getAbsolutePath()), outputDir, classpathElements, compileInLoop);
     }
 
+    protected int compile(List<String> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
+        final File lastCompileAtFile = new File(outputDir + ".timestamp");
+        long lastCompileAt = -1;
+        if (lastCompileAtFile.exists() && outputDir.exists() && (outputDir.list().length > 0)) {
+            lastCompileAt = lastCompileAtFile.lastModified();
+        }
+
+        List<File> files = getFilesToCompile(sourceRootDirs, compileInLoop, lastCompileAt);
+
+        if (files == null) {
+            return -1;
+        }
+
+        if (!compileInLoop) {
+            getLog().info(String.format("Compiling %d source files to %s", files.size(), outputDir.getAbsolutePath()));
+        }
+        if (files.size() < 1) {
+            return 0;
+        }
+        long now = System.currentTimeMillis();
+        JavaMainCaller jcmd = getScalaCommand();
+        jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
+        jcmd.addArgs("-d", outputDir.getAbsolutePath());
+        //jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
+        for (File f : files) {
+            jcmd.addArgs(f.getAbsolutePath());
+            if (compileInLoop) {
+                getLog().info(String.format("%tR compiling %s", now, f.getName()));
+            }
+        }
+        jcmd.run(displayCmd, !compileInLoop);
+        if (lastCompileAtFile.exists()) {
+            lastCompileAtFile.setLastModified(now);
+        } else {
+            FileUtils.fileWrite(lastCompileAtFile.getAbsolutePath(), ".");
+        }
+        return files.size();
+     }
+
     protected List<File> getFilesToCompile(List<String> sourceRootDirs, boolean compilingInLoop, long lastCompileTime) {
-        //TODO - Rather than mutate, pass to the function!
-       if(includes.isEmpty()) {
-           includes.add("**/*.scala");
-           if(sendJavaToScalac && !compilingInLoop && isJavaSupportedByCompiler() ) {
-               includes.add("**/*.java");
-           }
-       }
+        // TODO - Rather than mutate, pass to the function!
+        if (includes.isEmpty()) {
+            includes.add("**/*.scala");
+            if (sendJavaToScalac && !compilingInLoop && isJavaSupportedByCompiler()) {
+                includes.add("**/*.java");
+            }
+        }
 
-       if(getLog().isInfoEnabled()) {
-           StringBuilder builder = new StringBuilder("includes = [");
-           for(String include : includes) {
-               builder.append(include).append(",");
-           }
-           builder.append("]");
-           getLog().info(builder.toString());
+        if (getLog().isInfoEnabled()) {
+            StringBuilder builder = new StringBuilder("includes = [");
+            for (String include : includes) {
+                builder.append(include).append(",");
+            }
+            builder.append("]");
+            getLog().info(builder.toString());
 
-           builder = new StringBuilder("excludes = [");
-           for(String exclude : excludes) {
-               builder.append(exclude).append(",");
-           }
-           builder.append("]");
-           getLog().info(builder.toString());
-       }
+            builder = new StringBuilder("excludes = [");
+            for (String exclude : excludes) {
+                builder.append(exclude).append(",");
+            }
+            builder.append("]");
+            getLog().info(builder.toString());
+        }
 
+        List<String> scalaSourceFiles = findSourceWithFilters(sourceRootDirs);
+        if (scalaSourceFiles.size() == 0) {
+            return null;
+        }
 
+        // filter uptodate
+        ArrayList<File> files = new ArrayList<File>(scalaSourceFiles.size());
+        for (String x : scalaSourceFiles) {
+            File f = new File(x);
+            if (f.lastModified() >= lastCompileTime) {
+                files.add(f);
+            }
+        }
+        return files;
+    }
 
-       List<String> scalaSourceFiles = findSourceWithFilters(sourceRootDirs);
-       if (scalaSourceFiles.size() == 0) {
-           return null;
-       }
-
-       // filter uptodate
-       ArrayList<File> files = new ArrayList<File>(scalaSourceFiles.size());
-       for (String x : scalaSourceFiles) {
-           File f = new File(x);
-           if (f.lastModified() >= lastCompileTime) {
-               files.add(f);
-           }
-       }
-       return files;
-   }
-
-   protected int compile(List<String> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
-       final File lastCompileAtFile = new File(outputDir + ".timestamp");
-       long lastCompileAt = -1;
-       if (lastCompileAtFile.exists() && outputDir.exists() && (outputDir.list().length > 0)) {
-           lastCompileAt = lastCompileAtFile.lastModified();
-       }
-
-       List<File> files = getFilesToCompile(sourceRootDirs, compileInLoop, lastCompileAt);
-
-       if (files == null) {
-           return -1;
-       }
-
-       if (!compileInLoop) {
-           getLog().info(String.format("Compiling %d source files to %s", files.size(), outputDir.getAbsolutePath()));
-       }
-       long now = System.currentTimeMillis();
-       JavaMainCaller jcmd = getScalaCommand();
-       jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
-       jcmd.addArgs("-d", outputDir.getAbsolutePath());
-       //jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
-       for (File f : files) {
-           jcmd.addArgs(f.getAbsolutePath());
-           if (compileInLoop) {
-               getLog().info(String.format("%tR compiling %s", now, f.getName()));
-           }
-       }
-       jcmd.run(displayCmd, !compileInLoop);
-       if (lastCompileAtFile.exists()) {
-           lastCompileAtFile.setLastModified(now);
-       } else {
-           FileUtils.fileWrite(lastCompileAtFile.getAbsolutePath(), ".");
-       }
-       return files.size();
-   }
-
-//   /**
-//    * Finds all source files in a set of directories with a given extension.
-//    */
-//   private List<String> findSource(List<String> sourceRootDirs, String extension) {
-//       List<String> sourceFiles = new ArrayList<String>();
-//       //TODO - Since we're making files anyway, perhaps we should just test for existence here...
-//       for(String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
-//           File dir = normalize(new File(rootSourceDir));
-//           String[] tmpFiles = JavaCommand.findFiles(dir, "**/*." + extension);
-//           for(String tmpLocalFile : tmpFiles) {
-//               File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
-//               sourceFiles.add(tmpAbsFile.getAbsolutePath());
-//           }
-//       }
-//       return sourceFiles;
-//   }
-
-   /**
-    * Finds all source files in a set of directories with a given extension.
-    */
-   private List<String> findSourceWithFilters(List<String> sourceRootDirs) {
-       List<String> sourceFiles = new ArrayList<String>();
-       //TODO - Since we're making files anyway, perhaps we should just test for existence here...
-       for(String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
-           File dir = normalize(new File(rootSourceDir));
-           String[] tmpFiles = MainHelper.findFiles(dir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
-           for(String tmpLocalFile : tmpFiles) {
-               File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
-               sourceFiles.add(tmpAbsFile.getAbsolutePath());
-           }
-       }
-       return sourceFiles;
-   }
-
+    /**
+     * Finds all source files in a set of directories with a given extension.
+     */
+    private List<String> findSourceWithFilters(List<String> sourceRootDirs) {
+        List<String> sourceFiles = new ArrayList<String>();
+        // TODO - Since we're making files anyway, perhaps we should just test
+        // for existence here...
+        for (String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
+            File dir = normalize(new File(rootSourceDir));
+            String[] tmpFiles = MainHelper.findFiles(dir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
+            for (String tmpLocalFile : tmpFiles) {
+                File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
+                sourceFiles.add(tmpAbsFile.getAbsolutePath());
+            }
+        }
+        return sourceFiles;
+    }
 
     /**
      * This limits the source directories to only those that exist for real.
      */
-    private List<String> normalizeSourceRoots( List<String> compileSourceRootsList )
-    {
+    private List<String> normalizeSourceRoots(List<String> compileSourceRootsList) {
         List<String> newCompileSourceRootsList = new ArrayList<String>();
-        if ( compileSourceRootsList != null )
-        {
+        if (compileSourceRootsList != null) {
             // copy as I may be modifying it
-            for ( String srcDir : compileSourceRootsList )
-            {
+            for (String srcDir : compileSourceRootsList) {
                 File srcDirFile = normalize(new File(srcDir));
-                if ( !newCompileSourceRootsList.contains( srcDirFile.getAbsolutePath() ) && srcDirFile.exists() )
-                {
-                    newCompileSourceRootsList.add( srcDirFile.getAbsolutePath() );
+                if (!newCompileSourceRootsList.contains(srcDirFile.getAbsolutePath()) && srcDirFile.exists()) {
+                    newCompileSourceRootsList.add(srcDirFile.getAbsolutePath());
                 }
             }
         }
