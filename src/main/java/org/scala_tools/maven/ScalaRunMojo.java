@@ -16,8 +16,9 @@
 package org.scala_tools.maven;
 
 import org.codehaus.plexus.util.StringUtils;
-import org.scala_tools.maven.executions.JavaCommand;
+import org.scala_tools.maven.executions.JavaMainCallerByFork;
 import org.scala_tools.maven.executions.JavaMainCaller;
+import org.scala_tools.maven.executions.MainHelper;
 
 
 /**
@@ -83,18 +84,18 @@ public class ScalaRunMojo extends ScalaMojoSupport {
     protected void doExecute() throws Exception {
         JavaMainCaller jcmd = null;
         if (StringUtils.isNotEmpty(mainClass)) {
-            jcmd = new JavaCommand(this, mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), jvmArgs, args, forceUseArgFile);
+            jcmd = new JavaMainCallerByFork(this, mainClass, MainHelper.toMultiPath(project.getTestClasspathElements()), jvmArgs, args, forceUseArgFile);
         } else if ((launchers != null) && (launchers.length > 0)) {
             if (StringUtils.isNotEmpty(launcher)) {
                 for(int i = 0; (i < launchers.length) && (jcmd == null); i++) {
                     if (launcher.equals(launchers[i].id)) {
                         getLog().info("launcher '"+ launchers[i].id + "' selected => "+ launchers[i].mainClass );
-                        jcmd = new JavaCommand(this, launchers[i].mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), launchers[i].jvmArgs, launchers[i].args, forceUseArgFile);
+                        jcmd = new JavaMainCallerByFork(this, launchers[i].mainClass, MainHelper.toMultiPath(project.getTestClasspathElements()), launchers[i].jvmArgs, launchers[i].args, forceUseArgFile);
                     }
                 }
             } else {
                 getLog().info("launcher '"+ launchers[0].id + "' selected => "+ launchers[0].mainClass );
-                jcmd = new JavaCommand(this, launchers[0].mainClass, JavaCommand.toMultiPath(project.getTestClasspathElements()), launchers[0].jvmArgs, launchers[0].args, forceUseArgFile);
+                jcmd = new JavaMainCallerByFork(this, launchers[0].mainClass, MainHelper.toMultiPath(project.getTestClasspathElements()), launchers[0].jvmArgs, launchers[0].args, forceUseArgFile);
             }
         }
         if (jcmd != null) {

@@ -28,8 +28,8 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
-import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
+import org.scala_tools.maven.executions.MainHelper;
 
 /**
  * Produces Scala API documentation.
@@ -205,7 +205,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
             if(includes.isEmpty()) {
                 includes.add("**/*.scala");
             }
-            sourceFiles_ = JavaCommand.findFiles(sourceDir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
+            sourceFiles_ = MainHelper.findFiles(sourceDir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
         }
         return sourceFiles_;
     }
@@ -353,7 +353,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     @SuppressWarnings("unchecked")
     protected JavaMainCaller newScalaDocCmd() throws Exception {
         JavaMainCaller jcmd = getScalaCommand();
-        jcmd.addOption("-classpath", JavaCommand.toMultiPath(project.getCompileClasspathElements()));
+        jcmd.addOption("-classpath", MainHelper.toMultiPath(project.getCompileClasspathElements()));
         jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
         jcmd.addOption("-bottom", getBottomText());
         jcmd.addOption("-charset", charset);

@@ -10,18 +10,64 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.StringUtils;
+
 /**
- * 
+ * Helper methods
  * @author David Bernard
  */
 public class MainHelper {
-    //------------------------------ utils / shared function
+
+    public static String toMultiPath(List<String> paths) {
+        return StringUtils.join(paths.iterator(), File.pathSeparator);
+    }
+
+    public static String toMultiPath(String[] paths) {
+        return StringUtils.join(paths, File.pathSeparator);
+    }
+
+    public static String[] findFiles(File dir, String pattern) {
+        return findFiles(dir, new String[] { pattern }, new String[0]);
+    }
+
+    public static String[] findFiles(File dir, String[] includes, String[] excludes) {
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir(dir);
+        scanner.setIncludes(includes);
+        scanner.setExcludes(excludes);
+        scanner.addDefaultExcludes();
+        scanner.scan();
+        return scanner.getIncludedFiles();
+    }
+
+    public static String toClasspathString(ClassLoader cl) throws Exception {
+        if (cl == null) {
+            cl = Thread.currentThread().getContextClassLoader();
+        }
+        StringBuilder back = new StringBuilder();
+        while (cl != null) {
+            if (cl instanceof URLClassLoader) {
+                URLClassLoader ucl = (URLClassLoader) cl;
+                URL[] urls = ucl.getURLs();
+                for (URL url : urls) {
+                    if (back.length() != 0) {
+                        back.append(File.pathSeparatorChar);
+                    }
+                    back.append(url.getFile());
+                }
+            }
+            cl = cl.getParent();
+        }
+        return back.toString();
+    }
 
     /**
      * Escapes arguments as necessary so the StringTokenizer for scala arguments pulls in filenames with spaces correctly.
@@ -34,7 +80,7 @@ public class MainHelper {
         }
         return arg;
     }
-    
+
     /**
      * UnEscapes arguments as necessary so the StringTokenizer for scala arguments pulls in filenames with spaces correctly.
      * @param arg
@@ -49,7 +95,7 @@ public class MainHelper {
 
     /**
      * Creates a file containing all the arguments. This file has a very simple format of argument (white-space argument).
-     * 
+     *
      * @return
      * @throws IOException
      */
@@ -66,10 +112,10 @@ public class MainHelper {
        }
        return argFile;
     }
-    
+
     /**
      * Creates a file containing all the arguments. This file has a very simple format of argument (white-space argument).
-     * 
+     *
      * @return
      * @throws IOException
      */
@@ -93,18 +139,18 @@ public class MainHelper {
             cl = Thread.currentThread().getContextClassLoader();
         }
         Class<?> mainClass = cl.loadClass(mainClassName);
-        Method mainMethod = mainClass.getMethod("main", String[].class);        
+        Method mainMethod = mainClass.getMethod("main", String[].class);
         int mods = mainMethod.getModifiers();
         if(mainMethod.getReturnType() != void.class || !Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
             throw new NoSuchMethodException("main");
         }
         String[] argArray = args.toArray(new String[args.size()]);
-        
+
         //TODO - Redirect System.in System.err and System.out
-        
+
         mainMethod.invoke(null, new Object[] {argArray});
     }
-    
+
     public static String locateJar(Class<?> c) throws Exception {
         final URL location;
         final String classLocation = c.getName().replace('.', '/') + ".class";
@@ -122,7 +168,7 @@ public class MainHelper {
             } else {
                 throw new ClassNotFoundException( "Cannot parse location of '" + location + "'.  Probably not loaded from a Jar" ) ;
             }
-        } else { 
+        } else {
             throw new ClassNotFoundException( "Cannot find class '" + c.getName() + " using the classloader" ) ;
         }
     }

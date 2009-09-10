@@ -11,7 +11,7 @@ import org.apache.maven.plugin.AbstractMojo;
  * @author josh
  *
  */
-public abstract class AbstractJavaMainCaller implements JavaMainCaller {
+public abstract class JavaMainCallerSupport implements JavaMainCaller {
 
     protected AbstractMojo requester;
     protected List<String> env  = new ArrayList<String>();
@@ -20,7 +20,7 @@ public abstract class AbstractJavaMainCaller implements JavaMainCaller {
     protected List<String> args = new ArrayList<String>();
 
 
-    protected AbstractJavaMainCaller(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args) throws Exception {
+    protected JavaMainCallerSupport(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args) throws Exception {
         this.requester = requester;
         for (String key : System.getenv().keySet()) {
             env.add(key + "=" + System.getenv(key));

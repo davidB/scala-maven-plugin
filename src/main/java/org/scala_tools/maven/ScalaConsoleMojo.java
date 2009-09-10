@@ -21,9 +21,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
-import org.scala_tools.maven.executions.ReflectionJavaMainCaller;
+import org.scala_tools.maven.executions.JavaMainCallerByFork;
+import org.scala_tools.maven.executions.JavaMainCallerInProcess;
+import org.scala_tools.maven.executions.MainHelper;
 
 /**
  * Run the Scala console with all the classes of the projects (dependencies and builded)
@@ -82,7 +83,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         if (useRuntimeClasspath) {
             classpath.addAll(project.getRuntimeClasspathElements());
         }
-        String classpathStr = JavaCommand.toMultiPath(classpath.toArray(new String[classpath.size()]));
+        String classpathStr = MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
         JavaMainCaller jcmd = null;
         if(interpreterNeedsToBeLocal()) {
             List<String> list = new ArrayList<String>(args != null ? args.length + 3 : 3);
@@ -94,9 +95,9 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
             list.add("-cp");
             list.add(classpathStr);
 
-            jcmd = new ReflectionJavaMainCaller(this, mainConsole, classpathStr, jvmArgs, list.toArray(new String[list.size()]));
+            jcmd = new JavaMainCallerInProcess(this, mainConsole, classpathStr, jvmArgs, list.toArray(new String[list.size()]));
         } else {
-            jcmd = new JavaCommand(this, mainConsole, classpathStr, jvmArgs, args, forceUseArgFile);
+            jcmd = new JavaMainCallerByFork(this, mainConsole, classpathStr, jvmArgs, args, forceUseArgFile);
         }
         if (javaRebelPath != null) {
             if (!javaRebelPath.exists()) {

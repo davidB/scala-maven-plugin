@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.codehaus.plexus.util.FileUtils;
-import org.scala_tools.maven.executions.JavaCommand;
 import org.scala_tools.maven.executions.JavaMainCaller;
+import org.scala_tools.maven.executions.MainHelper;
 
 /**
  * Abstract parent of all Scala Mojo
@@ -178,7 +178,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
        }
        long now = System.currentTimeMillis();
        JavaMainCaller jcmd = getScalaCommand();
-       jcmd.addArgs("-classpath", JavaCommand.toMultiPath(classpathElements));
+       jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
        jcmd.addArgs("-d", outputDir.getAbsolutePath());
        //jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
        for (File f : files) {
@@ -221,7 +221,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
        //TODO - Since we're making files anyway, perhaps we should just test for existence here...
        for(String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
            File dir = normalize(new File(rootSourceDir));
-           String[] tmpFiles = JavaCommand.findFiles(dir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
+           String[] tmpFiles = MainHelper.findFiles(dir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
            for(String tmpLocalFile : tmpFiles) {
                File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
                sourceFiles.add(tmpAbsFile.getAbsolutePath());
