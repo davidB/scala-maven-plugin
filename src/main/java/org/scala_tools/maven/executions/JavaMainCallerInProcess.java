@@ -40,8 +40,10 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
 
     public void addJvmArgs(String... args) {
         //TODO - Ignore classpath
-        for (String arg : args) {
-            requester.getLog().warn("jvmArgs are ignored when run in process :" + arg);
+        if(args != null) {
+           for (String arg : args) {
+               requester.getLog().warn("jvmArgs are ignored when run in process :" + arg);
+           }
         }
     }
 
