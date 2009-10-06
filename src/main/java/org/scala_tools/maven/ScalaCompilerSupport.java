@@ -182,16 +182,19 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
             getLog().info(builder.toString());
         }
 
-        List<String> scalaSourceFiles = findSourceWithFilters(sourceRootDirs);
-        if (scalaSourceFiles.size() == 0) {
+        List<File> sourceFiles = findSourceWithFilters(sourceRootDirs);
+        if (sourceFiles.size() == 0) {
             return null;
         }
 
         // filter uptodate
-        ArrayList<File> files = new ArrayList<File>(scalaSourceFiles.size());
-        for (String x : scalaSourceFiles) {
-            File f = new File(x);
-            if (f.lastModified() >= lastCompileTime) {
+        // filter is not applied to .java, because scalac failed to used existing .class for unmodified .java
+        //   failed with "error while loading Xxx, class file '.../target/classes/.../Xxxx.class' is broken"
+        //   (restore how it work in 2.11 and failed in 2.12)
+        //TODO a better behavior : if there is at least one .scala to compile then add all .java, if there is at least one .java then add all .scala (because we don't manage class dependency)
+        ArrayList<File> files = new ArrayList<File>(sourceFiles.size());
+        for (File f : sourceFiles) {
+            if (f.getName().endsWith(".java") || (f.lastModified() >= lastCompileTime)) {
                 files.add(f);
             }
         }
@@ -201,8 +204,8 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     /**
      * Finds all source files in a set of directories with a given extension.
      */
-    private List<String> findSourceWithFilters(List<String> sourceRootDirs) {
-        List<String> sourceFiles = new ArrayList<String>();
+    private List<File> findSourceWithFilters(List<String> sourceRootDirs) {
+        List<File> sourceFiles = new ArrayList<File>();
         // TODO - Since we're making files anyway, perhaps we should just test
         // for existence here...
         for (String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
@@ -210,7 +213,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
             String[] tmpFiles = MainHelper.findFiles(dir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
             for (String tmpLocalFile : tmpFiles) {
                 File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
-                sourceFiles.add(tmpAbsFile.getAbsolutePath());
+                sourceFiles.add(tmpAbsFile);
             }
         }
         return sourceFiles;
