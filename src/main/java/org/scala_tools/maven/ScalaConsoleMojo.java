@@ -85,20 +85,16 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         }
         String classpathStr = MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
         JavaMainCaller jcmd = null;
-        if(interpreterNeedsToBeLocal()) {
-            List<String> list = new ArrayList<String>(args != null ? args.length + 3 : 3);
-            if(args != null) {
-                for(String arg : args) {
-                    list.add(arg);
-                }
+        List<String> list = new ArrayList<String>(args != null ? args.length + 3 : 3);
+        if(args != null) {
+            for(String arg : args) {
+                list.add(arg);
             }
-            list.add("-cp");
-            list.add(classpathStr);
-
-            jcmd = new JavaMainCallerInProcess(this, mainConsole, classpathStr, jvmArgs, list.toArray(new String[list.size()]));
-        } else {
-            jcmd = new JavaMainCallerByFork(this, mainConsole, classpathStr, jvmArgs, args, forceUseArgFile);
         }
+        list.add("-cp");
+        list.add(classpathStr);
+
+        jcmd = new JavaMainCallerInProcess(this, mainConsole, classpathStr, jvmArgs, list.toArray(new String[list.size()]));
         if (javaRebelPath != null) {
             if (!javaRebelPath.exists()) {
                 getLog().warn("javaRevelPath '"+javaRebelPath.getCanonicalPath()+"' not found");
@@ -107,9 +103,5 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
             }
         }
         jcmd.run(displayCmd);
-    }
-
-    private boolean interpreterNeedsToBeLocal() {
-        return System.getProperty("os.name").toLowerCase().contains("windows");
     }
 }

@@ -1,9 +1,9 @@
 package org.scala_tools.maven;
 
 public class Launcher {
-	protected String id;
+    protected String id;
 
-	protected String mainClass;
+    protected String mainClass;
 
     /**
      * Jvm Arguments
