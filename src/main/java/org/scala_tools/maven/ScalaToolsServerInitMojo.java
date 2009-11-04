@@ -4,14 +4,12 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.scala_tools.maven.executions.JavaMainCaller;
@@ -24,6 +22,13 @@ import org.yaml.snakeyaml.Yaml;
  * @requiresDependencyResolution test
  */
 public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
+    /**
+     * If you want to use an other version of scala-tools-server than the default one.
+     *
+     * @parameter expression="${maven.scala.stsVersion}"
+     */
+    protected String stsVersion = "0.1-SNAPSHOT";
+
     /**
      * The directory in which to place compilation output
      *
@@ -64,6 +69,19 @@ public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
      */
     protected File sourceDir;
 
+    /**
+     * The directory in which to place test compilation output
+     *
+     * @parameter expression="${project.build.testOutputDirectory}
+     */
+    protected File testOutputDir;
+
+    /**
+     * The directory in which to find test scala source code
+     *
+     * @parameter expression="${project.build.testSourceDirectory}/../scala"
+     */
+    protected File testSourceDir;
 
     @Override
     protected void doExecute() throws Exception {
@@ -72,7 +90,7 @@ public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
     }
 
     private String toYaml(MavenProject project) throws Exception {
-        HashMap<String, Object> data = new HashMap<String, Object>();
+        HashMap<String, Object> dataCompile = new HashMap<String, Object>();
         /*
         name : sample
         sourceDirs :
@@ -89,21 +107,38 @@ public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
         args :
           - "-deprecation"
         */
-        data.put("name", project.getArtifactId()+"-"+project.getVersion());
-        data.put("sourcesDirs", getSourceDirectories());
+        dataCompile.put("name", project.getArtifactId()+"-"+project.getVersion()+"/main");
+        dataCompile.put("sourcesDirs", getSourceDirectories());
         if (includes != null) {
-            data.put("includes", new ArrayList<String>(includes));
+            dataCompile.put("includes", new ArrayList<String>(includes));
         }
         if (excludes != null) {
-            data.put("excludes", new ArrayList<String>(excludes));
+            dataCompile.put("excludes", new ArrayList<String>(excludes));
         }
-        data.put("targetDir", outputDir.getCanonicalPath());
-        data.put("classpath", project.getCompileClasspathElements());
+        dataCompile.put("targetDir", outputDir.getCanonicalPath());
+        dataCompile.put("classpath", project.getCompileClasspathElements());
         if (args != null) {
-            data.put("args", args);
+            dataCompile.put("args", args);
         }
+        dataCompile.put("dependency-link-path", localRepo.pathOf(project.getArtifact()));
+
+        HashMap<String, Object> dataTest = new HashMap<String, Object>();
+        dataTest.put("name", project.getArtifactId()+"-"+project.getVersion() +"/test");
+        dataTest.put("sourcesDirs", project.getTestCompileSourceRoots());
+        if (includes != null) {
+            dataTest.put("includes", new ArrayList<String>(includes));
+        }
+        if (excludes != null) {
+            dataTest.put("excludes", new ArrayList<String>(excludes));
+        }
+        dataTest.put("targetDir", testOutputDir.getCanonicalPath());
+        dataTest.put("classpath", project.getTestClasspathElements());
+        if (args != null) {
+            dataTest.put("args", args);
+        }
+
         Yaml yaml = new Yaml();
-        return yaml.dump(data);
+        return yaml.dump(dataCompile) + "/n---/n" + yaml.dump(dataTest);
     }
 
     @SuppressWarnings("unchecked")
@@ -155,7 +190,7 @@ public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
         getLog().info("start scala-tools-server...");
         Set<String> classpath = new HashSet<String>();
         addToClasspath(SCALA_GROUPID, "scala-compiler", scalaVersion, classpath);
-        addToClasspath("org.scala-tools", "scala-tools-server", "0.1-SNAPSHOT", classpath);
+        addToClasspath("org.scala-tools", "scala-tools-server", stsVersion, classpath);
         JavaMainCaller jcmd = new JavaMainCallerByFork(this, "org.scala_tools.server.HttpServer", MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()])), null, null, forceUseArgFile);
         jcmd.spawn(displayCmd);
         boolean started = false;

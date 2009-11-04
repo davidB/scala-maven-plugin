@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.scala-tools</groupId>
@@ -28,6 +29,16 @@
     </snapshotRepository>
   </distributionManagement>
   <repositories>
+    <repository>
+      <id>scala-tools.org</id>
+      <name>Scala-Tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </repository>
+    <repository>
+      <id>snakeyaml</id>
+      <name>SnakeYAML repository</name>
+      <url>http://snakeyamlrepo.appspot.com/repository</url>
+    </repository>
     <repository>
       <id>jboss.releases</id>
       <name>JBoss releases</name>
@@ -129,6 +140,11 @@
       <artifactId>commons-exec</artifactId>
       <version>1.0</version>
     </dependency>
+    <dependency>
+      <groupId>SnakeYAML</groupId>
+      <artifactId>SnakeYAML</artifactId>
+      <version>1.3</version>
+    </dependency>
   </dependencies>
   <reporting>
     <plugins>
@@ -164,20 +180,10 @@
 
   <build>
     <plugins>
-<!--
-      <plugin>
-        <groupId>org.twdata.maven</groupId>
-        <artifactId>maven-yamlpom-plugin</artifactId>
-        <version>0.5</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>sync</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
--->
+      <!--
+        <plugin> <groupId>org.twdata.maven</groupId> <artifactId>maven-yamlpom-plugin</artifactId> <version>0.5</version> <executions>
+        <execution> <goals> <goal>sync</goal> </goals> </execution> </executions> </plugin>
+      -->
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.0-beta-9</version>
