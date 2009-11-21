@@ -11,11 +11,24 @@
   <name>maven-scala-plugin</name>
   <url>http://scala-tools.org/mvnsites/${project.artifactId}</url>
   <description>The maven-scala-plugin is used for compiling/testing/running/documenting scala code in maven.</description>
+
   <scm>
     <connection>scm:git:git://github.com/davidB/maven-scala-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:davidB/${project.artifactId}.git</developerConnection>
     <url>http://github.com/davidB/${project.artifactId}/</url>
   </scm>
+  <issueManagement>
+    <system>github</system>
+    <url>http://github.com/davidB/maven-scala-plugin/issues#issue/</url>
+  </issueManagement>
+  <mailingLists>
+    <mailingList>
+      <name>maven-and-scala</name>
+      <archive>http://groups.google.com/group/maven-and-scala</archive>
+      <post>http://groups.google.com/group/maven-and-scala</post>
+    </mailingList>
+  </mailingLists>
+
   <distributionManagement>
     <repository>
       <id>scala-tools.org</id>
