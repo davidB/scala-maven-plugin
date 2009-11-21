@@ -6,7 +6,10 @@ import java.util.List;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.LogOutputStream;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.StringUtils;
@@ -43,7 +46,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         _forceUseArgFile = forceUseArgFile;
     }
 
-    public void run(boolean displayCmd, boolean throwFailure) throws Exception {
+    public boolean run(boolean displayCmd, boolean throwFailure) throws Exception {
         String[] cmd = buildCommand();
         if (displayCmd) {
             requester.getLog().info("cmd: " + " " + StringUtils.join(cmd, " "));
@@ -51,14 +54,41 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
             requester.getLog().debug("cmd: " + " " + StringUtils.join(cmd, " "));
         }
         Executor exec = new DefaultExecutor();
+        //err and out are redirected to out
+        //exec.setStreamHandler(new PumpStreamHandler(System.out));
+        exec.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
+
+            @Override
+            protected void processLine(String line, int level) {
+                if (line.toLowerCase().indexOf("error") > -1) {
+                    requester.getLog().error(line);
+                } else if (line.toLowerCase().indexOf("warn") > -1) {
+                    requester.getLog().warn(line);
+                } else {
+                    requester.getLog().info(line);
+                }
+            }
+        }));
         CommandLine cl = new CommandLine(cmd[0]);
         for (int i = 1; i < cmd.length; i++) {
             cl.addArgument(cmd[i]);
         }
-        int exitValue = exec.execute(cl);
-
-        if (throwFailure && (exitValue != 0)) {
-            throw new MojoFailureException("command line returned non-zero value:" + exitValue);
+        try {
+            int exitValue = exec.execute(cl);
+            if (exitValue != 0) {
+                if (throwFailure) {
+                    throw new MojoFailureException("command line returned non-zero value:" + exitValue);
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        } catch (ExecuteException exc) {
+            if (throwFailure) {
+                throw exc;
+            } else {
+                return false;
+            }
         }
     }
 

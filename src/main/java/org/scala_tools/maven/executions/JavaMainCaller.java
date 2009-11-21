@@ -27,7 +27,7 @@ public interface JavaMainCaller {
     // TODO: add support to inject startup command and shutdown command (on :quit)
     public abstract void run(boolean displayCmd) throws Exception;
     /** Runs the JavaMain with all the built up arguments/options */
-    public abstract void run(boolean displayCmd, boolean throwFailure) throws Exception;
+    public abstract boolean run(boolean displayCmd, boolean throwFailure) throws Exception;
 
     /**
      * run the command without stream redirection nor waiting for exit

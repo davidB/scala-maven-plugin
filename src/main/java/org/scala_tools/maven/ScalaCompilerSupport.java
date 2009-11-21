@@ -28,14 +28,33 @@ import org.scala_tools.maven.executions.JavaMainCaller;
 import org.scala_tools.maven.executions.MainHelper;
 
 /**
- * Abstract parent of all Scala Mojo
+ * Abstract parent of all Scala Mojo who run compilation
  */
 public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
+    public static final String ALL = "all";
+    public static final String MODIFIED_ONLY = "modified-only";
+
     /**
      * Pause duration between to scan to detect changed file to compile.
      * Used only if compileInLoop or testCompileInLoop is true.
      */
     protected long loopSleep = 2500;
+
+    /**
+     * compilation-mode to use when sources was previously compiled and there is at least one change:
+     * "modified-only" => only modified source was recompiled (pre 2.13 behavior), "all" => every source are recompiled
+     * @parameter expression="${recompilation-mode}" default-value="all"
+     */
+    private String recompileMode = ALL;
+
+    /**
+     * notifyCompilation if true then print a message "path: compiling"
+     * for each root directory or files that will be compiled.
+     * Usefull for debug, and for integration with Editor/IDE to reset markers only for compiled files.
+     *
+     * @parameter expression="${notifyCompilation}" default-value="true"
+     */
+    private boolean notifyCompilation = true;
 
     /**
      * Enables/Disables sending java source to the scala compiler.
@@ -79,6 +98,8 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
      */
     abstract protected List<String> getSourceDirectories() throws Exception;
 
+    private long _lastCompileAt = -1;
+
     @Override
     protected void doExecute() throws Exception {
         File outputDir = normalize(getOutputDir());
@@ -90,7 +111,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
                 getLog().debug(directory);
             }
         }
-        int nbFiles = compile(getSourceDirectories(), outputDir, getClasspathElements(), false);
+        int nbFiles = compile(normalize(getSourceDirectories()), outputDir, getClasspathElements(), false);
         switch (nbFiles) {
             case -1:
                 getLog().warn("No source files found.");
@@ -112,52 +133,60 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         return f;
     }
 
+    /**
+     * This limits the source directories to only those that exist for real.
+     */
+    private List<File> normalize(List<String> compileSourceRootsList) {
+        List<File> newCompileSourceRootsList = new ArrayList<File>();
+        if (compileSourceRootsList != null) {
+            // copy as I may be modifying it
+            for (String srcDir : compileSourceRootsList) {
+                File srcDirFile = normalize(new File(srcDir));
+                if (!newCompileSourceRootsList.contains(srcDirFile) && srcDirFile.exists()) {
+                    newCompileSourceRootsList.add(srcDirFile);
+                }
+            }
+        }
+        return newCompileSourceRootsList;
+    }
 
     protected int compile(File sourceDir, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
         //getLog().warn("Using older form of compile");
-        return compile(Arrays.asList(sourceDir.getAbsolutePath()), outputDir, classpathElements, compileInLoop);
+        return compile(Arrays.asList(sourceDir), outputDir, classpathElements, compileInLoop);
     }
 
-    protected int compile(List<String> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
-        final File lastCompileAtFile = new File(outputDir + ".timestamp");
-        long lastCompileAt = -1;
-        if (lastCompileAtFile.exists() && outputDir.exists() && (outputDir.list().length > 0)) {
-            lastCompileAt = lastCompileAtFile.lastModified();
+    protected int compile(List<File> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
+        if (_lastCompileAt < 0) {
+            _lastCompileAt = findLastSuccessfullCompilation(outputDir);
         }
 
-        List<File> files = getFilesToCompile(sourceRootDirs, compileInLoop, lastCompileAt);
+        List<File> files = getFilesToCompile(sourceRootDirs, compileInLoop, _lastCompileAt);
 
         if (files == null) {
             return -1;
         }
 
-        if (!compileInLoop) {
-            getLog().info(String.format("Compiling %d source files to %s", files.size(), outputDir.getAbsolutePath()));
-        }
         if (files.size() < 1) {
             return 0;
         }
         long now = System.currentTimeMillis();
+        getLog().info(String.format("Compiling %d source files to %s at %d", files.size(), outputDir.getAbsolutePath(), now));
         JavaMainCaller jcmd = getScalaCommand();
         jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
         jcmd.addArgs("-d", outputDir.getAbsolutePath());
         //jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
         for (File f : files) {
             jcmd.addArgs(f.getAbsolutePath());
-            if (compileInLoop) {
-                getLog().info(String.format("%tR compiling %s", now, f.getName()));
-            }
         }
-        jcmd.run(displayCmd, !compileInLoop);
-        if (lastCompileAtFile.exists()) {
-            lastCompileAtFile.setLastModified(now);
-        } else {
-            FileUtils.fileWrite(lastCompileAtFile.getAbsolutePath(), ".");
+        if (jcmd.run(displayCmd, !compileInLoop)) {
+            setLastSuccessfullCompilation(outputDir, now);
         }
+        getLog().info(String.format("compile in %d s", (System.currentTimeMillis() - now) / 1000));
+        _lastCompileAt = now;
         return files.size();
      }
 
-    protected List<File> getFilesToCompile(List<String> sourceRootDirs, boolean compilingInLoop, long lastCompileTime) {
+    protected List<File> getFilesToCompile(List<File> sourceRootDirs, boolean compilingInLoop, long lastSuccessfullCompileTime) throws Exception {
         // TODO - Rather than mutate, pass to the function!
         if (includes.isEmpty()) {
             includes.add("**/*.scala");
@@ -166,7 +195,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
             }
         }
 
-        if (getLog().isInfoEnabled()) {
+        if ((_lastCompileAt <0) && getLog().isInfoEnabled()) {
             StringBuilder builder = new StringBuilder("includes = [");
             for (String include : includes) {
                 builder.append(include).append(",");
@@ -181,7 +210,6 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
             builder.append("]");
             getLog().info(builder.toString());
         }
-
         List<File> sourceFiles = findSourceWithFilters(sourceRootDirs);
         if (sourceFiles.size() == 0) {
             return null;
@@ -192,11 +220,36 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         //   failed with "error while loading Xxx, class file '.../target/classes/.../Xxxx.class' is broken"
         //   (restore how it work in 2.11 and failed in 2.12)
         //TODO a better behavior : if there is at least one .scala to compile then add all .java, if there is at least one .java then add all .scala (because we don't manage class dependency)
-        ArrayList<File> files = new ArrayList<File>(sourceFiles.size());
-        for (File f : sourceFiles) {
-            if (f.getName().endsWith(".java") || (f.lastModified() >= lastCompileTime)) {
-                files.add(f);
+        List<File> files = new ArrayList<File>(sourceFiles.size());
+        if (_lastCompileAt > 0 || (!ALL.equals(recompileMode) && (lastSuccessfullCompileTime > 0))) {
+            ArrayList<File> modifiedScalaFiles = new ArrayList<File>(sourceFiles.size());
+            ArrayList<File> modifiedJavaFiles = new ArrayList<File>(sourceFiles.size());
+            ArrayList<File> allJavaFiles = new ArrayList<File>(sourceFiles.size());
+            for (File f : sourceFiles) {
+                if (f.getName().endsWith(".java")) {
+                    allJavaFiles.add(f);
+                }
+                if (f.lastModified() >= lastSuccessfullCompileTime) {
+                    if (f.getName().endsWith(".java")) {
+                        modifiedJavaFiles.add(f);
+                    } else {
+                        modifiedScalaFiles.add(f);
+                    }
+                }
             }
+            if ((modifiedScalaFiles.size() != 0) || (modifiedJavaFiles.size() != 0)) {
+                if ((modifiedScalaFiles.size() != 0) && MODIFIED_ONLY.equals(recompileMode)) {
+                    files.addAll(allJavaFiles);
+                    files.addAll(modifiedScalaFiles);
+                    notifyCompilation(files);
+                } else {
+                    files.addAll(sourceFiles);
+                    notifyCompilation(sourceRootDirs);
+                }
+            }
+        } else {
+            files.addAll(sourceFiles);
+            notifyCompilation(sourceRootDirs);
         }
         return files;
     }
@@ -204,12 +257,11 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     /**
      * Finds all source files in a set of directories with a given extension.
      */
-    private List<File> findSourceWithFilters(List<String> sourceRootDirs) {
+    private List<File> findSourceWithFilters(List<File> sourceRootDirs) {
         List<File> sourceFiles = new ArrayList<File>();
         // TODO - Since we're making files anyway, perhaps we should just test
         // for existence here...
-        for (String rootSourceDir : normalizeSourceRoots(sourceRootDirs)) {
-            File dir = normalize(new File(rootSourceDir));
+        for (File dir : sourceRootDirs) {
             String[] tmpFiles = MainHelper.findFiles(dir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
             for (String tmpLocalFile : tmpFiles) {
                 File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
@@ -219,20 +271,29 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         return sourceFiles;
     }
 
-    /**
-     * This limits the source directories to only those that exist for real.
-     */
-    private List<String> normalizeSourceRoots(List<String> compileSourceRootsList) {
-        List<String> newCompileSourceRootsList = new ArrayList<String>();
-        if (compileSourceRootsList != null) {
-            // copy as I may be modifying it
-            for (String srcDir : compileSourceRootsList) {
-                File srcDirFile = normalize(new File(srcDir));
-                if (!newCompileSourceRootsList.contains(srcDirFile.getAbsolutePath()) && srcDirFile.exists()) {
-                    newCompileSourceRootsList.add(srcDirFile.getAbsolutePath());
-                }
+    private void notifyCompilation(List<File> files) throws Exception {
+        if (notifyCompilation) {
+            for (File f : files) {
+                getLog().info(String.format("%s:-1: info: compiling\n", f.getCanonicalPath()));
             }
         }
-        return newCompileSourceRootsList;
+    }
+
+    private long findLastSuccessfullCompilation(File outputDir) throws Exception {
+        long back =  -1;
+        final File lastCompileAtFile = new File(outputDir + ".timestamp");
+        if (lastCompileAtFile.exists() && outputDir.exists() && (outputDir.list().length > 0)) {
+            back = lastCompileAtFile.lastModified();
+        }
+        return back;
+    }
+
+    private void setLastSuccessfullCompilation(File outputDir, long v) throws Exception {
+        final File lastCompileAtFile = new File(outputDir + ".timestamp");
+        if (lastCompileAtFile.exists()) {
+        } else {
+            FileUtils.fileWrite(lastCompileAtFile.getAbsolutePath(), ".");
+        }
+        lastCompileAtFile.setLastModified(v);
     }
 }

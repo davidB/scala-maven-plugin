@@ -47,15 +47,19 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
         }
     }
 
-    public void run(boolean displayCmd, boolean throwFailure) throws Exception {
+    public boolean run(boolean displayCmd, boolean throwFailure) throws Exception {
         try {
             runInternal(displayCmd);
+            return true;
         } catch (Exception e) {
             if(throwFailure) {
                 throw e;
+            } else {
+                return false;
             }
         }
     }
+
     /** spawns a thread to run the method */
     public void spawn(final boolean displayCmd) throws Exception {
         Thread t = new Thread() {
