@@ -192,20 +192,6 @@
 
   <build>
     <plugins>
-<!--
-      <plugin>
-        <groupId>org.twdata.maven</groupId>
-        <artifactId>maven-yamlpom-plugin</artifactId>
-        <version>0.5</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>sync</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
--->
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.0-beta-9</version>
