@@ -386,7 +386,6 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         scriptDir.delete();
     }
 
-    @SuppressWarnings("unused")
     private enum Scopes {
         COMPILE {
             public Collection<Dependency> elements(MavenProjectAdapter project)

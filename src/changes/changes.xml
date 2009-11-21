@@ -9,7 +9,7 @@
       <action dev="David Bernard" type="update">compile, test-compile, cc compile all files by default</action>
       <action dev="David Bernard" type="add">compile, test-compile, cc log the root directories of compilation of the list of files that will be compiled (to allow editor/IDE to reset markers/annotation)</action>
       <action dev="David Bernard" type="add">prepare integration of scala-tool-server (sts) with the goal sts-init</action>
-      <action dev="David Bernard" type="fix">fix documentation of default value for goal's configuration (http://github.com/davidB/maven-scala-plugin/issues/unreads#issue/16)</action>
+      <action dev="David Bernard" type="fix" due-to="awhitford" issue="16">fix documentation of default value for goal's configuration (http://github.com/davidB/maven-scala-plugin/issues/unreads#issue/16)</action>
     </release>
     <release version="2.12" date="" description="">
       <action dev="David Bernard" type="fix">fix "Broken Pipe" issue on Windows</action>

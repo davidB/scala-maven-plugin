@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.scala_tools.maven.executions.JavaMainCaller;
-import org.scala_tools.maven.executions.JavaMainCallerByFork;
 import org.scala_tools.maven.executions.JavaMainCallerInProcess;
 import org.scala_tools.maven.executions.MainHelper;
 
