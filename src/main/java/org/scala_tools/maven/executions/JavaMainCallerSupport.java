@@ -27,8 +27,12 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         }
         this.mainClassName = mainClassName;
         addJvmArgs("-classpath", classpath);
-        addJvmArgs(jvmArgs);
-        addArgs(args);
+        if(jvmArgs != null) {
+           addJvmArgs(jvmArgs);
+        }
+        if(args != null) {
+           addArgs(args);
+        }
     }
 
     public void addJvmArgs(String... args) {

@@ -5,6 +5,11 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="2.13" date="" description="editor/ide integration enhancement">
+      <action dev="David Bernard" type="update">compile, test-compile, cc compile all files by default</action>
+      <action dev="David Bernard" type="add">compile, test-compile, cc log the root directories of compilation of the list of files that will be compiled (to allow editor/IDE to reset markers/annotation)</action>
+      <action dev="David Bernard" type="add">prepare integration of scala-tool-server (sts) with the goal sts-init</action>
+    </release>
     <release version="2.12" date="" description="">
       <action dev="David Bernard" type="fix">fix "Broken Pipe" issue on Windows</action>
       <action dev="David Bernard" type="add">use Yaml to manage pom (thanks to maven-yamlpom-plugin http://wiki.github.com/mrdon/maven-yamlpom-plugin)</action>

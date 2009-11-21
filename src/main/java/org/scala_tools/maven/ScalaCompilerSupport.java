@@ -210,6 +210,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
             builder.append("]");
             getLog().info(builder.toString());
         }
+
         List<File> sourceFiles = findSourceWithFilters(sourceRootDirs);
         if (sourceFiles.size() == 0) {
             return null;
