@@ -156,6 +156,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     }
 
     protected int compile(List<File> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
+        long t0 = System.currentTimeMillis();
         if (_lastCompileAt < 0) {
             _lastCompileAt = findLastSuccessfullCompilation(outputDir);
         }
@@ -169,9 +170,10 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         if (files.size() < 1) {
             return 0;
         }
-        long now = System.currentTimeMillis();
-        getLog().info(String.format("Compiling %d source files to %s at %d", files.size(), outputDir.getAbsolutePath(), now));
+        long t1 = System.currentTimeMillis();
+        getLog().info(String.format("Compiling %d source files to %s at %d", files.size(), outputDir.getAbsolutePath(), t1));
         JavaMainCaller jcmd = getScalaCommand();
+        jcmd.redirectToLog();
         jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
         jcmd.addArgs("-d", outputDir.getAbsolutePath());
         //jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
@@ -179,10 +181,11 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
             jcmd.addArgs(f.getAbsolutePath());
         }
         if (jcmd.run(displayCmd, !compileInLoop)) {
-            setLastSuccessfullCompilation(outputDir, now);
+            setLastSuccessfullCompilation(outputDir, t1);
         }
-        getLog().info(String.format("compile in %d s", (System.currentTimeMillis() - now) / 1000));
-        _lastCompileAt = now;
+        getLog().info(String.format("prepare-compile in %d s", (t1 - t0) / 1000));
+        getLog().info(String.format("compile in %d s", (System.currentTimeMillis() - t1) / 1000));
+        _lastCompileAt = t1;
         return files.size();
      }
 

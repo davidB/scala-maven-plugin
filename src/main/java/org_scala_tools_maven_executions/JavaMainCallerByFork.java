@@ -29,6 +29,8 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
      */
     private String _javaExec;
 
+    private boolean _redirectToLog;
+
     public JavaMainCallerByFork(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args,
             boolean forceUseArgFile) throws Exception {
         super(requester, mainClassName, classpath, jvmArgs, args);
@@ -54,21 +56,26 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
             requester.getLog().debug("cmd: " + " " + StringUtils.join(cmd, " "));
         }
         Executor exec = new DefaultExecutor();
-        //err and out are redirected to out
-        //exec.setStreamHandler(new PumpStreamHandler(System.out));
-        exec.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
 
-            @Override
-            protected void processLine(String line, int level) {
-                if (line.toLowerCase().indexOf("error") > -1) {
-                    requester.getLog().error(line);
-                } else if (line.toLowerCase().indexOf("warn") > -1) {
-                    requester.getLog().warn(line);
-                } else {
-                    requester.getLog().info(line);
+        //err and out are redirected to out
+        if (!_redirectToLog) {
+            exec.setStreamHandler(new PumpStreamHandler(System.out));
+        } else {
+            exec.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
+
+                @Override
+                protected void processLine(String line, int level) {
+                    if (line.toLowerCase().indexOf("error") > -1) {
+                        requester.getLog().error(line);
+                    } else if (line.toLowerCase().indexOf("warn") > -1) {
+                        requester.getLog().warn(line);
+                    } else {
+                        requester.getLog().info(line);
+                    }
                 }
-            }
-        }));
+            }));
+        }
+
         CommandLine cl = new CommandLine(cmd[0]);
         for (int i = 1; i < cmd.length; i++) {
             cl.addArgument(cmd[i]);
@@ -128,5 +135,9 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
             back += str.length() + sepLength;
         }
         return back;
+    }
+
+    public void redirectToLog() {
+        _redirectToLog = true;
     }
 }

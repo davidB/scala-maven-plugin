@@ -23,6 +23,9 @@ public interface JavaMainCaller {
     /** Adds the key if the value is true */
     public abstract void addOption(String key, boolean value);
 
+    /** request run to be redirected to maven/requester logger */
+    public abstract void redirectToLog();
+
     // TODO: avoid to have several Thread to pipe stream
     // TODO: add support to inject startup command and shutdown command (on :quit)
     public abstract void run(boolean displayCmd) throws Exception;

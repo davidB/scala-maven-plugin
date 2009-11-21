@@ -85,4 +85,10 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
     }
 
 
+
+    public void redirectToLog() {
+        requester.getLog().warn("redirection to log is not supported for 'inProcess' mode");
+    }
+
+
 }
