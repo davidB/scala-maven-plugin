@@ -2,10 +2,10 @@ package org.scala_tools.maven.executions;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.codehaus.plexus.util.StringUtils;
 /**
  * Abstract helper implementation for JavaMainCaller interface.
  * @author josh
@@ -27,18 +27,16 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         }
         this.mainClassName = mainClassName;
         addJvmArgs("-classpath", classpath);
-        if(jvmArgs != null) {
-           addJvmArgs(jvmArgs);
-        }
-        if(args != null) {
-           addArgs(args);
-        }
+        addJvmArgs(jvmArgs);
+        addArgs(args);
     }
 
     public void addJvmArgs(String... args) {
         if(args != null) {
             for(String arg : args) {
-                this.jvmArgs.add(arg);
+                if (StringUtils.isNotEmpty(arg)) {
+                    this.jvmArgs.add(arg);
+                }
             }
         }
     }
@@ -62,28 +60,32 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
     }
 
     public void addOption(String key, String value) {
-        if ((value == null) || (key == null)) {
+        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
             return;
         }
         addArgs(key, value);
     }
 
     public void addOption(String key, File value) {
-        if ((value == null) || (key == null)) {
+        if ( (value == null) || StringUtils.isEmpty(key)) {
             return;
         }
         addArgs(key, value.getAbsolutePath());
     }
 
     public void addOption(String key, boolean value) {
-        if ((!value) || (key == null)) {
+        if ((!value) || StringUtils.isEmpty(key)) {
             return;
         }
         addArgs(key);
     }
     public void addArgs(String... args) {
         if(args != null) {
-            this.args.addAll(Arrays.asList(args));
+            for(String arg : args) {
+                if (StringUtils.isNotEmpty(arg)) {
+                    this.args.add(arg);
+                }
+            }
         }
     }
 
