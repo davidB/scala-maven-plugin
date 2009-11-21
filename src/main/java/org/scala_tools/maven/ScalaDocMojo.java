@@ -89,14 +89,14 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     /**
      * Generate source in HTML
      *
-     * @parameter expression="${linksource}" default="true"
+     * @parameter expression="${linksource}" default-value="true"
      */
     protected boolean linksource;
 
     /**
      * Suppress description and tags, generate only declarations
      *
-     * @parameter expression="${nocomment}" default="false"
+     * @parameter expression="${nocomment}" default-value="false"
      */
     protected boolean nocomment;
 
@@ -172,14 +172,14 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     /**
      * To allow running aggregation only from command line use "-Dforce-aggregate=true" (avoid using in pom.xml).
      *
-     * @parameter expression="${force-aggregate}" default="false"
+     * @parameter expression="${force-aggregate}" default-value="false"
      */
     protected boolean forceAggregate = false;
 
     /**
      * If you want to aggregate only direct sub modules.
      *
-     * @parameter expression="${maven.scaladoc.aggregateDirectOnly}" default="true"
+     * @parameter expression="${maven.scaladoc.aggregateDirectOnly}" default-value="true"
      */
     protected boolean aggregateDirectOnly = true;
 

@@ -31,28 +31,28 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
 
     /**
      * The output directory for compilation.
-     * 
+     *
      * @parameter expression="${project.build.outputDirectory}"
      */
     protected File mainOutputDir;
 
     /**
      * The main directory containing scala source for compilation
-     * 
+     *
      * @parameter expression="${project.build.sourceDirectory}/../scala"
      */
     protected File mainSourceDir;
 
     /**
      * The directory to place test compilation output in
-     * 
+     *
      * @parameter expression="${project.build.testOutputDirectory}
      */
     protected File testOutputDir;
 
     /**
      * The directory containing test source for compilation
-     * 
+     *
      * @parameter expression="${project.build.testSourceDirectory}/../scala"
      */
     protected File testSourceDir;
@@ -60,21 +60,21 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     /**
      * Define if fsc should be used, else scalac is used.
      * fsc => scala.tools.nsc.CompileClient, scalac => scala.tools.nsc.Main.
-     * 
-     * @parameter expression="${fsc}" default="true"
+     *
+     * @parameter expression="${fsc}" default-value="true"
      */
     protected boolean useFsc = true;
 
     /**
      * Define if cc should run once or in infinite loop. (useful for test or working with editor)
-     * @parameter expression="${once}" default="false"
+     * @parameter expression="${once}" default-value="false"
      */
     protected boolean once = false;
 
     /**
      * Turns verbose output on.
-     * 
-     * @parameter expression="${verbose}" default="false"
+     *
+     * @parameter expression="${verbose}" default-value="false"
      */
     protected boolean verbose = false;
 
@@ -90,7 +90,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
 
     @Override
     protected List<String> getSourceDirectories() throws Exception {
-    	   throw new UnsupportedOperationException("USELESS");
+           throw new UnsupportedOperationException("USELESS");
     }
     @Override
     protected JavaMainCaller getScalaCommand() throws Exception {
