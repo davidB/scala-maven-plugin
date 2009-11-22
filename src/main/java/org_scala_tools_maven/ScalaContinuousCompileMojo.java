@@ -162,6 +162,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
         jcmd.addArgs(args);
         jcmd.spawn(displayCmd);
         FileUtils.fileWrite(serverTagFile.getAbsolutePath(), ".");
+        Thread.sleep(1000); //HACK To wait startup time of server (avoid first fsc command to failed to contact server)
     }
 
     private class StopServer extends Thread {

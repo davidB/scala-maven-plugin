@@ -11,6 +11,7 @@
       <action dev="David Bernard" type="update">output line from compiler are redirected to maven's logger in forked mode => prefixed by [ERROR]/[WARN]/[INFO] + ease integration with m2eclipse (FULL_BUILD)</action>
       <action dev="David Bernard" type="add">prepare integration of scala-tool-server (sts) with the goal sts-init</action>
       <action dev="David Bernard" type="fix" due-to="awhitford" issue="16">fix documentation of default value for goal's configuration (http://github.com/davidB/maven-scala-plugin/issues/unreads#issue/16)</action>
+      <action dev="David Bernard" type="fix" due-to="Christophe Dehlinger">fix regression of 2.12 where scala:cc stop/exit at first error</action>
       <action dev="David Bernard" type="update">rename packages to use a "flat one level" : org.scala_tools.maven.xxx => org_scala_tools_maven_xxx (ease file / web browsing)</action>
       <action dev="David Bernard" type="delete">remove yaml as pom (maven-yamlpom-plugin doesn't support !true as properties value)</action>
     </release>

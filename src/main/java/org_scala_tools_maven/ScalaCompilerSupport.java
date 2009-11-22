@@ -161,7 +161,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
             _lastCompileAt = findLastSuccessfullCompilation(outputDir);
         }
 
-        List<File> files = getFilesToCompile(sourceRootDirs, compileInLoop, _lastCompileAt);
+        List<File> files = getFilesToCompile(sourceRootDirs, _lastCompileAt);
 
         if (files == null) {
             return -1;
@@ -189,11 +189,11 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         return files.size();
      }
 
-    protected List<File> getFilesToCompile(List<File> sourceRootDirs, boolean compilingInLoop, long lastSuccessfullCompileTime) throws Exception {
+    protected List<File> getFilesToCompile(List<File> sourceRootDirs, long lastSuccessfullCompileTime) throws Exception {
         // TODO - Rather than mutate, pass to the function!
         if (includes.isEmpty()) {
             includes.add("**/*.scala");
-            if (sendJavaToScalac && !compilingInLoop && isJavaSupportedByCompiler()) {
+            if (sendJavaToScalac && isJavaSupportedByCompiler()) {
                 includes.add("**/*.java");
             }
         }
