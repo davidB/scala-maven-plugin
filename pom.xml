@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.scala-tools</groupId>
@@ -40,16 +41,12 @@
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
+
   <repositories>
     <repository>
       <id>scala-tools.org</id>
       <name>Scala-Tools Maven2 Repository</name>
       <url>http://scala-tools.org/repo-releases</url>
-    </repository>
-    <repository>
-      <id>snakeyaml</id>
-      <name>SnakeYAML repository</name>
-      <url>http://snakeyamlrepo.appspot.com/repository</url>
     </repository>
     <repository>
       <id>jboss.releases</id>
@@ -63,13 +60,7 @@
       </snapshots>
     </repository>
   </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>twdata-m2-repository</id>
-      <name>twdata.org Maven 2 Repository</name>
-      <url>http://twdata-m2-repository.googlecode.com/svn/</url>
-    </pluginRepository>
-  </pluginRepositories>
+
   <developers>
     <developer>
       <name>David Bernard</name>
@@ -153,9 +144,9 @@
       <version>1.0.1</version>
     </dependency>
     <dependency>
-      <groupId>SnakeYAML</groupId>
-      <artifactId>SnakeYAML</artifactId>
-      <version>1.3</version>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.4</version>
     </dependency>
   </dependencies>
   <reporting>
