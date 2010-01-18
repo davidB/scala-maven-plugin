@@ -6,6 +6,9 @@
   </properties>
   <body>
     <release version="2.13" date="" description="editor/ide integration enhancement">
+      <action dev="David Bernard" type="update">the list of source to compile is sorted by path to allow better "reproductible" build across box (as scalac seems sensible to file order)</action>
+    </release>
+    <release version="2.13" date="" description="editor/ide integration enhancement">
       <action dev="David Bernard" type="update">compile, test-compile, cc compile all files by default</action>
       <action dev="David Bernard" type="add">compile, test-compile, cc log the root directories of compilation of the list of files that will be compiled (to allow editor/IDE to reset markers/annotation)</action>
       <action dev="David Bernard" type="update">output line from compiler are redirected to maven's logger in forked mode => prefixed by [ERROR]/[WARN]/[INFO] + ease integration with m2eclipse (FULL_BUILD)</action>

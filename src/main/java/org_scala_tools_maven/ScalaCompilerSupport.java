@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -272,6 +273,9 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
                 sourceFiles.add(tmpAbsFile);
             }
         }
+        //scalac is sensible to scala file order, file system can't garanty file order => unreproductible build error across platform
+        // to garanty reproductible command line we order file by path (os dependend).
+        Collections.sort(sourceFiles);
         return sourceFiles;
     }
 
