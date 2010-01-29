@@ -274,26 +274,48 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
     protected JavaMainCaller getScalaCommand() throws Exception {
-        String oldClazz = scalaClassName;
         //This ensures we have a valid scala version...
         checkScalaVersion();
         boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(new VersionNumber(scalaVersion)) > 0);
-        if (!isPreviousScala271) {
-            scalaClassName = "scala.tools.nsc.ScalaDoc";
+        if (StringUtils.isEmpty(scaladocClassName)) {
+            if (!isPreviousScala271) {
+                scaladocClassName = "scala.tools.nsc.ScalaDoc";
+            } else {
+                scaladocClassName = scalaClassName;
+            }
         }
-        if (StringUtils.isNotEmpty(scaladocClassName)) {
-            scalaClassName = scaladocClassName;
-        }
-        JavaMainCaller cmd = getEmptyScalaCommand(scalaClassName);
-        cmd.addArgs(args);
-        cmd.addJvmArgs(jvmArgs);
+
+        JavaMainCaller jcmd = getEmptyScalaCommand(scaladocClassName);
+        jcmd.addArgs(args);
+        jcmd.addJvmArgs(jvmArgs);
+
         if (isPreviousScala271){
-            cmd.addArgs("-Ydoc");
+            jcmd.addArgs("-Ydoc");
         }
-        scalaClassName = oldClazz;
-        return cmd;
+
+        jcmd.addOption("-classpath", MainHelper.toMultiPath(project.getCompileClasspathElements()));
+        jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
+
+        boolean isScaladoc2 = (new VersionNumber("2.8.0").compareTo(new VersionNumber(scalaVersion)) <= 0) && ("scala.tools.nsc.ScalaDoc".equals(scaladocClassName));
+        if (isScaladoc2) {
+            jcmd.addArgs("-doc-format:html");
+            jcmd.addOption("-doc-title", doctitle);
+        } else {
+            jcmd.addOption("-bottom", getBottomText());
+            jcmd.addOption("-charset", charset);
+            jcmd.addOption("-doctitle", doctitle);
+            jcmd.addOption("-footer", footer);
+            jcmd.addOption("-header", header);
+            jcmd.addOption("-linksource", linksource);
+            jcmd.addOption("-nocomment", nocomment);
+            jcmd.addOption("-stylesheetfile", stylesheetfile);
+            jcmd.addOption("-top", top);
+            jcmd.addOption("-windowtitle", windowtitle);
+        }
+        return jcmd;
     }
 
     @SuppressWarnings("unchecked")
@@ -318,7 +340,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
             }
 
             if (sourceDir.exists()) {
-                JavaMainCaller jcmd = newScalaDocCmd();
+                JavaMainCaller jcmd = getScalaCommand();
                 jcmd.addOption("-d", reportOutputDir.getAbsolutePath());
                 String[] sources = findSourceFiles();
                 if (sources.length > 0) {
@@ -350,23 +372,6 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
             throw new MavenReportException("wrap: " + exc.getMessage(), exc);
         }
     }
-    @SuppressWarnings("unchecked")
-    protected JavaMainCaller newScalaDocCmd() throws Exception {
-        JavaMainCaller jcmd = getScalaCommand();
-        jcmd.addOption("-classpath", MainHelper.toMultiPath(project.getCompileClasspathElements()));
-        jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
-        jcmd.addOption("-bottom", getBottomText());
-        jcmd.addOption("-charset", charset);
-        jcmd.addOption("-doctitle", doctitle);
-        jcmd.addOption("-footer", footer);
-        jcmd.addOption("-header", header);
-        jcmd.addOption("-linksource", linksource);
-        jcmd.addOption("-nocomment", nocomment);
-        jcmd.addOption("-stylesheetfile", stylesheetfile);
-        jcmd.addOption("-top", top);
-        jcmd.addOption("-windowtitle", windowtitle);
-        return jcmd;
-    }
 
     @SuppressWarnings("unchecked")
     protected void aggregate(MavenProject parent) throws Exception {
@@ -389,7 +394,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
         }
         if (mpath.length() != 0) {
             getLog().info("aggregate vscaladoc from : " + mpath);
-            JavaMainCaller jcmd = newScalaDocCmd();
+            JavaMainCaller jcmd = getScalaCommand();
             jcmd.addOption("-d", dest.getAbsolutePath());
             jcmd.addOption("-aggregate", mpath.toString());
             jcmd.run(displayCmd);
