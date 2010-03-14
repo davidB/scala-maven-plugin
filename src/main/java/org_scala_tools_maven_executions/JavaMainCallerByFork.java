@@ -9,6 +9,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.LogOutputStream;
+import org.apache.commons.exec.OS;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
@@ -102,9 +103,20 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         File err = new File(System.getProperty("java.io.tmpdir"), mainClassName +".err");
         err.delete();
         cmd.add("2>"+ err.getCanonicalPath());
-        displayCmd(displayCmd, cmd);
-        ProcessBuilder pb = new ProcessBuilder(cmd);
-        pb.redirectErrorStream(true);
+        List<String> cmd2 = new ArrayList<String>();
+        String cmdStr = StringUtils.join(cmd.iterator(), " ");
+        if (OS.isFamilyDOS()) {
+            cmd2.add("cmd.exe");
+            cmd2.add("/C");
+            cmd2.add(cmdStr);
+        } else {
+            cmd2.add("/bin/sh");
+            cmd2.add("-c");
+            cmd2.add(cmdStr);
+        }
+        displayCmd(displayCmd, cmd2);
+        ProcessBuilder pb = new ProcessBuilder(cmd2);
+        //pb.redirectErrorStream(true);
         pb.start();
     }
 
