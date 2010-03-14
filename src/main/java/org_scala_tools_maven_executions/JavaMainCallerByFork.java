@@ -31,8 +31,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
 
     private boolean _redirectToLog;
 
-    public JavaMainCallerByFork(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args,
-            boolean forceUseArgFile) throws Exception {
+    public JavaMainCallerByFork(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args, boolean forceUseArgFile) throws Exception {
         super(requester, mainClassName, classpath, jvmArgs, args);
         for (String key : System.getenv().keySet()) {
             env.add(key + "=" + System.getenv(key));
@@ -49,12 +48,8 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
     }
 
     public boolean run(boolean displayCmd, boolean throwFailure) throws Exception {
-        String[] cmd = buildCommand();
-        if (displayCmd) {
-            requester.getLog().info("cmd: " + " " + StringUtils.join(cmd, " "));
-        } else if (requester.getLog().isDebugEnabled()) {
-            requester.getLog().debug("cmd: " + " " + StringUtils.join(cmd, " "));
-        }
+        List<String> cmd = buildCommand();
+        displayCmd(displayCmd, cmd);
         Executor exec = new DefaultExecutor();
 
         //err and out are redirected to out
@@ -76,9 +71,9 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
             }));
         }
 
-        CommandLine cl = new CommandLine(cmd[0]);
-        for (int i = 1; i < cmd.length; i++) {
-            cl.addArgument(cmd[i]);
+        CommandLine cl = new CommandLine(cmd.get(0));
+        for (int i = 1; i < cmd.size(); i++) {
+            cl.addArgument(cmd.get(i));
         }
         try {
             int exitValue = exec.execute(cl);
@@ -100,17 +95,28 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
     }
 
     public void spawn(boolean displayCmd) throws Exception {
-        String[] cmd = buildCommand();
-        if (displayCmd) {
-            requester.getLog().info("cmd: " + " " + StringUtils.join(cmd, " "));
-        } else if (requester.getLog().isDebugEnabled()) {
-            requester.getLog().debug("cmd: " + " " + StringUtils.join(cmd, " "));
-        }
+        List<String> cmd = buildCommand();
+        File out = new File(System.getProperty("java.io.tmpdir"), mainClassName +".out");
+        out.delete();
+        cmd.add(">"+ out.getCanonicalPath());
+        File err = new File(System.getProperty("java.io.tmpdir"), mainClassName +".err");
+        err.delete();
+        cmd.add("2>"+ err.getCanonicalPath());
+        displayCmd(displayCmd, cmd);
         ProcessBuilder pb = new ProcessBuilder(cmd);
+        pb.redirectErrorStream(true);
         pb.start();
     }
 
-    protected String[] buildCommand() throws Exception {
+    private void displayCmd(boolean displayCmd, List<String> cmd) {
+        if (displayCmd) {
+            requester.getLog().info("cmd: " + " " + StringUtils.join(cmd.iterator(), " "));
+        } else if (requester.getLog().isDebugEnabled()) {
+            requester.getLog().debug("cmd: " + " " + StringUtils.join(cmd.iterator(), " "));
+        }
+    }
+
+    protected List<String> buildCommand() throws Exception {
         ArrayList<String> back = new ArrayList<String>(2 + jvmArgs.size() + args.size());
         back.add(_javaExec);
         if (!_forceUseArgFile && (lengthOf(args, 1) + lengthOf(jvmArgs, 1) < 400)) {
@@ -126,7 +132,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
             back.add(mainClassName);
             back.add(MainHelper.createArgFile(args).getCanonicalPath());
         }
-        return back.toArray(new String[back.size()]);
+        return back;
     }
 
     private long lengthOf(List<String> l, long sepLength) throws Exception {
