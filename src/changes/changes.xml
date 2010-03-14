@@ -5,8 +5,10 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="2.13" date="" description="editor/ide integration enhancement">
+    <release version="2.14" date="" description="scalacs integration">
       <action dev="David Bernard" type="update">the list of source to compile is sorted by path to allow better "reproductible" build across box (as scalac seems sensible to file order)</action>
+      <action dev="David Bernard" type="update">add redirection of spawned process to (java.io.tmpdir)/(mainClassName).(err|out)</action>
+      <action dev="David Bernard" type="add">integration with ScalaCS</action>
     </release>
     <release version="2.13" date="" description="editor/ide integration enhancement">
       <action dev="David Bernard" type="update">compile, test-compile, cc compile all files by default</action>
