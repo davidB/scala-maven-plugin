@@ -6,16 +6,19 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -54,11 +57,13 @@ public class ScalacsClient {
     private Log _log;
     private ScalaMojoSupport _mojo;
     private String _csVersion;
+    private String[] _jvmArgs;
 
-    public ScalacsClient(ScalaMojoSupport mojo, String csVersion) {
+    public ScalacsClient(ScalaMojoSupport mojo, String csVersion, String[] jvmArgs) {
         _log = mojo.getLog();
         _mojo = mojo;
         _csVersion = csVersion;
+        _jvmArgs = jvmArgs;
     }
 
     public List<LogEvent> parse(String response) throws Exception {
@@ -118,8 +123,18 @@ public class ScalacsClient {
      * @return the output (log) of the request
      * @throws Exception
      */
-    public String sendRequestCompile() throws Exception {
-        return sendRequest("compile", null);
+    public String sendRequestCompile(String projectName, boolean withDependencies, boolean withDependent) throws Exception {
+        StringBuilder query = new StringBuilder("compile?");
+        if (StringUtils.isNotEmpty(projectName)) {
+            query.append("p=").append(projectName);
+            if (!withDependencies) {
+                query.append("&noDependencies=true");
+            }
+            if (!withDependent) {
+                query.append("&noDependent=true");
+            }
+        }
+        return sendRequest(query.toString(), null);
     }
 
     /**
@@ -180,12 +195,15 @@ public class ScalacsClient {
     public void startNewServer() throws Exception{
         _log.info("start scala-tools-server...");
         Set<String> classpath = new HashSet<String>();
-        //_mojo.addToClasspath(_mojo.SCALA_GROUPID, "scala-compiler", _mojo.scalaVersion, classpath);
-        _mojo.addToClasspath("net.alchim31", "scalacs", _csVersion, classpath, true);
-        JavaMainCaller jcmd = new JavaMainCallerByFork(_mojo, "net_alchim31_scalacs.HttpServer", MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()])), null, null, false);
+        //_mojo.addToClasspath("net.alchim31", "scalacs", _csVersion, classpath, true);
+        //JavaMainCaller jcmd = new JavaMainCallerByFork(_mojo, "net_alchim31_scalacs.HttpServer", MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()])), null, null, false);
+
+        _mojo.addToClasspath("org.scala-tools.sbt", "sbt-launch", "0.7.2", classpath, true);
+        File scalaCsBootConf = installConf(new File(System.getProperty("user.home"), ".sbt-launch/scalacs-"+ _csVersion +".boot.properties"));
+        JavaMainCaller jcmd = new JavaMainCallerByFork(_mojo, "xsbt.boot.Boot", MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()])), _jvmArgs, new String[]{scalaCsBootConf.getCanonicalPath()}, false);
         jcmd.spawn(_mojo.displayCmd);
         boolean started = false;
-        while (!started) {
+        for(int i = 60; i>0 && !started; i--) {
             try {
                 System.out.print(".");
                 Thread.sleep(1000);
@@ -196,5 +214,29 @@ public class ScalacsClient {
                 started = false; //useless but more readable
             }
         }
+        if (!started) {
+            throw new IllegalStateException("can't start and connect to scalacs");
+        }
+    }
+
+    private File installConf(File scalaCsBootConf) throws Exception {
+        if (!scalaCsBootConf.isFile()) {
+            scalaCsBootConf.getParentFile().mkdirs();
+            InputStream is = null;
+            StringWriter sw = new StringWriter();
+            try {
+                is = this.getClass().getResourceAsStream("scalacs.boot.properties");
+                IOUtil.copy(is, sw);
+            } finally {
+                IOUtil.close(is);
+                IOUtil.close(sw);
+            }
+            Properties p = new Properties(System.getProperties());
+            p.setProperty("scalacs.version", _csVersion);
+            p.setProperty("scalacs.directory", scalaCsBootConf.getParentFile().getCanonicalPath());
+            String cfg = StringUtils.interpolate(sw.toString(), p);
+            FileUtils.fileWrite(scalaCsBootConf.getCanonicalPath(), "UTF-8", cfg);
+        }
+        return scalaCsBootConf;
     }
 }

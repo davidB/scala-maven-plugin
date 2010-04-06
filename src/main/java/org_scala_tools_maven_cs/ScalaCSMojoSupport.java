@@ -15,6 +15,6 @@ abstract public class ScalaCSMojoSupport extends ScalaMojoSupport {
 
     @Override
     protected void doExecute() throws Exception {
-        scs = new ScalacsClient(this, csVersion);
+        scs = new ScalacsClient(this, csVersion, jvmArgs);
     }
 }

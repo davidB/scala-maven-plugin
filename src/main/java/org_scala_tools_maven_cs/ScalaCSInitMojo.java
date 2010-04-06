@@ -90,12 +90,13 @@ public class ScalaCSInitMojo extends ScalaCSMojoSupport {
         super.doExecute();
         String yaml = toYaml(project).toString();
         if (dumpYaml) {
+            new File(project.getBuild().getDirectory()).mkdirs();
             FileUtils.fileWrite(project.getBuild().getDirectory() + "/project.yaml", "UTF-8", yaml);
         }
         //TODO use parser and maven logger to print (and find warning, error,...)
         System.out.println(scs.sendRequestCreateOrUpdate(yaml));
         if (compileAfterInit) {
-            System.out.println(scs.sendRequestCompile());
+            System.out.println(scs.sendRequestCompile(project.getArtifactId()+"-"+project.getVersion(), true, true));
         }
     }
 
