@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>maven-scala-plugin : Articles</title>
+        <authors>
+            <person name="David Bernard"/>
+        </authors>
+    </properties>
+    <body>
+        <section name="Articles...">
+            <ul>
+                <li>[2010-03-24 en] <a href="http://mackaz.de/111">Build a mixed Scala 2.8/Java application from scratch with Maven</a></li>
+                <li>[2009-09-27 fr] <a href="http://www.scala-fr.org/initialiser-un-nouveau-projet-scala-avec-maven-2">Initialiser un nouveau projet Scala avec Maven 2</a></li>
+                <li>[2008-01-04 en] <a href="http://www.scala-blogs.org/2008/01/maven-for-scala.html">maven for scala</a></li>
+            </ul>
+        </section>
+    </body>
+</document>
