@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
@@ -26,6 +27,7 @@ import org_scala_tools_maven.ScalaMojoSupport;
 import org_scala_tools_maven_executions.JavaMainCaller;
 import org_scala_tools_maven_executions.JavaMainCallerByFork;
 import org_scala_tools_maven_executions.MainHelper;
+import org_scala_tools_maven_executions.SpawnMonitor;
 
 /**
  * ScalacsClient is a client used to send request to a scalacs running server.
@@ -33,6 +35,7 @@ import org_scala_tools_maven_executions.MainHelper;
  * @author davidB
  */
 public class ScalacsClient {
+    public static final String BOOT_PROP_RSRC = "scalacs.boot.properties";
     public static Pattern linePattern = Pattern.compile("^-(INFO|WARN|ERROR)\t([^\t]*)\t([^\t]*)\t(.*)$");
     public static Pattern locationPattern = Pattern.compile("([^#]*)#(\\d+),(\\d+),(\\d+),(\\d+)");
 
@@ -124,12 +127,13 @@ public class ScalacsClient {
      * @throws Exception
      */
     public String sendRequestCompile(String projectName, boolean withDependencies, boolean withDependent) throws Exception {
-        StringBuilder query = new StringBuilder("compile?");
+        StringBuilder query = new StringBuilder("compile");
         if (StringUtils.isNotEmpty(projectName)) {
-            query.append("p=").append(projectName);
+            query.append("?p=").append(projectName);
             if (!withDependencies) {
                 query.append("&noDependencies=true");
             }
+            // not supported by scalacs 0.2
             if (!withDependent) {
                 query.append("&noDependent=true");
             }
@@ -184,7 +188,12 @@ public class ScalacsClient {
      * @throws Exception
      */
     public void traceUrl(URL url) throws Exception {
-        _log.debug("request : " + url);
+        String msg = "request : " + url;
+        if (_mojo.displayCmd) {
+            _log.info(msg);
+        } else {
+            _log.debug(msg);
+        }
     }
 
     /**
@@ -199,23 +208,42 @@ public class ScalacsClient {
         //JavaMainCaller jcmd = new JavaMainCallerByFork(_mojo, "net_alchim31_scalacs.HttpServer", MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()])), null, null, false);
 
         _mojo.addToClasspath("org.scala-tools.sbt", "sbt-launch", "0.7.2", classpath, true);
-        File scalaCsBootConf = installConf(new File(System.getProperty("user.home"), ".sbt-launch/scalacs-"+ _csVersion +".boot.properties"));
-        JavaMainCaller jcmd = new JavaMainCallerByFork(_mojo, "xsbt.boot.Boot", MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()])), _jvmArgs, new String[]{scalaCsBootConf.getCanonicalPath()}, false);
-        jcmd.spawn(_mojo.displayCmd);
+        String[] jvmArgs = new String[(_jvmArgs == null)?1:_jvmArgs.length + 1];
+        File installDir = new File(System.getProperty("user.home"), ".sbt-launch");
+        jvmArgs[0] = "-Dsbt.boot.properties="+ installConf(new File(installDir, "scalacs-"+ _csVersion +".boot.properties")).getCanonicalPath();
+        if (_jvmArgs != null) {
+            System.arraycopy(_jvmArgs, 0, jvmArgs, 1, _jvmArgs.length);
+        }
+        FileTailer tailer = new FileTailer(new File(installDir, "update.log"));
         boolean started = false;
-        for(int i = 60; i>0 && !started; i--) {
-            try {
-                System.out.print(".");
-                Thread.sleep(1000);
-                sendRequest("ping", null);
-                started = true;
-                System.out.println("\n started");
-            } catch (java.net.ConnectException exc) {
-                started = false; //useless but more readable
+        try {
+            JavaMainCaller jcmd = new JavaMainCallerByFork(_mojo, "xsbt.boot.Boot", MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()])), jvmArgs, null, false);
+            SpawnMonitor mon = jcmd.spawn(_mojo.displayCmd);
+            for(int i = 60; i>0 && !started && mon.isRunning(); i--) {
+                try {
+                    if (_mojo.displayCmd) {
+                        System.out.print(tailer.whatNew());
+                    } else {
+                        System.out.print(".");
+                    }
+                    Thread.sleep(1000);
+                    sendRequest("ping", null);
+                    started = true;
+                } catch (java.net.ConnectException exc) {
+                    started = false; //useless but more readable
+                }
             }
+            if (_mojo.displayCmd) {
+                System.out.print(tailer.whatNew());
+            }
+            System.out.println("");
+        } finally {
+            tailer.close();
         }
         if (!started) {
             throw new IllegalStateException("can't start and connect to scalacs");
+        } else {
+            _mojo.getLog().info("scalacs connected");
         }
     }
 
@@ -225,7 +253,17 @@ public class ScalacsClient {
             InputStream is = null;
             StringWriter sw = new StringWriter();
             try {
-                is = this.getClass().getResourceAsStream("scalacs.boot.properties");
+                is = this.getClass().getResourceAsStream(BOOT_PROP_RSRC);
+                if (is == null) {
+                    is = Thread.currentThread().getContextClassLoader().getResourceAsStream(BOOT_PROP_RSRC);
+                }
+                if (is == null) {
+                    String abspath = "/" + this.getClass().getPackage().getName().replace('.', '/') + "/" + BOOT_PROP_RSRC;
+                    is = Thread.currentThread().getContextClassLoader().getResourceAsStream(abspath);
+                    if (is == null) {
+                        throw new IllegalStateException("can't find " + abspath + " in the classpath");
+                    }
+                }
                 IOUtil.copy(is, sw);
             } finally {
                 IOUtil.close(is);
@@ -238,5 +276,57 @@ public class ScalacsClient {
             FileUtils.fileWrite(scalaCsBootConf.getCanonicalPath(), "UTF-8", cfg);
         }
         return scalaCsBootConf;
+    }
+
+    private static class FileTailer {
+        private long _filePointer;
+        private RandomAccessFile _raf;
+        private File _file;
+        public FileTailer(File f) throws Exception {
+            _file = f;
+            _filePointer = f.length();
+            _raf = null;
+        }
+
+        public CharSequence whatNew() throws Exception {
+            StringBuilder back = new StringBuilder();
+            if (_raf == null && _file.isFile()) {
+                _raf = new RandomAccessFile(_file, "r" );
+            }
+            if (_raf != null) {
+                // Compare the length of the file to the file pointer
+                long fileLength = _file.length();
+                if( fileLength < _filePointer ) {
+                  // Log file must have been rotated or deleted;
+                  // reopen the file and reset the file pointer
+                  close();
+                  _raf = new RandomAccessFile(_file, "r" );
+                  _filePointer = 0;
+                }
+
+                if( fileLength > _filePointer ) {
+                  // There is data to read
+                  _raf.seek( _filePointer );
+//                  back = _raf.readUTF();
+
+                  String line =  null;
+                  while( (line = _raf.readLine())!= null ) {
+                    back.append( line ).append('\n');
+                  }
+                  _filePointer = _raf.getFilePointer();
+                }
+            }
+            return back;
+        }
+        public void close() {
+            try {
+                if (_raf != null) {
+                    _raf.close();
+                    _raf = null;
+                }
+            } catch(Exception e) {
+                // ignore
+            }
+        }
     }
 }
