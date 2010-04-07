@@ -59,12 +59,16 @@ public class ScalacsClient {
 
     private Log _log;
     private ScalaMojoSupport _mojo;
-    private String _csVersion;
     private String[] _jvmArgs;
+    private String _csGroupId;
+    private String _csArtifactId;
+    private String _csVersion;
 
-    public ScalacsClient(ScalaMojoSupport mojo, String csVersion, String[] jvmArgs) {
+    public ScalacsClient(ScalaMojoSupport mojo, String csGroupId, String csArtifactId, String csVersion, String[] jvmArgs) {
         _log = mojo.getLog();
         _mojo = mojo;
+        _csGroupId = csGroupId;
+        _csArtifactId = csArtifactId;
         _csVersion = csVersion;
         _jvmArgs = jvmArgs;
     }
@@ -210,7 +214,7 @@ public class ScalacsClient {
         _mojo.addToClasspath("org.scala-tools.sbt", "sbt-launch", "0.7.2", classpath, true);
         String[] jvmArgs = new String[(_jvmArgs == null)?1:_jvmArgs.length + 1];
         File installDir = new File(System.getProperty("user.home"), ".sbt-launch");
-        jvmArgs[0] = "-Dsbt.boot.properties="+ installConf(new File(installDir, "scalacs-"+ _csVersion +".boot.properties")).getCanonicalPath();
+        jvmArgs[0] = "-Dsbt.boot.properties="+ installConf(new File(installDir, _csArtifactId + "-"+ _csVersion +".boot.properties")).getCanonicalPath();
         if (_jvmArgs != null) {
             System.arraycopy(_jvmArgs, 0, jvmArgs, 1, _jvmArgs.length);
         }
@@ -270,6 +274,8 @@ public class ScalacsClient {
                 IOUtil.close(sw);
             }
             Properties p = new Properties(System.getProperties());
+            p.setProperty("scalacs.groupId", _csGroupId);
+            p.setProperty("scalacs.artifactId", _csArtifactId);
             p.setProperty("scalacs.version", _csVersion);
             p.setProperty("scalacs.directory", scalaCsBootConf.getParentFile().getCanonicalPath());
             String cfg = StringUtils.interpolate(sw.toString(), p);
