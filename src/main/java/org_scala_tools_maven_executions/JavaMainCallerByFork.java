@@ -95,7 +95,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         }
     }
 
-    public void spawn(boolean displayCmd) throws Exception {
+    public SpawnMonitor spawn(boolean displayCmd) throws Exception {
         List<String> cmd = buildCommand();
         File out = new File(System.getProperty("java.io.tmpdir"), mainClassName +".out");
         out.delete();
@@ -117,7 +117,17 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         displayCmd(displayCmd, cmd2);
         ProcessBuilder pb = new ProcessBuilder(cmd2);
         //pb.redirectErrorStream(true);
-        pb.start();
+        final Process p = pb.start();
+        return new SpawnMonitor(){
+            public boolean isRunning() throws Exception {
+                try {
+                    p.exitValue();
+                    return false;
+                } catch(IllegalThreadStateException e) {
+                    return true;
+                }
+            }
+        };
     }
 
     private void displayCmd(boolean displayCmd, List<String> cmd) {

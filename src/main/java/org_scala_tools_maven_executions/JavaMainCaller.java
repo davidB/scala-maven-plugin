@@ -36,8 +36,9 @@ public interface JavaMainCaller {
      * run the command without stream redirection nor waiting for exit
      *
      * @param displayCmd
+     * @return the spawn Process (or null if no process was spawned)
      * @throws Exception
      */
-    public abstract void spawn(boolean displayCmd) throws Exception;
+    public abstract SpawnMonitor spawn(boolean displayCmd) throws Exception;
 
 }
