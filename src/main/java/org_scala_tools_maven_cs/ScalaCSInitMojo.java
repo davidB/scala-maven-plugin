@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -86,18 +87,18 @@ public class ScalaCSInitMojo extends ScalaCSMojoSupport {
     protected boolean compileAfterInit;
 
     @Override
-    protected void doExecute() throws Exception {
-        super.doExecute();
+    protected CharSequence doRequest() throws Exception {
         String yaml = toYaml(project).toString();
         if (dumpYaml) {
             new File(project.getBuild().getDirectory()).mkdirs();
             FileUtils.fileWrite(project.getBuild().getDirectory() + "/project.yaml", "UTF-8", yaml);
         }
-        //TODO use parser and maven logger to print (and find warning, error,...)
-        System.out.println(scs.sendRequestCreateOrUpdate(yaml));
+        StringBuilder back = new StringBuilder();
+        back.append(scs.sendRequestCreateOrUpdate(yaml));
         if (compileAfterInit) {
-            System.out.println(scs.sendRequestCompile(project.getArtifactId()+"-"+project.getVersion(), true, true));
+            back.append(scs.sendRequestCompile(project.getArtifactId()+"-"+project.getVersion(), true, true));
         }
+        return back;
     }
 
     private CharSequence toYaml(MavenProject project) throws Exception {
@@ -149,12 +150,10 @@ public class ScalaCSInitMojo extends ScalaCSMojoSupport {
         }
 
         Yaml yaml = new Yaml();
-        StringBuilder back = new StringBuilder();
-        back.append(yaml.dump(dataCompile))
-//            .append("\n---\n")
-            //.append(yaml.dump(dataTest))
-            ;
-        return back;
+        List<HashMap<String, Object>> prjs = new LinkedList<HashMap<String, Object>>();
+        prjs.add(dataCompile);
+        prjs.add(dataTest);
+        return yaml.dumpAll(prjs.iterator());
     }
 
     @SuppressWarnings("unchecked")

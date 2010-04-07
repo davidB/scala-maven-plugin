@@ -1,5 +1,7 @@
 package org_scala_tools_maven_cs;
 
+import org.apache.maven.plugin.MojoFailureException;
+
 import org_scala_tools_maven.ScalaMojoSupport;
 
 abstract public class ScalaCSMojoSupport extends ScalaMojoSupport {
@@ -14,7 +16,20 @@ abstract public class ScalaCSMojoSupport extends ScalaMojoSupport {
     protected ScalacsClient scs;
 
     @Override
-    protected void doExecute() throws Exception {
+    final protected void doExecute() throws Exception {
         scs = new ScalacsClient(this, csVersion, jvmArgs);
+        String output = doRequest().toString();
+        //TODO use parser and maven logger to print (and find warning, error,...)
+        //TODO use Stream instead of String to allow progressive display (when scalacs will support it)
+        System.out.println(output);
+        if (output.contains("-ERROR")) {
+            throw new MojoFailureException("ScalaCS reply with ERRORs");
+        }
+    }
+
+    protected abstract CharSequence doRequest() throws Exception;
+
+    protected String projectNamePattern() throws Exception {
+        return project.getArtifactId() + "-" + project.getVersion() + "/.*";
     }
 }

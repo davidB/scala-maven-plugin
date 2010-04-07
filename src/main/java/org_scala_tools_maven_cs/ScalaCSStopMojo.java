@@ -8,8 +8,7 @@ package org_scala_tools_maven_cs;
 public class ScalaCSStopMojo extends ScalaCSMojoSupport {
 
     @Override
-    protected void doExecute() throws Exception {
-        super.doExecute();
-        System.out.println(scs.sendRequestStop());
+    protected CharSequence doRequest() throws Exception {
+        return scs.sendRequestStop();
     }
 }

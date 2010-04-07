@@ -8,8 +8,7 @@ package org_scala_tools_maven_cs;
 public class ScalaCSCompileMojo extends ScalaCSMojoSupport {
 
     @Override
-    protected void doExecute() throws Exception {
-        super.doExecute();
-        System.out.println(scs.sendRequestCompile(project.getArtifactId()+"-"+project.getVersion(), true, true));
+    protected CharSequence doRequest() throws Exception {
+        return scs.sendRequestCompile(projectNamePattern(), true, true);
     }
 }
