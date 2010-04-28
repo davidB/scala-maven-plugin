@@ -494,7 +494,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @param scalac
      * @throws Exception
      */
-    private void addCompilerPluginOptions(JavaMainCaller scalac) throws Exception {
+    protected void addCompilerPluginOptions(JavaMainCaller scalac) throws Exception {
         for (String plugin : getCompilerPlugins()) {
             scalac.addArgs("-Xplugin:" + plugin);
         }

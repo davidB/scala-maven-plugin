@@ -11,6 +11,11 @@
 		
 		<section name="Read-Eval-Print-Loop (aka scala:console)">
 			<dl>
+				<dt>Why does maven net let me call scala:console?</dt>
+				<dd>Maven 3.0 made its policy more strict about shortened plugin names.   If you wish to use scala:goal forms on the command-line you must create a &lt;pluginGroup&gt; element in your ~/.m2/settings.xml file that contains org.scala-tools as a pluginGroup.
+				</dd>
+			</dl>
+			<dl>
 				<dt>Why does the mvn scala:console goal not compile the project?</dt>
 				<dd>The authors of the plugin felt it was much more flexible to allow a REPL to be started during the coding of a project.
 				The REPL is mostly used for experimenting with APIs and therefore users should not need a functioning project to test out potential code paths.

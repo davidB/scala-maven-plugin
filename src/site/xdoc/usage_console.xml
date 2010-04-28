@@ -107,6 +107,10 @@ object LiftConsole {
       </plugin>
       ]]></source>
     </li>
+    <li><b>NOTE</b> - Forking is currently disabled in the plugin due to cross-platform issues with jline and process indirection.
+        If you wish to use JRebel with the console, please set your maven opts in your environment:
+        <source>MAVEN_OPTS="$MAVEN_OPTS -noverify -javaagent:/...path/to/jrebel.jar" mvn scala:console</source>
+    </li>
     </ol>       
     </p>
     </section>
