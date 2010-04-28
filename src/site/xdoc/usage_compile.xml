@@ -102,5 +102,26 @@ one error found
        ]]></source>
        </p>
 	</section>
+
+    <section name="Compiler Arguments">
+        <p>It is common to wish to send arguments to the scalac compiler during compilation of your project.  To do so, make use of the args configuration parameter like so:</p>
+        <source><![CDATA[
+<project>
+  ...
+  <plugin>
+    <groupId>org.scala-tools</groupId>
+    <artifactId>maven-scala-plugin</artifactId>
+      <configuration>
+        <args>
+          <arg>-unchecked</arg>
+          <arg>-deprecation</arg>
+          <arg>-explaintypes</arg>
+        </args>
+    </configuration>
+  </plugin>
+  ...
+</project>
+                ]]></source>
+    </section>
   </body>
 </document>
