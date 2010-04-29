@@ -36,6 +36,7 @@ import org_scala_tools_maven_executions.MainHelper;
  *
  * @goal doc
  * @requiresDependencyResolution compile
+ * @execute phase="generate-sources"
  */
 public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
     /**

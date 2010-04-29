@@ -56,7 +56,7 @@ import org_scala_tools_maven_executions.JavaMainCallerByFork;
 import org_scala_tools_maven_executions.JavaMainCallerInProcess;
 import org_scala_tools_maven_executions.MainHelper;
 
-abstract class ScalaMojoSupport extends AbstractMojo {
+public abstract class ScalaMojoSupport extends AbstractMojo {
 
     public static final String SCALA_GROUPID= "org.scala-lang";
     public static final String SCALA_LIBRARY_ARTIFACTID= "scala-library";
@@ -170,7 +170,7 @@ abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter expression="${maven.scala.displayCmd}"
      *            default-value="false"
      */
-    protected boolean displayCmd;
+    public boolean displayCmd;
 
     /**
      * Forks the execution of scalac into a separate process.
@@ -298,12 +298,12 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         return resolveDependencyArtifacts(pomProject);
     }
 
-    protected void addToClasspath(String groupId, String artifactId, String version, Set<String> classpath) throws Exception {
+    public void addToClasspath(String groupId, String artifactId, String version, Set<String> classpath) throws Exception {
         addToClasspath(groupId, artifactId, version, classpath, true);
     }
 
 
-    protected void addToClasspath(String groupId, String artifactId, String version, Set<String> classpath, boolean addDependencies) throws Exception {
+    public void addToClasspath(String groupId, String artifactId, String version, Set<String> classpath, boolean addDependencies) throws Exception {
         addToClasspath(factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar"), classpath, addDependencies);
     }
 
@@ -312,7 +312,8 @@ abstract class ScalaMojoSupport extends AbstractMojo {
         classpath.add(artifact.getFile().getCanonicalPath());
         if (addDependencies) {
             for (Artifact dep : resolveArtifactDependencies(artifact)) {
-                classpath.add(dep.getFile().getCanonicalPath());
+                //classpath.add(dep.getFile().getCanonicalPath());
+                addToClasspath(dep, classpath, addDependencies);
             }
         }
     }

@@ -282,7 +282,7 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     private void notifyCompilation(List<File> files) throws Exception {
         if (notifyCompilation) {
             for (File f : files) {
-                getLog().info(String.format("%s:-1: info: compiling\n", f.getCanonicalPath()));
+                getLog().info(String.format("%s:-1: info: compiling", f.getCanonicalPath()));
             }
         }
     }

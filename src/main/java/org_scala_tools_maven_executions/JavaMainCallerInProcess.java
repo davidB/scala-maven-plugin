@@ -60,9 +60,11 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
         }
     }
 
-    /** spawns a thread to run the method */
-    public void spawn(final boolean displayCmd) throws Exception {
-        Thread t = new Thread() {
+    /**
+     *  spawns a thread to run the method
+     */
+    public SpawnMonitor spawn(final boolean displayCmd) throws Exception {
+        final Thread t = new Thread() {
             @Override
             public void run() {
                 try {
@@ -73,6 +75,11 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
             }
         };
         t.start();
+        return new SpawnMonitor() {
+            public boolean isRunning() throws Exception {
+                return t.isAlive();
+            }
+        };
     }
 
     /** Runs the main method of a java class */

@@ -1,33 +1,22 @@
-package org_scala_tools_maven;
+package org_scala_tools_maven_cs;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.FileUtils;
 import org.yaml.snakeyaml.Yaml;
-import org_scala_tools_maven_executions.JavaMainCaller;
-import org_scala_tools_maven_executions.JavaMainCallerByFork;
-import org_scala_tools_maven_executions.MainHelper;
 
 /**
- * @goal sts-init
+ * @goal cs-init
  * @requiresDependencyResolution test
  */
-public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
-    /**
-     * If you want to use an other version of scala-tools-server than the default one.
-     *
-     * @parameter expression="${maven.scala.stsVersion}"
-     */
-    protected String stsVersion = "0.1-SNAPSHOT";
+public class ScalaCSInitMojo extends ScalaCSMojoSupport {
 
     /**
      * The directory in which to place compilation output
@@ -83,13 +72,36 @@ public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
      */
     protected File testSourceDir;
 
+    /**
+     * The directory in which to find test scala source code
+     *
+     * @parameter expression="${maven.scalacs.dumpYaml}" default-value="true"
+     */
+    protected boolean dumpYaml;
+
+    /**
+     * Should send a compilation request after initialization.
+     *
+     * @parameter expression="${maven.scalacs.compileAfterInit}" default-value="false"
+     */
+    protected boolean compileAfterInit;
+
     @Override
-    protected void doExecute() throws Exception {
-        System.out.println(sendRequestAdd());
-        System.out.println(sendRequestCompile());
+    protected CharSequence doRequest() throws Exception {
+        String yaml = toYaml(project).toString();
+        if (dumpYaml) {
+            new File(project.getBuild().getDirectory()).mkdirs();
+            FileUtils.fileWrite(project.getBuild().getDirectory() + "/project.yaml", "UTF-8", yaml);
+        }
+        StringBuilder back = new StringBuilder();
+        back.append(scs.sendRequestCreateOrUpdate(yaml));
+        if (compileAfterInit) {
+            back.append(scs.sendRequestCompile(project.getArtifactId()+"-"+project.getVersion(), true, true));
+        }
+        return back;
     }
 
-    private String toYaml(MavenProject project) throws Exception {
+    private CharSequence toYaml(MavenProject project) throws Exception {
         HashMap<String, Object> dataCompile = new HashMap<String, Object>();
         /*
         name : sample
@@ -108,7 +120,7 @@ public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
           - "-deprecation"
         */
         dataCompile.put("name", project.getArtifactId()+"-"+project.getVersion()+"/main");
-        dataCompile.put("sourcesDirs", getSourceDirectories());
+        dataCompile.put("sourceDirs", getSourceDirectories());
         if (includes != null) {
             dataCompile.put("includes", new ArrayList<String>(includes));
         }
@@ -120,11 +132,11 @@ public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
         if (args != null) {
             dataCompile.put("args", args);
         }
-        dataCompile.put("dependency-link-path", localRepo.pathOf(project.getArtifact()));
+        dataCompile.put("exported", new File(localRepo.getBasedir() , localRepo.pathOf(project.getArtifact())).getCanonicalPath());
 
         HashMap<String, Object> dataTest = new HashMap<String, Object>();
         dataTest.put("name", project.getArtifactId()+"-"+project.getVersion() +"/test");
-        dataTest.put("sourcesDirs", project.getTestCompileSourceRoots());
+        dataTest.put("sourceDirs", project.getTestCompileSourceRoots());
         if (includes != null) {
             dataTest.put("includes", new ArrayList<String>(includes));
         }
@@ -138,7 +150,10 @@ public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
         }
 
         Yaml yaml = new Yaml();
-        return yaml.dump(dataCompile) + "/n---/n" + yaml.dump(dataTest);
+        List<HashMap<String, Object>> prjs = new LinkedList<HashMap<String, Object>>();
+        prjs.add(dataCompile);
+        prjs.add(dataTest);
+        return yaml.dumpAll(prjs.iterator());
     }
 
     @SuppressWarnings("unchecked")
@@ -150,60 +165,5 @@ public class ScalaToolsServerInitMojo extends ScalaMojoSupport {
             sources.add(scalaSourceDir);
         }
         return sources;
-    }
-
-    protected String sendRequestAdd() throws Exception {
-        String yamlDef = toYaml(project);
-        String back = "";
-        try {
-            back = sendRequest("add", yamlDef);
-        } catch (java.net.ConnectException exc) {
-            startNewServer();
-            back = sendRequest("add", yamlDef);
-        }
-        return back;
-    }
-
-    protected String sendRequestCompile() throws Exception {
-        return sendRequest("compile", null);
-    }
-
-    protected String sendRequestStop() throws Exception {
-        return sendRequest("stop", null);
-    }
-
-    protected String sendRequest(String action, String data) throws Exception {
-        URL url = new URL("http://127.0.0.1:27616/" + action);
-        URLConnection cnx = url.openConnection();
-        cnx.setDoOutput(StringUtils.isNotEmpty(data));
-        cnx.setDoInput(true);
-        if (StringUtils.isNotEmpty(data)) {
-            IOUtil.copy(data, cnx.getOutputStream());
-            IOUtil.close(cnx.getOutputStream());
-        }
-        String back = IOUtil.toString(cnx.getInputStream());
-        IOUtil.close(cnx.getInputStream());
-        return back;
-    }
-
-    private void startNewServer() throws Exception {
-        getLog().info("start scala-tools-server...");
-        Set<String> classpath = new HashSet<String>();
-        addToClasspath(SCALA_GROUPID, "scala-compiler", scalaVersion, classpath);
-        addToClasspath("org.scala-tools", "scala-tools-server", stsVersion, classpath);
-        JavaMainCaller jcmd = new JavaMainCallerByFork(this, "org.scala_tools.server.HttpServer", MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()])), null, null, forceUseArgFile);
-        jcmd.spawn(displayCmd);
-        boolean started = false;
-        while (!started) {
-            try {
-                System.out.print(".");
-                Thread.sleep(1000);
-                sendRequest("ping", null);
-                started = true;
-                System.out.println("\n started");
-            } catch (java.net.ConnectException exc) {
-                started = false; //useless but more readable
-            }
-        }
     }
 }
