@@ -6,6 +6,9 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
 import org_scala_tools_maven.VersionNumber;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org_scala_tools_maven_dependency.ScalaConstants.*;
 /**
  * Ensures that all scala versions match the given version.
@@ -16,6 +19,8 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
     private VersionNumber _version;
     private boolean _failed = false;
     private Log _log;
+
+    private List<String> scalaDependentArtifactStrings = new ArrayList<String>();
 
     public boolean endVisit(DependencyNode node) {
         return !_failed;
@@ -40,6 +45,11 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
             if(originalVersion.compareTo(_version) != 0) {
                 _failed = true;
             }
+            //If this dependency is transitive, we want to track which artifact requires this...
+            if(node.getParent() != null) { //TODO - Go all the way up the parent chain till we hit the bottom....
+                final Artifact parentArtifact = node.getParent().getArtifact();
+                scalaDependentArtifactStrings.add(" " + StringUtil.makeArtifactNameString(parentArtifact) + " requires scala version: " + originalVersion);
+            }
         } else {
             //TODO - What now?
         }
@@ -48,5 +58,11 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
 
     public boolean isFailed() {
         return _failed;
+    }
+    public void logScalaDependents() {
+        _log.warn(" Expected all dependencies to require Scala version: " + _version);
+        for(String dependString : scalaDependentArtifactStrings) {
+            _log.warn(dependString);
+        }
     }
 }
