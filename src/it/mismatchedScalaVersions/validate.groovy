@@ -1,11 +1,11 @@
 try {
 
-def echoString = "OUT: [WARNING] Multiple versions of scala libraries detected!"
+def echoString = "[WARNING] Multiple versions of scala libraries detected!"
 def logFile = new File(basedir, "build.log")
 //Look for echo string
 def found = false;
 logFile.eachLine({ line ->
-   if(line.startsWith(echoString)) {
+   if(line.contains(echoString)) {
      found = true;
    }
 });
