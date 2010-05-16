@@ -56,10 +56,10 @@
     </section>
 
     <section name="Displaying the command line used">
-      <p>Set the property maven.scala.displayCmd to true</p>
+      <p>Set the property displayCmd to true</p>
       <source>
         <![CDATA[
-$> mvn scala:compile -Dmaven.scala.displayCmd=true
+$> mvn scala:compile -DdisplayCmd=true
 
 [INFO] Scanning for projects...
 [INFO] Searching repository for plugin with prefix: 'scala'.

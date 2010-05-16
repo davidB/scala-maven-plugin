@@ -32,7 +32,7 @@ mvn scala:cc -Dfsc=false
       <li>If you want to display command used to run scala :
         <source>
           <![CDATA[
-mvn scala:cc -Dmaven.scala.displayCmd=true
+mvn scala:cc -DdisplayCmd=true
        ]]>
         </source>
       </li>

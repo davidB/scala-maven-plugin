@@ -55,9 +55,9 @@
       <p>Now you can run the following command to run your launcher (the classpath used is the test classpath).</p>
       <source>mvn scala:run -Dlauncher=foo</source>
       <p>If you don't specify launcher or mainClass then the first launcher is used, in your case, the example below is equivalent to the example above.</p>
-	  <source>mvn scala:run</source>
+    <source>mvn scala:run</source>
       <p>If you need/which to specify some additional arguments at call time use "-DaddArgs=arg1|arg2|arg3" ('|' is used as separator)</p>
-      <p>Set the property maven.scala.displayCmd to true, to display the command line used</p>
+      <p>Set the property 'displayCmd' to true, to display the command line used</p>
 
     </section>
   </body>

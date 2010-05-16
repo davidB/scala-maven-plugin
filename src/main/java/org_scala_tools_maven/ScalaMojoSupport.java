@@ -158,16 +158,19 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected String scalaClassName;
 
     /**
-     * Scala 's version to use
-     * @parameter expression="${maven.scala.version}"
+     * Scala 's version to use.
+     * (property 'maven.scala.version' replaced by 'scala.version')
+     *
+     * @parameter expression="${scala.version}"
      */
     protected String scalaVersion;
 
     /**
      * Display the command line called ?
+     * (property 'maven.scala.displayCmd' replaced by 'displayCmd')
      *
      * @required
-     * @parameter expression="${maven.scala.displayCmd}"
+     * @parameter expression="${displayCmd}"
      *            default-value="false"
      */
     public boolean displayCmd;
@@ -320,6 +323,19 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
+            String oldWay = System.getProperty("maven.scala.version");
+            if (oldWay != null) {
+                getLog().warn("using 'maven.scala.version' is deprecated, use 'scala.version' instead");
+                if (scalaVersion != null) {
+                    scalaVersion = oldWay;
+                }
+            }
+
+            oldWay = System.getProperty("maven.scala.displayCmd");
+            if (oldWay != null) {
+                getLog().warn("using 'maven.scala.displayCmd' is deprecated, use 'displayCmd' instead");
+                displayCmd = displayCmd || Boolean.parseBoolean(oldWay);
+            }
             checkScalaVersion();
             doExecute();
         } catch (MojoExecutionException exc) {
