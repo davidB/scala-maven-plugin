@@ -211,8 +211,9 @@
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.3</version>
+            <version>1.5</version>
             <configuration>
+              <settingsFile>src/it/settings.xml</settingsFile>
               <debug>false</debug>
               <streamLogs>true</streamLogs>
               <projectsDirectory>src/it</projectsDirectory>
