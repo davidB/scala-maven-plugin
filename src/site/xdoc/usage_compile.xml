@@ -89,5 +89,39 @@ mvn scala:cc -Donce=true -Dfsc=false
             ]]>
       </source>
     </section>
+    <section name="Emacs user">
+      <p>If you are an emacs user, you could try the to run the compilation with "-DemacsMode=true" then compilation error will be displayed without [WARNING] at the begin of the line like :
+      <source><![CDATA[
+[INFO] Compiling 1 source files to /home/dwayne/work/oss/scala-tools/vscaladoc/target/classes
+[WARNING] Compilation failure
+
+/project/src/main/scala/org/example/Main.scala:12: error: expected class or object definition
+foo()
+^
+one error found
+       ]]></source>
+       </p>
+	</section>
+
+    <section name="Compiler Arguments">
+        <p>It is common to wish to send arguments to the scalac compiler during compilation of your project.  To do so, make use of the args configuration parameter like so:</p>
+        <source><![CDATA[
+<project>
+  ...
+  <plugin>
+    <groupId>org.scala-tools</groupId>
+    <artifactId>maven-scala-plugin</artifactId>
+      <configuration>
+        <args>
+          <arg>-unchecked</arg>
+          <arg>-deprecation</arg>
+          <arg>-explaintypes</arg>
+        </args>
+    </configuration>
+  </plugin>
+  ...
+</project>
+                ]]></source>
+    </section>
   </body>
 </document>

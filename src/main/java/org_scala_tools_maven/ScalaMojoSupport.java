@@ -429,6 +429,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         rootNode.accept( filteredVisitor );
 
         if(visitor.isFailed()) {
+            visitor.logScalaDependents();
             if(failOnMultipleScalaVersions) {
                 getLog().error("Multiple versions of scala libraries detected!");
                 throw new MojoFailureException("Multiple versions of scala libraries detected!");

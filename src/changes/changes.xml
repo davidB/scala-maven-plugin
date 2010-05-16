@@ -5,9 +5,13 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="2.14" date="" description="scalacs integration">
+    <release version="2.14" date="" description="scalac integration and other minor updates">
       <action dev="David Bernard" type="update">property 'maven.scala.displayCmd' replaced by 'displayCmd' shorter for command line typing</action>
       <action dev="David Bernard" type="update">property 'maven.scala.version' replaced by 'scala.version' to avoid over-configuration</action>
+      <action dev="Indrajit Raychaudhuri" type="update">scaladoc goal now executes generate-sources before executing</action>
+      <action dev="Josh Suereth" type="update">Documentation for scalac arguments updated in usage_compiler.html</action>
+      <action dev="Josh Suereth" type="update">Dependent Artifacts are now listed when there are scala version mismtaches detected</action>
+      <action dev="Josh Suereth" type="fix">Scalac plugins now sent to REPL when executing scala:console</action>
       <action dev="David Bernard" type="update">the list of source to compile is sorted by path to allow better "reproductible" build across box (as scalac seems sensible to file order)</action>
       <action dev="David Bernard" type="update">add redirection of spawned process to (java.io.tmpdir)/(mainClassName).(err|out)</action>
       <action dev="David Bernard" type="add">integration with ScalaCS</action>
