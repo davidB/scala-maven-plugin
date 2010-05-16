@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-	<properties>
-		<title>Execute Script</title>
-		<authors>
-			<person name="Jesse Eichar" />
-		</authors>
-	</properties>
-	<body>
-		<h1>Running a scala script</h1>
-		<section name="Running a Script Inlined in the pom">
-			<p>
-			This goal allows you to execute a scala script defined in the pom.
-			</p>
-			<source><![CDATA[
+  <properties>
+    <title>Execute Script</title>
+    <authors>
+      <person name="Jesse Eichar" />
+    </authors>
+  </properties>
+  <body>
+    <h1>Running a scala script</h1>
+    <section name="Running a Script Inlined in the pom">
+      <p>
+      This goal allows you to execute a scala script defined in the pom.
+      </p>
+      <source><![CDATA[
   <plugin>
     <groupId>org.scala-tools</groupId>
     <artifactId>maven-scala-plugin</artifactId>
@@ -26,21 +26,21 @@
     </executions>
     <configuration>
       <script>
-      	println ("Hello from pom script :-)")
+        println ("Hello from pom script :-)")
      </script>
     </configuration>
-  </plugin>]]></source>	    
-  		</section>
-		<section name="Running from a Script File">
-			<p>
-				This goal allows you to run a scala script by defining the "script"
-				property:
-				<source>mvn scala:script -DscriptFile=scripts/PrintHello.scala</source>
-			</p>
-		</section>
-		<section name="Running a script as part of a build">
-			<p>Executing a script as part of the build process.</p>
-			<source><![CDATA[
+  </plugin>]]></source>
+      </section>
+    <section name="Running from a Script File">
+      <p>
+        This goal allows you to run a scala script by defining the "script"
+        property:
+        <source>mvn scala:script -DscriptFile=scripts/PrintHello.scala</source>
+      </p>
+    </section>
+    <section name="Running a script as part of a build">
+      <p>Executing a script as part of the build process.</p>
+      <source><![CDATA[
   <plugin>
     <groupId>org.scala-tools</groupId>
     <artifactId>maven-scala-plugin</artifactId>
@@ -56,11 +56,11 @@
       <scriptFile>package.scala</scriptFile>
     </configuration>
   </plugin>]]></source>
-		</section>
-		<section name="Predefining a script file">
-			<p>Adding the script configuration to your plugin
-				definition.</p>
-			<source><![CDATA[
+    </section>
+    <section name="Predefining a script file">
+      <p>Adding the script configuration to your plugin
+        definition.</p>
+      <source><![CDATA[
   <plugin>
     <groupId>maven</groupId>
     <artifactId>maven-scala-plugin</artifactId>
@@ -68,64 +68,103 @@
       <scriptFile>pathToScript/MyScript</scriptFile>
     </configuration>
   </plugin>]]></source>
-			<p>Now you can run the following command to run your scala app.
-			</p>
-			<source>mvn scala:script</source>
-		</section>
-		<section name="Using the Maven Project from within a script">
-        			<p>If the maven-scala-plugin is not a dependency in the scope that
-        				the script executes then a scala.maven.model.MavenProjectAdapter object
-        				and a org.apache.maven.plugin.logging.Log object will be passed 
-        				to the script.  The Log will have the name "log" and the 
-        				MavenProjectAdapter will have the name "project"
-        			</p><p>
-        				The class MavenProjectAdapter is a decorator for the MavenProject class
-        				that adds typing to the java.util.Collection and adds
-        				apply and update methods for accessing the properties of the project.
-        			</p><p>
-            			Note: In this scenario the scala.collection.jcl.Conversions._ is imported so 
-            			that the java.util collections can be treated as Scala collections.
-        		    </p>
-        			<p>Here is an example script using the project</p>
-        			<source><![CDATA[
-  println(project.getArtifactId())
-  log.info( project("scala.version") )
-  project("scala.version") = "77"
-  for( d <- project.getDependencies() ) println (d.getArtifactId)]]></source>
-		</section>
-		<section name="Technical details">
-		    <p>
-                This mojo operates by adding a class definition to the start of the script. 
-                As a result the script is essentially the initialization of the class.  
+      <p>Now you can run the following command to run your scala app.
+      </p>
+      <source>mvn scala:script</source>
+    </section>
+    <section name="Classpath for running and compiling script">
+    The classpath is define by configuration 'includeScopes', 'excludeScopes', 'addToClasspath'.
+    The possible scopes are : test, compile, system, runtime, plugin. The default rules (since 2.14) is :
+    <ul>
+      <li>embedded script into pom.xml run with 'plugin' scope</li>
+      <li>script read from scriptFile run with 'compile, test, runtime'</li>
+    </ul>
+    </section>
+    <section name="Using the Maven Project from within a script">
+              <p>If the script run within the 'PLUGIN' scope then a scala.maven.model.MavenProjectAdapter object
+                and a org.apache.maven.plugin.logging.Log object will be passed
+                to the script.  The Log will have the name "log" and the
+                MavenProjectAdapter will have the name "project"
+              </p><p>
+                The class MavenProjectAdapter is a decorator for the MavenProject class
+                that adds typing to the java.util.Collection and adds
+                apply and update methods for accessing the properties of the project.
+              </p><p>
+                  Note: In this scenario the scala.collection.jcl.Conversions._ is imported so
+                  that the java.util collections can be treated as Scala collections.
+                </p>
+              <p>Here is an example script using the project</p>
+              <source><![CDATA[
+        <executions>
+          <execution>
+            <id>generate-hello</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>script</goal>
+            </goals>
+            <configuration>
+              <scalaVersion>2.7.7</scalaVersion>
+              <keepGeneratedScript>true</keepGeneratedScript>
+              <script>
+              &lt;![CDATA[
+                println("hello from scala script constructor")
+
+                def run() {
+                  import java.io.PrintWriter
+                  import scala.collection.jcl.Conversions._
+
+                  println("hello from scala script run method")
+                  log.info( project("scala.version") )
+                  val fo = new PrintWriter("target/hello.txt")
+                  try {
+                    fo.println(project.getArtifactId())
+                    for( d <- project.getDependencies() ) {
+                      fo.println (d.getArtifactId)
+                    }
+                  } finally {
+                    fo.close()
+                  }
+                }
+              ]]&gt;
+              </script>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>]]></source>
+    </section>
+    <section name="Technical details">
+        <p>
+                This mojo operates by adding a class definition to the start of the script.
+                As a result the script is essentially the initialization of the class.
             </p>
             <p>
-                The reason for this is that it allows one to define classes and functions in any 
-                order and not worry about '<em>forward reference extends over definition of 
+                The reason for this is that it allows one to define classes and functions in any
+                order and not worry about '<em>forward reference extends over definition of
                 value _</em>' compile errors.
             </p>
             <p>
-                However there is a danger in putting complex code in the constructor of a class and 
+                However there is a danger in putting complex code in the constructor of a class and
                 that has to do poor performance because of certain precautions the JVM takes when
-                 constructing a class.  In order to offer a solution to this this Mojo will look for 
+                 constructing a class.  In order to offer a solution to this this Mojo will look for
                  a run() method after the '<em>virtual</em>' class has been constructed and invokes
                   that method.
             </p>
             <p>
                 If this mojo detects that the MavenProjectAdapter class is on the classpath
-                (in otherwords this plugin is a dependency in the scope that the script runs) then 
-                the MavenProjectAdapter that decorates the current MavenProject will be passed to 
+                (in otherwords this plugin is a dependency in the scope that the script runs) then
+                the MavenProjectAdapter that decorates the current MavenProject will be passed to
                 the script's construct.  The variable name is '<em>project</em>'.  The project
                 variable can be used to inspect parameters of the maven project like the properties and
                 dependencies of the project.
             </p>
-  			<p>Here is an example using the run method with the MavenProjectAdapter</p>
-  			<source><![CDATA[<script>
+        <p>Here is an example using the run method with the MavenProjectAdapter</p>
+        <source><![CDATA[<script>
   println ("Hi I shouldn't do any heavy work here...")
   def run(){
     println(project.getName+" is the current project")
-    println("Now lets do some serious work!  Even multi-threaded programming is allowed.") 
+    println("Now lets do some serious work!  Even multi-threaded programming is allowed.")
   }
 </script>]]></source>
         </section>
-	</body>
+  </body>
 </document>

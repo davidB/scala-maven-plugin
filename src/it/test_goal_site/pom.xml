@@ -17,6 +17,7 @@
 		</dependency>
 	</dependencies>
 
+	<url>http://sandbox/</url>
 	<organization>
 	  <url>ANYTHING</url>
 	  <name>ANYTHING</name>

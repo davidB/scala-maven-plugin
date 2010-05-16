@@ -22,8 +22,10 @@ import java.util.Set;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringUtils;
 import org_scala_tools_maven_executions.JavaMainCaller;
 import org_scala_tools_maven_executions.MainHelper;
 import org_scala_tools_maven_model.MavenProjectAdapter;
@@ -79,11 +81,12 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     protected boolean keepGeneratedScript;
 
     /**
-     * Comma separated list of scopes to add to the classpath. Eg: test,compile
+     * Comma separated list of scopes to add to the classpath.
+     * The possible scopes are : test,compile, system, runtime, plugin.
+     * By default embedded script into pom.xml run with 'plugin' scope
+     * and script read from scriptFile run with 'compile, test, runtime'
      *
      * @parameter expression="${maven.scala.includeScopes}"
-     *            default-value="compile, test, runtime"
-     * @required
      */
     protected String includeScopes;
 
@@ -125,6 +128,13 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
                     "Only one of script or scriptFile can be defined");
         }
         currentScriptIndex++;
+        if (StringUtils.isEmpty(includeScopes)) {
+            if (scriptFile != null) {
+                includeScopes = "compile, test, runtime";
+            } else {
+                includeScopes= Scopes.PLUGIN.name();
+            }
+        }
 
         // prepare
         File scriptDir = new File(outputDir, ".scalaScriptGen");
@@ -311,17 +321,29 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             classpath.removeAll(toRemove);
         }
 
-        String outputDirectory = project.getBuild().getOutputDirectory();
-        if(!outputDirectory.endsWith("/")){
-            // need it to end with / for URLClassloader
-            outputDirectory+="/";
-        }
-        classpath.add( outputDirectory);
+//        String outputDirectory = project.getBuild().getOutputDirectory();
+//        if(!outputDirectory.endsWith("/")){
+//            // need it to end with / for URLClassloader
+//            outputDirectory+="/";
+//        }
+//        classpath.add( outputDirectory);
         addToClasspath("org.scala-lang", "scala-compiler", scalaVersion,
                 classpath);
         addToClasspath("org.scala-lang", "scala-library", scalaVersion,
                 classpath);
-
+        //TODO check that every entry from the classpath exists !
+        boolean ok = true;
+        for (String s : classpath) {
+            File f = new File(s);
+            getLog().debug("classpath entry for running and compiling scripts: " + f);
+            if (!f.exists()) {
+                getLog().error("classpath entry for script not found : " + f);
+                ok = false;
+            }
+        }
+        if (!ok) {
+            throw new MojoFailureException("some script dependencies not found (see log)");
+        }
         getLog().debug("Using the following classpath for running and compiling scripts: "+classpath);
 
     }
@@ -341,7 +363,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             }
 
             if (mavenProjectDependency) {
-                out.println("import scala.collection.jcl.Conversions._");
+//                out.println("import scala.collection.jcl.Conversions._");
                 out.println("class " + scriptBaseName() + "(project:"
                         + MavenProjectAdapter.class.getCanonicalName() + ",log:"+Log.class.getCanonicalName()+") {");
             } else {
@@ -410,11 +432,24 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
                     throws DependencyResolutionRequiredException {
                 return project.getSystemDependencies();
             }
+        },
+        PLUGIN {
+            @SuppressWarnings("unchecked")
+            public Collection<Dependency> elements(MavenProjectAdapter project)
+                    throws DependencyResolutionRequiredException {
+                Plugin me = (Plugin) project.getBuild().getPluginsAsMap().get("org.scala-tools:maven-scala-plugin");
+                Set<Dependency> back = new HashSet<Dependency>();
+                Dependency dep = new Dependency();
+                dep.setArtifactId(me.getArtifactId());
+                dep.setGroupId(me.getGroupId());
+                dep.setVersion(me.getVersion());
+                back.add(dep);
+                back.addAll((Collection<Dependency>) me.getDependencies());
+                return back;
+            }
         };
 
-        public abstract Collection<Dependency> elements(
-                MavenProjectAdapter project)
-                throws DependencyResolutionRequiredException;
+        public abstract Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException;
 
         public static Scopes lookup(String name) {
             for (Scopes scope : Scopes.values()) {

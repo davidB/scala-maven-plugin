@@ -13,6 +13,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,24 +51,32 @@ public class MainHelper {
     }
 
     public static String toClasspathString(ClassLoader cl) throws Exception {
+        StringBuilder back = new StringBuilder();
+        List<String> cps = new LinkedList<String>();
+        appendUrltoClasspathCollection(cl, cps);
+        for(String cp : cps) {
+            if (back.length() != 0) {
+                back.append(File.pathSeparatorChar);
+            }
+            back.append(cp);
+        }
+        return back.toString();
+    }
+
+    public static void appendUrltoClasspathCollection(ClassLoader cl, Collection<String> classpath) throws Exception {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
         }
-        StringBuilder back = new StringBuilder();
         while (cl != null) {
             if (cl instanceof URLClassLoader) {
                 URLClassLoader ucl = (URLClassLoader) cl;
                 URL[] urls = ucl.getURLs();
                 for (URL url : urls) {
-                    if (back.length() != 0) {
-                        back.append(File.pathSeparatorChar);
-                    }
-                    back.append(url.getFile());
+                    classpath.add(url.getFile());
                 }
             }
             cl = cl.getParent();
         }
-        return back.toString();
     }
 
     /**
