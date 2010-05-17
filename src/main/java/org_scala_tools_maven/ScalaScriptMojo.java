@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
@@ -114,6 +115,14 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * @parameter expression="${removeFromClasspath}"
      */
     protected String removeFromClasspath;
+    /**
+     * The Maven Session Object
+     *
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    protected MavenSession session;
 
     private static int currentScriptIndex = 0;
 
@@ -188,10 +197,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             try {
                 Object instance;
                 if (mavenProjectDependency) {
-                    Constructor<?> constructor = compiledScript
-                            .getConstructor(MavenProjectAdapter.class, Log.class);
-                    instance = constructor.newInstance(new MavenProjectAdapter(
-                            project), getLog());
+                    Constructor<?> constructor = compiledScript.getConstructor(MavenProjectAdapter.class, MavenSession.class, Log.class);
+                    instance = constructor.newInstance(new MavenProjectAdapter(project), session, getLog());
                 } else {
                     instance = compiledScript.newInstance();
                 }
@@ -364,8 +371,12 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
             if (mavenProjectDependency) {
 //                out.println("import scala.collection.jcl.Conversions._");
-                out.println("class " + scriptBaseName() + "(project:"
-                        + MavenProjectAdapter.class.getCanonicalName() + ",log:"+Log.class.getCanonicalName()+") {");
+                out.println("class " + scriptBaseName()
+                        + "(project :" + MavenProjectAdapter.class.getCanonicalName()
+                        + ",session :" + MavenSession.class.getCanonicalName()
+                        + ",log :"+Log.class.getCanonicalName()
+                        +") {"
+                        );
             } else {
                 out.println("class " + scriptBaseName() + " {");
             }
@@ -434,9 +445,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             }
         },
         PLUGIN {
-            @SuppressWarnings("unchecked")
-            public Collection<Dependency> elements(MavenProjectAdapter project)
-                    throws DependencyResolutionRequiredException {
+            public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
                 Plugin me = (Plugin) project.getBuild().getPluginsAsMap().get("org.scala-tools:maven-scala-plugin");
                 Set<Dependency> back = new HashSet<Dependency>();
                 Dependency dep = new Dependency();
