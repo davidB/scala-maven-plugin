@@ -196,11 +196,29 @@
   <build>
     <plugins>
       <plugin>
+        <!--
+         make sure our code doesn't have 1.6 dependencies except where we know it
+         see
+         * http://mojo.codehaus.org/animal-sniffer/index.html
+         * http://weblogs.java.net/blog/kohsuke/archive/2008/11/compiling_with.html
+        -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>animal-sniffer-maven-plugin</artifactId>
+        <version>1.5</version>
+        <configuration>
+          <signature>
+            <groupId>org.codehaus.mojo.signature</groupId>
+            <artifactId>java15</artifactId>
+            <version>1.0</version>
+          </signature>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.0-beta-9</version>
         <configuration>
           <releaseProfiles>release</releaseProfiles>
-          <goals>deploy site-deploy assembly:assembly</goals>
+          <goals>install animal-sniffer:check deploy site-deploy assembly:assembly</goals>
         </configuration>
       </plugin>
     </plugins>
