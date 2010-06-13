@@ -6,6 +6,7 @@
   </properties>
   <body>
     <release version="2.14" date="" description="scalac integration and other minor updates">
+      <action dev="Miles Sabin" type="add">first raw integration with tycho</action>
       <action dev="David Bernard" type="update">script no longer include default import (like for Conversion, as it will not be part of scala 2.8)</action>
       <action dev="David Bernard" type="update">change the classpath rules for running and compiling script (see doc)</action>
       <action dev="David Bernard" type="update">property 'maven.scala.displayCmd' replaced by 'displayCmd' shorter for command line typing</action>
