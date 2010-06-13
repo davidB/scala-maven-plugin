@@ -62,7 +62,7 @@
         <artifactId>maven-scala-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-            <vscaladocVersion>1.2-SNAPSHOT</vscaladocVersion>
+            <vscaladocVersion>1.2-m1</vscaladocVersion>
         </configuration>
       </plugin>
     </plugins>
