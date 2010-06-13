@@ -13,6 +13,8 @@ import org.codehaus.plexus.util.FileUtils;
 import org.yaml.snakeyaml.Yaml;
 
 /**
+ * Register the current project into running ScalaCS. If there is no running ScalaCS then install (if needed) and start it.
+ *
  * @goal cs-init
  * @requiresDependencyResolution test
  */

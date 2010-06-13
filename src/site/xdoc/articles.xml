@@ -9,6 +9,7 @@
     <body>
         <section name="Articles...">
             <ul>
+                <li>[2010-06-05 en] <a href="https://www.assembla.com/wiki/show/scala-ide/Using_Maven_with_the_Scala_IDE_for_Eclipse">Using Maven with the Scala IDE for Eclipse</a></li>
                 <li>[2010-03-24 en] <a href="http://mackaz.de/111">Build a mixed Scala 2.8/Java application from scratch with Maven</a></li>
                 <li>[2009-09-27 fr] <a href="http://www.scala-fr.org/initialiser-un-nouveau-projet-scala-avec-maven-2">Initialiser un nouveau projet Scala avec Maven 2</a></li>
                 <li>[2008-01-04 en] <a href="http://www.scala-blogs.org/2008/01/maven-for-scala.html">maven for scala</a></li>

@@ -22,8 +22,9 @@
 
   <body>
     <links>
-      <item name="scala-tools" href="http://scala-tools.org/"/>
-      <item name="scala-blogs" href="http://scala-blogs.org/"/>
+      <item name="Wiki" href="http://wiki.github.com/davidB/maven-scala-plugin/"/>
+      <item name="FAQ" href="http://wiki.github.com/davidB/maven-scala-plugin/frequently-asked-questions"/>
+      <item name="Mailing-list" href="http://groups.google.com/group/maven-and-scala"/>
     </links>
     <menu name="Overview">
       <item name="Introduction" href="index.html" />
@@ -32,14 +33,14 @@
       <item name="FAQ" href="faq.html" />
     </menu>
     <menu name="Examples">
-      <item name="Compiling" href="usage_compile.html" />
-      <item name="Continuous Compilation" href="usage_cc.html" />
-      <item name="Scaladoc" href="usage_doc.html" />
-      <item name="Running" href="usage_run.html" />
-      <item name="Scripting" href="usage_script.html" />
-      <item name="Scala Console" href="usage_console.html" />
-      <item name="Mixed Java/Scala Projects" href="usage_java.html" />
-      <item name="Creating Scalac Plugins" href="usage_scalac_plugins.html" />
+      <item name="Compiling" href="example_compile.html" />
+      <item name="Continuous Compilation" href="example_cc.html" />
+      <item name="Scaladoc" href="example_doc.html" />
+      <item name="Running" href="example_run.html" />
+      <item name="Scripting" href="example_script.html" />
+      <item name="Scala Console" href="example_console.html" />
+      <item name="Mixed Java/Scala Projects" href="example_java.html" />
+      <item name="Creating Scalac Plugins" href="example_scalac_plugins.html" />
       <item name="Articles..." href="articles.html" />
     </menu>
     <menu ref="reports" />
