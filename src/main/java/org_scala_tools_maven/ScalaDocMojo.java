@@ -232,14 +232,14 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
         return CATEGORY_PROJECT_REPORTS;
     }
 
-    public String getDescription(Locale locale) {
+    public String getDescription(@SuppressWarnings("unused") Locale locale) {
         if (StringUtils.isEmpty(description)) {
             return "ScalaDoc API documentation";
         }
         return description;
     }
 
-    public String getName(Locale locale) {
+    public String getName(@SuppressWarnings("unused") Locale locale) {
         if (StringUtils.isEmpty(name)) {
             return "ScalaDocs";
         }
@@ -296,8 +296,9 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
         if (isPreviousScala271){
             jcmd.addArgs("-Ydoc");
         }
-
-        jcmd.addOption("-classpath", MainHelper.toMultiPath(project.getCompileClasspathElements()));
+        List<String> paths = project.getCompileClasspathElements();
+        paths.remove(project.getBuild().getOutputDirectory()); //remove output to avoid "error for" : error:  XXX is already defined as package XXX ... object XXX {
+        jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
         jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
 
         boolean isScaladoc2 = (new VersionNumber("2.8.0").compareTo(new VersionNumber(scalaVersion)) <= 0) && ("scala.tools.nsc.ScalaDoc".equals(scaladocClassName));
@@ -319,8 +320,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
         return jcmd;
     }
 
-    @SuppressWarnings("unchecked")
-    public void generate(Sink sink, Locale locale) throws MavenReportException {
+    public void generate(@SuppressWarnings("unused") Sink sink, @SuppressWarnings("unused") Locale locale) throws MavenReportException {
         try {
             if (!canGenerateReport()) {
                 getLog().warn("No source files found in " + sourceDir);
@@ -356,13 +356,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
             } else {
                 // Mojo could not be run from parent after all its children
                 // So the aggregation will be run after the last child
-                if (project.hasParent()) {
-                    MavenProject parent = project.getParent();
-                    List<MavenProject> modules = parent.getCollectedProjects();
-                    if ((modules.size() > 1) && project.equals(modules.get(modules.size() - 1))) {
-                        aggregate(parent);
-                    }
-                }
+                tryAggregateUpper(project);
             }
 
         } catch (MavenReportException exc) {
@@ -371,6 +365,17 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
             throw exc;
         } catch (Exception exc) {
             throw new MavenReportException("wrap: " + exc.getMessage(), exc);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void tryAggregateUpper(MavenProject prj) throws Exception {
+        if (prj != null && prj.hasParent()) {
+            MavenProject parent = prj.getParent();
+            List<MavenProject> modules = parent.getCollectedProjects();
+            if ((modules.size() > 1) && prj.equals(modules.get(modules.size() - 1))) {
+                aggregate(parent);
+            }
         }
     }
 
@@ -402,6 +407,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
         } else {
             getLog().warn("no vscaladoc to aggregate");
         }
+        tryAggregateUpper(parent);
     }
 
     /**
