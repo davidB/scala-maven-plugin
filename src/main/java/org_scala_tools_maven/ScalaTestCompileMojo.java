@@ -42,14 +42,14 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
 
     /**
      * The directory in which to place test compilation output
-     * 
+     *
      * @parameter expression="${project.build.testOutputDirectory}
      */
     protected File testOutputDir;
 
     /**
      * The directory in which to find test scala source code
-     * 
+     *
      * @parameter expression="${project.build.testSourceDirectory}/../scala"
      */
     protected File testSourceDir;
@@ -79,13 +79,14 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
         return testOutputDir.getAbsoluteFile();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     protected List<String> getSourceDirectories() throws Exception {
-    	List<String> sources = project.getTestCompileSourceRoots();
-    	String scalaSourceDir = testSourceDir.getAbsolutePath();
-		if(!sources.contains(scalaSourceDir)) {
-    		sources.add(scalaSourceDir);
-    	}
-    	return sources;
+        List<String> sources = project.getTestCompileSourceRoots();
+        String scalaSourceDir = testSourceDir.getAbsolutePath();
+        if(!sources.contains(scalaSourceDir)) {
+            sources.add(scalaSourceDir);
+        }
+        return sources;
     }
 }

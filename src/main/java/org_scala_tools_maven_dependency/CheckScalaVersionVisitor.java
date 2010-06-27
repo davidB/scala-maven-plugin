@@ -22,7 +22,7 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
 
     private List<String> scalaDependentArtifactStrings = new ArrayList<String>();
 
-    public boolean endVisit(DependencyNode node) {
+    public boolean endVisit(@SuppressWarnings("unused") DependencyNode node) {
         return !_failed;
     }
 

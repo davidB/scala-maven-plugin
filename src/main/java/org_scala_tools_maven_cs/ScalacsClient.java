@@ -246,9 +246,8 @@ public class ScalacsClient {
         }
         if (!started) {
             throw new IllegalStateException("can't start and connect to scalacs");
-        } else {
-            _mojo.getLog().info("scalacs connected");
         }
+        _mojo.getLog().info("scalacs connected");
     }
 
     private File installConf(File scalaCsBootConf) throws Exception {

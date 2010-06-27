@@ -38,6 +38,7 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
 
 
 
+    @Override
     public void addJvmArgs(String... args) {
         //TODO - Ignore classpath
         if (args != null) {
@@ -54,9 +55,8 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
         } catch (Exception e) {
             if(throwFailure) {
                 throw e;
-            } else {
-                return false;
             }
+            return false;
         }
     }
 

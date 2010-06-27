@@ -175,11 +175,9 @@ public class MainHelper {
             Matcher m = p.matcher( location.toString() ) ;
             if( m.find() ) {
                 return URLDecoder.decode(m.group( 1 ), "UTF-8") ;
-            } else {
-                throw new ClassNotFoundException( "Cannot parse location of '" + location + "'.  Probably not loaded from a Jar" ) ;
             }
-        } else {
-            throw new ClassNotFoundException( "Cannot find class '" + c.getName() + " using the classloader" ) ;
+            throw new ClassNotFoundException( "Cannot parse location of '" + location + "'.  Probably not loaded from a Jar" ) ;
         }
+        throw new ClassNotFoundException( "Cannot find class '" + c.getName() + " using the classloader" ) ;
     }
 }

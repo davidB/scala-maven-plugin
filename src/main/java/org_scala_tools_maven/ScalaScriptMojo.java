@@ -231,10 +231,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         } catch (Throwable e) {
             if (e instanceof Exception) {
                 throw (Exception) e;
-            } else {
-                throw new Exception("A " + e.getClass().getSimpleName()
-                        + " exception was thrown", e);
             }
+            throw new Exception("A " + e.getClass().getSimpleName() + " exception was thrown", e);
         }
     }
 
@@ -398,14 +396,12 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     private String scriptBaseName() {
         if (scriptFile == null) {
             return "embeddedScript_" + currentScriptIndex;
-        } else {
-            int dot = scriptFile.getName().lastIndexOf('.');
-            if (dot == -1) {
-                return scriptFile.getName() + "_" + currentScriptIndex;
-            }
-            return scriptFile.getName().substring(0, dot) + "_"
-                    + currentScriptIndex;
         }
+        int dot = scriptFile.getName().lastIndexOf('.');
+        if (dot == -1) {
+            return scriptFile.getName() + "_" + currentScriptIndex;
+        }
+        return scriptFile.getName().substring(0, dot) + "_" + currentScriptIndex;
     }
 
     private void delete(File scriptDir) {
@@ -421,30 +417,31 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
     private enum Scopes {
         COMPILE {
-            public Collection<Dependency> elements(MavenProjectAdapter project)
-                    throws DependencyResolutionRequiredException {
+            @Override
+            public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
                 return project.getCompileDependencies();
             }
         },
         RUNTIME {
-            public Collection<Dependency> elements(MavenProjectAdapter project)
-                    throws DependencyResolutionRequiredException {
+            @Override
+            public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
                 return project.getRuntimeDependencies();
             }
         },
         TEST {
-            public Collection<Dependency> elements(MavenProjectAdapter project)
-                    throws DependencyResolutionRequiredException {
+            @Override
+            public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
                 return project.getTestDependencies();
             }
         },
         SYSTEM {
-            public Collection<Dependency> elements(MavenProjectAdapter project)
-                    throws DependencyResolutionRequiredException {
+            @Override
+            public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
                 return project.getSystemDependencies();
             }
         },
         PLUGIN {
+            @Override
             public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
                 Plugin me = (Plugin) project.getBuild().getPluginsAsMap().get("org.scala-tools:maven-scala-plugin");
                 Set<Dependency> back = new HashSet<Dependency>();

@@ -60,7 +60,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
             exec.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
 
                 @Override
-                protected void processLine(String line, int level) {
+                protected void processLine(String line, @SuppressWarnings("unused") int level) {
                     if (line.toLowerCase().indexOf("error") > -1) {
                         requester.getLog().error(line);
                     } else if (line.toLowerCase().indexOf("warn") > -1) {
@@ -81,17 +81,15 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
             if (exitValue != 0) {
                 if (throwFailure) {
                     throw new MojoFailureException("command line returned non-zero value:" + exitValue);
-                } else {
-                    return false;
                 }
+                return false;
             }
             return true;
         } catch (ExecuteException exc) {
             if (throwFailure) {
                 throw exc;
-            } else {
-                return false;
             }
+            return false;
         }
     }
 

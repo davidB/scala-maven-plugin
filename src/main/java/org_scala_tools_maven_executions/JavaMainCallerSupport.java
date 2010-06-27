@@ -53,9 +53,8 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
                 jvmArgs.set(i, item);
                 isClasspath = false;
                 break;
-            } else {
-                isClasspath = "-classpath".equals(item);
             }
+            isClasspath = "-classpath".equals(item);
         }
     }
 

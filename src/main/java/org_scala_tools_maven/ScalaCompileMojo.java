@@ -31,30 +31,31 @@ import org.apache.maven.model.Dependency;
 public class ScalaCompileMojo extends ScalaCompilerSupport {
 
     /**
-     * The directory in which to place compilation output 
-     * 
+     * The directory in which to place compilation output
+     *
      * @parameter expression="${project.build.outputDirectory}"
      */
     protected File outputDir;
 
     /**
      * The directory which contains scala/java source files
-     * 
+     *
      * @parameter expression="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;
 
+    @Override
     @SuppressWarnings("unchecked")
     protected List<String> getSourceDirectories() throws Exception {
-    	List<String> sources = project.getCompileSourceRoots();
-    	//Quick fix in case the user has not added the "add-source" goal.
-    	String scalaSourceDir = sourceDir.getCanonicalPath();
-		if(!sources.contains(scalaSourceDir)) {
-    		sources.add(scalaSourceDir);
-    	}
-    	return sources;
+        List<String> sources = project.getCompileSourceRoots();
+        //Quick fix in case the user has not added the "add-source" goal.
+        String scalaSourceDir = sourceDir.getCanonicalPath();
+        if(!sources.contains(scalaSourceDir)) {
+            sources.add(scalaSourceDir);
+        }
+        return sources;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     protected List<String> getClasspathElements() throws Exception {
