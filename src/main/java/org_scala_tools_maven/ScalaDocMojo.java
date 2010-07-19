@@ -220,8 +220,12 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
         // there is source to compile
         boolean back = sourceDir.exists() && (findSourceFiles().length != 0);
         // there is modules to aggregate
-        back = back || ((project.isExecutionRoot() || forceAggregate) && StringUtils.isNotEmpty(vscaladocVersion) && (new VersionNumber(vscaladocVersion).compareTo(new VersionNumber("1.1")) >= 0) && project.getCollectedProjects().size() > 0);
+        back = back || ((project.isExecutionRoot() || forceAggregate) && canAggregate() && project.getCollectedProjects().size() > 0);
         return back;
+    }
+
+    private boolean canAggregate() {
+        return StringUtils.isNotEmpty(vscaladocVersion) && (new VersionNumber(vscaladocVersion).compareTo(new VersionNumber("1.1")) >= 0);
     }
 
     public boolean isExternalReport() {
@@ -370,7 +374,7 @@ public class ScalaDocMojo extends ScalaMojoSupport implements MavenReport {
 
     @SuppressWarnings("unchecked")
     protected void tryAggregateUpper(MavenProject prj) throws Exception {
-        if (prj != null && prj.hasParent()) {
+        if (prj != null && prj.hasParent() && canAggregate()) {
             MavenProject parent = prj.getParent();
             List<MavenProject> modules = parent.getCollectedProjects();
             if ((modules.size() > 1) && prj.equals(modules.get(modules.size() - 1))) {
