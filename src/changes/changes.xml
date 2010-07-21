@@ -5,7 +5,10 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="2.14" date="" description="scalac integration and other minor updates">
+    <release version="2.14.1" date="2010-07-21" description="">
+      <action dev="Ross A. Baker" type="fix">aggregate vscaladoc should not run with scaladoc(2)</action>
+    </release>
+    <release version="2.14" date="2010-06-27" description="scalac integration and other minor updates">
       <action dev="David Bernard" type="fix">Allow scala:doc to generate scaladoc for multi-level projects like lift (quick fix)</action>
       <action dev="Miles Sabin" type="add">first raw integration with tycho</action>
       <action dev="David Bernard" type="update">script no longer include default import (like for Conversion, as it will not be part of scala 2.8)</action>
@@ -20,7 +23,7 @@
       <action dev="David Bernard" type="update">add redirection of spawned process to (java.io.tmpdir)/(mainClassName).(err|out)</action>
       <action dev="David Bernard" type="add">integration with ScalaCS</action>
     </release>
-    <release version="2.13" date="" description="editor/ide integration enhancement">
+    <release version="2.13" date="2009-11-23" description="editor/ide integration enhancement">
       <action dev="David Bernard" type="update">compile, test-compile, cc compile all files by default</action>
       <action dev="David Bernard" type="add">compile, test-compile, cc log the root directories of compilation of the list of files that will be compiled (to allow editor/IDE to reset markers/annotation)</action>
       <action dev="David Bernard" type="update">output line from compiler are redirected to maven's logger in forked mode => prefixed by [ERROR]/[WARN]/[INFO] + ease integration with m2eclipse (FULL_BUILD)</action>
@@ -30,7 +33,7 @@
       <action dev="David Bernard" type="update">rename packages to use a "flat one level" : org.scala_tools.maven.xxx => org_scala_tools_maven_xxx (ease file / web browsing)</action>
       <action dev="David Bernard" type="delete">remove yaml as pom (maven-yamlpom-plugin doesn't support !true as properties value)</action>
     </release>
-    <release version="2.12" date="" description="IO Windows fixes">
+    <release version="2.12" date="2009-10-06" description="IO Windows fixes">
       <action dev="David Bernard" type="fix">fix "Broken Pipe" issue on Windows</action>
       <action dev="David Bernard" type="add">use Yaml to manage pom (thanks to maven-yamlpom-plugin http://wiki.github.com/mrdon/maven-yamlpom-plugin)</action>
       <action dev="Josh Suereth" type="add">compile and doc mojo now use includes and excludes configuration.</action>
