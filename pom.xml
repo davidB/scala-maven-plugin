@@ -3,7 +3,7 @@
   
   <groupId>org.scala-tools</groupId>  
   <artifactId>maven-scala-plugin</artifactId>
-  <version>2.14.1-SNAPSHOT</version>
+  <version>2.14.1</version>
   <packaging>maven-plugin</packaging>
   
   <name>maven-scala-plugin</name>
