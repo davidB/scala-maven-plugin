@@ -83,7 +83,7 @@ public class ScalacsClient {
                     LogEvent e = new LogEvent();
                     e.level = Level.valueOf(m.group(1).toUpperCase());
                     e.category = m.group(2);
-                    e.text = m.group(4).replace('§', '\n');
+                    e.text = m.group(4).replace('$', '\n');
                     Matcher ml = locationPattern.matcher(m.group(3));
                     if (ml.matches()) {
                         e.file = new File(ml.group(1));
