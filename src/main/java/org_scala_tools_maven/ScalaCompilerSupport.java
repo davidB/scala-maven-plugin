@@ -36,6 +36,12 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
     public static final String MODIFIED_ONLY = "modified-only";
 
     /**
+     * Keeps track of if we get compile errors in incremental mode
+     */
+    private boolean compileErrors;
+
+
+    /**
      * Pause duration between to scan to detect changed file to compile.
      * Used only if compileInLoop or testCompileInLoop is true.
      */
@@ -184,11 +190,26 @@ public abstract class ScalaCompilerSupport extends ScalaMojoSupport {
         if (jcmd.run(displayCmd, !compileInLoop)) {
             setLastSuccessfullCompilation(outputDir, t1);
         }
+        else {
+            compileErrors = true;
+        }
         getLog().info(String.format("prepare-compile in %d s", (t1 - t0) / 1000));
         getLog().info(String.format("compile in %d s", (System.currentTimeMillis() - t1) / 1000));
         _lastCompileAt = t1;
         return files.size();
      }
+
+
+    /**
+     * Returns true if the previous compile failed
+     */
+    protected boolean hasCompileErrors() {
+        return compileErrors;
+    }
+
+    protected void clearCompileErrors() {
+        compileErrors = false;
+    }
 
     protected List<File> getFilesToCompile(List<File> sourceRootDirs, long lastSuccessfullCompileTime) throws Exception {
         // TODO - Rather than mutate, pass to the function!

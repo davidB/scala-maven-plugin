@@ -132,6 +132,8 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
 
         getLog().info("wait for files to compile...");
         do {
+            clearCompileErrors();
+
             int nbFile = 0;
             if (mainSourceDir.exists()) {
                 nbFile = compile(mainSourceDir, mainOutputDir, project.getCompileClasspathElements(), true);
@@ -140,7 +142,11 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
                 nbFile += compile(testSourceDir, testOutputDir, project.getTestClasspathElements(), true);
             }
             if (nbFile > 0) {
-                postCompileActions();
+                if (!hasCompileErrors()) {
+                    postCompileActions();
+                } else {
+                    getLog().info("Not running test cases due to compile error");
+                }
             }
             if (!once) {
                 if (nbFile > 0) {
@@ -152,6 +158,8 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
             }
         } while (!once);
     }
+
+
 
     /**
      * Allows derived Mojos to do things after a compile has succesfully completed such as run test cases
