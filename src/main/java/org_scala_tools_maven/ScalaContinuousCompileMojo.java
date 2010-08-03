@@ -156,7 +156,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     /**
      * Allows derived Mojos to do things after a compile has succesfully completed such as run test cases
      */
-    protected void postCompileActions() {
+    protected void postCompileActions() throws Exception {
     }
 
     private void startNewCompileServer() throws Exception {
