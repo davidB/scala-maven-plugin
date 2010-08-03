@@ -95,8 +95,8 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     @Override
     protected JavaMainCaller getScalaCommand() throws Exception {
         JavaMainCaller jcmd = super.getScalaCommand();
-        if (useFsc) {
-            jcmd.addOption("verbose", verbose);
+        if (useFsc && verbose) {
+            jcmd.addOption("-verbose", verbose);
         }
         return jcmd;
     }
@@ -139,6 +139,9 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
             if (testSourceDir.exists()) {
                 nbFile += compile(testSourceDir, testOutputDir, project.getTestClasspathElements(), true);
             }
+            if (nbFile > 0) {
+                postCompileActions();
+            }
             if (!once) {
                 if (nbFile > 0) {
                     getLog().info("wait for files to compile...");
@@ -148,6 +151,12 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
                 }
             }
         } while (!once);
+    }
+
+    /**
+     * Allows derived Mojos to do things after a compile has succesfully completed such as run test cases
+     */
+    protected void postCompileActions() {
     }
 
     private void startNewCompileServer() throws Exception {
