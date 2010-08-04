@@ -21,7 +21,7 @@ mvn scala:cc
         </source>
       </p>
       <ul>
-      <li>Compilation run in a infinite loop and compile only modified file (non-stop), so use Ctrl+C to stop it</li>
+      <li>Compilation runs in a infinite loop and compiles only modified files (non-stop), so use Ctrl+C to stop it</li>
       <li>If you want to compile without FSC (with regular scalac like non-continuous compilation) :
         <source>
           <![CDATA[
@@ -36,7 +36,7 @@ mvn scala:cc -DdisplayCmd=true
        ]]>
         </source>
       </li>
-      <li style="color:red">WARNING : continius compilation is an infinite loop so, avoid call the goal "cc" in pom.xml or to connect it to a lifecycle's phase.</li>
+      <li style="color:red">WARNING : continuous compilation is an infinite loop so, avoid call the goal "cc" in pom.xml or to connect it to a lifecycle's phase.</li>
       </ul>
     </section>
   </body>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>maven-scala-plugin</title>
+    <authors>
+      <person name="James Strachan" />
+    </authors>
+  </properties>
+  <body>
+    <h1>Continuous Testing of Scala sources</h1>
+
+    <span>Prerequisite : <a href="usage.html">common usages</a></span>
+
+    <section name="Running all tests">
+      <p>
+        If you want continuous testing of sources under src/main and src/test (files are compiled when they are saved then tests are run whenever a compile succeeds) :
+        <source><![CDATA[mvn scala:cctest]]></source>
+      </p>
+      <ul>
+      <li>Compilation runs in a infinite loop and compiles only modified files (non-stop), so use Ctrl+C to stop it</li>
+      <li>Tests are run if the compile succeeds</li>
+      <li>If you want to compile without FSC (with regular scalac like non-continuous compilation) :
+        <source><![CDATA[mvn scala:cctest -Dfsc=false]]></source>
+      </li>
+    </ul>
+    </section>
+    <section name="Running a subset of tests">
+      <p>To run only a single test each time or test cases matching a particular pattern, supply the <b>test</b> parameter 
+      (like the <a href="http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#test">surefire:test goal</a>)
+        <source><![CDATA[mvn scala:cctest -Dtest=MyTest]]></source>
+      </p>
+    </section>
+    <section name="Summary of test failures">
+      <p>To get useful output when tests fail (like SBT does by default) please make sure you have configured the surefire plugin
+      to set <a href="http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#useFile">useFile</a> to false (or to use a maven property in the configuration of the useFile so you can override on the command line) then you get a reasonable report on the console when tests fail; showing the failed assertion and stack traces etc. So adding something like the following to your pom.xml           
+      <source><![CDATA[
+<plugin>
+  <artifactId>maven-surefire-plugin</artifactId>
+  <configuration>
+    <forkMode>once</forkMode>
+    <useFile>false</useFile>
+  </configuration>
+</plugin>
+       ]]></source>
+      </p>
+    </section>
+    <section name="Note">
+      <p>If you want to display command used to run scala :
+        <source><![CDATA[mvn scala:cctest -DdisplayCmd=true]]></source>
+      </p>
+      <ul>
+      <li style="color:red">WARNING : continuous compilation is an infinite loop so, avoid call the goal "cctest" in pom.xml or to connect it to a lifecycle's phase.</li>
+      </ul>
+    </section>
+  </body>
+</document>
