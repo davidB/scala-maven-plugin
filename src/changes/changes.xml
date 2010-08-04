@@ -5,6 +5,10 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="2.14.2-SNAPSHOT" date="TODO" description="new continuous testing feature">
+      <action dev="James Strachan" type="add">New scala:cctest goal for Continuous Testing of Scala projects</action>
+      <action dev="James Strachan" type="fix">scala:cc now works OK if verbose is enabled</action>
+    </release>
     <release version="2.14.1" date="2010-07-21" description="">
       <action dev="Ross A. Baker" type="fix">aggregate vscaladoc should not run with scaladoc(2)</action>
     </release>
