@@ -89,7 +89,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     }
 
     @Override
-    protected List<String> getSourceDirectories() throws Exception {
+    protected List<File> getSourceDirectories() throws Exception {
            throw new UnsupportedOperationException("USELESS");
     }
     @Override

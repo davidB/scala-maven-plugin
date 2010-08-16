@@ -332,10 +332,9 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 //            outputDirectory+="/";
 //        }
 //        classpath.add( outputDirectory);
-        addToClasspath("org.scala-lang", "scala-compiler", scalaVersion,
-                classpath);
-        addToClasspath("org.scala-lang", "scala-library", scalaVersion,
-                classpath);
+        String sv = findScalaVersion().toString();
+        addToClasspath("org.scala-lang", "scala-compiler", sv, classpath);
+        addToClasspath("org.scala-lang", "scala-library", sv, classpath);
         //TODO check that every entry from the classpath exists !
         boolean ok = true;
         for (String s : classpath) {
