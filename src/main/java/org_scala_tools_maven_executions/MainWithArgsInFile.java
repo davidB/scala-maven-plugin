@@ -26,7 +26,7 @@ public class MainWithArgsInFile {
             MainHelper.runMain(mainClassName, argsFromFile, null);
         } catch(Throwable t) {
             t.printStackTrace();
-            System.exit(Integer.MIN_VALUE);
+            System.exit(-10000 /*Integer.MIN_VALUE*/);
         }
     }
 
