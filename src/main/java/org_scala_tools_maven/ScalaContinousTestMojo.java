@@ -17,20 +17,19 @@
  */
 package org_scala_tools_maven;
 
-import org.apache.maven.BuildFailureException;
-import org.apache.maven.shared.invoker.CommandLineConfigurationException;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
-import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.apache.maven.shared.invoker.SystemOutHandler;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import org.apache.maven.BuildFailureException;
+import org.apache.maven.shared.invoker.CommandLineConfigurationException;
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
+import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.apache.maven.shared.invoker.SystemOutHandler;
 
 /**
  * Compile the main and test scala source directory then run unit test cases in continuous (infinite loop).
@@ -104,10 +103,8 @@ public class ScalaContinousTestMojo extends ScalaContinuousCompileMojo {
             }
         }
 
-        InvocationResult result;
-
         try {
-            result = invoker.execute(request);
+            invoker.execute(request);
         }
         catch (final MavenInvocationException e) {
             getLog().debug("Error invoking Maven: " + e.getMessage(), e);
