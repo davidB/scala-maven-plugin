@@ -13,6 +13,7 @@
 
     <section name="Configuration">
       <p>to generate apidocs / scaladoc for your scala sources, add this to your pom.xml</p>
+      <h2>with maven 2.x</h2>
       <source><![CDATA[
 <project>
   ...
@@ -28,6 +29,44 @@
   </reporting>
   ...
 </project>]]></source>
+      <h2>with maven 3.x</h2>
+      <source><![CDATA[
+<project>
+  ...
+  <build>
+    ...
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.0-beta-2</version>
+        <configuration>
+          <reportPlugins>
+            <plugin>
+              <artifactId>maven-project-info-reports-plugin</artifactId>
+              <version>2.2</version>
+            </plugin>
+            <plugin>
+              <groupId>org.scala-tools</groupId>
+              <artifactId>maven-scala-plugin</artifactId>
+              <version>2.14.2-SNAPSHOT</version>
+              <configuration>
+                <jvmArgs>
+                  <jvmArg>-Xms64m</jvmArg>
+                  <jvmArg>-Xmx1024m</jvmArg>
+                </jvmArgs>
+              </configuration>
+            </plugin>
+            ...
+          </reportPlugins>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>]]></source>
+
     </section>
     <section name="To generate api">
       <p>
@@ -85,7 +124,7 @@ mvn scala:doc
     </section>
     <section name="To use vscaladoc">
       <p>
-        vscaladoc have a shortcut way to use it (instead of using the custom way describe above) :        
+        vscaladoc have a shortcut way to use it (instead of using the custom way describe above) :
         <source><![CDATA[
 <configuration>
   <vscalaVersion>1.0</vscalaVersion>

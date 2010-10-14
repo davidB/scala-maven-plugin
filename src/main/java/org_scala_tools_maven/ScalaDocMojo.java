@@ -16,14 +16,10 @@
 package org_scala_tools_maven;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -40,16 +36,10 @@ import org_scala_tools_maven_executions.MainHelper;
  * @execute phase="generate-sources"
  */
 public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport {
-    /**
-     * Enables/Disables sending java source to the scala compiler.
-     *
-     * @parameter default-value="true"
-     */
-    protected boolean sendJavaToScalac = true;
-    
-    
+
     /**
      * Specify window title of generated HTML documentation.
+     * [scaladoc, vscaladoc]
      *
      * @parameter expression="${windowtitle}"
      *            default-value="${project.name} ${project.version} API"
@@ -61,6 +51,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * want to use html you have to put it in a CDATA section, eg.
      * &lt;![CDATA[Copyright 2005, &lt;a
      * href="http://www.mycompany.com">MyCompany, Inc.&lt;a>]]&gt;
+     * [scaladoc, vscaladoc]
      *
      * @parameter expression="${bottom}"
      *            default-value="Copyright (c) {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved."
@@ -69,6 +60,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * Charset for cross-platform viewing of generated documentation.
+     * [scaladoc, vscaladoc]
      *
      * @parameter expression="${charset}" default-value="ISO-8859-1"
      */
@@ -76,6 +68,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * Include title for the overview page.
+     * [scaladoc, scaladoc2, vscaladoc]
      *
      * @parameter expression="${doctitle}"
      *            default-value="${project.name} ${project.version} API"
@@ -84,6 +77,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * Include footer text for each page.
+     * [scaladoc, vscaladoc]
      *
      * @parameter expression="${footer}"
      */
@@ -91,6 +85,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * Include header text for each page
+     * [scaladoc, vscaladoc]
      *
      * @parameter expression="${header}"
      */
@@ -98,6 +93,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * Generate source in HTML
+     * [scaladoc, vscaladoc]
      *
      * @parameter expression="${linksource}" default-value="true"
      */
@@ -105,6 +101,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * Suppress description and tags, generate only declarations
+     * [scaladoc, vscaladoc]
      *
      * @parameter expression="${nocomment}" default-value="false"
      */
@@ -112,6 +109,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * File to change style of the generated documentation
+     * [scaladoc, vscaladoc]
      *
      * @parameter expression="${stylesheetfile}"
      */
@@ -119,6 +117,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * Include top text for each page
+     * [scaladoc, vscaladoc]
      *
      * @parameter expression="${top}"
      */
@@ -174,6 +173,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * To allow running aggregation only from command line use "-Dforce-aggregate=true" (avoid using in pom.xml).
+     * [scaladoc, vscaladoc]
      *
      * @parameter expression="${force-aggregate}" default-value="false"
      */
@@ -192,7 +192,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * @parameter expression="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;
-    
+
     private List<File> _sourceFiles;
 
     @Override
@@ -206,7 +206,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         }
         return normalize(sources);
     }
-    
+
     public boolean canGenerateReport() {
         // there is modules to aggregate
         boolean back = ((project.isExecutionRoot() || forceAggregate) && canAggregate() && project.getCollectedProjects().size() > 0);
@@ -216,7 +216,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     private List<File> findSourceFiles() {
         if (_sourceFiles == null) {
@@ -266,12 +266,11 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         return reportOutputDirectory;
     }
 
-    public void setReportOutputDirectory(File reportOutputDirectory) {
-        if (reportOutputDirectory != null && !reportOutputDirectory.getAbsolutePath().endsWith(outputDirectory)) {
-            this.reportOutputDirectory = new File(reportOutputDirectory, outputDirectory);
-        }
-        else {
-            this.reportOutputDirectory = reportOutputDirectory;
+    public void setReportOutputDirectory(File v) {
+        if (v != null && outputDirectory != null && !v.getAbsolutePath().endsWith(outputDirectory)) {
+            this.reportOutputDirectory = new File(v, outputDirectory);
+        } else {
+            this.reportOutputDirectory = v;
         }
     }
 
