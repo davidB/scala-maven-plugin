@@ -9,6 +9,7 @@
       <action dev="James Strachan" type="add">New scala:cctest goal for Continuous Testing of Scala projects</action>
       <action dev="James Strachan" type="fix">scala:cc now works OK if verbose is enabled</action>
       <action dev="David Bernard" type="update">scala:doc now works with maven 3.0 (and maven-site-plugin 3.0-beta-2)</action>
+      <action dev="David Bernard" type="fix">fix issue in finding the compiler for scala's version with modifier prefixed by '.' instead of '-' like 2.8.1.RC2</action>
     </release>
     <release version="2.14.1" date="2010-07-21" description="">
       <action dev="Ross A. Baker" type="fix">aggregate vscaladoc should not run with scaladoc(2)</action>

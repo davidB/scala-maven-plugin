@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 
 public class VersionNumber /*implements Serializable*/ implements Comparable<VersionNumber>{
-    private static Pattern _regexp = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+)?(-\\w+)?");
+    private static Pattern _regexp = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+)?([-\\.]\\w+)?");
 
     public int major;
     public int minor;
@@ -19,7 +19,7 @@ public class VersionNumber /*implements Serializable*/ implements Comparable<Ver
     public VersionNumber(String s) {
         Matcher match = _regexp.matcher(s);
         if (!match.find()) {
-            throw new IllegalArgumentException("invalid versionNumber : major.minor(.bugfix)(-modifier) :" + s);
+            throw new IllegalArgumentException("invalid versionNumber : major.minor(.bugfix)(modifier) :" + s);
         }
         major = Integer.parseInt(match.group(1));
         minor = Integer.parseInt(match.group(2));
@@ -27,7 +27,7 @@ public class VersionNumber /*implements Serializable*/ implements Comparable<Ver
             bugfix = Integer.parseInt(match.group(3).substring(1));
         }
         if ((match.group(4) != null) && (match.group(4).length() > 1)){
-            modifier = match.group(4).substring(1);
+            modifier = match.group(4);
         }
     }
 
@@ -41,7 +41,7 @@ public class VersionNumber /*implements Serializable*/ implements Comparable<Ver
                  .append(bugfix)
                  ;
          if ((modifier != null) && (modifier.length() > 0)){
-             str.append('-').append(modifier);
+             str.append(modifier);
          }
          return str.toString();
      }
