@@ -22,7 +22,11 @@ temp*
 dist
 test-output
 build.log
+pom.xml.releaseBackup
+release.properties
 TestJavaClass*.java
+interpolated-*.xml
+
 # other scm
 .svn
 .CVS
