@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
-			<version>2.7.3</version>
+			<version>${scala.version.lastrelease}</version>
 		</dependency>
 	</dependencies>
 
@@ -57,6 +57,7 @@
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
+        <version>@project.version@</version>
 			</plugin>
 		</plugins>
 	</reporting>

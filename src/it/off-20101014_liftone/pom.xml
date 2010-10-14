@@ -45,25 +45,6 @@
           <nosuffix>true</nosuffix>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <configuration>
-          <downloadSources>true</downloadSources>
-          <excludes>
-            <exclude>org.scala-lang:scala-library</exclude>
-          </excludes>
-          <classpathContainers>
-            <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER</classpathContainer>
-          </classpathContainers>
-          <projectnatures>
-            <java.lang.String>ch.epfl.lamp.sdt.core.scalanature</java.lang.String>
-            <java.lang.String>org.eclipse.jdt.core.javanature</java.lang.String>
-          </projectnatures>
-          <buildcommands>
-            <java.lang.String>ch.epfl.lamp.sdt.core.scalabuilder</java.lang.String>
-          </buildcommands>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
   <repositories>
@@ -126,11 +107,11 @@
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
-		<version>testing</version>
+        <version>@project.version@</version>
       </plugin>
     </plugins>
   </reporting>
   <properties>
-    <scala.version>2.7.1</scala.version>
+    <scala.version>${scala.version.28}</scala.version>
   </properties>
 </project>

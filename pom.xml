@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
-  <groupId>org.scala-tools</groupId>  
+
+  <groupId>org.scala-tools</groupId>
   <artifactId>maven-scala-plugin</artifactId>
   <version>2.14.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-  
+
   <name>maven-scala-plugin</name>
   <url>http://scala-tools.org/mvnsites/${project.artifactId}</url>
   <!--url>http://github.com/davidB/${project.artifactId}</url-->
@@ -23,18 +23,18 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <scm>
     <connection>scm:git:git://github.com/davidB/maven-scala-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:davidB/${project.artifactId}.git</developerConnection>
     <url>http://github.com/davidB/${project.artifactId}/</url>
   </scm>
-  
+
   <issueManagement>
     <system>github</system>
     <url>http://github.com/davidB/maven-scala-plugin/issues#issue/</url>
   </issueManagement>
-  
+
   <mailingLists>
     <mailingList>
       <name>maven-and-scala</name>
@@ -69,7 +69,7 @@
       -->
       <id>scala-tools.org</id>
       <url>dav:http://nexus-direct.scala-tools.org/content/sites/mvnsites/maven-scala-plugin</url>
-    </site>    
+    </site>
   </distributionManagement>
 
   <repositories>
@@ -102,7 +102,7 @@
       <email>Joshua.Suereth @ gmail.com</email>
     </developer>
   </developers>
-  
+
   <contributors>
     <contributor>
       <name>David Pollak</name>
@@ -280,7 +280,7 @@
             </reports>
           </reportSet>
         </reportSets>
-      </plugin>      
+      </plugin>
     </plugins>
   </reporting>
 
@@ -289,7 +289,7 @@
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <version>2.1.1</version>
-      </plugin>    
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-docck-plugin</artifactId>
@@ -348,6 +348,18 @@
             <version>1.5</version>
             <configuration>
               <settingsFile>src/it/settings.xml</settingsFile>
+              <properties>
+                <scala.version.27>2.7.7</scala.version.27>
+                <scala.version.28>2.8.0</scala.version.28>
+                <scala.version.lastrelease>2.8.0</scala.version.lastrelease>
+                <scala.version.next>2.8.1.RC2</scala.version.next>
+              <!--
+                <property><name>scala.version.27</name><value>2.7.7</value></property>
+                <property><name>scala.version.28</name><value>2.8.0</value></property>
+                <property><name>scala.version.lastrelease</name><value>2.8.0</value></property>
+                <property><name>scala.version.next</name><value>2.8.1-RC2</value></property>
+                 -->
+              </properties>
               <debug>false</debug>
               <streamLogs>true</streamLogs>
               <projectsDirectory>src/it</projectsDirectory>
@@ -355,6 +367,8 @@
                 <pomInclude>**/pom.xml</pomInclude>
               </pomIncludes>
               <pomExcludes>
+                <pomExclude>**/off-*/pom.xml</pomExclude>
+                <!-- submodule -->
                 <pomExclude>**/m*/pom.xml</pomExclude>
                 <pomExclude>scalac-plugin/src/it/**/pom.xml</pomExclude>
               </pomExcludes>

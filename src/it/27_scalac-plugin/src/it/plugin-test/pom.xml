@@ -10,7 +10,7 @@
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-compiler</artifactId>
-			<version>2.7.3</version>
+			<version>${scala.version.27}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -37,7 +37,7 @@
 						<compilerPlugin>
 							<groupId>org.scala-tools</groupId>
 							<artifactId>test-scalac-plugin</artifactId>
-							<version>@project.version@</version>
+							<version>1.0-SNAPSHOT</version>
 						</compilerPlugin>
 					</compilerPlugins>
 					<args>
@@ -61,7 +61,7 @@
 			<id>scala-tools.org</id>
 			<name>Scala-tools Maven2 Repository</name>
 			<url>http://scala-tools.org/repo-releases</url>
-		</pluginRepository>	
+		</pluginRepository>
 		<pluginRepository>
 			<id>snapshots.scala-tools.org</id>
 			<name>Scala-tools Maven2 Snapshot Repository</name>
