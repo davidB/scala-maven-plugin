@@ -351,12 +351,6 @@
                 <scala.version.28>2.8.0</scala.version.28>
                 <scala.version.lastrelease>2.8.0</scala.version.lastrelease>
                 <scala.version.next>2.8.1.RC2</scala.version.next>
-              <!--
-                <property><name>scala.version.27</name><value>2.7.7</value></property>
-                <property><name>scala.version.28</name><value>2.8.0</value></property>
-                <property><name>scala.version.lastrelease</name><value>2.8.0</value></property>
-                <property><name>scala.version.next</name><value>2.8.1-RC2</value></property>
-                 -->
               </properties>
               <debug>false</debug>
               <streamLogs>true</streamLogs>
