@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org_scala_tools_maven;
 
@@ -17,7 +17,7 @@ import org_scala_tools_maven_executions.MainHelper;
  * @author david.bernard
  */
 abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
-    
+
     /**
      * Enables/Disables sending java source to the scala compiler.
      *
@@ -55,15 +55,22 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
      * Retreives the list of *all* root source directories.  We need to pass all .java and .scala files into the scala compiler
      */
     abstract protected List<File> getSourceDirectories() throws Exception;
-    
+
     private boolean _filterPrinted = false;
+
     /**
      * Finds all source files in a set of directories with a given extension.
      */
     protected List<File> findSourceWithFilters() throws Exception {
-        List<File> sourceRootDirs = getSourceDirectories();
+        return  findSourceWithFilters(getSourceDirectories());
+    }
+
+    /**
+     * Finds all source files in a set of directories with a given extension.
+     */
+    protected List<File> findSourceWithFilters(List<File> sourceRootDirs) throws Exception {
         List<File> sourceFiles = new ArrayList<File>();
-        
+
         if (includes.isEmpty()) {
             includes.add("**/*.scala");
             if (sendJavaToScalac && isJavaSupportedByCompiler()) {
@@ -87,7 +94,7 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
             getLog().info(builder.toString());
             _filterPrinted = true;
         }
-        
+
         // TODO - Since we're making files anyway, perhaps we should just test
         // for existence here...
         for (File dir : sourceRootDirs) {
@@ -102,7 +109,7 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
         Collections.sort(sourceFiles);
         return sourceFiles;
     }
-    
+
     protected File normalize(File f) {
         try {
             f = f.getCanonicalFile();
