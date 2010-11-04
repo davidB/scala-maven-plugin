@@ -77,7 +77,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
      * @parameter expression="${verbose}" default-value="false"
      */
     protected boolean verbose = false;
-
+    
     @Override
     protected List<String> getClasspathElements() throws Exception {
         throw new UnsupportedOperationException("USELESS");

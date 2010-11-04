@@ -43,7 +43,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
      * @parameter expression="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;
-
+    
     @Override
     @SuppressWarnings("unchecked")
     protected List<File> getSourceDirectories() throws Exception {

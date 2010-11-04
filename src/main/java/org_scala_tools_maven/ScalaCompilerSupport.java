@@ -28,6 +28,7 @@ import org_scala_tools_maven_executions.MainHelper;
  * Abstract parent of all Scala Mojo who run compilation
  */
 public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
+
     public static final String ALL = "all";
     public static final String MODIFIED_ONLY = "modified-only";
 
