@@ -53,8 +53,7 @@ import org_scala_tools_maven_executions.MainHelper;
 public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
 
   /**
-   * Charset for cross-platform viewing of generated documentation. [scaladoc,
-   * vscaladoc]
+   * Define the html fragment for logo.
    * 
    * @parameter expression="${logo}"
    *            default-value="<a href='${project.url}'>${project.name}</a>"
@@ -62,12 +61,18 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
   protected String logo;
 
   /**
-   * Include title for the overview page. [scaladoc, scaladoc2, vscaladoc]
+   * Define the html fragment for license (default : use info of the first entry of pom.xml/project/licenses).
    * 
-   * @parameter expression="${license}" default-value=
-   *            ""
+   * @parameter expression="${license}" 
    */
   protected String license;
+
+  /**
+   * Define the artifact's tags (space separator).
+   * 
+   * @parameter expression="${tags}" default-value=""
+   */
+  protected String tags = "";
 
   // /**
   // * Generate source in HTML (not yet supported by vscaladoc2)
@@ -78,7 +83,7 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
   // protected boolean linksource;
 
   /**
-   * The description of the Scaladoc report.
+   * Define the html fragment for description (use in overview page).
    * 
    * @parameter expression="${description}"
    *            default-value="${project.description}"
@@ -86,8 +91,7 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
   private String description;
 
   /**
-   * If you want to use vscaladoc to generate api instead of regular scaladoc,
-   * set the version of vscaladoc you want to use.
+   * Define the version of vscaladoc2_genjson to use.
    * 
    * @parameter expression="${vscaladoc2_genjson.version}"
    *            default-value="0.2-SNAPSHOT"
@@ -165,11 +169,14 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
     public String groupId = "";
     public String artifactId = "undef";
     public String version = "0.0.0";
+    public String description = "";
     public String logo = "";
     public String license = "";
+    public String kind = "";
+    public String tags = "";
     public List<List<String>> dependencies = Collections.emptyList();
     public List<List<Object>> sources = Collections.emptyList();
-    public List<List<String>> artifacts = Collections.emptyList();
+    public List<String> artifacts = Collections.emptyList();
     public List<String> additionnalArgs = Collections.emptyList();
 
     @SuppressWarnings("unchecked")
@@ -179,6 +186,8 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
       version = data.project.getVersion();
       logo = data.logo;
       license = data.license;
+      description = data.description;
+      tags = data.tags;
       if (StringUtils.isBlank(license) && !data.project.getLicenses().isEmpty()) {
         License lic = (License) data.project.getLicenses().get(0); 
         license = String.format("<a href='%s'>%s</a>", lic.getUrl(), lic.getName());
@@ -186,7 +195,21 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
       dependencies = makeDependencies(data);
       sources = makeSources(data);
       artifacts = makeArtifacts(data);
-      additionnalArgs = Arrays.asList(data.args);
+      if (data.args != null && data.args.length > 0) {
+        additionnalArgs = Arrays.asList(data.args);
+      }
+      kind = makeKind(data);
+    }
+
+    private String makeKind(ScalaGenJsonMojo data) {
+      String back = null;
+      String pkg = data.project.getPackaging();
+      if ("pom".equals(pkg)) {
+        back = "group";
+      } else {
+        back = pkg;
+      }
+      return back;
     }
 
     protected List<List<String>> makeDependencies(ScalaGenJsonMojo data) throws Exception {
@@ -196,8 +219,7 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
       for (Artifact dep : deps) {
         List<String> e = new ArrayList<String>(3);
         e.add(dep.getFile().getCanonicalPath());
-        e.add(dep.getArtifactId());
-        e.add(dep.getVersion());
+        e.add(dep.getArtifactId() + "/" + dep.getVersion());
         back.add(e);
       }
       return back;
@@ -218,15 +240,12 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
       return back;
     }
 
-    protected List<List<String>> makeArtifacts(ScalaGenJsonMojo data) throws Exception {
-      List<List<String>> back = new ArrayList<List<String>>();
+    protected List<String> makeArtifacts(ScalaGenJsonMojo data) throws Exception {
+      List<String> back = new ArrayList<String>();
       @SuppressWarnings("unchecked")
       List<MavenProject> modules = data.project.getCollectedProjects();
       for (MavenProject module : modules) {
-        List<String> e = new ArrayList<String>(2);
-        e.add(module.getArtifactId());
-        e.add(module.getVersion());
-        back.add(e);
+        back.add(module.getArtifactId() + "/" + module.getVersion());
       }
       return back;
     }
