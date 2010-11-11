@@ -16,31 +16,21 @@
 package org_scala_tools_maven;
 
 import java.io.File;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.MavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.sink.Sink;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.plexus.util.StringUtils;
+import org_scala_tools_maven_executions.JavaMainCaller;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
-import org_scala_tools_maven_executions.JavaMainCaller;
-import org_scala_tools_maven_executions.JavaMainCallerByFork;
-import org_scala_tools_maven_executions.MainHelper;
 
 /**
  * Produces Scala API documentation in Json (use vscaladoc2_genjson).
@@ -94,7 +84,7 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
    * Define the version of vscaladoc2_genjson to use.
    * 
    * @parameter expression="${vscaladoc2_genjson.version}"
-   *            default-value="0.2-SNAPSHOT"
+   *            default-value="0.2"
    */
   protected String vscaladoc2Version;
 
