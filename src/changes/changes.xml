@@ -5,6 +5,9 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="2.15.0" date="2010-11-11" description="genjson">
+      <action dev="David Bernard" type="add">Add scala:genjson to generate scaladoc in json format (via vscaladoc2_genjson)</action>
+    </release>
     <release version="2.14.3" date="2010-10-25" description="fix scala:cc">
       <action dev="David Bernard" type="fix">scala:cc and scala:cctest raise an "UnsupportedOperationException: USELESS"</action>
     </release>
