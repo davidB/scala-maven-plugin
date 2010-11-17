@@ -39,7 +39,8 @@ import org.apache.maven.shared.invoker.SystemOutHandler;
  * @goal cctest
  * @requiresDependencyResolution test
  */
-public class ScalaContinousTestMojo extends ScalaContinuousCompileMojo {
+
+public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
 
     /**
      * @component
