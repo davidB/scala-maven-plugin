@@ -44,6 +44,28 @@
        ]]></source>
       </p>
     </section>
+    <section name="Running ScataTest tests">
+        <p>The <b>ccTestGoals</b> parameter can be used to run tests with a different plugin other than the surefire plugin. For example ScalaTest tests can be executed using the <a href="https://github.com/teigen/maven-scalatest-plugin">maven-scalatst-plugin</a>.
+        To execute continuous tests using the maven-scalatest-plugin, first make sure that the maven-scalatest-plugin is configured in your pom.xml. Then, set the ccTestGoals parameter to execute the `scalatest:test` goal.
+        </p>
+        <p>From the command line:
+        <source><![CDATA[mvn -Dcctest.goals=scalatest:test scala:cctest]]></source>
+        </p>
+        <p>If you plan to execute ScalaTest often, you can also set the parameter in your pom.xml:
+      <source><![CDATA[
+<plugin>
+  <groupId>org.scala-tools</groupId>
+  <artifactId>maven-scala-plugin</artifactId>
+  <configuration>
+    <ccTestGoals>scatatest:test</ccTestGoals>
+  </configuration>
+</plugin>
+       ]]></source>        
+        </p>
+        <p>The ccTestGoals parameter takes a space-seperated list of goals. Thus, it is possible to run both JUnit tests and ScalaTest tests:
+        <source><![CDATA[mvn -Dcctest.goals="surefire:test scalatest:test" scala:cctest]]></source>
+        </p>
+    </section>
     <section name="Note">
       <p>If you want to display command used to run scala :
         <source><![CDATA[mvn scala:cctest -DdisplayCmd=true]]></source>

@@ -67,6 +67,40 @@ public class ScalaContinousTestMojo extends ScalaContinuousCompileMojo {
      */
     protected String test;
 
+    /**
+     * A space-separated list of the goals to execute as part of running the tests. You can use this
+     * setting to run different testing tools other than just JUnit. For example, to run the
+     * ScalaTest (with the maven-scalatest-plugin):
+     *
+     * <pre>
+     *   mvn -Dcctest.goals=scalatest:test scala:cctest
+     * </pre>
+     *
+     * To run both ScalaTest and JUnit tests:
+     *
+     * <pre>
+     *   mvn -Dcctest.goals="surefire:test scalatest:test" scala:cctest
+     * </pre>
+     *
+     * If you need to specify the goal every time you run <code>scala:cctest</code>, you can
+     * configure the setting in the pom.xml:
+     *
+     * <pre>
+     *    &lt;plugin&gt;
+     *       &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+     *       &lt;artifactId&gt;maven-scala-plugin&lt;/artifactId&gt;
+     *       &lt;version&gt;2.15.1-SNAPSHOT&lt;/version&gt;
+     *       &lt;configuration&gt;
+     *          &lt;ccTestGoals&gt;scalatest:test&lt;/ccTestGoals&gt;
+     *       &lt;/configuration&gt;
+     *       &lt;!-- normal executions here --&gt;
+     *    &lt;/plugin&gt;
+     * </pre>
+     *
+     * @parameter expression="${cctest.goals}" default-value="surefire:test"
+     */
+    protected String ccTestGoals;
+
     @Override
     protected void postCompileActions() throws Exception {
         if (test == null) {
@@ -113,6 +147,7 @@ public class ScalaContinousTestMojo extends ScalaContinuousCompileMojo {
     }
 
     protected List<String> getMavenGoals() {
-        return Arrays.asList(new String[]{"surefire:test"});
+        getLog().debug("Running tests with goal(s): " + ccTestGoals);
+        return Arrays.asList(ccTestGoals.split(" "));
     }
 }
