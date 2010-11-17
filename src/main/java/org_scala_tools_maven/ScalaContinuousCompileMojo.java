@@ -77,7 +77,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
      * @parameter expression="${verbose}" default-value="false"
      */
     protected boolean verbose = false;
-    
+
     @Override
     protected List<String> getClasspathElements() throws Exception {
         throw new UnsupportedOperationException("USELESS");
@@ -137,6 +137,10 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
             int nbFile = 0;
             if (mainSourceDir.exists()) {
                 nbFile = compile(mainSourceDir, mainOutputDir, project.getCompileClasspathElements(), true);
+                // If there are no source files, the compile method returns -1. Thus, to make sure we
+                // still run the tests if there are test sources, reset nbFile to zero.
+                if (nbFile == -1)
+                    nbFile = 0;
             }
             if (testSourceDir.exists()) {
                 nbFile += compile(testSourceDir, testOutputDir, project.getTestClasspathElements(), true);
