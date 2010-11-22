@@ -5,6 +5,10 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="2.15.1-SNAPSHOT" date="" description="">
+      <action dev="Jim Hurne" type="fix">Fixed bug with cctest that caused the tests to not run if there are no main source files but there are test source files</action>
+      <action dev="Jim Hurne" type="add">Add ccTestGoals parameters to choose others test goals (eg: scalatest:test)</action>
+    </release>
     <release version="2.15.0" date="2010-11-11" description="genjson">
       <action dev="David Bernard" type="add">Add scala:genjson to generate scaladoc in json format (via vscaladoc2_genjson)</action>
     </release>
