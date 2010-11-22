@@ -353,6 +353,7 @@
             <version>1.5</version>
             <configuration>
               <settingsFile>src/it/settings.xml</settingsFile>
+              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <properties>
                 <scala.version.27>2.7.7</scala.version.27>
                 <scala.version.28>2.8.0</scala.version.28>
