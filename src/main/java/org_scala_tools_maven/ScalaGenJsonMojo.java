@@ -18,6 +18,7 @@ package org_scala_tools_maven;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -26,7 +27,9 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.plexus.util.StringUtils;
 import org_scala_tools_maven_executions.JavaMainCaller;
 
@@ -34,7 +37,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * Produces Scala API documentation in Json (use vscaladoc2_genjson).
- * 
+ *
  * @goal genjson
  * @requiresDependencyResolution compile
  * @execute phase="generate-sources"
@@ -44,23 +47,23 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
 
   /**
    * Define the html fragment for logo.
-   * 
-   * @parameter expression="${logo}"
+   *
+   * @parameter expression="${genjson.logo}"
    *            default-value="<a href='${project.url}'>${project.name}</a>"
    */
   protected String logo;
 
   /**
    * Define the html fragment for license (default : use info of the first entry of pom.xml/project/licenses).
-   * 
-   * @parameter expression="${license}" 
+   *
+   * @parameter expression="${genjson.license}"
    */
   protected String license;
 
   /**
    * Define the artifact's tags (space separator).
-   * 
-   * @parameter expression="${tags}" default-value=""
+   *
+   * @parameter expression="${genjson.tags}" default-value=""
    */
   protected String tags = "";
 
@@ -74,23 +77,47 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
 
   /**
    * Define the html fragment for description (use in overview page).
-   * 
-   * @parameter expression="${description}"
+   *
+   * @parameter expression="${genjson.description}"
    *            default-value="${project.description}"
    */
   private String description;
 
   /**
+   * Define the html fragment for description (use in overview page).
+   *
+   * @parameter expression="${genjson.linksources}"
+   *            default-value=""
+   */
+  private String linksources;
+
+  /**
+   * Allow to override the artifactId used to generated json doc. Can be need sometimes (eg : for parent/group of projects)
+   *
+   * @parameter expression="${genjson.artifactId}"
+   *            default-value="${project.artifactId}"
+   */
+  private String artifactId;
+
+  /**
+   * An optional json object as string used to override base configuration generated
+   * (useful for additional, not yet supported, entry)
+   *
+   * @parameter expression="${genjson.override}"
+   */
+  private String overrideJson;
+
+  /**
    * Define the version of vscaladoc2_genjson to use.
-   * 
-   * @parameter expression="${vscaladoc2_genjson.version}"
-   *            default-value="0.2"
+   *
+   * @parameter expression="${genjson.version}"
+   *            default-value="0.3"
    */
   protected String vscaladoc2Version;
 
   /**
    * The directory which contains scala/java source files
-   * 
+   *
    * @parameter expression="${project.build.sourceDirectory}/../scala"
    */
   protected File sourceDir;
@@ -143,7 +170,19 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
     if (prettyPrint) {
       jg.useDefaultPrettyPrinter();
     }
-    m.writeValue(jg, pojo);
+    ObjectNode tree = m.valueToTree(pojo);
+
+    if (StringUtils.isNotEmpty(overrideJson)) {
+      JsonNode overrideTree = m.readValue(overrideJson, JsonNode.class);
+      Iterator<String>  ks = overrideTree.getFieldNames();
+      while( ks.hasNext()) {
+        String k = ks.next();
+        JsonNode v = overrideTree.get(k);
+        tree.put(k, v);
+      }
+    }
+
+    m.writeTree(jg, tree);
   }
 
   private File makeJsonCfg() throws Exception {
@@ -164,6 +203,7 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
     public String license = "";
     public String kind = "";
     public String tags = "";
+    public String linksources = "";
     public List<List<String>> dependencies = Collections.emptyList();
     public List<List<Object>> sources = Collections.emptyList();
     public List<String> artifacts = Collections.emptyList();
@@ -172,14 +212,15 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
     @SuppressWarnings("unchecked")
     protected Cfg(ScalaGenJsonMojo data) throws Exception {
       groupId = data.project.getGroupId();
-      artifactId = data.project.getArtifactId();
+      artifactId = data.artifactId;
       version = data.project.getVersion();
       logo = data.logo;
       license = data.license;
       description = data.description;
       tags = data.tags;
+      linksources = data.linksources;
       if (StringUtils.isBlank(license) && !data.project.getLicenses().isEmpty()) {
-        License lic = (License) data.project.getLicenses().get(0); 
+        License lic = (License) data.project.getLicenses().get(0);
         license = String.format("<a href='%s'>%s</a>", lic.getUrl(), lic.getName());
       }
       dependencies = makeDependencies(data);
