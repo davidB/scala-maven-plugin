@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
@@ -122,6 +123,13 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
    */
   protected File sourceDir;
 
+  /**
+   * Maven ProjectHelper.
+   * 
+   * @component
+   */
+  private MavenProjectHelper projectHelper;
+  
   protected String _mainClass = "net_alchim31_vscaladoc2_genjson.Main";
   protected boolean _prettyPrint = true;
 
@@ -144,12 +152,14 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
   @Override
   protected void doExecute() throws Exception {
     if (StringUtils.isNotEmpty(_mainClass)) {
-      File cfg = makeJsonCfg();
+      Cfg cfg = new Cfg(this);
+      File cfgFile = makeJsonCfg(cfg);
       setDependenciesForJcmd();
       JavaMainCaller jcmd = getEmptyScalaCommand(_mainClass);
       jcmd.addJvmArgs(jvmArgs);
-      jcmd.addArgs(cfg.getCanonicalPath());
+      jcmd.addArgs(cfgFile.getCanonicalPath());
       jcmd.run(displayCmd);
+      registerApidocArchiveForInstall(cfg);
     } else {
       getLog().warn("Not mainClass or valid launcher found/define");
     }
@@ -185,13 +195,22 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
     m.writeTree(jg, tree);
   }
 
-  private File makeJsonCfg() throws Exception {
+  private File makeJsonCfg(Cfg cfg) throws Exception {
     initFilters();
     File dir = new File(project.getBuild().getDirectory());
     dir.mkdirs();
     File f = new File(dir, "vscaladoc2_cfg.json");
-    toJson(new Cfg(this), _prettyPrint, f);
+    toJson(cfg, _prettyPrint, f);
     return f;
+  }
+
+  private void registerApidocArchiveForInstall(Cfg cfg) throws Exception {
+    File apidocArchiveFile = new File(System.getProperty("user.home"), ".config/vscaladoc2/apis/" + cfg.artifactId + "/" + cfg.version + "-apidoc.jar.gz").getCanonicalFile();
+    if (apidocArchiveFile.exists()) {
+      projectHelper.attachArtifact(project, "jar.gz", "apidoc", apidocArchiveFile);
+    } else {
+      getLog().warn("archive of apidoc not found : " + apidocArchiveFile);
+    }
   }
 
   protected static class Cfg {
