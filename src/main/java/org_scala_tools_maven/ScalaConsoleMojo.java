@@ -18,6 +18,7 @@ package org_scala_tools_maven;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -73,9 +74,9 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     protected void doExecute() throws Exception {
         //TODO - Many other paths uses the getScalaCommand()!!! We should try to use that as much as possibel to help maintainability.
         String sv = findScalaVersion().toString();
-        Set<String> classpath = new HashSet<String>();
+        Set<String> classpath = new LinkedHashSet<String>();
         addCompilerToClasspath(sv, classpath);
-        addToClasspath("org.scala-lang", "scala-library", sv, classpath);
+        addLibraryToClasspath(sv, classpath);
         addToClasspath("jline", "jline", "0.9.94", classpath);
         classpath.addAll(project.getCompileClasspathElements());
         if (useTestClasspath) {

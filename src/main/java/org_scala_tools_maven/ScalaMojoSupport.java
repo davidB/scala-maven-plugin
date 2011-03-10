@@ -333,6 +333,17 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         }
     }
 
+    protected void addLibraryToClasspath(String version, Set<String> classpath) throws Exception {
+        if(StringUtils.isEmpty(scalaHome)) {
+            addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, version, classpath);
+        } else {
+            // Note that in this case we have to ignore dependencies.
+            File lib = new File(scalaHome, "lib");
+            File libraryJar = new File(lib, "scala-library.jar");
+            classpath.add(libraryJar.toString());
+        }
+    }
+
     protected void addToClasspath(Artifact artifact, Set<String> classpath, boolean addDependencies) throws Exception {
         resolver.resolve(artifact, remoteRepos, localRepo);
         classpath.add(artifact.getFile().getCanonicalPath());
@@ -385,7 +396,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             }
             if (StringUtils.isEmpty(detectedScalaVersion)) {
                 if (!"pom".equals( project.getPackaging().toLowerCase() )) {
-                    getLog().warn("you don't define "+SCALA_GROUPID + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
+                    getLog().warn("you don't define " + SCALA_GROUPID + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
                 }
                 detectedScalaVersion = "0.0.0";
             } else {
@@ -528,8 +539,8 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     private String getBootClasspath() throws Exception {
-        Set<String> classpath = new HashSet<String>();
-        addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString(), classpath);
+        Set<String> classpath = new LinkedHashSet<String>();
+        addLibraryToClasspath(findScalaVersion().toString(), classpath);
         return MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
     }
 
@@ -561,10 +572,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     private Set<String> getCompilerPlugins() throws Exception {
         Set<String> plugins = new HashSet<String>();
         if (compilerPlugins != null) {
-            Set<String> ignoreClasspath = new HashSet<String>();
+            Set<String> ignoreClasspath = new LinkedHashSet<String>();
             String sv = findScalaVersion().toString();
             addCompilerToClasspath(sv, ignoreClasspath);
-            addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, sv, ignoreClasspath);
+            addLibraryToClasspath(sv, ignoreClasspath);
             for (BasicArtifact artifact : compilerPlugins) {
                 getLog().info("compiler plugin: " + artifact.toString());
                 // TODO - Ensure proper scala version for plugins
