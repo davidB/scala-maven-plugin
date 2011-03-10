@@ -15,8 +15,10 @@
  */
 package org_scala_tools_maven;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -59,6 +61,7 @@ import org_scala_tools_maven_executions.MainHelper;
 public abstract class ScalaMojoSupport extends AbstractMojo {
 
     public static final String SCALA_GROUPID= "org.scala-lang";
+    public static final String SCALA_COMPILER_ARTIFACTID= "scala-compiler";
     public static final String SCALA_LIBRARY_ARTIFACTID= "scala-library";
     /**
      * @parameter expression="${project}"
@@ -319,6 +322,17 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         addToClasspath(factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar"), classpath, addDependencies);
     }
 
+    protected void addCompilerToClasspath(String version, Set<String> classpath) throws Exception {
+        if(StringUtils.isEmpty(scalaHome)) {
+            addToClasspath(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, version, classpath);
+        } else {
+            // Note that in this case we have to ignore dependencies.
+            File lib = new File(scalaHome, "lib");
+            File compilerJar = new File(lib, "scala-compiler.jar");
+            classpath.add(compilerJar.toString());
+        }
+    }
+
     protected void addToClasspath(Artifact artifact, Set<String> classpath, boolean addDependencies) throws Exception {
         resolver.resolve(artifact, remoteRepos, localRepo);
         classpath.add(artifact.getFile().getCanonicalPath());
@@ -501,8 +515,8 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     private String getToolClasspath() throws Exception {
-        Set<String> classpath = new HashSet<String>();
-        addToClasspath(SCALA_GROUPID, "scala-compiler", findScalaVersion().toString(), classpath);
+        Set<String> classpath = new LinkedHashSet<String>();
+        addCompilerToClasspath(findScalaVersion().toString(), classpath);
 //        addToClasspath(SCALA_GROUPID, "scala-decoder", scalaVersion, classpath);
 //        addToClasspath(SCALA_GROUPID, "scala-dbc", scalaVersion, classpath);
         if (dependencies != null) {
@@ -549,7 +563,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         if (compilerPlugins != null) {
             Set<String> ignoreClasspath = new HashSet<String>();
             String sv = findScalaVersion().toString();
-            addToClasspath(SCALA_GROUPID, "scala-compiler", sv, ignoreClasspath);
+            addCompilerToClasspath(sv, ignoreClasspath);
             addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, sv, ignoreClasspath);
             for (BasicArtifact artifact : compilerPlugins) {
                 getLog().info("compiler plugin: " + artifact.toString());
