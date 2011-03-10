@@ -166,6 +166,13 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     private String scalaVersion;
 
     /**
+     * Path to Scala installation.
+     *
+     * @parameter expression="${scala.home}"
+     */
+    private String scalaHome;
+
+    /**
      * Display the command line called ?
      * (property 'maven.scala.displayCmd' replaced by 'displayCmd')
      *
