@@ -244,7 +244,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         urls.add(scriptDir.toURI().toURL());
 
         for (String string : classpath) {
-            urls.add(new URL("file://" + string));
+        	urls.add(new File(string).toURI().toURL());
         }
 
         URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls
