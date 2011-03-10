@@ -42,10 +42,10 @@
 //                  import scala.collection.jcl.Conversions._
 
                   println("hello from scala script run method")
-                  log.info( project("scala.version") )
+//                log.info( project("scala.version") )
                   val fo = new PrintWriter("target/hello.txt")
                   try {
-                    fo.println(project.getArtifactId())
+//                    fo.println(project.getArtifactId())
 //                    for( d <- project.getDependencies() ) {
 //                      fo.println (d.getArtifactId)
 //                    }
