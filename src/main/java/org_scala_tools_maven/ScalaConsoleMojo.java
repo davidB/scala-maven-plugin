@@ -104,9 +104,9 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         addCompilerPluginOptions(jcmd);
         if (javaRebelPath != null) {
             if (!javaRebelPath.exists()) {
-                getLog().warn("javaRevelPath '"+javaRebelPath.getCanonicalPath()+"' not found");
+                getLog().warn("javaRevelPath '"+javaRebelPath.getAbsolutePath()+"' not found");
             } else {
-                jcmd.addJvmArgs("-noverify", "-javaagent:" + javaRebelPath.getCanonicalPath());
+                jcmd.addJvmArgs("-noverify", "-javaagent:" + javaRebelPath.getAbsolutePath());
             }
         }
         jcmd.run(displayCmd);

@@ -97,10 +97,10 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         List<String> cmd = buildCommand();
         File out = new File(System.getProperty("java.io.tmpdir"), mainClassName +".out");
         out.delete();
-        cmd.add(">"+ out.getCanonicalPath());
+        cmd.add(">"+ out.getAbsolutePath());
         File err = new File(System.getProperty("java.io.tmpdir"), mainClassName +".err");
         err.delete();
-        cmd.add("2>"+ err.getCanonicalPath());
+        cmd.add("2>"+ err.getAbsolutePath());
         List<String> cmd2 = new ArrayList<String>();
         String cmdStr = StringUtils.join(cmd.iterator(), " ");
         if (OS.isFamilyDOS()) {
@@ -150,7 +150,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
             back.addAll(jvmArgs);
             back.add(MainWithArgsInFile.class.getName());
             back.add(mainClassName);
-            back.add(MainHelper.createArgFile(args).getCanonicalPath());
+            back.add(MainHelper.createArgFile(args).getAbsolutePath());
         }
         return back;
     }

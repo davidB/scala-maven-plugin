@@ -74,7 +74,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
         if (getLog().isDebugEnabled()) {
             for(File directory : getSourceDirectories()) {
-                getLog().debug(directory.getCanonicalPath());
+                getLog().debug(directory.getAbsolutePath());
             }
         }
         int nbFiles = compile(getSourceDirectories(), outputDir, getClasspathElements(), false);
@@ -193,7 +193,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     private void notifyCompilation(List<File> files) throws Exception {
         if (notifyCompilation) {
             for (File f : files) {
-                getLog().info(String.format("%s:-1: info: compiling", f.getCanonicalPath()));
+                getLog().info(String.format("%s:-1: info: compiling", f.getAbsolutePath()));
             }
         }
     }

@@ -314,10 +314,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     protected void addToClasspath(Artifact artifact, Set<String> classpath, boolean addDependencies) throws Exception {
         resolver.resolve(artifact, remoteRepos, localRepo);
-        classpath.add(artifact.getFile().getCanonicalPath());
+        classpath.add(artifact.getFile().getAbsolutePath());
         if (addDependencies) {
             for (Artifact dep : resolveArtifactDependencies(artifact)) {
-                //classpath.add(dep.getFile().getCanonicalPath());
+                //classpath.add(dep.getFile().getAbsolutePath());
                 addToClasspath(dep, classpath, addDependencies);
             }
         }

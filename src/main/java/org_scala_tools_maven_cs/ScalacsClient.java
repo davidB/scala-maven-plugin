@@ -214,7 +214,7 @@ public class ScalacsClient {
         _mojo.addToClasspath("org.scala-tools.sbt", "sbt-launch", "0.7.2", classpath, true);
         String[] jvmArgs = new String[(_jvmArgs == null)?1:_jvmArgs.length + 1];
         File installDir = new File(System.getProperty("user.home"), ".sbt-launch");
-        jvmArgs[0] = "-Dsbt.boot.properties="+ installConf(new File(installDir, _csArtifactId + "-"+ _csVersion +".boot.properties")).getCanonicalPath();
+        jvmArgs[0] = "-Dsbt.boot.properties="+ installConf(new File(installDir, _csArtifactId + "-"+ _csVersion +".boot.properties")).getAbsolutePath();
         if (_jvmArgs != null) {
             System.arraycopy(_jvmArgs, 0, jvmArgs, 1, _jvmArgs.length);
         }
@@ -276,9 +276,9 @@ public class ScalacsClient {
             p.setProperty("scalacs.groupId", _csGroupId);
             p.setProperty("scalacs.artifactId", _csArtifactId);
             p.setProperty("scalacs.version", _csVersion);
-            p.setProperty("scalacs.directory", scalaCsBootConf.getParentFile().getCanonicalPath());
+            p.setProperty("scalacs.directory", scalaCsBootConf.getParentFile().getAbsolutePath());
             String cfg = StringUtils.interpolate(sw.toString(), p);
-            FileUtils.fileWrite(scalaCsBootConf.getCanonicalPath(), "UTF-8", cfg);
+            FileUtils.fileWrite(scalaCsBootConf.getAbsolutePath(), "UTF-8", cfg);
         }
         return scalaCsBootConf;
     }

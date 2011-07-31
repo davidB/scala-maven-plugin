@@ -40,14 +40,14 @@ public class AddSourceMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         try {
             if (sourceDir != null) {
-                String path = sourceDir.getCanonicalPath();
+                String path = sourceDir.getAbsolutePath();
                 if (!project.getCompileSourceRoots().contains(path)) {
                     getLog().info("Add Source directory: " + path);
                     project.addCompileSourceRoot(path);
                 }
             }
             if (testSourceDir != null) {
-                String path = testSourceDir.getCanonicalPath();
+                String path = testSourceDir.getAbsolutePath();
                 if (!project.getTestCompileSourceRoots().contains(path)) {
                     getLog().info("Add Test Source directory: " + path);
                     project.addTestCompileSourceRoot(path);

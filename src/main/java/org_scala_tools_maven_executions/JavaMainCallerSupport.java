@@ -49,7 +49,7 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         for (int i = 0; i < jvmArgs.size(); i++) {
             String item = jvmArgs.get(i);
             if (isClasspath) {
-                item = item + File.pathSeparator + entry.getCanonicalPath();
+                item = item + File.pathSeparator + entry.getAbsolutePath();
                 jvmArgs.set(i, item);
                 isClasspath = false;
                 break;

@@ -129,12 +129,12 @@ public class ScalaCSInitMojo extends ScalaCSMojoSupport {
         if (excludes != null) {
             dataCompile.put("excludes", new ArrayList<String>(excludes));
         }
-        dataCompile.put("targetDir", outputDir.getCanonicalPath());
+        dataCompile.put("targetDir", outputDir.getAbsolutePath());
         dataCompile.put("classpath", project.getCompileClasspathElements());
         if (args != null) {
             dataCompile.put("args", args);
         }
-        dataCompile.put("exported", new File(localRepo.getBasedir() , localRepo.pathOf(project.getArtifact())).getCanonicalPath());
+        dataCompile.put("exported", new File(localRepo.getBasedir() , localRepo.pathOf(project.getArtifact())).getAbsolutePath());
 
         HashMap<String, Object> dataTest = new HashMap<String, Object>();
         dataTest.put("name", project.getArtifactId()+"-"+project.getVersion() +"/test");
@@ -145,7 +145,7 @@ public class ScalaCSInitMojo extends ScalaCSMojoSupport {
         if (excludes != null) {
             dataTest.put("excludes", new ArrayList<String>(excludes));
         }
-        dataTest.put("targetDir", testOutputDir.getCanonicalPath());
+        dataTest.put("targetDir", testOutputDir.getAbsolutePath());
         dataTest.put("classpath", project.getTestClasspathElements());
         if (args != null) {
             dataTest.put("args", args);
@@ -162,7 +162,7 @@ public class ScalaCSInitMojo extends ScalaCSMojoSupport {
     protected List<String> getSourceDirectories() throws Exception {
         List<String> sources = project.getCompileSourceRoots();
         //Quick fix in case the user has not added the "add-source" goal.
-        String scalaSourceDir = sourceDir.getCanonicalPath();
+        String scalaSourceDir = sourceDir.getAbsolutePath();
         if(!sources.contains(scalaSourceDir)) {
             sources.add(scalaSourceDir);
         }

@@ -142,7 +142,7 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
   protected List<File> getSourceDirectories() throws Exception {
     List<String> sources = project.getCompileSourceRoots();
     // Quick fix in case the user has not added the "add-source" goal.
-    String scalaSourceDir = sourceDir.getCanonicalPath();
+    String scalaSourceDir = sourceDir.getAbsolutePath();
     if (!sources.contains(scalaSourceDir)) {
       sources.add(scalaSourceDir);
     }
@@ -157,7 +157,7 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
       setDependenciesForJcmd();
       JavaMainCaller jcmd = getEmptyScalaCommand(_mainClass);
       jcmd.addJvmArgs(jvmArgs);
-      jcmd.addArgs(cfgFile.getCanonicalPath());
+      jcmd.addArgs(cfgFile.getAbsolutePath());
       jcmd.run(displayCmd);
       registerApidocArchiveForInstall(cfg);
     } else {
@@ -268,7 +268,7 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
       List<Artifact> deps = data.project.getCompileArtifacts();
       for (Artifact dep : deps) {
         List<String> e = new ArrayList<String>(3);
-        e.add(dep.getFile().getCanonicalPath());
+        e.add(dep.getFile().getAbsolutePath());
         e.add(dep.getArtifactId() + "/" + dep.getVersion());
         back.add(e);
       }
@@ -282,7 +282,7 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
       List<String> excludes = new ArrayList<String>(data.excludes);
       for (File dir : dirs) {
         List<Object> e = new ArrayList<Object>(3);
-        e.add(dir.getCanonicalPath());
+        e.add(dir.getAbsolutePath());
         e.add(excludes);
         e.add(includes);
         back.add(e);
