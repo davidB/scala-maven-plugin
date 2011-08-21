@@ -377,7 +377,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
                 reader = new BufferedReader(new StringReader(script));
             }
 
-            String baseName = FileUtils.basename(destFile.getName(), "scala");
+            String baseName = FileUtils.basename(destFile.getName(), ".scala");
             if (mavenProjectDependency) {
 //                out.println("import scala.collection.jcl.Conversions._");
                 out.println("class " + baseName 
