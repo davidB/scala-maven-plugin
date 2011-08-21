@@ -18,7 +18,6 @@ package org_scala_tools_maven;
 import java.io.File;
 import java.util.List;
 
-import org.codehaus.plexus.util.FileUtils;
 import org_scala_tools_maven_executions.JavaMainCaller;
 
 /**
@@ -105,17 +104,17 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     @Override
     protected final void doExecute() throws Exception {
 
-        mainOutputDir = normalize(mainOutputDir);
+        mainOutputDir = FileUtils.fileOf(mainOutputDir, useCanonicalPath);
         if (!mainOutputDir.exists()) {
             mainOutputDir.mkdirs();
         }
-        mainSourceDir = normalize(mainSourceDir);
+        mainSourceDir = FileUtils.fileOf(mainSourceDir, useCanonicalPath);
 
-        testOutputDir = normalize(testOutputDir);
+        testOutputDir = FileUtils.fileOf(testOutputDir, useCanonicalPath);
         if (!testOutputDir.exists()) {
             testOutputDir.mkdirs();
         }
-        testSourceDir = normalize(testSourceDir);
+        testSourceDir = FileUtils.fileOf(testSourceDir, useCanonicalPath);
 
         if (useFsc) {
             getLog().info("use fsc for compilation");

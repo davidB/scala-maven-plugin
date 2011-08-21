@@ -202,6 +202,14 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter default-value="false"
      */
     protected boolean failOnMultipleScalaVersions = false;
+    
+    /**
+     * Should use CanonicalPath to normalize path (true => getCanonicalPath, false => getAbsolutePath)
+     * @see https://github.com/davidB/maven-scala-plugin/issues/50
+     * @parameter expression="${maven.scala.useCanonicalPath}" default-value="true"
+     */
+    protected boolean useCanonicalPath = true;
+    
     /**
      * Artifact factory, needed to download source jars.
      *
@@ -314,10 +322,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     protected void addToClasspath(Artifact artifact, Set<String> classpath, boolean addDependencies) throws Exception {
         resolver.resolve(artifact, remoteRepos, localRepo);
-        classpath.add(artifact.getFile().getCanonicalPath());
+        classpath.add(FileUtils.pathOf(artifact.getFile(), useCanonicalPath));
         if (addDependencies) {
             for (Artifact dep : resolveArtifactDependencies(artifact)) {
-                //classpath.add(dep.getFile().getCanonicalPath());
                 addToClasspath(dep, classpath, addDependencies);
             }
         }

@@ -4,7 +4,6 @@
 package org_scala_tools_maven;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -103,7 +102,7 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
         for (File dir : sourceRootDirs) {
             String[] tmpFiles = MainHelper.findFiles(dir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
             for (String tmpLocalFile : tmpFiles) {
-                File tmpAbsFile = normalize(new File(dir, tmpLocalFile));
+                File tmpAbsFile = FileUtils.fileOf(new File(dir, tmpLocalFile), useCanonicalPath);
                 sourceFiles.add(tmpAbsFile);
             }
         }
@@ -113,24 +112,15 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
         return sourceFiles;
     }
 
-    protected File normalize(File f) {
-        try {
-            f = f.getCanonicalFile();
-        } catch (IOException exc) {
-            f = f.getAbsoluteFile();
-        }
-        return f;
-    }
-
     /**
      * This limits the source directories to only those that exist for real.
      */
-    protected List<File> normalize(List<String> compileSourceRootsList) {
+    protected List<File> normalize(List<String> compileSourceRootsList) throws Exception {
         List<File> newCompileSourceRootsList = new ArrayList<File>();
         if (compileSourceRootsList != null) {
             // copy as I may be modifying it
             for (String srcDir : compileSourceRootsList) {
-                File srcDirFile = normalize(new File(srcDir));
+                File srcDirFile = FileUtils.fileOf(new File(srcDir), useCanonicalPath);
                 if (!newCompileSourceRootsList.contains(srcDirFile) && srcDirFile.exists()) {
                     newCompileSourceRootsList.add(srcDirFile);
                 }

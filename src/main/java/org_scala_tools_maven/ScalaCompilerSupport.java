@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.plexus.util.FileUtils;
 import org_scala_tools_maven_executions.JavaMainCaller;
 import org_scala_tools_maven_executions.MainHelper;
 
@@ -60,6 +59,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      */
     private boolean notifyCompilation = true;
 
+
     abstract protected File getOutputDir() throws Exception;
 
     abstract protected List<String> getClasspathElements() throws Exception;
@@ -68,13 +68,13 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     @Override
     protected void doExecute() throws Exception {
-        File outputDir = normalize(getOutputDir());
+        File outputDir = FileUtils.fileOf(getOutputDir(), useCanonicalPath);
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
         if (getLog().isDebugEnabled()) {
             for(File directory : getSourceDirectories()) {
-                getLog().debug(directory.getCanonicalPath());
+                getLog().debug(FileUtils.pathOf(directory, useCanonicalPath));
             }
         }
         int nbFiles = compile(getSourceDirectories(), outputDir, getClasspathElements(), false);
@@ -193,7 +193,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     private void notifyCompilation(List<File> files) throws Exception {
         if (notifyCompilation) {
             for (File f : files) {
-                getLog().info(String.format("%s:-1: info: compiling", f.getCanonicalPath()));
+                getLog().info(String.format("%s:-1: info: compiling", FileUtils.pathOf(f, useCanonicalPath)));
             }
         }
     }

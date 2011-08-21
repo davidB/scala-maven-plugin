@@ -200,7 +200,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     protected List<File> getSourceDirectories() throws Exception {
         List<String> sources = project.getCompileSourceRoots();
         //Quick fix in case the user has not added the "add-source" goal.
-        String scalaSourceDir = sourceDir.getCanonicalPath();
+        String scalaSourceDir = FileUtils.pathOf(sourceDir, useCanonicalPath);
         if(!sources.contains(scalaSourceDir)) {
             sources.add(scalaSourceDir);
         }
@@ -353,7 +353,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
                 JavaMainCaller jcmd = getScalaCommand();
                 jcmd.addOption("-d", reportOutputDir.getAbsolutePath());
                 for (File x : sources) {
-                    jcmd.addArgs(x.getCanonicalPath());
+                    jcmd.addArgs(FileUtils.pathOf(x, useCanonicalPath));
                 }
                 jcmd.run(displayCmd);
             }

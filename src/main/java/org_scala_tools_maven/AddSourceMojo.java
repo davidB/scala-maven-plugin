@@ -37,17 +37,24 @@ public class AddSourceMojo extends AbstractMojo {
      */
     protected File testSourceDir;
 
+    /**
+     * Should use CanonicalPath to normalize path (true => getCanonicalPath, false => getAbsolutePath)
+     * @see https://github.com/davidB/maven-scala-plugin/issues/50
+     * @parameter expression="${maven.scala.useCanonicalPath}" default-value="true"
+     */
+    protected boolean useCanonicalPath = true;
+    
     public void execute() throws MojoExecutionException {
         try {
             if (sourceDir != null) {
-                String path = sourceDir.getCanonicalPath();
+                String path = FileUtils.pathOf(sourceDir, useCanonicalPath);
                 if (!project.getCompileSourceRoots().contains(path)) {
                     getLog().info("Add Source directory: " + path);
                     project.addCompileSourceRoot(path);
                 }
             }
             if (testSourceDir != null) {
-                String path = testSourceDir.getCanonicalPath();
+                String path = FileUtils.pathOf(testSourceDir, useCanonicalPath);
                 if (!project.getTestCompileSourceRoots().contains(path)) {
                     getLog().info("Add Test Source directory: " + path);
                     project.addTestCompileSourceRoot(path);
