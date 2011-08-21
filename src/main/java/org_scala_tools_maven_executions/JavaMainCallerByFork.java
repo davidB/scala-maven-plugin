@@ -14,6 +14,8 @@ import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.StringUtils;
+import org_scala_tools_maven_executions.LogProcessorUtils.Level;
+import org_scala_tools_maven_executions.LogProcessorUtils.LevelState;
 
 /**
  * forked java commands.
@@ -58,16 +60,26 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
             exec.setStreamHandler(new PumpStreamHandler(System.out));
         } else {
             exec.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
-
+                private LevelState _previous = new LevelState();
+                
                 @Override
                 protected void processLine(String line, @SuppressWarnings("unused") int level) {
-                    if (line.toLowerCase().indexOf("error") > -1) {
-                        requester.getLog().error(line);
-                    } else if (line.toLowerCase().indexOf("warn") > -1) {
-                        requester.getLog().warn(line);
-                    } else {
-                        requester.getLog().info(line);
+                  try {
+                    _previous = LogProcessorUtils.levelStateOf(line, _previous);
+                    switch (_previous.level) {
+                    case ERROR:
+                      requester.getLog().error(line);
+                      break;
+                    case WARNING:
+                      requester.getLog().warn(line);
+                      break;
+                    default:
+                      requester.getLog().info(line);
+                      break;
                     }
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                  }
                 }
             }));
         }
@@ -166,4 +178,5 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
     public void redirectToLog() {
         _redirectToLog = true;
     }
+    
 }
