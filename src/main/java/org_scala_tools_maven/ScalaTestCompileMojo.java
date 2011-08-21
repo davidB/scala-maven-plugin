@@ -29,6 +29,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @phase test-compile
  * @goal testCompile
  * @requiresDependencyResolution test
+ * @threadSafe
  */
 public class ScalaTestCompileMojo extends ScalaCompilerSupport {
 

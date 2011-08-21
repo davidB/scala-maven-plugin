@@ -27,6 +27,7 @@ import org_scala_tools_maven_executions.MainHelper;
  * @goal run
  * @requiresDependencyResolution test
  * @execute phase="test-compile"
+ * @threadSafe
  */
 public class ScalaRunMojo extends ScalaMojoSupport {
 

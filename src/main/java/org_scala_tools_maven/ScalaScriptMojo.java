@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -39,6 +40,7 @@ import org_scala_tools_maven_model.MavenProjectAdapter;
  * @requiresDependencyResolution runtime
  * @executionStrategy always
  * @since 2.7
+ * @threadSafe
  */
 public class ScalaScriptMojo extends ScalaMojoSupport {
 
@@ -124,7 +126,18 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      */
     protected MavenSession session;
 
-    private static int currentScriptIndex = 0;
+    private static AtomicInteger _lastScriptIndex = new AtomicInteger(0);
+    
+    private static String scriptBaseNameOf(File scriptFile, int idx) {
+      if (scriptFile == null) {
+          return "embeddedScript_" + idx;
+      }
+      int dot = scriptFile.getName().lastIndexOf('.');
+      if (dot == -1) {
+          return scriptFile.getName() + "_" + idx;
+      }
+      return scriptFile.getName().substring(0, dot) + "_" + idx;
+    }
 
     @Override
     protected void doExecute() throws Exception {
@@ -136,7 +149,6 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             throw new MojoFailureException(
                     "Only one of script or scriptFile can be defined");
         }
-        currentScriptIndex++;
         if (StringUtils.isEmpty(includeScopes)) {
             if (scriptFile != null) {
                 includeScopes = "compile, test, runtime";
@@ -148,7 +160,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         // prepare
         File scriptDir = new File(outputDir, ".scalaScriptGen");
         scriptDir.mkdirs();
-        File destFile = new File(scriptDir + "/" + scriptBaseName() + ".scala");
+        String baseName = scriptBaseNameOf(scriptFile, _lastScriptIndex.incrementAndGet());
+        File destFile = new File(scriptDir, baseName  + ".scala");
 
         Set<String> classpath = new HashSet<String>();
         configureClasspath(classpath);
@@ -160,7 +173,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
         try {
             compileScript(scriptDir, destFile, classpath);
-            runScript(mavenProjectDependency, loader);
+            runScript(mavenProjectDependency, loader, baseName);
         } finally {
             if (!keepGeneratedScript) {
                 delete(scriptDir);
@@ -189,9 +202,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         }
     }
 
-    private void runScript(boolean mavenProjectDependency, URLClassLoader loader)
-            throws Exception {
-        Class<?> compiledScript = loader.loadClass(scriptBaseName());
+    private void runScript(boolean mavenProjectDependency, URLClassLoader loader, String baseName) throws Exception {
+        Class<?> compiledScript = loader.loadClass(baseName);
 
         try {
             try {
@@ -352,8 +364,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
     }
 
-    private void wrapScript(File destFile, boolean mavenProjectDependency)
-            throws IOException {
+    private void wrapScript(File destFile, boolean mavenProjectDependency) throws IOException {
         destFile.delete();
 
         FileOutputStream fileOutputStream = new FileOutputStream(destFile);
@@ -366,16 +377,17 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
                 reader = new BufferedReader(new StringReader(script));
             }
 
+            String baseName = FileUtils.basename(destFile.getName(), "scala");
             if (mavenProjectDependency) {
 //                out.println("import scala.collection.jcl.Conversions._");
-                out.println("class " + scriptBaseName()
+                out.println("class " + baseName 
                         + "(project :" + MavenProjectAdapter.class.getCanonicalName()
                         + ",session :" + MavenSession.class.getCanonicalName()
                         + ",log :"+Log.class.getCanonicalName()
                         +") {"
                         );
             } else {
-                out.println("class " + scriptBaseName() + " {");
+                out.println("class " + baseName + " {");
             }
 
             String line = reader.readLine();
@@ -390,17 +402,6 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             out.close();
             fileOutputStream.close();
         }
-    }
-
-    private String scriptBaseName() {
-        if (scriptFile == null) {
-            return "embeddedScript_" + currentScriptIndex;
-        }
-        int dot = scriptFile.getName().lastIndexOf('.');
-        if (dot == -1) {
-            return scriptFile.getName() + "_" + currentScriptIndex;
-        }
-        return scriptFile.getName().substring(0, dot) + "_" + currentScriptIndex;
     }
 
     private void delete(File scriptDir) {

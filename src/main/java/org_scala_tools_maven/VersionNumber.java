@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 
 public class VersionNumber /*implements Serializable*/ implements Comparable<VersionNumber>{
-    private static Pattern _regexp = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+)?([-\\.]\\w+)?");
+    private static final Pattern _regexp = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+)?([-\\.]\\w+)?");
 
     public int major;
     public int minor;

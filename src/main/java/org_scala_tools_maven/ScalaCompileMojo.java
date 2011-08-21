@@ -27,6 +27,7 @@ import org.apache.maven.model.Dependency;
  * @phase compile
  * @goal compile
  * @requiresDependencyResolution compile
+ * @threadSafe
  */
 public class ScalaCompileMojo extends ScalaCompilerSupport {
 

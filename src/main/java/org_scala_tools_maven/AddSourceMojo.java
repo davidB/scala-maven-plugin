@@ -13,6 +13,7 @@ import org.apache.maven.project.MavenProject;
  * @goal add-source
  * @phase initialize
  * @requiresDirectInvocation false
+ * @threadSafe
  */
 public class AddSourceMojo extends AbstractMojo {
 
