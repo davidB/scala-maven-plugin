@@ -301,6 +301,14 @@
             </goals>
           </execution>
         </executions>
+        <!-- Default qdox version is 1.6.3 which fails to parse LogProcessorUtils for some unknown reason, and is quite old -->
+        <dependencies>
+          <dependency>
+            <groupId>com.thoughtworks.qdox</groupId>
+            <artifactId>qdox</artifactId>
+            <version>1.11</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <!-- make sure our code doesn't have 1.6 dependencies except where we know it see * http://mojo.codehaus.org/animal-sniffer/index.html * http://weblogs.java.net/blog/kohsuke/archive/2008/11/compiling_with.html -->
