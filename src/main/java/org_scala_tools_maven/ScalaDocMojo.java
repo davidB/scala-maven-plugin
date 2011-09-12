@@ -16,6 +16,7 @@
 package org_scala_tools_maven;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -304,7 +305,8 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         if (isPreviousScala271){
             jcmd.addArgs("-Ydoc");
         }
-        List<String> paths = project.getCompileClasspathElements();
+        // copy the classpathElements to not modify the global project definition see https://github.com/davidB/maven-scala-plugin/issues/60
+        List<String> paths = new ArrayList<String>(project.getCompileClasspathElements());
         paths.remove(project.getBuild().getOutputDirectory()); //remove output to avoid "error for" : error:  XXX is already defined as package XXX ... object XXX {
         jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
         //jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
