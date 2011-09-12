@@ -37,6 +37,8 @@
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
         <version>@project.version@</version>
+        <!--version>2.15.2</version-->
+<!--
         <executions>
           <execution>
             <goals>
@@ -45,6 +47,45 @@
             </goals>
           </execution>
         </executions>
+-->
+       <executions>
+         <execution>
+           <id>cmain</id>
+           <goals>
+             <goal>compile</goal>
+           </goals>
+           <configuration>
+             <args>
+               <arg>-make:transitive</arg>
+               <arg>-dependencyfile</arg>
+               <arg>$
+{project.build.directory}/.main_scala_dependencies</arg>
+             </args>
+           </configuration>
+         </execution>
+         <execution>
+           <id>ctest</id>
+           <goals>
+         <goal>testCompile</goal>
+           </goals>
+           <configuration>
+             <args>
+               <arg>-make:transitive</arg>
+               <arg>-dependencyfile</arg>
+               <arg>$
+{project.build.directory}/.test_scala_dependencies</arg>
+             </args>
+           </configuration>
+         </execution>
+       </executions>
+       <configuration>
+         <scalaVersion>${scala.version}</scalaVersion>
+         <useFsc>true</useFsc>
+         <args>
+           <arg>-encoding</arg>
+           <arg>UTF8</arg>
+         </args>
+       </configuration>
       </plugin>
     </plugins>
   </build>
