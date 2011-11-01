@@ -189,7 +189,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
             // add the script directory to the classpath
             for (String string : classpath) {
-                urls.add(new URL("file://" + string));
+                urls.add(new File (string).toURI().toURL());
             }
 
             URLClassLoader loader = new URLClassLoader(urls
