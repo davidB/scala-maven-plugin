@@ -23,9 +23,9 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-      			<groupId>org.openid4java</groupId>
-      			<artifactId>openid4java</artifactId>
-      			<version>0.9.3</version>
+ 			<groupId>org.openid4java</groupId>
+ 			<artifactId>openid4java</artifactId>
+ 			<version>0.9.3</version>
 		</dependency>
 	</dependencies>
 	<repositories>

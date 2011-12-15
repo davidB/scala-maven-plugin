@@ -1,17 +1,12 @@
 try {
 
-def file = new File(basedir, 'target/classes/MyClass.class')
-assert file.exists()
+assert new File(basedir, 'target/classes/MyClass.class').exists()
 
-def file2 = new File(basedir, 'target/classes/MyClass$.class')
-assert file2.exists()
+assert new File(basedir, 'target/classes/MyClass$.class').exists()
 
-def file3 = new File(basedir, 'target/classes/TestClass.class')
-assert file3.exists()
+assert new File(basedir, 'target/classes/TestClass.class').exists()
 
-def file4 = new File(basedir, 'target/site/scaladocs/MyClass.html')
-assert file4.exists()
-
+assert new File(basedir, 'target/site/scaladocs/MyClass.html').exists()
 
 return true
 

@@ -48,7 +48,7 @@
 
     <!-- Latest Maven Scala Plugin -->
     <pluginRepository>
-      <id>scala-tools.org</id>
+      <id>scala-tools.org.snapshots</id>
       <name>Scala-Tools Maven2 Repository</name>
       <url>http://scala-tools.org/repo-snapshots</url>
     </pluginRepository>
