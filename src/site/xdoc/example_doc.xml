@@ -144,5 +144,29 @@ mvn scala:doc
       </p>
       <p>See the result under target/site/scaladocs/</p>
     </section>
+    <section name="Attaching Scaladoc">
+      <p>to attach scaladoc JAR files with your project</p>
+      <source><![CDATA[
+<project>
+  ...
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>doc-jar</goal>
+            </goals>
+        </execution>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>]]></source>
+     </section>
   </body>
 </document>
