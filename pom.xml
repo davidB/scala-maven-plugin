@@ -153,10 +153,27 @@
       <version>${maven.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven</groupId>
+       <artifactId>maven-toolchain</artifactId>
+       <version>1.0</version>
+       <exclusions>
+         <!-- Using org.codehaus.plexus:plexus-utils instead of -->
+         <exclusion>
+           <groupId>plexus</groupId>
+           <artifactId>plexus-utils</artifactId>
+         </exclusion>
+       </exclusions>
+     </dependency>
+     <dependency>
+       <groupId>org.codehaus.plexus</groupId>
+       <artifactId>plexus-utils</artifactId>
+       <version>3.0</version>
+     </dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>2.0.1</version>
-    </dependency>
+      <artifactId>plexus-archiver</artifactId>
+      <version>2.1</version>
+    </dependency>		 
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
@@ -190,6 +207,11 @@
       <artifactId>junit</artifactId>
       <version>4.8.1</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.maven</groupId>
+    	<artifactId>maven-archiver</artifactId>
+    	<version>2.5</version>
     </dependency>
   </dependencies>
 
