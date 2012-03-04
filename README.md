@@ -9,6 +9,16 @@ The scala-maven-plugin (previously maven-scala-plugin) is used for compiling/tes
 # Build
 
 Currently, you need maven 3.x to build the plugin, create the site and run integration-test.
+
+## commands
+
+* 'mvn package' : generate jar
+* 'mvn site' : generate the plugin website
+* 'mvn integration-test' : 'mvn package' + run all integration test
+  * 'mvn invoker:run -Dinvoker.test=test1' : run integration test 'test1' usefull for tuning/debug
+* 'mvn install' :  'mvn integration-test' + publish on local maven repository
+* 'mvn install -Dmave.test.skip=true' : 'mvn install' - run of unit test - run of integration test
+* 'mvn release:prepare && mvn release:perform' : to publish on staging repository
   
 # TODO
 
