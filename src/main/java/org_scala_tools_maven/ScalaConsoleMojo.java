@@ -101,7 +101,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         list.add(classpathStr);
 
         if(fork) {
-            getLog().warn("maven-scala-plugin cannot fork scala console!!  Running in process");
+            getLog().warn("scala-maven-plugin cannot fork scala console!!  Running in process");
         }
 
         jcmd = new JavaMainCallerInProcess(this, mainConsole, classpathStr, jvmArgs, list.toArray(new String[list.size()]));

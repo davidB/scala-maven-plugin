@@ -443,7 +443,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         PLUGIN {
             @Override
             public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
-                Plugin me = (Plugin) project.getBuild().getPluginsAsMap().get("org.scala-tools:maven-scala-plugin");
+                Plugin me = (Plugin) project.getBuild().getPluginsAsMap().get("net.alchim31.maven:scala-maven-plugin");
                 Set<Dependency> back = new HashSet<Dependency>();
                 Dependency dep = new Dependency();
                 dep.setArtifactId(me.getArtifactId());

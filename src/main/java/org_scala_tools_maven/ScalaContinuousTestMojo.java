@@ -88,9 +88,9 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      *
      * <pre>
      *    &lt;plugin&gt;
-     *       &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
-     *       &lt;artifactId&gt;maven-scala-plugin&lt;/artifactId&gt;
-     *       &lt;version&gt;2.15.1-SNAPSHOT&lt;/version&gt;
+     *       &lt;groupId&gt;net.alchim31.maven&lt;/groupId&gt;
+     *       &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+     *       &lt;version&gt;2.16.0&lt;/version&gt;
      *       &lt;configuration&gt;
      *          &lt;ccTestGoals&gt;scalatest:test&lt;/ccTestGoals&gt;
      *       &lt;/configuration&gt;
