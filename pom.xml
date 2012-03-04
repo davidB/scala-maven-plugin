@@ -7,11 +7,11 @@
   </parent>
 
   <groupId>net.alchim31.maven</groupId>
-  <artifactId>maven-scala-plugin</artifactId>
+  <artifactId>scala-maven-plugin</artifactId>
   <version>2.16.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>maven-scala-plugin</name>
+  <name>scala-maven-plugin</name>
   <url>http://github.com/davidB/${project.artifactId}</url>
   <inceptionYear>2012</inceptionYear>
   <description>The maven-scala-plugin is used for compiling/testing/running/documenting scala code in maven.</description>
@@ -25,9 +25,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/davidB/${project.artifactId}.git</connection>
-    <developerConnection>scm:git:git@github.com:davidB/${project.artifactId}.git</developerConnection>
-    <url>http://github.com/davidB/${project.artifactId}/</url>
+    <connection>scm:git:git://github.com/davidB/maven-scala-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:davidB/maven-scala-plugin.git</developerConnection>
+    <url>http://github.com/davidB/maven-scala-plugin/</url>
   </scm>
 
   <issueManagement>

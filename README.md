@@ -1,4 +1,4 @@
-The maven-scala-plugin is used for compiling/testing/running/documenting scala code in maven
+The scala-maven-plugin (previously maven-scala-plugin) is used for compiling/testing/running/documenting scala code in maven
 
 # Links
 
