@@ -22,8 +22,8 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.scala-tools</groupId>
-				<artifactId>maven-scala-plugin</artifactId>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
 				<executions>
 					<execution>
 						<goals>
@@ -48,25 +48,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<repositories>
-		<repository>
-			<id>scala-tools.org</id>
-			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>scala-tools.org</id>
-			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>snapshots.scala-tools.org</id>
-			<name>Scala-tools Maven2 Snapshot Repository</name>
-			<url>http://scala-tools.org/repo-snapshots</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>

@@ -13,47 +13,6 @@
     <scala.version>2.8.0</scala.version>
   </properties>
 
-  <repositories>
-    <!-- Scala -->
-    <repository>
-      <id>scala-tools.org</id>
-      <name>Scala-Tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </repository>
-
-    <!-- Scala Latest -->
-    <repository>
-      <id>scala-tools.org.snapshots</id>
-      <name>Scala Tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-snapshots</url>
-      <snapshots />
-    </repository>
-
-    <!-- Java.Net Maven2 Repo (Glassfish,JEE API) -->
-    <repository>
-      <id>maven2-repository.dev.java.net</id>
-      <name>Java.net Repository for Maven</name>
-      <url>http://download.java.net/maven/2/</url>
-      <layout>default</layout>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <!-- Scala -->
-    <pluginRepository>
-      <id>scala-tools.org</id>
-      <name>Scala-Tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </pluginRepository>
-
-    <!-- Latest Maven Scala Plugin -->
-    <pluginRepository>
-      <id>scala-tools.org.snapshots</id>
-      <name>Scala-Tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-snapshots</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <dependencies>
     <!-- Scala language/library -->
     <dependency>
@@ -70,8 +29,8 @@
       <!--================= MAVEN SCALA PLUGIN =================-->
       <!-- Compile Scala, make mix with Java possible -->
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
         <version>@project.version@</version>
         <executions>
           <execution>
@@ -113,19 +72,4 @@
     </plugins>
   </build>
 
-  <!--================= REPORTING =================-->
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
-        <version>@project.version@</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>

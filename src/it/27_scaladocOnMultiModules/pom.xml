@@ -3,24 +3,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.scala-tools.maven-scala-plugin</groupId>
+  <groupId>it.scala-maven-plugin</groupId>
   <artifactId>it-parent</artifactId>
   <version>testing</version>
   <name>Test scaladoc generation+aggregation</name>
   <packaging>pom</packaging>
-  <repositories>
-    <repository>
-      <id>scala-tools.org</id>
-      <name>Scala Tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </repository>
-    <repository>
-      <id>scala-tools.org.snapshots</id>
-      <name>Scala Tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-snapshots</url>
-      <snapshots />
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.scala-lang</groupId>
@@ -34,8 +21,8 @@
       <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.scala-tools</groupId>
-          <artifactId>maven-scala-plugin</artifactId>
+          <groupId>@project.groupId@</groupId>
+          <artifactId>@project.artifactId@</artifactId>
           <version>@project.version@</version>
           <executions>
             <execution>
@@ -50,20 +37,11 @@
       </pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.scala-tools</groupId>
-          <artifactId>maven-scala-plugin</artifactId>
+          <groupId>@project.groupId@</groupId>
+          <artifactId>@project.artifactId@</artifactId>
         </plugin>
       </plugins>
   </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
-        <version>@project.version@</version>
-      </plugin>
-    </plugins>
-  </reporting>
 
   <modules>
       <module>m1</module>

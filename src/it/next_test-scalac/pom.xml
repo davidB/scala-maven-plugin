@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.scala-tools.maven-scala-plugin</groupId>
+  <groupId>it.scala-maven-plugin</groupId>
   <artifactId>test-scalac-nextversion</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>Test compilation with the next scala version</name>
@@ -15,25 +15,11 @@
       <version>${scala.version.next}</version>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>snapshots.scala-tools.org</id>
-      <name>Scala-tools Maven2 Repository SNAPSHOTS</name>
-      <url>http://scala-tools.org/repo-snapshots</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>scala-tools.org</id>
-      <name>Scala-tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </pluginRepository>
-  </pluginRepositories>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
         <version>@project.version@</version>
         <executions>
           <execution>
