@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
   <properties>
-    <title>maven-scala-plugin</title>
+    <title>scala-maven-plugin</title>
     <authors>
       <person name="Josh Suereth" />
     </authors>
@@ -37,7 +37,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.scala-tools.maven-scala-plugin</groupId>
+	<groupId>org.scala-tools.scala-maven-plugin</groupId>
 	<artifactId>testJavaAndScala</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<name>Test for Java + Scala compilation</name>
@@ -70,7 +70,7 @@
 			<plugins>
 				<plugin>
 					<groupId>org.scala-tools</groupId>
-					<artifactId>maven-scala-plugin</artifactId>
+					<artifactId>scala-maven-plugin</artifactId>
 					<version>2.9.1</version>
 				</plugin>
 				<plugin>
@@ -83,7 +83,7 @@
 		<plugins>
 			<plugin>
 				<groupId>org.scala-tools</groupId>
-				<artifactId>maven-scala-plugin</artifactId>
+				<artifactId>scala-maven-plugin</artifactId>
 				<executions>
 					<execution>
 						<id>scala-compile-first</id>

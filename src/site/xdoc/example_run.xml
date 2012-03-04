@@ -31,7 +31,7 @@
       <source><![CDATA[
   <plugin>
     <groupId>maven</groupId>
-    <artifactId>maven-scala-plugin</artifactId>
+    <artifactId>scala-maven-plugin</artifactId>
     <configuration>
       <launchers>
         <launcher>

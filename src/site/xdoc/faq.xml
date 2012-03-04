@@ -31,7 +31,7 @@
 				<dt>Is there a wiki detailing Scala/Eclipse/Maven integration</dt>
 				<dd>Yes, it requires a Scala trac user account and is located <a href="http://lampsvn.epfl.ch/trac/scala/wiki/ScalaEclipseMaven">here</a></dd>
 				<dt>Why does the mvn eclipse:eclipse not add the src/main/scala directory as a source path</dt>
-				<dd>The maven-eclipse-plugin is not maintained/integrated with the maven-scala-plugin.  
+				<dd>The maven-eclipse-plugin is not maintained/integrated with the scala-maven-plugin.  
 				If you would like to have the src/main/scala directory added as a source path in eclipse, you must configure it useing the <a href="http://mojo.codehaus.org/build-helper-maven-plugin/howto.html">maven-build-helper-plugin's add-source goal</a>
 				Example: <pre>
 &lt;project&gt;

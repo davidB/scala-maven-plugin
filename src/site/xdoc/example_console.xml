@@ -77,7 +77,7 @@ object LiftConsole {
     <source><![CDATA[
       <plugin>
         <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <artifactId>scala-maven-plugin</artifactId>
         ...
         <configuration>
           <mainConsole>LiftConsole</mainConsole>
@@ -99,7 +99,7 @@ object LiftConsole {
     <source><![CDATA[
       <plugin>
         <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <artifactId>scala-maven-plugin</artifactId>
         ...
         <configuration>
           <javaRebelPath>${user.home}/lib/java/javarebel/javarebel.jar</javaRebelPath>

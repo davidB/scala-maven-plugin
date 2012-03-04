@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
   <properties>
-    <title>maven-scala-plugin</title>
+    <title>scala-maven-plugin</title>
     <authors>
       <person name="James Strachan" />
     </authors>
@@ -55,7 +55,7 @@
       <source><![CDATA[
 <plugin>
   <groupId>org.scala-tools</groupId>
-  <artifactId>maven-scala-plugin</artifactId>
+  <artifactId>scala-maven-plugin</artifactId>
   <configuration>
     <ccTestGoals>scatatest:test</ccTestGoals>
   </configuration>

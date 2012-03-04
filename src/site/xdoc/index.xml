@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <properties>
-        <title>maven-scala-plugin</title>
+        <title>scala-maven-plugin</title>
         <authors>
             <person name="Brice Lambi"/>
             <person name="David Bernard"/>
         </authors>
     </properties>
     <body>
-        <section name="maven-scala-plugin">
-            <p>The maven-scala-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a href="http://liftweb.net"><i>/Lift/</i></a>.</p>
+        <section name="scala-maven-plugin">
+            <p>The scala-maven-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a href="http://liftweb.net"><i>/Lift/</i></a>.</p>
             <p>If there are problems please let us know.</p>
         </section>
         <section name="Requirements">

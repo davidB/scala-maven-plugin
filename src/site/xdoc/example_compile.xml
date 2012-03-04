@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
   <properties>
-    <title>maven-scala-plugin</title>
+    <title>scala-maven-plugin</title>
     <authors>
       <person name="David Bernard" />
     </authors>
@@ -68,7 +68,7 @@ mvn scala:cc -Donce=true -Dfsc=false
   ...
       <plugin>
         <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <artifactId>scala-maven-plugin</artifactId>
         <executions>
           <execution>
             <goals>
@@ -110,7 +110,7 @@ one error found
   ...
   <plugin>
     <groupId>org.scala-tools</groupId>
-    <artifactId>maven-scala-plugin</artifactId>
+    <artifactId>scala-maven-plugin</artifactId>
       <configuration>
         <args>
           <arg>-unchecked</arg>

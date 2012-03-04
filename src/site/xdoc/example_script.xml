@@ -15,7 +15,7 @@
       <source><![CDATA[
   <plugin>
     <groupId>org.scala-tools</groupId>
-    <artifactId>maven-scala-plugin</artifactId>
+    <artifactId>scala-maven-plugin</artifactId>
     <executions>
       <execution>
         <phase>package</phase>
@@ -43,7 +43,7 @@
       <source><![CDATA[
   <plugin>
     <groupId>org.scala-tools</groupId>
-    <artifactId>maven-scala-plugin</artifactId>
+    <artifactId>scala-maven-plugin</artifactId>
     <executions>
       <execution>
         <phase>package</phase>
@@ -63,7 +63,7 @@
       <source><![CDATA[
   <plugin>
     <groupId>maven</groupId>
-    <artifactId>maven-scala-plugin</artifactId>
+    <artifactId>scala-maven-plugin</artifactId>
     <configuration>
       <scriptFile>pathToScript/MyScript</scriptFile>
     </configuration>
