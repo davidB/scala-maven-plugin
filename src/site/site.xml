@@ -11,13 +11,13 @@
   </bannerRight>
   <publishDate position="left" format="yyyy-MM-dd HH:mm" />
   <version position="left"/>
-  <skin>
+  <!--skin>
     <groupId>org.scala-tools.skins</groupId>
     <artifactId>scala-skin-simple</artifactId>
     <version>1.0</version>
-  </skin>
+  </skin-->
   <poweredBy>
-    <logo name="Build with Maven 2" href="http://maven.apache.org" img="images/logos/maven-feather.png" />
+    <logo name="Build with Maven" href="http://maven.apache.org" img="images/logos/maven-feather.png" />
   </poweredBy>
 
   <body>
