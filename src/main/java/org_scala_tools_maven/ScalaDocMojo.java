@@ -131,7 +131,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * @parameter expression="scaladocs"
      * @required
      */
-    private String outputDirectory;
+    protected String outputDirectory;
 
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
@@ -139,7 +139,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * @parameter expression="${project.reporting.outputDirectory}/scaladocs"
      * @required
      */
-    private File reportOutputDirectory;
+    protected File reportOutputDirectory;
 
     /**
      * The name of the Scaladoc report.
