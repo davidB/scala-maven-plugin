@@ -1,22 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>5</version>
+  </parent>
 
-  <groupId>org.scala-tools</groupId>
+  <groupId>net.alchim31.maven</groupId>
   <artifactId>maven-scala-plugin</artifactId>
   <version>2.15.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>maven-scala-plugin</name>
-  <url>http://scala-tools.org/mvnsites/${project.artifactId}</url>
-  <!--url>http://github.com/davidB/${project.artifactId}</url -->
+  <url>http://github.com/davidB/${project.artifactId}</url>
+  <inceptionYear>2012</inceptionYear>
   <description>The maven-scala-plugin is used for compiling/testing/running/documenting scala code in maven.</description>
-  <inceptionYear>2010</inceptionYear>
-  <organization>
-    <name>Scala Tools</name>
-    <url>http://scala-tools.org/</url>
-  </organization>
 
   <licenses>
     <license>
@@ -27,7 +25,7 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/davidB/maven-scala-plugin.git</connection>
+    <connection>scm:git:git://github.com/davidB/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:davidB/${project.artifactId}.git</developerConnection>
     <url>http://github.com/davidB/${project.artifactId}/</url>
   </scm>
@@ -44,30 +42,6 @@
       <post>http://groups.google.com/group/maven-and-scala</post>
     </mailingList>
   </mailingLists>
-
-  <distributionManagement>
-    <repository>
-      <id>scala-tools.org</id>
-      <url>http://nexus-direct.scala-tools.org/content/repositories/releases</url>
-    </repository>
-    <snapshotRepository>
-      <id>scala-tools.org</id>
-      <url>http://nexus-direct.scala-tools.org/content/repositories/snapshots</url>
-      <uniqueVersion>false</uniqueVersion>
-    </snapshotRepository>
-    <site>
-      <id>scala-tools.org</id>
-      <url>dav:http://nexus-direct.scala-tools.org/content/sites/mvnsites/maven-scala-plugin</url>
-    </site>
-  </distributionManagement>
-
-  <repositories>
-    <repository>
-      <id>scala-tools.org</id>
-      <name>Scala-Tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </repository>
-  </repositories>
 
   <developers>
     <developer>
@@ -193,83 +167,15 @@
     </dependency>
   </dependencies>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.6</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.2</version>
-        <inherited>false</inherited>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.7</version>
-        <configuration>
-          <useStandardDocletOptions>true</useStandardDocletOptions>
-          <charset>UTF-8</charset>
-          <encoding>UTF-8</encoding>
-          <docencoding>UTF-8</docencoding>
-          <breakiterator>true</breakiterator>
-          <version>true</version>
-          <author>true</author>
-          <keywords>true</keywords>
-          <additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam>
-          <minmemory>128m</minmemory>
-          <maxmemory>512m</maxmemory>
-          <links>
-            <link>http://java.sun.com/j2se/${maven.compiler.source}/docs/api/</link>
-            <link>http://slf4j.org/api/</link>
-            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
-            <link>http://logging.apache.org/log4j/docs/api/</link>
-            <link>http://people.apache.org/~tobrien/wicket/apidocs/</link>
-            <link>http://commons.apache.org/lang/api-release/</link>
-            <link>http://commons.apache.org/io/api-release/</link>
-            <link>http://testng.org/javadocs/</link>
-            <link>http://junit.sourceforge.net/javadoc/</link>
-          </links>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.2</version>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>taglist-maven-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <tags>
-            <tag>TODO</tag>
-            <tag>FIXME</tag>
-            <tag>@todo</tag>
-            <tag>@deprecated</tag>
-          </tags>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-changes-plugin</artifactId>
-        <version>2.3</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>changes-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>
 
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-changes-plugin</artifactId>
+          <version>2.6</version>
+        </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
@@ -299,34 +205,103 @@
     </pluginManagement>
     <plugins>
       <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.0-beta-2</version>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-docck-plugin</artifactId>
-        <version>1.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <!-- Default qdox version is 1.6.3 which fails to parse LogProcessorUtils for some unknown reason, and is quite old -->
-        <dependencies>
-          <dependency>
-            <groupId>com.thoughtworks.qdox</groupId>
-            <artifactId>qdox</artifactId>
-            <version>1.11</version>
-          </dependency>
-        </dependencies>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+          <templateFile>${basedir}/src/site/template-site.vm</templateFile>
+          <reportPlugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-plugin-plugin</artifactId>
+              <version>2.6</version>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-project-info-reports-plugin</artifactId>
+              <version>2.2</version>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <version>2.7</version>
+              <configuration>
+                <minmemory>128m</minmemory>
+                <maxmemory>512m</maxmemory>
+                <useStandardDocletOptions>true</useStandardDocletOptions>
+                <charset>${encoding}</charset>
+                <encoding>${encoding}</encoding>
+                <docencoding>${encoding}</docencoding>
+                <docfilessubdirs>true</docfilessubdirs>
+                <breakiterator>true</breakiterator>
+                <version>true</version>
+                <author>true</author>
+                <keywords>true</keywords>
+                <attach>false</attach>
+                <!--
+                <doctitle>${project.name} API Reference (${project.version}, r${buildNumber})</doctitle>
+                <windowtitle>${project.name} API Reference (${project.version}, r${buildNumber})</windowtitle>
+                 -->
+                <links>
+                  <link>http://java.sun.com/j2se/${maven.compiler.source}/docs/api/</link>
+                  <link>http://slf4j.org/api/</link>
+                  <link>http://commons.apache.org/lang/api-release/</link>
+                  <link>http://commons.apache.org/io/api-release/</link>
+                </links>
+                <!-- additionalparam>-nopackagediagram</additionalparam-->
+                <!-- additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam-->
+                <!-- -sourceclasspath ${project.build.outputDirectory} -->
+                <excludePackageNames>${project.groupId}.example*:${project.groupId}.util.internal*</excludePackageNames>
+              </configuration>
+            </plugin>
+            <!--
+            <plugin>
+              <groupId>com.dzone.jdocs</groupId>
+              <artifactId>javadoc</artifactId>
+              <version>1.0</version>
+              <configuration>
+                <aggregate>true</aggregate>
+                <source>${java.src.version}</source>
+                <overview>${basedir}/src/main/java/overview.html</overview>
+              </configuration>
+            </plugin>
+            -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jxr-plugin</artifactId>
+              <version>2.2</version>
+            </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>taglist-maven-plugin</artifactId>
+              <version>2.4</version>
+              <configuration>
+                <tags>
+                  <tag>TODO</tag>
+                  <tag>FIXME</tag>
+                  <tag>@todo</tag>
+                  <tag>@deprecated</tag>
+                </tags>
+              </configuration>
+            </plugin>
+            <plugin>
+              <artifactId>maven-changes-plugin</artifactId>
+              <reportSets>
+                <reportSet>
+                  <reports>
+                    <report>changes-report</report>
+                  </reports>
+                </reportSet>
+              </reportSets>
+            </plugin>
+          </reportPlugins>
+        </configuration>
       </plugin>
       <plugin>
         <!-- make sure our code doesn't have 1.6 dependencies except where we know it see * http://mojo.codehaus.org/animal-sniffer/index.html * http://weblogs.java.net/blog/kohsuke/archive/2008/11/compiling_with.html -->
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.5</version>
+        <version>1.7</version>
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
@@ -338,7 +313,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
-        <version>2.3</version>
         <configuration>
           <template>announcement.md.vm</template>
           <templateDirectory>announcements</templateDirectory>
@@ -350,10 +324,10 @@
       </plugin>
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.1</version>
+        <version>2.2.1</version>
         <configuration>
           <releaseProfiles>release</releaseProfiles>
-          <goals>install animal-sniffer:check deploy site-deploy assembly:assembly</goals>
+          <goals>install animal-sniffer:check deploy site assembly:assembly</goals>
         </configuration>
       </plugin>
     </plugins>
@@ -421,10 +395,47 @@
       </activation>
       <build>
         <plugins>
-         <plugin>
+          <!--plugin>
+            Diseable docck as it doesn work with site 3.0 (no longer need to have reporting tag
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-docck-plugin</artifactId>
+            <version>1.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+            Default qdox version is 1.6.3 which fails to parse LogProcessorUtils for some unknown reason, and is quite old
+            <dependencies>
+              <dependency>
+                <groupId>com.thoughtworks.qdox</groupId>
+                <artifactId>qdox</artifactId>
+                <version>1.11</version>
+              </dependency>
+            </dependencies>
+          </plugin-->
+          <plugin>
             <artifactId>maven-site-plugin</artifactId>
           </plugin>
-       </plugins>
+          <plugin>
+            <groupId>com.github.github</groupId>
+            <artifactId>site-maven-plugin</artifactId>
+            <version>0.4</version>
+            <configuration>
+              <message>Building site for ${project.version}</message>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>site</goal>
+                </goals>
+                <phase>site</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>
