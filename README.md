@@ -8,12 +8,11 @@ The maven-scala-plugin is used for compiling/testing/running/documenting scala c
 
 # Build
 
-Currently, you need maven 2.x to build the plugin, create the site and run integration-test.
+Currently, you need maven 3.x to build the plugin, create the site and run integration-test.
   
 # TODO
 
 * close issue from https://github.com/davidB/maven-scala-plugin/issues/
-* move build to run with maven 3.x
 * try to integrate the "dependency builder" of SBT 0.10
 * try to use aether to manage dependencies  
 * refactor :
