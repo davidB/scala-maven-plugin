@@ -57,7 +57,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
 
         //err and out are redirected to out
         if (!_redirectToLog) {
-            exec.setStreamHandler(new PumpStreamHandler(System.out));
+            exec.setStreamHandler(new PumpStreamHandler(System.out, System.err, System.in));
         } else {
             exec.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
                 private LevelState _previous = new LevelState();
