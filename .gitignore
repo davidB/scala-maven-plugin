@@ -12,6 +12,7 @@ syntax: glob
 .classpath
 .project
 .manager
+.idea
 
 # building
 target
