@@ -204,7 +204,9 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
     private void runScript(boolean mavenProjectDependency, URLClassLoader loader, String baseName) throws Exception {
         Class<?> compiledScript = loader.loadClass(baseName);
-
+        
+        ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(loader);
         try {
             try {
                 Object instance;
@@ -245,6 +247,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
                 throw (Exception) e;
             }
             throw new Exception("A " + e.getClass().getSimpleName() + " exception was thrown", e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentCL);
         }
     }
 
