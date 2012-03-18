@@ -25,14 +25,14 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/davidB/${artifactId}.git</connection>
-    <developerConnection>scm:git:git@github.com:davidB/${artifactId}.git</developerConnection>
-    <url>http://github.com/davidB/${artifactId}/</url>
+    <connection>scm:git:git://github.com/davidB/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:davidB/${project.artifactId}.git</developerConnection>
+    <url>http://github.com/davidB/${project.artifactId}/</url>
   </scm>
 
   <issueManagement>
     <system>github</system>
-    <url>http://github.com/davidB/${artifactId}/issues#issue/</url>
+    <url>http://github.com/davidB/${project.artifactId}/issues#issue/</url>
   </issueManagement>
 
   <mailingLists>
@@ -332,7 +332,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.2.1</version>
+        <version>2.2.2</version>
         <configuration>
           <releaseProfiles>release</releaseProfiles>
           <goals>install animal-sniffer:check deploy site assembly:assembly</goals>
