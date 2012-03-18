@@ -15,6 +15,7 @@
       <action dev="David Bernard" type="fix">fix #60 : scala:doc no longer remove elements from the classpath</action>
       <action dev="David Bernard" type="update">move from org.scala-tools to net.alchim31.maven (repo hosted by oss.sonatype)</action>
       <action dev="David Bernard" type="update">rename artifactId from maven-scala-plugin to scala-maven-plugin (follow maven rules and warning)</action>
+      <action dev="David Bernard" type="update">change name of github repository from maven-scala-plugin to scala-maven-plugin</action>
       <action dev="David Bernard" type="update">change license from ASL 2.0 to public domain (Unlicense)</action>
     </release>
     <release version="2.15.2" date="2011-02-06" description="">
