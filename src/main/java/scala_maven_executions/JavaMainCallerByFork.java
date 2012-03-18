@@ -15,7 +15,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.StringUtils;
 
-import scala_maven_executions.LogProcessorUtils.Level;
 import scala_maven_executions.LogProcessorUtils.LevelState;
 
 /**
@@ -58,13 +57,13 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
 
         //err and out are redirected to out
         if (!_redirectToLog) {
-            exec.setStreamHandler(new PumpStreamHandler(System.out));
+          exec.setStreamHandler(new PumpStreamHandler(System.out, System.err, System.in));
         } else {
             exec.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
                 private LevelState _previous = new LevelState();
                 
                 @Override
-                protected void processLine(String line, @SuppressWarnings("unused") int level) {
+                protected void processLine(String line, int level) {
                   try {
                     _previous = LogProcessorUtils.levelStateOf(line, _previous);
                     switch (_previous.level) {
