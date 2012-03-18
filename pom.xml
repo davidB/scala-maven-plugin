@@ -117,27 +117,10 @@
       <version>1.0.1</version>
     </dependency>
     <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
       <version>${maven.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-       <artifactId>maven-toolchain</artifactId>
-       <version>1.0</version>
-       <exclusions>
-         <!-- Using org.codehaus.plexus:plexus-utils instead of -->
-         <exclusion>
-           <groupId>plexus</groupId>
-           <artifactId>plexus-utils</artifactId>
-         </exclusion>
-       </exclusions>
-     </dependency>
      <dependency>
        <groupId>org.codehaus.plexus</groupId>
        <artifactId>plexus-utils</artifactId>
