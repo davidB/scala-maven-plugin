@@ -45,7 +45,11 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     @SuppressWarnings("unchecked")
     @Override
     protected List<String> getClasspathElements() throws Exception {
-        return TychoUtilities.addOsgiClasspathElements(project, project.getCompileClasspathElements());
+        List<String> back = project.getCompileClasspathElements();
+        back.remove(project.getBuild().getOutputDirectory());
+        back.add(getOutputDir().getAbsolutePath());
+        back = TychoUtilities.addOsgiClasspathElements(project, back);
+        return back;
     }
 
     @SuppressWarnings("unchecked")

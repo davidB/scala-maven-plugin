@@ -51,7 +51,10 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     @SuppressWarnings("unchecked")
     @Override
     protected List<String> getClasspathElements() throws Exception {
-        return project.getTestClasspathElements();
+      List<String> back = project.getTestClasspathElements();
+      back.remove(project.getBuild().getTestOutputDirectory());
+      back.add(getOutputDir().getAbsolutePath());
+      return back;
     }
 
     @SuppressWarnings("unchecked")
