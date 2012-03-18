@@ -14,8 +14,9 @@
       </p>
       <source><![CDATA[
   <plugin>
-    <groupId>org.scala-tools</groupId>
-    <artifactId>scala-maven-plugin</artifactId>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <version>${project.version}</version>
     <executions>
       <execution>
         <phase>package</phase>
@@ -42,8 +43,9 @@
       <p>Executing a script as part of the build process.</p>
       <source><![CDATA[
   <plugin>
-    <groupId>org.scala-tools</groupId>
-    <artifactId>scala-maven-plugin</artifactId>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <version>${project.version}</version>
     <executions>
       <execution>
         <phase>package</phase>
@@ -62,8 +64,9 @@
         definition.</p>
       <source><![CDATA[
   <plugin>
-    <groupId>maven</groupId>
-    <artifactId>scala-maven-plugin</artifactId>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <version>${project.version}</version>
     <configuration>
       <scriptFile>pathToScript/MyScript</scriptFile>
     </configuration>

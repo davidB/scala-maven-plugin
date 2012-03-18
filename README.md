@@ -18,7 +18,9 @@ Currently, you need maven 3.x to build the plugin, create the site and run integ
   * 'mvn invoker:run -Dinvoker.test=test1' : run integration test 'test1' usefull for tuning/debug
 * 'mvn install' :  'mvn integration-test' + publish on local maven repository
 * 'mvn install -Dmave.test.skip=true' : 'mvn install' - run of unit test - run of integration test
-* 'mvn release:prepare && mvn release:perform' : to publish on staging repository
+* release :
+  * 'mvn release:prepare && mvn release:perform' : to publish on staging repository via plugin
+  * 'mvn site source:jar javadoc:jar install:install gpg:sign deploy:deploy  changes:announcement-generate -Dmaven.test.skip=true -DperformRelease=true' : manual
   
 # TODO
 

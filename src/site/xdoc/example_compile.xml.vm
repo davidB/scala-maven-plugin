@@ -67,8 +67,9 @@ mvn scala:cc -Donce=true -Dfsc=false
 <project>
   ...
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <goals>
@@ -109,14 +110,15 @@ one error found
 <project>
   ...
   <plugin>
-    <groupId>org.scala-tools</groupId>
-    <artifactId>scala-maven-plugin</artifactId>
-      <configuration>
-        <args>
-          <arg>-unchecked</arg>
-          <arg>-deprecation</arg>
-          <arg>-explaintypes</arg>
-        </args>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <version>${project.version}</version>
+    <configuration>
+      <args>
+        <arg>-unchecked</arg>
+        <arg>-deprecation</arg>
+        <arg>-explaintypes</arg>
+      </args>
     </configuration>
   </plugin>
   ...

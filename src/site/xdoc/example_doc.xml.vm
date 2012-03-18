@@ -21,8 +21,9 @@
     <plugins>
       ...
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
       </plugin>
       ...
     </plugins>
@@ -40,7 +41,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.0-beta-2</version>
+        <version>3.0</version>
         <configuration>
           <reportPlugins>
             <plugin>
@@ -48,9 +49,9 @@
               <version>2.2</version>
             </plugin>
             <plugin>
-              <groupId>org.scala-tools</groupId>
-              <artifactId>scala-maven-plugin</artifactId>
-              <version>2.14.2-SNAPSHOT</version>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>${project.artifactId}</artifactId>
+              <version>${project.version}</version>
               <configuration>
                 <jvmArgs>
                   <jvmArg>-Xms64m</jvmArg>
@@ -153,13 +154,14 @@ mvn scala:doc
     <plugins>
       ...
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
         <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>doc-jar</goal>
-            </goals>
+          <id>attach-javadocs</id>
+          <goals>
+            <goal>doc-jar</goal>
+          </goals>
         </execution>
       </plugin>
       ...

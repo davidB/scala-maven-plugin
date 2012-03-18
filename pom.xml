@@ -335,7 +335,7 @@
         <version>2.2.2</version>
         <configuration>
           <releaseProfiles>release</releaseProfiles>
-          <goals>install animal-sniffer:check deploy site assembly:assembly</goals>
+          <goals>changes:changes-validate install animal-sniffer:check site deploy changes:announcement-generate</goals>
         </configuration>
       </plugin>
     </plugins>

@@ -16,7 +16,7 @@
         <li>compile your code (running the console doesn't force to compile:
           <source>mvn test-compile #or mvn test</source>
         </li>
-        <li>run the console :    
+        <li>run the console :
           <source>mvn scala:console</source>
         </li>
         <li>when the scala prompt is shown, play :
@@ -55,7 +55,7 @@ scala> new bootstrap.liftweb.Boot().boot
     <source><![CDATA[
 import bootstrap.liftweb.Boot
 import scala.tools.nsc.MainGenericRunner
- 
+
 object LiftConsole {
    def main(args : Array[String]) {
      // Instantiate your project's Boot file
@@ -76,19 +76,19 @@ object LiftConsole {
       then edit your pom.xml and add to the configuration of the plugin :
     <source><![CDATA[
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
-        ...
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
         <configuration>
           <mainConsole>LiftConsole</mainConsole>
         </configuration>
       </plugin>
       ]]></source>
       </li>
-  </ol>    
-    
+  </ol>
+
     </section>
-    
+
     <section name="running with JavaRebel">
     <p>If you want to run the console with <a href="">JavaRebel</a>, you need :
      <ol>
@@ -98,9 +98,9 @@ object LiftConsole {
        or through the pom.xml
     <source><![CDATA[
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
-        ...
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <version>${project.version}</version>
         <configuration>
           <javaRebelPath>${user.home}/lib/java/javarebel/javarebel.jar</javaRebelPath>
         </configuration>
@@ -111,7 +111,7 @@ object LiftConsole {
         If you wish to use JRebel with the console, please set your maven opts in your environment:
         <source>MAVEN_OPTS="$MAVEN_OPTS -noverify -javaagent:/...path/to/jrebel.jar" mvn scala:console</source>
     </li>
-    </ol>       
+    </ol>
     </p>
     </section>
   </body>

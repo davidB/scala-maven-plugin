@@ -19,7 +19,7 @@
       <p>
         Place java test sources files in :
         <source>src/test/java</source>
-      </p>    
+      </p>
       <p>
         Place scala sources files in :
         <source>src/main/scala</source>
@@ -37,7 +37,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.scala-tools.scala-maven-plugin</groupId>
+	<groupId>sandbox</groupId>
 	<artifactId>testJavaAndScala</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<name>Test for Java + Scala compilation</name>
@@ -50,28 +50,14 @@
 			<version>2.7.2</version>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>scala-tools.org</id>
-			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>scala-tools.org</id>
-			<name>Scala-tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<build>
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>org.scala-tools</groupId>
-					<artifactId>scala-maven-plugin</artifactId>
-					<version>2.9.1</version>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}</artifactId>
+          <version>${project.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -82,8 +68,8 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>org.scala-tools</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
 				<executions>
 					<execution>
 						<id>scala-compile-first</id>
@@ -92,7 +78,7 @@
 						    <goal>add-source</goal>
 							<goal>compile</goal>
 						</goals>
-					</execution>									
+					</execution>
 					<execution>
 						<id>scala-test-compile</id>
 						<phase>process-test-resources</phase>
@@ -134,9 +120,9 @@ mvn test
 mvn package
        ]]>
         </source>
-      </p>      
-      
-    </section>    
+      </p>
+
+    </section>
 
   </body>
 </document>
