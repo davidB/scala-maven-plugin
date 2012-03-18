@@ -135,6 +135,13 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected String[] args;
 
     /**
+     * Additional parameter to use to call the main class
+     * Using this parameter only from command line ("-DaddScalacArgs=arg1|arg2|arg3|..."), not from pom.xml.
+     * @parameter expression="${addScalacArgs}"
+     */
+    protected String addScalacArgs;
+    
+    /**
      * className (FQN) of the scala tool to provide as
      *
      * @required
@@ -348,7 +355,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected List<Dependency> getDependencies() {
         return project.getCompileDependencies();
     }
-
+   
     protected VersionNumber findScalaVersion() throws Exception {
         if (_scalaVersionN == null) {
             String detectedScalaVersion = scalaVersion;
@@ -465,6 +472,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected JavaMainCaller getScalaCommand() throws Exception {
         JavaMainCaller cmd = getEmptyScalaCommand(scalaClassName);
         cmd.addArgs(args);
+        if (StringUtils.isNotEmpty(addScalacArgs)) {
+          cmd.addArgs(StringUtils.split(addScalacArgs, "|"));
+        }        
         addCompilerPluginOptions(cmd);
         cmd.addJvmArgs(jvmArgs);
         return cmd;

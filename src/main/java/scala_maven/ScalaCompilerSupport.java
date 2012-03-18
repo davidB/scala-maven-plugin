@@ -43,8 +43,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * @parameter expression="${notifyCompilation}" default-value="true"
      */
     private boolean notifyCompilation = true;
-
-
+    
     abstract protected File getOutputDir() throws Exception;
 
     abstract protected List<String> getClasspathElements() throws Exception;
