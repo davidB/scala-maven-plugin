@@ -14,7 +14,7 @@
   <name>scala-maven-plugin</name>
   <url>http://github.com/davidB/${project.artifactId}</url>
   <inceptionYear>2012</inceptionYear>
-  <description>The scala-maven-plugin (previously maven-scala-plugin) is used for compiling/testing/running/documenting scala code in maven.</description>
+  <description>The scala-maven-plugin (previously maven-scala-plugin) is used for compiling/testing/running/documenting scala code of any maven project.</description>
 
   <licenses>
     <license>

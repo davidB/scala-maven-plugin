@@ -17,8 +17,9 @@
 ##
 ## Announcement in markdown format (+tag for Postenours)
 
-to:post@implicitly.posterous.com, scala-announce@listes.epfl.ch 
-Subject : ${artifactId} ${version} ((tag : maven, scala))
+##to:post@implicitly.posterous.com, scala-announce@listes.epfl.ch 
+to:post@implicitly.posterous.com
+Subject : ${artifactId} ${version} ((tag: maven))
 
 <markdown>
 The ${developmentTeam} is pleased to announce the [${finalName}](${url}) release!
