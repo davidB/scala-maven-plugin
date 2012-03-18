@@ -1,6 +1,3 @@
-/**
- *
- */
 package scala_maven;
 
 import java.io.File;
