@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>
-        scala-maven-plugin</title>
+    scala-maven-plugin</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -66,8 +66,8 @@
                                 <h5>Overview</h5>
                   <ul>
                   <li class="none">
-            <strong>Introduction</strong>
-          </li>
+                          <a href="index.html" title="Introduction">Introduction</a>
+            </li>
                   <li class="none">
                           <a href="plugin-info.html" title="Goals">Goals</a>
             </li>
@@ -102,8 +102,8 @@
                           <a href="example_console.html" title="Scala Console">Scala Console</a>
             </li>
                   <li class="none">
-                          <a href="example_java.html" title="Mixed Java/Scala Projects">Mixed Java/Scala Projects</a>
-            </li>
+            <strong>Mixed Java/Scala Projects</strong>
+          </li>
                   <li class="none">
                           <a href="example_scalac_plugins.html" title="Creating Scalac Plugins">Creating Scalac Plugins</a>
             </li>
@@ -113,44 +113,9 @@
           </ul>
                        <h5>Project Documentation</h5>
                   <ul>
-                                                                                                                                                                                                                                                                  <li class="expanded">
+                                                                                                                                                                                                                                                        <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
-                    <ul>
-                      <li class="none">
-            <strong>About</strong>
-          </li>
-                      <li class="none">
-                          <a href="source-repository.html" title="Source Repository">Source Repository</a>
-            </li>
-                      <li class="none">
-                          <a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
-            </li>
-                      <li class="none">
-                          <a href="mail-lists.html" title="Mailing Lists">Mailing Lists</a>
-            </li>
-                      <li class="none">
-                          <a href="issue-tracking.html" title="Issue Tracking">Issue Tracking</a>
-            </li>
-                      <li class="none">
-                          <a href="plugins.html" title="Project Plugins">Project Plugins</a>
-            </li>
-                      <li class="none">
-                          <a href="project-summary.html" title="Project Summary">Project Summary</a>
-            </li>
-                      <li class="none">
-                          <a href="dependencies.html" title="Dependencies">Dependencies</a>
-            </li>
-                      <li class="none">
-                          <a href="license.html" title="Project License">Project License</a>
-            </li>
-                      <li class="none">
-                          <a href="team-list.html" title="Project Team">Project Team</a>
-            </li>
-                      <li class="none">
-                          <a href="integration.html" title="Continuous Integration">Continuous Integration</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
                                                                                                                                                                                 <li class="collapsed">
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                   </li>
@@ -165,20 +130,139 @@
     <div id="bodyColumn">
       <div id="contentBox">
         
-    
-        <div class="section"><h2>scala-maven-plugin<a name="scala-maven-plugin"></a></h2>
-            <p>The scala-maven-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a class="externalLink" href="http://liftweb.net"><i>/Lift/</i></a>.</p>
-            <p>If there are problems please let us know.</p>
-        </div>
-        <div class="section"><h2>Requirements<a name="Requirements"></a></h2>
-            <ul>
-                <li>Maven 2.0.7</li>
-                <li>JDK 1.5</li>
-                <li>No need to install <a class="externalLink" href="http://scala-lang.org">scala</a> !</li>
-            </ul>
-        </div>
-       <p>Thanks to Brice Lambi and the team of the version 1.0 of the plugin. (version 2.x is a 95%/full rewrite)</p>
-    
+  
+    <h1>Mixed Java/Scala Projects</h1>
+
+    <span>Prerequisites : <a href="usage.html">common usages</a></span>
+
+    <div class="section"><h2>setup<a name="setup"></a></h2>
+      <p>
+        Place java sources files in :
+        </p><div class="source"><pre>src/main/java</pre></div>
+      
+      <p>
+        Place java test sources files in :
+        </p><div class="source"><pre>src/test/java</pre></div>
+          
+      <p>
+        Place scala sources files in :
+        </p><div class="source"><pre>src/main/scala</pre></div>
+      
+      <p>
+        Place scala test sources files in :
+        </p><div class="source"><pre>src/test/scala</pre></div>
+      
+      <p>Make your pom file look similar to the following (this is what we use for integration testing):
+       </p><div class="source"><pre>
+          
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+	&lt;groupId&gt;org.scala-tools.scala-maven-plugin&lt;/groupId&gt;
+	&lt;artifactId&gt;testJavaAndScala&lt;/artifactId&gt;
+	&lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+	&lt;name&gt;Test for Java + Scala compilation&lt;/name&gt;
+	&lt;description&gt;Test for Java + Scala compilation&lt;/description&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
+			&lt;artifactId&gt;scala-library&lt;/artifactId&gt;
+			&lt;version&gt;2.7.2&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+	&lt;repositories&gt;
+		&lt;repository&gt;
+			&lt;id&gt;scala-tools.org&lt;/id&gt;
+			&lt;name&gt;Scala-tools Maven2 Repository&lt;/name&gt;
+			&lt;url&gt;http://scala-tools.org/repo-releases&lt;/url&gt;
+		&lt;/repository&gt;
+	&lt;/repositories&gt;
+	&lt;pluginRepositories&gt;
+		&lt;pluginRepository&gt;
+			&lt;id&gt;scala-tools.org&lt;/id&gt;
+			&lt;name&gt;Scala-tools Maven2 Repository&lt;/name&gt;
+			&lt;url&gt;http://scala-tools.org/repo-releases&lt;/url&gt;
+		&lt;/pluginRepository&gt;
+	&lt;/pluginRepositories&gt;
+
+	&lt;build&gt;
+		&lt;pluginManagement&gt;
+			&lt;plugins&gt;
+				&lt;plugin&gt;
+					&lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+					&lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+					&lt;version&gt;2.9.1&lt;/version&gt;
+				&lt;/plugin&gt;
+				&lt;plugin&gt;
+					&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+					&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+					&lt;version&gt;2.0.2&lt;/version&gt;
+				&lt;/plugin&gt;
+			&lt;/plugins&gt;
+		&lt;/pluginManagement&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+				&lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+				&lt;executions&gt;
+					&lt;execution&gt;
+						&lt;id&gt;scala-compile-first&lt;/id&gt;
+						&lt;phase&gt;process-resources&lt;/phase&gt;
+						&lt;goals&gt;
+						    &lt;goal&gt;add-source&lt;/goal&gt;
+							&lt;goal&gt;compile&lt;/goal&gt;
+						&lt;/goals&gt;
+					&lt;/execution&gt;									
+					&lt;execution&gt;
+						&lt;id&gt;scala-test-compile&lt;/id&gt;
+						&lt;phase&gt;process-test-resources&lt;/phase&gt;
+						&lt;goals&gt;
+							&lt;goal&gt;testCompile&lt;/goal&gt;
+						&lt;/goals&gt;
+					&lt;/execution&gt;
+				&lt;/executions&gt;
+			&lt;/plugin&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+				&lt;executions&gt;
+					&lt;execution&gt;
+						&lt;phase&gt;compile&lt;/phase&gt;
+						&lt;goals&gt;
+							&lt;goal&gt;compile&lt;/goal&gt;
+						&lt;/goals&gt;
+					&lt;/execution&gt;
+				&lt;/executions&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+
+&lt;/project&gt;
+
+          
+       </pre></div>
+      
+      <p>
+        Then use the standard maven phases :
+        </p><div class="source"><pre>
+          
+# compile only
+mvn compile
+# or compile and test
+mvn test
+# or compile, test and package
+mvn package
+       
+        </pre></div>
+            
+      
+    </div>    
+
+  
 
       </div>
     </div>

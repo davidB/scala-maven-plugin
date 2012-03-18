@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>
-        scala-maven-plugin</title>
+    scala-maven-plugin</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -66,8 +66,8 @@
                                 <h5>Overview</h5>
                   <ul>
                   <li class="none">
-            <strong>Introduction</strong>
-          </li>
+                          <a href="index.html" title="Introduction">Introduction</a>
+            </li>
                   <li class="none">
                           <a href="plugin-info.html" title="Goals">Goals</a>
             </li>
@@ -81,8 +81,8 @@
                        <h5>Examples</h5>
                   <ul>
                   <li class="none">
-                          <a href="example_compile.html" title="Compiling">Compiling</a>
-            </li>
+            <strong>Compiling</strong>
+          </li>
                   <li class="none">
                           <a href="example_cc.html" title="Continuous Compilation">Continuous Compilation</a>
             </li>
@@ -113,44 +113,9 @@
           </ul>
                        <h5>Project Documentation</h5>
                   <ul>
-                                                                                                                                                                                                                                                                  <li class="expanded">
+                                                                                                                                                                                                                                                        <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
-                    <ul>
-                      <li class="none">
-            <strong>About</strong>
-          </li>
-                      <li class="none">
-                          <a href="source-repository.html" title="Source Repository">Source Repository</a>
-            </li>
-                      <li class="none">
-                          <a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
-            </li>
-                      <li class="none">
-                          <a href="mail-lists.html" title="Mailing Lists">Mailing Lists</a>
-            </li>
-                      <li class="none">
-                          <a href="issue-tracking.html" title="Issue Tracking">Issue Tracking</a>
-            </li>
-                      <li class="none">
-                          <a href="plugins.html" title="Project Plugins">Project Plugins</a>
-            </li>
-                      <li class="none">
-                          <a href="project-summary.html" title="Project Summary">Project Summary</a>
-            </li>
-                      <li class="none">
-                          <a href="dependencies.html" title="Dependencies">Dependencies</a>
-            </li>
-                      <li class="none">
-                          <a href="license.html" title="Project License">Project License</a>
-            </li>
-                      <li class="none">
-                          <a href="team-list.html" title="Project Team">Project Team</a>
-            </li>
-                      <li class="none">
-                          <a href="integration.html" title="Continuous Integration">Continuous Integration</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
                                                                                                                                                                                 <li class="collapsed">
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                   </li>
@@ -165,20 +130,124 @@
     <div id="bodyColumn">
       <div id="contentBox">
         
-    
-        <div class="section"><h2>scala-maven-plugin<a name="scala-maven-plugin"></a></h2>
-            <p>The scala-maven-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a class="externalLink" href="http://liftweb.net"><i>/Lift/</i></a>.</p>
-            <p>If there are problems please let us know.</p>
-        </div>
-        <div class="section"><h2>Requirements<a name="Requirements"></a></h2>
-            <ul>
-                <li>Maven 2.0.7</li>
-                <li>JDK 1.5</li>
-                <li>No need to install <a class="externalLink" href="http://scala-lang.org">scala</a> !</li>
-            </ul>
-        </div>
-       <p>Thanks to Brice Lambi and the team of the version 1.0 of the plugin. (version 2.x is a 95%/full rewrite)</p>
-    
+  
+    <h1>Compiling Scala sources</h1>
+
+    <span>Prerequis : <a href="usage.html">common usages</a></span>
+
+    <div class="section"><h2>Compiling<a name="Compiling"></a></h2>
+      <p>
+        Place scala sources files in :
+        </p><div class="source"><pre>src/main/scala</pre></div>
+      
+      <p>
+        Place scala test sources files in :
+        </p><div class="source"><pre>src/test/scala</pre></div>
+      
+      <p>
+        Then use the standard maven phases :
+        </p><div class="source"><pre>
+          
+# compile only
+mvn compile
+# or compile and test
+mvn test
+# or compile, test and package
+mvn package
+       
+        </pre></div>
+      
+      <p>
+        Or the plugin specifics goal :
+        </p><div class="source"><pre>
+          
+# compile source
+mvn scala:compile
+# compile test
+mvn scala:testCompile
+       
+        </pre></div>
+      
+      <p>
+        Or if you want to compile only source (from main and test) without calling previous phases like check resources, generate-sources,... :
+        </p><div class="source"><pre>
+          
+# compile source and test with fsc
+mvn scala:cc -Donce=true
+# compile source and test with scalac
+mvn scala:cc -Donce=true -Dfsc=false
+       
+        </pre></div>
+        WARNING:
+        <ul>
+        <li>This feature is provide for integration with editor.</li>
+        <li>using once and fsc =&gt; reuse server if previously started else start a new one but never stop it (except if you call scala:cc without -Donce=true, or if you kill the process yourself)</li>
+        </ul>
+      
+    </div>
+    <div class="section"><h2>Increasing memory<a name="Increasing_memory"></a></h2>
+      <div class="source"><pre>
+        
+&lt;project&gt;
+  ...
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+        &lt;executions&gt;
+          &lt;execution&gt;
+            &lt;goals&gt;
+              &lt;goal&gt;compile&lt;/goal&gt;
+              &lt;goal&gt;testCompile&lt;/goal&gt;
+            &lt;/goals&gt;
+          &lt;/execution&gt;
+        &lt;/executions&gt;
+        &lt;configuration&gt;
+          &lt;jvmArgs&gt;
+            &lt;jvmArg&gt;-Xms64m&lt;/jvmArg&gt;
+            &lt;jvmArg&gt;-Xmx1024m&lt;/jvmArg&gt;
+          &lt;/jvmArgs&gt;
+        &lt;/configuration&gt;
+      &lt;/plugin&gt;
+  ...
+&lt;/project&gt;
+            
+      </pre></div>
+    </div>
+    <div class="section"><h2>Emacs user<a name="Emacs_user"></a></h2>
+      <p>If you are an emacs user, you could try the to run the compilation with &quot;-DemacsMode=true&quot; then compilation error will be displayed without [WARNING] at the begin of the line like :
+      </p><div class="source"><pre>
+[INFO] Compiling 1 source files to /home/dwayne/work/oss/scala-tools/vscaladoc/target/classes
+[WARNING] Compilation failure
+
+/project/src/main/scala/org/example/Main.scala:12: error: expected class or object definition
+foo()
+^
+one error found
+       </pre></div>
+       
+	</div>
+
+    <div class="section"><h2>Compiler Arguments<a name="Compiler_Arguments"></a></h2>
+        <p>It is common to wish to send arguments to the scalac compiler during compilation of your project.  To do so, make use of the args configuration parameter like so:</p>
+        <div class="source"><pre>
+&lt;project&gt;
+  ...
+  &lt;plugin&gt;
+    &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+    &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+      &lt;configuration&gt;
+        &lt;args&gt;
+          &lt;arg&gt;-unchecked&lt;/arg&gt;
+          &lt;arg&gt;-deprecation&lt;/arg&gt;
+          &lt;arg&gt;-explaintypes&lt;/arg&gt;
+        &lt;/args&gt;
+    &lt;/configuration&gt;
+  &lt;/plugin&gt;
+  ...
+&lt;/project&gt;
+                </pre></div>
+    </div>
+  
 
       </div>
     </div>

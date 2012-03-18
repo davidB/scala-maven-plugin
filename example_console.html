@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>
-        scala-maven-plugin</title>
+    Example</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -44,7 +44,7 @@
             
                 
                 <div class="xleft">
-        <span id="publishDate">Last Published: 2012-03-18 17:16</span>
+        <span id="publishDate">Last Published: 2012-03-18 17:15</span>
                   &nbsp;| <span id="projectVersion">Version: 3.0.0-SNAPSHOT</span>
                       </div>
             <div class="xright">                    <a href="http://wiki.github.com/davidB/scala-maven-plugin/" class="externalLink" title="Wiki">Wiki</a>
@@ -66,8 +66,8 @@
                                 <h5>Overview</h5>
                   <ul>
                   <li class="none">
-            <strong>Introduction</strong>
-          </li>
+                          <a href="index.html" title="Introduction">Introduction</a>
+            </li>
                   <li class="none">
                           <a href="plugin-info.html" title="Goals">Goals</a>
             </li>
@@ -99,8 +99,8 @@
                           <a href="example_script.html" title="Scripting">Scripting</a>
             </li>
                   <li class="none">
-                          <a href="example_console.html" title="Scala Console">Scala Console</a>
-            </li>
+            <strong>Scala Console</strong>
+          </li>
                   <li class="none">
                           <a href="example_java.html" title="Mixed Java/Scala Projects">Mixed Java/Scala Projects</a>
             </li>
@@ -113,44 +113,9 @@
           </ul>
                        <h5>Project Documentation</h5>
                   <ul>
-                                                                                                                                                                                                                                                                  <li class="expanded">
+                                                                                                                                                                                                                                                        <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
-                    <ul>
-                      <li class="none">
-            <strong>About</strong>
-          </li>
-                      <li class="none">
-                          <a href="source-repository.html" title="Source Repository">Source Repository</a>
-            </li>
-                      <li class="none">
-                          <a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
-            </li>
-                      <li class="none">
-                          <a href="mail-lists.html" title="Mailing Lists">Mailing Lists</a>
-            </li>
-                      <li class="none">
-                          <a href="issue-tracking.html" title="Issue Tracking">Issue Tracking</a>
-            </li>
-                      <li class="none">
-                          <a href="plugins.html" title="Project Plugins">Project Plugins</a>
-            </li>
-                      <li class="none">
-                          <a href="project-summary.html" title="Project Summary">Project Summary</a>
-            </li>
-                      <li class="none">
-                          <a href="dependencies.html" title="Dependencies">Dependencies</a>
-            </li>
-                      <li class="none">
-                          <a href="license.html" title="Project License">Project License</a>
-            </li>
-                      <li class="none">
-                          <a href="team-list.html" title="Project Team">Project Team</a>
-            </li>
-                      <li class="none">
-                          <a href="integration.html" title="Continuous Integration">Continuous Integration</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
                                                                                                                                                                                 <li class="collapsed">
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                   </li>
@@ -165,20 +130,115 @@
     <div id="bodyColumn">
       <div id="contentBox">
         
+  
+    <h1>Running a scala console</h1>
+
+    <div class="section"><h2>Running<a name="Running"></a></h2>
+      <p>
+        You can start a console with a classpath set with the project dependencies (compile, test, runtime) and compiler classes (main and test):
+        </p><ol style="list-style-type: decimal">
+        <li>compile your code (running the console doesn't force to compile:
+          <div class="source"><pre>mvn test-compile #or mvn test</pre></div>
+        </li>
+        <li>run the console :    
+          <div class="source"><pre>mvn scala:console</pre></div>
+        </li>
+        <li>when the scala prompt is shown, play :
+      <div class="source"><pre>
+...
+[INFO] [scala:console]
+Welcome to Scala version 2.6.0-final.
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala&gt; print(&quot;hello&quot;)
+hello
+scala&gt; new bootstrap.liftweb.Boot().boot
+...
+      </pre></div>
+        </li>
+        </ol>
+      
+    </div>
+
+    <div class="section"><h2>pre/post action<a name="prepost_action"></a></h2>
+    <p>If you want to always run some code before use the console or after use it, and don't want to type it at every startup. Then you could wrap the console into a scala main().</p>
+    <p>I'll show an example with the LiftConsole. A good pratice is to put this class in the test directory (it's not part of the main code ;) )</p>
+    <ol style="list-style-type: decimal">
+    <li>add into the pom.xml the jar with the scala 's console
+    <div class="source"><pre>
+      &lt;dependency&gt;
+        &lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
+        &lt;artifactId&gt;scala-compiler&lt;/artifactId&gt;
+        &lt;version&gt;${scala.version}&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+      &lt;/dependency&gt;
+      </pre></div>
+     </li>
+    <li>create the scala file src/test/scala/LiftConsole.scala (based on liftrepl)
+    <div class="source"><pre>
+import bootstrap.liftweb.Boot
+import scala.tools.nsc.MainGenericRunner
+ 
+object LiftConsole {
+   def main(args : Array[String]) {
+     // Instantiate your project's Boot file
+     val b = new Boot();
+     // Boot your project
+     b.boot;
+     // Now run the MainGenericRunner to get your repl
+     MainGenericRunner.main(args)
+     // After the repl exits, then exit the scala script
+     exit(0)
+   }
+}
+      </pre></div>
+     </li>
+     <li>compile: <div class="source"><pre>mvn test</pre></div></li>
+     <li>run : <div class="source"><pre>mvn scala:console -DmainConsole=LiftConsole</pre></div></li>
+     <li>if you don't want to always need to set &quot;-DmainConsole=LiftConsole&quot;,
+      then edit your pom.xml and add to the configuration of the plugin :
+    <div class="source"><pre>
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+        ...
+        &lt;configuration&gt;
+          &lt;mainConsole&gt;LiftConsole&lt;/mainConsole&gt;
+        &lt;/configuration&gt;
+      &lt;/plugin&gt;
+      </pre></div>
+      </li>
+  </ol>    
     
-        <div class="section"><h2>scala-maven-plugin<a name="scala-maven-plugin"></a></h2>
-            <p>The scala-maven-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a class="externalLink" href="http://liftweb.net"><i>/Lift/</i></a>.</p>
-            <p>If there are problems please let us know.</p>
-        </div>
-        <div class="section"><h2>Requirements<a name="Requirements"></a></h2>
-            <ul>
-                <li>Maven 2.0.7</li>
-                <li>JDK 1.5</li>
-                <li>No need to install <a class="externalLink" href="http://scala-lang.org">scala</a> !</li>
-            </ul>
-        </div>
-       <p>Thanks to Brice Lambi and the team of the version 1.0 of the plugin. (version 2.x is a 95%/full rewrite)</p>
+    </div>
     
+    <div class="section"><h2>running with JavaRebel<a name="running_with_JavaRebel"></a></h2>
+    <p>If you want to run the console with <a href="">JavaRebel</a>, you need :
+     </p><ol style="list-style-type: decimal">
+     <li>install javarebel somewhere on your disk, javarebel is available on a public maven repository (commercial tool)</li>
+     <li>call the console with the option define where is the javarebel.jar:
+       <div class="source"><pre>mvn scala:console -Djavarebel.jar.path=[path_of_javarebel.jar]</pre></div>
+       or through the pom.xml
+    <div class="source"><pre>
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+        ...
+        &lt;configuration&gt;
+          &lt;javaRebelPath&gt;${user.home}/lib/java/javarebel/javarebel.jar&lt;/javaRebelPath&gt;
+        &lt;/configuration&gt;
+      &lt;/plugin&gt;
+      </pre></div>
+    </li>
+    <li><b>NOTE</b> - Forking is currently disabled in the plugin due to cross-platform issues with jline and process indirection.
+        If you wish to use JRebel with the console, please set your maven opts in your environment:
+        <div class="source"><pre>MAVEN_OPTS=&quot;$MAVEN_OPTS -noverify -javaagent:/...path/to/jrebel.jar&quot; mvn scala:console</pre></div>
+    </li>
+    </ol>       
+    
+    </div>
+  
 
       </div>
     </div>

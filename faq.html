@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>
-        scala-maven-plugin</title>
+		Maven Scala Plugin Frequently Asked Questions</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -66,8 +66,8 @@
                                 <h5>Overview</h5>
                   <ul>
                   <li class="none">
-            <strong>Introduction</strong>
-          </li>
+                          <a href="index.html" title="Introduction">Introduction</a>
+            </li>
                   <li class="none">
                           <a href="plugin-info.html" title="Goals">Goals</a>
             </li>
@@ -75,8 +75,8 @@
                           <a href="usage.html" title="Usage">Usage</a>
             </li>
                   <li class="none">
-                          <a href="faq.html" title="FAQ">FAQ</a>
-            </li>
+            <strong>FAQ</strong>
+          </li>
           </ul>
                        <h5>Examples</h5>
                   <ul>
@@ -113,44 +113,9 @@
           </ul>
                        <h5>Project Documentation</h5>
                   <ul>
-                                                                                                                                                                                                                                                                  <li class="expanded">
+                                                                                                                                                                                                                                                        <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
-                    <ul>
-                      <li class="none">
-            <strong>About</strong>
-          </li>
-                      <li class="none">
-                          <a href="source-repository.html" title="Source Repository">Source Repository</a>
-            </li>
-                      <li class="none">
-                          <a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
-            </li>
-                      <li class="none">
-                          <a href="mail-lists.html" title="Mailing Lists">Mailing Lists</a>
-            </li>
-                      <li class="none">
-                          <a href="issue-tracking.html" title="Issue Tracking">Issue Tracking</a>
-            </li>
-                      <li class="none">
-                          <a href="plugins.html" title="Project Plugins">Project Plugins</a>
-            </li>
-                      <li class="none">
-                          <a href="project-summary.html" title="Project Summary">Project Summary</a>
-            </li>
-                      <li class="none">
-                          <a href="dependencies.html" title="Dependencies">Dependencies</a>
-            </li>
-                      <li class="none">
-                          <a href="license.html" title="Project License">Project License</a>
-            </li>
-                      <li class="none">
-                          <a href="team-list.html" title="Project Team">Project Team</a>
-            </li>
-                      <li class="none">
-                          <a href="integration.html" title="Continuous Integration">Continuous Integration</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
                                                                                                                                                                                 <li class="collapsed">
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                   </li>
@@ -165,20 +130,69 @@
     <div id="bodyColumn">
       <div id="contentBox">
         
-    
-        <div class="section"><h2>scala-maven-plugin<a name="scala-maven-plugin"></a></h2>
-            <p>The scala-maven-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a class="externalLink" href="http://liftweb.net"><i>/Lift/</i></a>.</p>
-            <p>If there are problems please let us know.</p>
-        </div>
-        <div class="section"><h2>Requirements<a name="Requirements"></a></h2>
-            <ul>
-                <li>Maven 2.0.7</li>
-                <li>JDK 1.5</li>
-                <li>No need to install <a class="externalLink" href="http://scala-lang.org">scala</a> !</li>
-            </ul>
-        </div>
-       <p>Thanks to Brice Lambi and the team of the version 1.0 of the plugin. (version 2.x is a 95%/full rewrite)</p>
-    
+	
+		<h1>Frequently Asked Questions</h1>
+		
+		<div class="section"><h2>Read-Eval-Print-Loop (aka scala:console)<a name="Read-Eval-Print-Loop_aka_scala:console"></a></h2>
+			<dl>
+				<dt>Why does maven net let me call scala:console?</dt>
+				<dd>Maven 3.0 made its policy more strict about shortened plugin names.   If you wish to use scala:goal forms on the command-line you must create a &lt;pluginGroup&gt; element in your ~/.m2/settings.xml file that contains org.scala-tools as a pluginGroup.
+				</dd>
+			</dl>
+			<dl>
+				<dt>Why does the mvn scala:console goal not compile the project?</dt>
+				<dd>The authors of the plugin felt it was much more flexible to allow a REPL to be started during the coding of a project.
+				The REPL is mostly used for experimenting with APIs and therefore users should not need a functioning project to test out potential code paths.
+				Users who want to make use of their latest changes should type &quot;mvn compile scala:console&quot; or &quot;mvn test-compile scala:console&quot; rather than just &quot;mvn scala:console&quot;</dd>
+				<dt>Does the REPL support auto-complete?</dt>
+				<dd>As of Scala 2.8.0 the REPL supports auto-complete features.</dd>
+				
+			</dl>
+		</div>
+		
+		<div class="section"><h2>Eclipse Integration<a name="Eclipse_Integration"></a></h2>
+			<dl>
+				<dt>Is there a wiki detailing Scala/Eclipse/Maven integration</dt>
+				<dd>Yes, it requires a Scala trac user account and is located <a class="externalLink" href="http://lampsvn.epfl.ch/trac/scala/wiki/ScalaEclipseMaven">here</a></dd>
+				<dt>Why does the mvn eclipse:eclipse not add the src/main/scala directory as a source path</dt>
+				<dd>The maven-eclipse-plugin is not maintained/integrated with the scala-maven-plugin.  
+				If you would like to have the src/main/scala directory added as a source path in eclipse, you must configure it useing the <a class="externalLink" href="http://mojo.codehaus.org/build-helper-maven-plugin/howto.html">maven-build-helper-plugin's add-source goal</a>
+				Example: <div><pre>
+&lt;project&gt;
+
+  ...
+  &lt;build&gt;
+   &lt;plugins&gt;
+     &lt;plugin&gt;
+        &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+        &lt;artifactId&gt;build-helper-maven-plugin&lt;/artifactId&gt;
+        &lt;executions&gt;
+          &lt;execution&gt;
+            &lt;id&gt;add-source&lt;/id&gt;
+            &lt;phase&gt;generate-sources&lt;/phase&gt;
+            &lt;goals&gt;
+              &lt;goal&gt;add-source&lt;/goal&gt;
+            &lt;/goals&gt;
+            &lt;configuration&gt;
+              &lt;sources&gt;
+                &lt;source&gt;src/main/scala&lt;/source&gt;
+                ...
+              &lt;/sources&gt;
+            &lt;/configuration&gt;
+          &lt;/execution&gt;
+        &lt;/executions&gt;
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+&lt;/project&gt;
+				</pre></div>
+				</dd>
+				<dt>Can you synchronize eclipse configuration with the scalac plugin pom configuration?</dt>
+				<dd>Not Currently</dd>
+				
+			</dl>
+		</div>
+	
 
       </div>
     </div>

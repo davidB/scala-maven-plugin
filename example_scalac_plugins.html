@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>
-        scala-maven-plugin</title>
+    Example Scalac plugin project</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -66,8 +66,8 @@
                                 <h5>Overview</h5>
                   <ul>
                   <li class="none">
-            <strong>Introduction</strong>
-          </li>
+                          <a href="index.html" title="Introduction">Introduction</a>
+            </li>
                   <li class="none">
                           <a href="plugin-info.html" title="Goals">Goals</a>
             </li>
@@ -105,52 +105,17 @@
                           <a href="example_java.html" title="Mixed Java/Scala Projects">Mixed Java/Scala Projects</a>
             </li>
                   <li class="none">
-                          <a href="example_scalac_plugins.html" title="Creating Scalac Plugins">Creating Scalac Plugins</a>
-            </li>
+            <strong>Creating Scalac Plugins</strong>
+          </li>
                   <li class="none">
                           <a href="articles.html" title="Articles...">Articles...</a>
             </li>
           </ul>
                        <h5>Project Documentation</h5>
                   <ul>
-                                                                                                                                                                                                                                                                  <li class="expanded">
+                                                                                                                                                                                                                                                        <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
-                    <ul>
-                      <li class="none">
-            <strong>About</strong>
-          </li>
-                      <li class="none">
-                          <a href="source-repository.html" title="Source Repository">Source Repository</a>
-            </li>
-                      <li class="none">
-                          <a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
-            </li>
-                      <li class="none">
-                          <a href="mail-lists.html" title="Mailing Lists">Mailing Lists</a>
-            </li>
-                      <li class="none">
-                          <a href="issue-tracking.html" title="Issue Tracking">Issue Tracking</a>
-            </li>
-                      <li class="none">
-                          <a href="plugins.html" title="Project Plugins">Project Plugins</a>
-            </li>
-                      <li class="none">
-                          <a href="project-summary.html" title="Project Summary">Project Summary</a>
-            </li>
-                      <li class="none">
-                          <a href="dependencies.html" title="Dependencies">Dependencies</a>
-            </li>
-                      <li class="none">
-                          <a href="license.html" title="Project License">Project License</a>
-            </li>
-                      <li class="none">
-                          <a href="team-list.html" title="Project Team">Project Team</a>
-            </li>
-                      <li class="none">
-                          <a href="integration.html" title="Continuous Integration">Continuous Integration</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
                                                                                                                                                                                 <li class="collapsed">
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                   </li>
@@ -165,20 +130,105 @@
     <div id="bodyColumn">
       <div id="contentBox">
         
-    
-        <div class="section"><h2>scala-maven-plugin<a name="scala-maven-plugin"></a></h2>
-            <p>The scala-maven-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a class="externalLink" href="http://liftweb.net"><i>/Lift/</i></a>.</p>
-            <p>If there are problems please let us know.</p>
-        </div>
-        <div class="section"><h2>Requirements<a name="Requirements"></a></h2>
-            <ul>
-                <li>Maven 2.0.7</li>
-                <li>JDK 1.5</li>
-                <li>No need to install <a class="externalLink" href="http://scala-lang.org">scala</a> !</li>
-            </ul>
-        </div>
-       <p>Thanks to Brice Lambi and the team of the version 1.0 of the plugin. (version 2.x is a 95%/full rewrite)</p>
-    
+  
+    <h1>Creating/Using a Scalac plugin</h1>
+    <div class="section"><h2>Project Setup<a name="Project_Setup"></a></h2>
+       <p>A scalac maven-based project has the following structure</p>
+       <div class="source"><pre>
+project-root/
+  pom.xml
+  src/
+    main/
+      scala/
+        -Your plugin Source Here
+      resources/
+          scalac-plugin.xml
+       </pre></div>
+       <p>Please follow the <a class="externalLink" href="http://www.scala-lang.org/node/140">Writing Scala Compiler Plugins</a> tutorial for the content of the project.</p>
+      <p>A scalac plugin should *only* have dependencies on the scala-compiler artifact, and
+        these dependencies should be of type &quot;provided&quot;. Here is an example pom for a plugin project:
+        </p>
+      <div class="source"><pre>
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+  xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd&quot;&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
+  &lt;artifactId&gt;my-test-plugin&lt;/artifactId&gt;
+  &lt;packaging&gt;jar&lt;/packaging&gt;
+  &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+  &lt;name&gt;Dependency Resolution extensions for the scala compiler&lt;/name&gt;
+  &lt;repositories&gt;
+    &lt;repository&gt;
+      &lt;id&gt;scala-tools.org&lt;/id&gt;
+      &lt;name&gt;Scala-tools Maven2 Repository&lt;/name&gt;
+      &lt;url&gt;http://scala-tools.org/repo-releases&lt;/url&gt;
+    &lt;/repository&gt;
+  &lt;/repositories&gt;
+  &lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+      &lt;id&gt;scala-tools.org&lt;/id&gt;
+      &lt;name&gt;Scala-tools Maven2 Repository&lt;/name&gt;
+      &lt;url&gt;http://scala-tools.org/repo-releases&lt;/url&gt;
+    &lt;/pluginRepository&gt;
+  &lt;/pluginRepositories&gt;
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
+      &lt;artifactId&gt;scala-compiler&lt;/artifactId&gt;
+      &lt;version&gt;2.7.2&lt;/version&gt;
+      &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+  &lt;build&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+        &lt;executions&gt;
+          &lt;execution&gt;
+            &lt;goals&gt;
+              &lt;goal&gt;compile&lt;/goal&gt;
+              &lt;goal&gt;testCompile&lt;/goal&gt;
+            &lt;/goals&gt;
+          &lt;/execution&gt;
+        &lt;/executions&gt;
+        &lt;configuration&gt;
+          &lt;sourceDir&gt;src/main/scala&lt;/sourceDir&gt;
+          &lt;jvmArgs&gt;
+            &lt;jvmArg&gt;-Xms64m&lt;/jvmArg&gt;
+            &lt;jvmArg&gt;-Xmx1024m&lt;/jvmArg&gt;
+          &lt;/jvmArgs&gt;
+        &lt;/configuration&gt;
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+&lt;/project&gt;
+      </pre></div>
+      <p>Now you need to make sure you install the plugin project into the local repository.</p>
+      <div class="source"><pre>mvn install</pre></div>
+    </div>
+    <div class="section"><h2>Using a scalac plugin<a name="Using_a_scalac_plugin"></a></h2>
+      <p>To make use of one or more scalac plugins, you need to declare them inside your pom using the &quot;compilerPlugins&quot; configuration item.</p>
+      <div class="source"><pre>
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+        ...
+        &lt;configuration&gt;
+          ...
+          &lt;compilerPlugins&gt;
+            &lt;compilerPlugin&gt;
+              &lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
+              &lt;artifactId&gt;my-scalac-plugin&lt;/artifactId&gt;
+              &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+            &lt;/compilerPlugin&gt;
+          &lt;/compilerPlugins&gt;
+        &lt;/configuration&gt;
+      &lt;/plugin&gt;
+      </pre></div>
+      <p>If you need to send arguments to the plugin, this can be done with the &quot;args&quot; confguration tag.</p>
+    </div>
+  
 
       </div>
     </div>

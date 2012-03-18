@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>
-        scala-maven-plugin</title>
+    scala:add-source</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -66,8 +66,8 @@
                                 <h5>Overview</h5>
                   <ul>
                   <li class="none">
-            <strong>Introduction</strong>
-          </li>
+                          <a href="index.html" title="Introduction">Introduction</a>
+            </li>
                   <li class="none">
                           <a href="plugin-info.html" title="Goals">Goals</a>
             </li>
@@ -113,44 +113,9 @@
           </ul>
                        <h5>Project Documentation</h5>
                   <ul>
-                                                                                                                                                                                                                                                                  <li class="expanded">
+                                                                                                                                                                                                                                                        <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
-                    <ul>
-                      <li class="none">
-            <strong>About</strong>
-          </li>
-                      <li class="none">
-                          <a href="source-repository.html" title="Source Repository">Source Repository</a>
-            </li>
-                      <li class="none">
-                          <a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
-            </li>
-                      <li class="none">
-                          <a href="mail-lists.html" title="Mailing Lists">Mailing Lists</a>
-            </li>
-                      <li class="none">
-                          <a href="issue-tracking.html" title="Issue Tracking">Issue Tracking</a>
-            </li>
-                      <li class="none">
-                          <a href="plugins.html" title="Project Plugins">Project Plugins</a>
-            </li>
-                      <li class="none">
-                          <a href="project-summary.html" title="Project Summary">Project Summary</a>
-            </li>
-                      <li class="none">
-                          <a href="dependencies.html" title="Dependencies">Dependencies</a>
-            </li>
-                      <li class="none">
-                          <a href="license.html" title="Project License">Project License</a>
-            </li>
-                      <li class="none">
-                          <a href="team-list.html" title="Project Team">Project Team</a>
-            </li>
-                      <li class="none">
-                          <a href="integration.html" title="Continuous Integration">Continuous Integration</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
                                                                                                                                                                                 <li class="collapsed">
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                   </li>
@@ -165,20 +130,72 @@
     <div id="bodyColumn">
       <div id="contentBox">
         
-    
-        <div class="section"><h2>scala-maven-plugin<a name="scala-maven-plugin"></a></h2>
-            <p>The scala-maven-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a class="externalLink" href="http://liftweb.net"><i>/Lift/</i></a>.</p>
-            <p>If there are problems please let us know.</p>
-        </div>
-        <div class="section"><h2>Requirements<a name="Requirements"></a></h2>
-            <ul>
-                <li>Maven 2.0.7</li>
-                <li>JDK 1.5</li>
-                <li>No need to install <a class="externalLink" href="http://scala-lang.org">scala</a> !</li>
-            </ul>
-        </div>
-       <p>Thanks to Brice Lambi and the team of the version 1.0 of the plugin. (version 2.x is a 95%/full rewrite)</p>
-    
+  
+    <div class="section"><h2>scala:add-source<a name="scala:add-source"></a></h2>
+      <p><b>Full name</b>:</p>
+      <p>net.alchim31.maven:scala-maven-plugin:3.0.0-SNAPSHOT:add-source</p>
+      <p><b>Description</b>:</p>
+      <div>Add more source directories to the POM.</div>
+      <p><b>Attributes</b>:</p>
+      <ul>
+        <li>Requires a Maven 2.0 project to be executed.</li>
+        <li>The goal is thread-safe and supports parallel builds.</li>
+        <li>Binds by default to the lifecycle phase: <tt>initialize</tt>.</li>
+      </ul>
+      <div class="section"><h3>Optional Parameters<a name="Optional_Parameters"></a></h3>
+        <table class="bodyTable" border="0" align="left">
+          <tr class="a">
+            <th>Name</th>
+            <th>Type</th>
+            <th>Since</th>
+            <th>Description</th>
+          </tr>
+          <tr class="b">
+            <td><b><a href="#sourceDir">sourceDir</a></b></td>
+            <td><tt>File</tt></td>
+            <td><tt>-</tt></td>
+            <td>The directory in which scala source is found<br /></td>
+          </tr>
+          <tr class="a">
+            <td><b><a href="#testSourceDir">testSourceDir</a></b></td>
+            <td><tt>File</tt></td>
+            <td><tt>-</tt></td>
+            <td>The directory in which testing scala source is found<br /></td>
+          </tr>
+          <tr class="b">
+            <td><b><a href="#useCanonicalPath">useCanonicalPath</a></b></td>
+            <td><tt>boolean</tt></td>
+            <td><tt>-</tt></td>
+            <td>Should use CanonicalPath to normalize path (true =&gt;
+getCanonicalPath, false =&gt; getAbsolutePath)<br /><b>Default value is</b>: <tt>true</tt>.</td>
+          </tr>
+        </table>
+      </div>
+      <div class="section"><h3>Parameter Details<a name="Parameter_Details"></a></h3>
+        <p><b><a name="sourceDir">sourceDir</a>:</b></p>
+        <div>The directory in which scala source is found</div>
+        <ul>
+          <li><b>Type</b>: <tt>java.io.File</tt></li>
+          <li><b>Required</b>: <tt>No</tt></li>
+          <li><b>Expression</b>: <tt>${project.build.sourceDirectory}/../scala</tt></li>
+        </ul><hr /><p><b><a name="testSourceDir">testSourceDir</a>:</b></p>
+        <div>The directory in which testing scala source is found</div>
+        <ul>
+          <li><b>Type</b>: <tt>java.io.File</tt></li>
+          <li><b>Required</b>: <tt>No</tt></li>
+          <li><b>Expression</b>: <tt>${project.build.testSourceDirectory}/../scala</tt></li>
+        </ul><hr /><p><b><a name="useCanonicalPath">useCanonicalPath</a>:</b></p>
+        <div>Should use CanonicalPath to normalize path (true =&gt;
+getCanonicalPath, false =&gt; getAbsolutePath)</div>
+        <ul>
+          <li><b>Type</b>: <tt>boolean</tt></li>
+          <li><b>Required</b>: <tt>No</tt></li>
+          <li><b>Expression</b>: <tt>${maven.scala.useCanonicalPath}</tt></li>
+          <li><b>Default</b>: <tt>true</tt></li>
+        </ul>
+      </div>
+    </div>
+  
 
       </div>
     </div>

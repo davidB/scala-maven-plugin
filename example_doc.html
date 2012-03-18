@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>
-        scala-maven-plugin</title>
+    Generating API with ScalaDoc</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -66,8 +66,8 @@
                                 <h5>Overview</h5>
                   <ul>
                   <li class="none">
-            <strong>Introduction</strong>
-          </li>
+                          <a href="index.html" title="Introduction">Introduction</a>
+            </li>
                   <li class="none">
                           <a href="plugin-info.html" title="Goals">Goals</a>
             </li>
@@ -90,8 +90,8 @@
                           <a href="example_cctest.html" title="Continuous Testing">Continuous Testing</a>
             </li>
                   <li class="none">
-                          <a href="example_doc.html" title="Scaladoc">Scaladoc</a>
-            </li>
+            <strong>Scaladoc</strong>
+          </li>
                   <li class="none">
                           <a href="example_run.html" title="Running">Running</a>
             </li>
@@ -113,44 +113,9 @@
           </ul>
                        <h5>Project Documentation</h5>
                   <ul>
-                                                                                                                                                                                                                                                                  <li class="expanded">
+                                                                                                                                                                                                                                                        <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
-                    <ul>
-                      <li class="none">
-            <strong>About</strong>
-          </li>
-                      <li class="none">
-                          <a href="source-repository.html" title="Source Repository">Source Repository</a>
-            </li>
-                      <li class="none">
-                          <a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
-            </li>
-                      <li class="none">
-                          <a href="mail-lists.html" title="Mailing Lists">Mailing Lists</a>
-            </li>
-                      <li class="none">
-                          <a href="issue-tracking.html" title="Issue Tracking">Issue Tracking</a>
-            </li>
-                      <li class="none">
-                          <a href="plugins.html" title="Project Plugins">Project Plugins</a>
-            </li>
-                      <li class="none">
-                          <a href="project-summary.html" title="Project Summary">Project Summary</a>
-            </li>
-                      <li class="none">
-                          <a href="dependencies.html" title="Dependencies">Dependencies</a>
-            </li>
-                      <li class="none">
-                          <a href="license.html" title="Project License">Project License</a>
-            </li>
-                      <li class="none">
-                          <a href="team-list.html" title="Project Team">Project Team</a>
-            </li>
-                      <li class="none">
-                          <a href="integration.html" title="Continuous Integration">Continuous Integration</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
                                                                                                                                                                                 <li class="collapsed">
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                   </li>
@@ -165,20 +130,169 @@
     <div id="bodyColumn">
       <div id="contentBox">
         
-    
-        <div class="section"><h2>scala-maven-plugin<a name="scala-maven-plugin"></a></h2>
-            <p>The scala-maven-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a class="externalLink" href="http://liftweb.net"><i>/Lift/</i></a>.</p>
-            <p>If there are problems please let us know.</p>
-        </div>
-        <div class="section"><h2>Requirements<a name="Requirements"></a></h2>
-            <ul>
-                <li>Maven 2.0.7</li>
-                <li>JDK 1.5</li>
-                <li>No need to install <a class="externalLink" href="http://scala-lang.org">scala</a> !</li>
-            </ul>
-        </div>
-       <p>Thanks to Brice Lambi and the team of the version 1.0 of the plugin. (version 2.x is a 95%/full rewrite)</p>
-    
+  
+    <h1>Generating API with ScalaDoc</h1>
+
+    <span>Prerequis : <a href="usage.html">common usages</a></span>
+
+    <div class="section"><h2>Configuration<a name="Configuration"></a></h2>
+      <p>to generate apidocs / scaladoc for your scala sources, add this to your pom.xml</p>
+      <div class="section"><h2>with maven 2.x<a name="with_maven_2.x"></a></h2>
+      <div class="source"><pre>
+&lt;project&gt;
+  ...
+  &lt;reporting&gt;
+    &lt;plugins&gt;
+      ...
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+      &lt;/plugin&gt;
+      ...
+    &lt;/plugins&gt;
+  &lt;/reporting&gt;
+  ...
+&lt;/project&gt;</pre></div>
+      <div class="section"><h2>with maven 3.x<a name="with_maven_3.x"></a></h2>
+      <div class="source"><pre>
+&lt;project&gt;
+  ...
+  &lt;build&gt;
+    ...
+    &lt;plugins&gt;
+      ...
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-site-plugin&lt;/artifactId&gt;
+        &lt;version&gt;3.0-beta-2&lt;/version&gt;
+        &lt;configuration&gt;
+          &lt;reportPlugins&gt;
+            &lt;plugin&gt;
+              &lt;artifactId&gt;maven-project-info-reports-plugin&lt;/artifactId&gt;
+              &lt;version&gt;2.2&lt;/version&gt;
+            &lt;/plugin&gt;
+            &lt;plugin&gt;
+              &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+              &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+              &lt;version&gt;2.14.2-SNAPSHOT&lt;/version&gt;
+              &lt;configuration&gt;
+                &lt;jvmArgs&gt;
+                  &lt;jvmArg&gt;-Xms64m&lt;/jvmArg&gt;
+                  &lt;jvmArg&gt;-Xmx1024m&lt;/jvmArg&gt;
+                &lt;/jvmArgs&gt;
+              &lt;/configuration&gt;
+            &lt;/plugin&gt;
+            ...
+          &lt;/reportPlugins&gt;
+        &lt;/configuration&gt;
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+  ...
+&lt;/project&gt;</pre></div>
+
+    </div>
+    <div class="section"><h2>To generate api<a name="To_generate_api"></a></h2>
+      <p>
+        Place scala sources files in :
+        </p><div class="source"><pre>src/main/scala</pre></div>
+      
+      <p>
+        Then use the standard maven phases :
+        </p><div class="source"><pre>
+          
+# generate a site
+mvn site
+       
+        </pre></div>
+      
+      <p>
+        Or the plugin specifics goal :
+        </p><div class="source"><pre>
+          
+# generate only the doc
+mvn scala:doc
+        
+        </pre></div>
+      
+      <p>See the result under target/site/scaladocs/</p>
+    </div>
+    <div class="section"><h2>To use a custom api generator<a name="To_use_a_custom_api_generator"></a></h2>
+      <p>
+        You need to declare the main class to call (with the same parameter as scaladoc). And you need to list the additional artifact(jar) to use :
+        </p><div class="source"><pre>
+&lt;configuration&gt;
+  &lt;scaladocClassName&gt;org.scala_tools.vscaladoc.Main&lt;/scaladocClassName&gt;
+  &lt;scalaJars&gt;
+    &lt;scalaJar&gt;
+      &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+      &lt;artifactId&gt;vscaladoc&lt;/artifactId&gt;
+      &lt;version&gt;1.0&lt;/version&gt;
+    &lt;/scalaJar&gt;
+  &lt;/scalaJars&gt;
+&lt;/configuration&gt;
+        </pre></div>
+      
+      <p>
+        Then use the standard maven phases :
+        </p><div class="source"><pre>
+          
+# generate a site
+mvn site
+# or generate only the doc
+mvn scala:doc
+       
+        </pre></div>
+      
+      <p>See the result under target/site/scaladocs/</p>
+    </div>
+    <div class="section"><h2>To use vscaladoc<a name="To_use_vscaladoc"></a></h2>
+      <p>
+        vscaladoc have a shortcut way to use it (instead of using the custom way describe above) :
+        </p><div class="source"><pre>
+&lt;configuration&gt;
+  &lt;vscalaVersion&gt;1.0&lt;/vscalaVersion&gt;
+&lt;/configuration&gt;
+        </pre></div>
+      
+      <p>
+        Then use the standard maven phases :
+        </p><div class="source"><pre>
+          
+# generate a site
+mvn site
+# or generate only the doc
+mvn scala:doc
+       
+        </pre></div>
+      
+      <p>See the result under target/site/scaladocs/</p>
+    </div>
+    <div class="section"><h2>Attaching Scaladoc<a name="Attaching_Scaladoc"></a></h2>
+      <p>to attach scaladoc JAR files with your project</p>
+      <div class="source"><pre>
+&lt;project&gt;
+  ...
+  &lt;build&gt;
+    &lt;plugins&gt;
+      ...
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+        &lt;execution&gt;
+            &lt;id&gt;attach-javadocs&lt;/id&gt;
+            &lt;goals&gt;
+              &lt;goal&gt;doc-jar&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+      &lt;/plugin&gt;
+      ...
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+  ...
+&lt;/project&gt;</pre></div>
+     </div>
+  
 
       </div>
     </div>

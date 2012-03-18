@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>
-        scala-maven-plugin</title>
+    scala-maven-plugin</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -66,8 +66,8 @@
                                 <h5>Overview</h5>
                   <ul>
                   <li class="none">
-            <strong>Introduction</strong>
-          </li>
+                          <a href="index.html" title="Introduction">Introduction</a>
+            </li>
                   <li class="none">
                           <a href="plugin-info.html" title="Goals">Goals</a>
             </li>
@@ -87,8 +87,8 @@
                           <a href="example_cc.html" title="Continuous Compilation">Continuous Compilation</a>
             </li>
                   <li class="none">
-                          <a href="example_cctest.html" title="Continuous Testing">Continuous Testing</a>
-            </li>
+            <strong>Continuous Testing</strong>
+          </li>
                   <li class="none">
                           <a href="example_doc.html" title="Scaladoc">Scaladoc</a>
             </li>
@@ -113,44 +113,9 @@
           </ul>
                        <h5>Project Documentation</h5>
                   <ul>
-                                                                                                                                                                                                                                                                  <li class="expanded">
+                                                                                                                                                                                                                                                        <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
-                    <ul>
-                      <li class="none">
-            <strong>About</strong>
-          </li>
-                      <li class="none">
-                          <a href="source-repository.html" title="Source Repository">Source Repository</a>
-            </li>
-                      <li class="none">
-                          <a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
-            </li>
-                      <li class="none">
-                          <a href="mail-lists.html" title="Mailing Lists">Mailing Lists</a>
-            </li>
-                      <li class="none">
-                          <a href="issue-tracking.html" title="Issue Tracking">Issue Tracking</a>
-            </li>
-                      <li class="none">
-                          <a href="plugins.html" title="Project Plugins">Project Plugins</a>
-            </li>
-                      <li class="none">
-                          <a href="project-summary.html" title="Project Summary">Project Summary</a>
-            </li>
-                      <li class="none">
-                          <a href="dependencies.html" title="Dependencies">Dependencies</a>
-            </li>
-                      <li class="none">
-                          <a href="license.html" title="Project License">Project License</a>
-            </li>
-                      <li class="none">
-                          <a href="team-list.html" title="Project Team">Project Team</a>
-            </li>
-                      <li class="none">
-                          <a href="integration.html" title="Continuous Integration">Continuous Integration</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
                                                                                                                                                                                 <li class="collapsed">
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                   </li>
@@ -165,20 +130,75 @@
     <div id="bodyColumn">
       <div id="contentBox">
         
-    
-        <div class="section"><h2>scala-maven-plugin<a name="scala-maven-plugin"></a></h2>
-            <p>The scala-maven-plugin is used for compiling/testing/running/documenting scala code in maven. The plugin is used by <a class="externalLink" href="http://liftweb.net"><i>/Lift/</i></a>.</p>
-            <p>If there are problems please let us know.</p>
-        </div>
-        <div class="section"><h2>Requirements<a name="Requirements"></a></h2>
-            <ul>
-                <li>Maven 2.0.7</li>
-                <li>JDK 1.5</li>
-                <li>No need to install <a class="externalLink" href="http://scala-lang.org">scala</a> !</li>
-            </ul>
-        </div>
-       <p>Thanks to Brice Lambi and the team of the version 1.0 of the plugin. (version 2.x is a 95%/full rewrite)</p>
-    
+  
+    <h1>Continuous Testing of Scala sources</h1>
+
+    <span>Prerequisite : <a href="usage.html">common usages</a></span>
+
+    <div class="section"><h2>Running all tests<a name="Running_all_tests"></a></h2>
+      <p>
+        If you want continuous testing of sources under src/main and src/test (files are compiled when they are saved then tests are run whenever a compile succeeds) :
+        </p><div class="source"><pre>mvn scala:cctest</pre></div>
+      
+      <ul>
+      <li>Compilation runs in a infinite loop and compiles only modified files (non-stop), so use Ctrl+C to stop it</li>
+      <li>Tests are run if the compile succeeds</li>
+      <li>If you want to compile without FSC (with regular scalac like non-continuous compilation) :
+        <div class="source"><pre>mvn scala:cctest -Dfsc=false</pre></div>
+      </li>
+    </ul>
+    </div>
+    <div class="section"><h2>Running a subset of tests<a name="Running_a_subset_of_tests"></a></h2>
+      <p>To run only a single test each time or test cases matching a particular pattern, supply the <b>test</b> parameter 
+      (like the <a class="externalLink" href="http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#test">surefire:test goal</a>)
+        </p><div class="source"><pre>mvn scala:cctest -Dtest=MyTest</pre></div>
+      
+    </div>
+    <div class="section"><h2>Summary of test failures<a name="Summary_of_test_failures"></a></h2>
+      <p>To get useful output when tests fail (like SBT does by default) please make sure you have configured the surefire plugin
+      to set <a class="externalLink" href="http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#useFile">useFile</a> to false (or to use a maven property in the configuration of the useFile so you can override on the command line) then you get a reasonable report on the console when tests fail; showing the failed assertion and stack traces etc. So adding something like the following to your pom.xml           
+      </p><div class="source"><pre>
+&lt;plugin&gt;
+  &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+  &lt;configuration&gt;
+    &lt;forkMode&gt;once&lt;/forkMode&gt;
+    &lt;useFile&gt;false&lt;/useFile&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;
+       </pre></div>
+      
+    </div>
+    <div class="section"><h2>Running ScataTest tests<a name="Running_ScataTest_tests"></a></h2>
+        <p>The <b>ccTestGoals</b> parameter can be used to run tests with a different plugin other than the surefire plugin. For example ScalaTest tests can be executed using the <a class="externalLink" href="https://github.com/teigen/maven-scalatest-plugin">maven-scalatst-plugin</a>.
+        To execute continuous tests using the maven-scalatest-plugin, first make sure that the maven-scalatest-plugin is configured in your pom.xml. Then, set the ccTestGoals parameter to execute the `scalatest:test` goal.
+        </p>
+        <p>From the command line:
+        </p><div class="source"><pre>mvn -Dcctest.goals=scalatest:test scala:cctest</pre></div>
+        
+        <p>If you plan to execute ScalaTest often, you can also set the parameter in your pom.xml:
+      </p><div class="source"><pre>
+&lt;plugin&gt;
+  &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+  &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+  &lt;configuration&gt;
+    &lt;ccTestGoals&gt;scatatest:test&lt;/ccTestGoals&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;
+       </pre></div>        
+        
+        <p>The ccTestGoals parameter takes a space-seperated list of goals. Thus, it is possible to run both JUnit tests and ScalaTest tests:
+        </p><div class="source"><pre>mvn -Dcctest.goals=&quot;surefire:test scalatest:test&quot; scala:cctest</pre></div>
+        
+    </div>
+    <div class="section"><h2>Note<a name="Note"></a></h2>
+      <p>If you want to display command used to run scala :
+        </p><div class="source"><pre>mvn scala:cctest -DdisplayCmd=true</pre></div>
+      
+      <ul>
+      <li style="color:red">WARNING : continuous compilation is an infinite loop so, avoid call the goal &quot;cctest&quot; in pom.xml or to connect it to a lifecycle's phase.</li>
+      </ul>
+    </div>
+  
 
       </div>
     </div>
