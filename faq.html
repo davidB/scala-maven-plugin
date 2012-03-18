@@ -44,8 +44,8 @@
             
                 
                 <div class="xleft">
-        <span id="publishDate">Last Published: 2012-03-18 20:53</span>
-                  &nbsp;| <span id="projectVersion">Version: 3.0.0</span>
+        <span id="publishDate">Last Published: 2012-03-18 23:32</span>
+                  &nbsp;| <span id="projectVersion">Version: 3.0.1-SNAPSHOT</span>
                       </div>
             <div class="xright">                    <a href="http://wiki.github.com/davidB/scala-maven-plugin/" class="externalLink" title="Wiki">Wiki</a>
             |
@@ -132,11 +132,11 @@
         
 	
 		<h1>Frequently Asked Questions</h1>
-		
+
 		<div class="section"><h2>Read-Eval-Print-Loop (aka scala:console)<a name="Read-Eval-Print-Loop_aka_scala:console"></a></h2>
 			<dl>
-				<dt>Why does maven net let me call scala:console?</dt>
-				<dd>Maven 3.0 made its policy more strict about shortened plugin names.   If you wish to use scala:goal forms on the command-line you must create a &lt;pluginGroup&gt; element in your ~/.m2/settings.xml file that contains org.scala-tools as a pluginGroup.
+				<dt>Why does maven not let me call scala:console?</dt>
+        <dd>Maven 3.0 made its policy more strict about shortened plugin names.   If you wish to use scala:goal forms on the command-line you must create a &lt;pluginGroup&gt; element in your ~/.m2/settings.xml file that contains net.alchim31.maven as a pluginGroup.
 				</dd>
 			</dl>
 			<dl>
@@ -146,16 +146,16 @@
 				Users who want to make use of their latest changes should type &quot;mvn compile scala:console&quot; or &quot;mvn test-compile scala:console&quot; rather than just &quot;mvn scala:console&quot;</dd>
 				<dt>Does the REPL support auto-complete?</dt>
 				<dd>As of Scala 2.8.0 the REPL supports auto-complete features.</dd>
-				
+
 			</dl>
 		</div>
-		
+
 		<div class="section"><h2>Eclipse Integration<a name="Eclipse_Integration"></a></h2>
 			<dl>
 				<dt>Is there a wiki detailing Scala/Eclipse/Maven integration</dt>
 				<dd>Yes, it requires a Scala trac user account and is located <a class="externalLink" href="http://lampsvn.epfl.ch/trac/scala/wiki/ScalaEclipseMaven">here</a></dd>
 				<dt>Why does the mvn eclipse:eclipse not add the src/main/scala directory as a source path</dt>
-				<dd>The maven-eclipse-plugin is not maintained/integrated with the scala-maven-plugin.  
+				<dd>The maven-eclipse-plugin is not maintained/integrated with the scala-maven-plugin.
 				If you would like to have the src/main/scala directory added as a source path in eclipse, you must configure it useing the <a class="externalLink" href="http://mojo.codehaus.org/build-helper-maven-plugin/howto.html">maven-build-helper-plugin's add-source goal</a>
 				Example: <div><pre>
 &lt;project&gt;
@@ -189,7 +189,7 @@
 				</dd>
 				<dt>Can you synchronize eclipse configuration with the scalac plugin pom configuration?</dt>
 				<dd>Not Currently</dd>
-				
+
 			</dl>
 		</div>
 	

@@ -44,8 +44,8 @@
             
                 
                 <div class="xleft">
-        <span id="publishDate">Last Published: 2012-03-18 20:53</span>
-                  &nbsp;| <span id="projectVersion">Version: 3.0.0</span>
+        <span id="publishDate">Last Published: 2012-03-18 23:32</span>
+                  &nbsp;| <span id="projectVersion">Version: 3.0.1-SNAPSHOT</span>
                       </div>
             <div class="xright">                    <a href="http://wiki.github.com/davidB/scala-maven-plugin/" class="externalLink" title="Wiki">Wiki</a>
             |
@@ -138,22 +138,6 @@
         
 &lt;project&gt;
   ...
-  &lt;repositories&gt;
-    &lt;repository&gt;
-      &lt;id&gt;scala-tools.org&lt;/id&gt;
-      &lt;name&gt;Scala-tools Maven2 Repository&lt;/name&gt;
-      &lt;url&gt;http://scala-tools.org/repo-releases&lt;/url&gt;
-    &lt;/repository&gt;
-  &lt;/repositories&gt;
-  ...
-  &lt;pluginRepositories&gt;
-    &lt;pluginRepository&gt;
-      &lt;id&gt;scala-tools.org&lt;/id&gt;
-      &lt;name&gt;Scala-tools Maven2 Repository&lt;/name&gt;
-      &lt;url&gt;http://scala-tools.org/repo-releases&lt;/url&gt;
-    &lt;/pluginRepository&gt;
-  &lt;/pluginRepositories&gt;
-  ...
   &lt;build&gt;
     &lt;sourceDirectory&gt;src/main/scala&lt;/sourceDirectory&gt;
     &lt;testSourceDirectory&gt;src/test/scala&lt;/testSourceDirectory&gt;
@@ -161,8 +145,9 @@
     &lt;plugins&gt;
       ...
       &lt;plugin&gt;
-        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;groupId&gt;net.alchim31.maven&lt;/groupId&gt;
         &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+        &lt;version&gt;3.0.1-SNAPSHOT&lt;/version&gt;
         ... (see other usage or goals for details) ...
       &lt;/plugin&gt;
       ...
@@ -211,8 +196,9 @@ $&gt; mvn scala:compile -DdisplayCmd=true
         </p><div class="source"><pre>
           
       &lt;plugin&gt;
-        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;groupId&gt;net.alchim31.maven&lt;/groupId&gt;
         &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+        &lt;version&gt;3.0.1-SNAPSHOT&lt;/version&gt;
         &lt;executions&gt;
           &lt;execution&gt;
             &lt;goals&gt;

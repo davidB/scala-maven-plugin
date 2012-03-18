@@ -44,8 +44,8 @@
             
                 
                 <div class="xleft">
-        <span id="publishDate">Last Published: 2012-03-18 20:53</span>
-                  &nbsp;| <span id="projectVersion">Version: 3.0.0</span>
+        <span id="publishDate">Last Published: 2012-03-18 23:32</span>
+                  &nbsp;| <span id="projectVersion">Version: 3.0.1-SNAPSHOT</span>
                       </div>
             <div class="xright">                    <a href="http://wiki.github.com/davidB/scala-maven-plugin/" class="externalLink" title="Wiki">Wiki</a>
             |
@@ -149,14 +149,14 @@
     </ul>
     </div>
     <div class="section"><h2>Running a subset of tests<a name="Running_a_subset_of_tests"></a></h2>
-      <p>To run only a single test each time or test cases matching a particular pattern, supply the <b>test</b> parameter 
+      <p>To run only a single test each time or test cases matching a particular pattern, supply the <b>test</b> parameter
       (like the <a class="externalLink" href="http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#test">surefire:test goal</a>)
         </p><div class="source"><pre>mvn scala:cctest -Dtest=MyTest</pre></div>
       
     </div>
     <div class="section"><h2>Summary of test failures<a name="Summary_of_test_failures"></a></h2>
       <p>To get useful output when tests fail (like SBT does by default) please make sure you have configured the surefire plugin
-      to set <a class="externalLink" href="http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#useFile">useFile</a> to false (or to use a maven property in the configuration of the useFile so you can override on the command line) then you get a reasonable report on the console when tests fail; showing the failed assertion and stack traces etc. So adding something like the following to your pom.xml           
+      to set <a class="externalLink" href="http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#useFile">useFile</a> to false (or to use a maven property in the configuration of the useFile so you can override on the command line) then you get a reasonable report on the console when tests fail; showing the failed assertion and stack traces etc. So adding something like the following to your pom.xml
       </p><div class="source"><pre>
 &lt;plugin&gt;
   &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
@@ -178,13 +178,14 @@
         <p>If you plan to execute ScalaTest often, you can also set the parameter in your pom.xml:
       </p><div class="source"><pre>
 &lt;plugin&gt;
-  &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+  &lt;groupId&gt;net.alchim31.maven&lt;/groupId&gt;
   &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+  &lt;version&gt;3.0.1-SNAPSHOT&lt;/version&gt;
   &lt;configuration&gt;
     &lt;ccTestGoals&gt;scatatest:test&lt;/ccTestGoals&gt;
   &lt;/configuration&gt;
 &lt;/plugin&gt;
-       </pre></div>        
+       </pre></div>
         
         <p>The ccTestGoals parameter takes a space-seperated list of goals. Thus, it is possible to run both JUnit tests and ScalaTest tests:
         </p><div class="source"><pre>mvn -Dcctest.goals=&quot;surefire:test scalatest:test&quot; scala:cctest</pre></div>

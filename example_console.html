@@ -44,8 +44,8 @@
             
                 
                 <div class="xleft">
-        <span id="publishDate">Last Published: 2012-03-18 20:53</span>
-                  &nbsp;| <span id="projectVersion">Version: 3.0.0</span>
+        <span id="publishDate">Last Published: 2012-03-18 23:32</span>
+                  &nbsp;| <span id="projectVersion">Version: 3.0.1-SNAPSHOT</span>
                       </div>
             <div class="xright">                    <a href="http://wiki.github.com/davidB/scala-maven-plugin/" class="externalLink" title="Wiki">Wiki</a>
             |
@@ -140,7 +140,7 @@
         <li>compile your code (running the console doesn't force to compile:
           <div class="source"><pre>mvn test-compile #or mvn test</pre></div>
         </li>
-        <li>run the console :    
+        <li>run the console :
           <div class="source"><pre>mvn scala:console</pre></div>
         </li>
         <li>when the scala prompt is shown, play :
@@ -179,7 +179,7 @@ scala&gt; new bootstrap.liftweb.Boot().boot
     <div class="source"><pre>
 import bootstrap.liftweb.Boot
 import scala.tools.nsc.MainGenericRunner
- 
+
 object LiftConsole {
    def main(args : Array[String]) {
      // Instantiate your project's Boot file
@@ -200,19 +200,19 @@ object LiftConsole {
       then edit your pom.xml and add to the configuration of the plugin :
     <div class="source"><pre>
       &lt;plugin&gt;
-        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;groupId&gt;net.alchim31.maven&lt;/groupId&gt;
         &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
-        ...
+        &lt;version&gt;3.0.1-SNAPSHOT&lt;/version&gt;
         &lt;configuration&gt;
           &lt;mainConsole&gt;LiftConsole&lt;/mainConsole&gt;
         &lt;/configuration&gt;
       &lt;/plugin&gt;
       </pre></div>
       </li>
-  </ol>    
-    
+  </ol>
+
     </div>
-    
+
     <div class="section"><h2>running with JavaRebel<a name="running_with_JavaRebel"></a></h2>
     <p>If you want to run the console with <a href="">JavaRebel</a>, you need :
      </p><ol style="list-style-type: decimal">
@@ -222,9 +222,9 @@ object LiftConsole {
        or through the pom.xml
     <div class="source"><pre>
       &lt;plugin&gt;
-        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+        &lt;groupId&gt;net.alchim31.maven&lt;/groupId&gt;
         &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
-        ...
+        &lt;version&gt;3.0.1-SNAPSHOT&lt;/version&gt;
         &lt;configuration&gt;
           &lt;javaRebelPath&gt;${user.home}/lib/java/javarebel/javarebel.jar&lt;/javaRebelPath&gt;
         &lt;/configuration&gt;
@@ -235,7 +235,7 @@ object LiftConsole {
         If you wish to use JRebel with the console, please set your maven opts in your environment:
         <div class="source"><pre>MAVEN_OPTS=&quot;$MAVEN_OPTS -noverify -javaagent:/...path/to/jrebel.jar&quot; mvn scala:console</pre></div>
     </li>
-    </ol>       
+    </ol>
     
     </div>
   

@@ -44,8 +44,8 @@
             
                 
                 <div class="xleft">
-        <span id="publishDate">Last Published: 2012-03-18 20:53</span>
-                  &nbsp;| <span id="projectVersion">Version: 3.0.0</span>
+        <span id="publishDate">Last Published: 2012-03-18 23:32</span>
+                  &nbsp;| <span id="projectVersion">Version: 3.0.1-SNAPSHOT</span>
                       </div>
             <div class="xright">                    <a href="http://wiki.github.com/davidB/scala-maven-plugin/" class="externalLink" title="Wiki">Wiki</a>
             |
@@ -143,7 +143,7 @@
       <p>
         Place java test sources files in :
         </p><div class="source"><pre>src/test/java</pre></div>
-          
+      
       <p>
         Place scala sources files in :
         </p><div class="source"><pre>src/main/scala</pre></div>
@@ -161,7 +161,7 @@
 	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd&quot;&gt;
 	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
-	&lt;groupId&gt;org.scala-tools.scala-maven-plugin&lt;/groupId&gt;
+	&lt;groupId&gt;sandbox&lt;/groupId&gt;
 	&lt;artifactId&gt;testJavaAndScala&lt;/artifactId&gt;
 	&lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
 	&lt;name&gt;Test for Java + Scala compilation&lt;/name&gt;
@@ -174,28 +174,14 @@
 			&lt;version&gt;2.7.2&lt;/version&gt;
 		&lt;/dependency&gt;
 	&lt;/dependencies&gt;
-	&lt;repositories&gt;
-		&lt;repository&gt;
-			&lt;id&gt;scala-tools.org&lt;/id&gt;
-			&lt;name&gt;Scala-tools Maven2 Repository&lt;/name&gt;
-			&lt;url&gt;http://scala-tools.org/repo-releases&lt;/url&gt;
-		&lt;/repository&gt;
-	&lt;/repositories&gt;
-	&lt;pluginRepositories&gt;
-		&lt;pluginRepository&gt;
-			&lt;id&gt;scala-tools.org&lt;/id&gt;
-			&lt;name&gt;Scala-tools Maven2 Repository&lt;/name&gt;
-			&lt;url&gt;http://scala-tools.org/repo-releases&lt;/url&gt;
-		&lt;/pluginRepository&gt;
-	&lt;/pluginRepositories&gt;
 
 	&lt;build&gt;
 		&lt;pluginManagement&gt;
 			&lt;plugins&gt;
 				&lt;plugin&gt;
-					&lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
-					&lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
-					&lt;version&gt;2.9.1&lt;/version&gt;
+          &lt;groupId&gt;net.alchim31.maven&lt;/groupId&gt;
+          &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+          &lt;version&gt;3.0.1-SNAPSHOT&lt;/version&gt;
 				&lt;/plugin&gt;
 				&lt;plugin&gt;
 					&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
@@ -206,8 +192,8 @@
 		&lt;/pluginManagement&gt;
 		&lt;plugins&gt;
 			&lt;plugin&gt;
-				&lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
-				&lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
+        &lt;groupId&gt;net.alchim31.maven&lt;/groupId&gt;
+        &lt;artifactId&gt;scala-maven-plugin&lt;/artifactId&gt;
 				&lt;executions&gt;
 					&lt;execution&gt;
 						&lt;id&gt;scala-compile-first&lt;/id&gt;
@@ -216,7 +202,7 @@
 						    &lt;goal&gt;add-source&lt;/goal&gt;
 							&lt;goal&gt;compile&lt;/goal&gt;
 						&lt;/goals&gt;
-					&lt;/execution&gt;									
+					&lt;/execution&gt;
 					&lt;execution&gt;
 						&lt;id&gt;scala-test-compile&lt;/id&gt;
 						&lt;phase&gt;process-test-resources&lt;/phase&gt;
@@ -258,9 +244,9 @@ mvn test
 mvn package
        
         </pre></div>
-            
       
-    </div>    
+
+    </div>
 
   
 
