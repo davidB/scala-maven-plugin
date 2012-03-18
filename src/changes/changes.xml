@@ -5,7 +5,7 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="3.0.0-SNAPSHOT" date="" description="">
+    <release version="3.0.0" date="2012-03-18" description="">
       <action dev="Josh Suereth"  type="fix">added docjar task to create scaladoc *and* place it in a jar file attached to the project.</action>
       <action dev="Josh Suereth"  type="fix">modify VersionNumber class so scala-virtualized builds can be used.</action>
       <action dev="David Bernard" type="update">scala:console use jline from scala-lang when scala's verion >= 2.9.0</action>
