@@ -7,7 +7,7 @@
   <bannerRight>
     <name>Scala-lang</name>
     <href>http://www.scala-lang.org/</href>
-    <src>http://www.scala-lang.org/images/scala_logo.png</src>
+    <src>http://www.scala-lang.org/sites/default/files/newsflash_logo.png</src>
   </bannerRight>
   <publishDate position="left" format="yyyy-MM-dd HH:mm" />
   <version position="left"/>
@@ -17,7 +17,7 @@
     <version>1.0</version>
   </skin-->
   <poweredBy>
-    <logo name="Build with Maven" href="http://maven.apache.org" img="images/logos/maven-feather.png" />
+    <logo name="Build with Maven" href="http://maven.apache.org" img="http://maven.apache.org/images/logos/maven-feather.png" />
   </poweredBy>
 
   <body>
