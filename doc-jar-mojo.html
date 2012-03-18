@@ -34,7 +34,7 @@
                 scala-maven-plugin
                 </a>
                         <a href="http://www.scala-lang.org/" id="bannerRight">
-                                        <img src="http://www.scala-lang.org/images/scala_logo.png" alt="Scala-lang" />
+                                        <img src="http://www.scala-lang.org/sites/default/files/newsflash_logo.png" alt="Scala-lang" />
                 </a>
             <div class="clear">
         <hr/>
@@ -44,7 +44,7 @@
             
                 
                 <div class="xleft">
-        <span id="publishDate">Last Published: 2012-03-18 17:25</span>
+        <span id="publishDate">Last Published: 2012-03-18 20:14</span>
                   &nbsp;| <span id="projectVersion">Version: 3.0.0-SNAPSHOT</span>
                       </div>
             <div class="xright">                    <a href="http://wiki.github.com/davidB/scala-maven-plugin/" class="externalLink" title="Wiki">Wiki</a>
@@ -120,8 +120,8 @@
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                   </li>
           </ul>
-                                                                                                                         <a href="http://maven.apache.org" title="Build with Maven" class="poweredBy">
-        <img class="poweredBy"  alt="Build with Maven" src="http://www.scala-lang.org/images/scala_logo.png"    />
+                                                                                                                   <a href="http://maven.apache.org" title="Build with Maven" class="poweredBy">
+        <img class="poweredBy"  alt="Build with Maven" src="http://maven.apache.org/images/logos/maven-feather.png"    />
       </a>
                        
                 
@@ -191,32 +191,40 @@ generated HTML files.<br /></td>
             <th>Description</th>
           </tr>
           <tr class="b">
+            <td><b><a href="#addScalacArgs">addScalacArgs</a></b></td>
+            <td><tt>String</tt></td>
+            <td><tt>-</tt></td>
+            <td>Additional parameter to use to call the main class Using this
+parameter only from command line
+(&quot;-DaddScalacArgs=arg1|arg2|arg3|...&quot;), not from pom.xml.<br /></td>
+          </tr>
+          <tr class="a">
             <td><b><a href="#aggregateDirectOnly">aggregateDirectOnly</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>If you want to aggregate only direct sub modules.<br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#archive">archive</a></b></td>
             <td><tt>MavenArchiveConfiguration</tt></td>
             <td><tt>-</tt></td>
             <td>The archive configuration to use. See <a class="externalLink" href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
 Archiver Reference</a>.<br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#args">args</a></b></td>
             <td><tt>String[]</tt></td>
             <td><tt>-</tt></td>
             <td>compiler additionnals arguments<br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#attach">attach</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Specifies whether to attach the generated artifact to the project
 helper. <br /><br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#bottom">bottom</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
@@ -226,26 +234,26 @@ If you want to use html you have to put it in a CDATA section, eg.
 href=&quot;http://www.mycompany.com&quot;&gt;MyCompany, Inc.&lt;a&gt;]]&gt;
 [scaladoc, vscaladoc]<br /><b>Default value is</b>: <tt>Copyright (c) {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved.</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#charset">charset</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
             <td>Charset for cross-platform viewing of generated documentation.
 [scaladoc, vscaladoc]<br /><b>Default value is</b>: <tt>ISO-8859-1</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#checkMultipleScalaVersions">checkMultipleScalaVersions</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Check if every dependencies use the same version of scala-library.<br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#compilerPlugins">compilerPlugins</a></b></td>
             <td><tt>BasicArtifact[]</tt></td>
             <td><tt>-</tt></td>
             <td>Compiler plugin dependencies to use when compiling. ex:<br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#dependencies">dependencies</a></b></td>
             <td><tt>BasicArtifact[]</tt></td>
             <td><tt>-</tt></td>
@@ -262,20 +270,20 @@ href=&quot;http://www.mycompany.com&quot;&gt;MyCompany, Inc.&lt;a&gt;]]&gt;
    &lt;/dependencies&gt;
 </pre></div><br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#description">description</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>2.1</tt></td>
             <td>The description of the Scaladoc report.<br /><b>Default value is</b>: <tt>ScalaDoc API</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#doctitle">doctitle</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
             <td>Include title for the overview page. [scaladoc, scaladoc2,
 vscaladoc]<br /><b>Default value is</b>: <tt>${project.name} ${project.version} API</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#excludes">excludes</a></b></td>
             <td><tt>Set</tt></td>
             <td><tt>-</tt></td>
@@ -287,21 +295,21 @@ vscaladoc]<br /><b>Default value is</b>: <tt>${project.name} ${project.version} 
    &lt;/excludes&gt;
 </pre></div><br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#failOnError">failOnError</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>2.5</tt></td>
             <td>Specifies if the build will fail if there are errors during javadoc
 execution or not.<br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#failOnMultipleScalaVersions">failOnMultipleScalaVersions</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Determines if a detection of multiple scala versions in the
 dependencies will cause the build to fail.<br /><b>Default value is</b>: <tt>false</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#finalName">finalName</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
@@ -309,13 +317,13 @@ dependencies will cause the build to fail.<br /><b>Default value is</b>: <tt>fal
 file. Please note that <tt>-javadoc</tt> or
 <tt>-test-javadoc</tt> will be appended to the file name.<br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#footer">footer</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
             <td>Include footer text for each page. [scaladoc, vscaladoc]<br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#forceAggregate">forceAggregate</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
@@ -323,25 +331,25 @@ file. Please note that <tt>-javadoc</tt> or
 &quot;-Dforce-aggregate=true&quot; (avoid using in pom.xml). [scaladoc,
 vscaladoc]<br /><b>Default value is</b>: <tt>false</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#forceUseArgFile">forceUseArgFile</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Force the use of an external ArgFile to run any forked process.<br /><b>Default value is</b>: <tt>false</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#fork">fork</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Forks the execution of scalac into a separate process.<br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#header">header</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
             <td>Include header text for each page [scaladoc, vscaladoc]<br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#includes">includes</a></b></td>
             <td><tt>Set</tt></td>
             <td><tt>-</tt></td>
@@ -353,104 +361,104 @@ vscaladoc]<br /><b>Default value is</b>: <tt>false</tt>.</td>
    &lt;/includes&gt;
 </pre></div><br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#jarOutputDirectory">jarOutputDirectory</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
             <td>Specifies the directory where the generated jar file will be put.<br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#jvmArgs">jvmArgs</a></b></td>
             <td><tt>String[]</tt></td>
             <td><tt>-</tt></td>
             <td>Jvm Arguments.<br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#linksource">linksource</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Generate source in HTML [scaladoc, vscaladoc]<br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#name">name</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>2.1</tt></td>
             <td>The name of the Scaladoc report.<br /><b>Default value is</b>: <tt>ScalaDocs</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#nocomment">nocomment</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Suppress description and tags, generate only declarations
 [scaladoc, vscaladoc]<br /><b>Default value is</b>: <tt>false</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#scalaVersion">scalaVersion</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
             <td>Scala 's version to use. (property 'maven.scala.version' replaced
 by 'scala.version')<br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#scaladocClassName">scaladocClassName</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
             <td>className (FQN) of the main scaladoc to use, if not define, the the
 scalaClassName is used<br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#sendJavaToScalac">sendJavaToScalac</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Enables/Disables sending java source to the scala compiler.<br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#skip">skip</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Specifies whether to skip generating scaladoc. <br /><br /><b>Default value is</b>: <tt>false</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#sourceDir">sourceDir</a></b></td>
             <td><tt>File</tt></td>
             <td><tt>-</tt></td>
             <td>The directory which contains scala/java source files<br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#stylesheetfile">stylesheetfile</a></b></td>
             <td><tt>File</tt></td>
             <td><tt>-</tt></td>
             <td>File to change style of the generated documentation [scaladoc,
 vscaladoc]<br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#top">top</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
             <td>Include top text for each page [scaladoc, vscaladoc]<br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#useCanonicalPath">useCanonicalPath</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Should use CanonicalPath to normalize path (true =&gt;
 getCanonicalPath, false =&gt; getAbsolutePath)<br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#useDefaultManifestFile">useDefaultManifestFile</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Set this to <tt>true</tt> to enable the use of the
 <tt>defaultManifestFile</tt>. <br /><br /><b>Default value is</b>: <tt>false</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#vscaladocVersion">vscaladocVersion</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
             <td>If you want to use vscaladoc to generate api instead of regular
 scaladoc, set the version of vscaladoc you want to use.<br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#windowtitle">windowtitle</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
@@ -460,7 +468,15 @@ vscaladoc]<br /><b>Default value is</b>: <tt>${project.name} ${project.version} 
         </table>
       </div>
       <div class="section"><h3>Parameter Details<a name="Parameter_Details"></a></h3>
-        <p><b><a name="aggregateDirectOnly">aggregateDirectOnly</a>:</b></p>
+        <p><b><a name="addScalacArgs">addScalacArgs</a>:</b></p>
+        <div>Additional parameter to use to call the main class Using this
+parameter only from command line
+(&quot;-DaddScalacArgs=arg1|arg2|arg3|...&quot;), not from pom.xml.</div>
+        <ul>
+          <li><b>Type</b>: <tt>java.lang.String</tt></li>
+          <li><b>Required</b>: <tt>No</tt></li>
+          <li><b>Expression</b>: <tt>${addScalacArgs}</tt></li>
+        </ul><hr /><p><b><a name="aggregateDirectOnly">aggregateDirectOnly</a>:</b></p>
         <div>If you want to aggregate only direct sub modules.</div>
         <ul>
           <li><b>Type</b>: <tt>boolean</tt></li>

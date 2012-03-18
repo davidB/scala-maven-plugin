@@ -34,7 +34,7 @@
                 scala-maven-plugin
                 </a>
                         <a href="http://www.scala-lang.org/" id="bannerRight">
-                                        <img src="http://www.scala-lang.org/images/scala_logo.png" alt="Scala-lang" />
+                                        <img src="http://www.scala-lang.org/sites/default/files/newsflash_logo.png" alt="Scala-lang" />
                 </a>
             <div class="clear">
         <hr/>
@@ -44,7 +44,7 @@
             
                 
                 <div class="xleft">
-        <span id="publishDate">Last Published: 2012-03-18 17:25</span>
+        <span id="publishDate">Last Published: 2012-03-18 20:14</span>
                   &nbsp;| <span id="projectVersion">Version: 3.0.0-SNAPSHOT</span>
                       </div>
             <div class="xright">                    <a href="http://wiki.github.com/davidB/scala-maven-plugin/" class="externalLink" title="Wiki">Wiki</a>
@@ -120,8 +120,8 @@
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                   </li>
           </ul>
-                                                                                                                         <a href="http://maven.apache.org" title="Build with Maven" class="poweredBy">
-        <img class="poweredBy"  alt="Build with Maven" src="http://www.scala-lang.org/images/scala_logo.png"    />
+                                                                                                                   <a href="http://maven.apache.org" title="Build with Maven" class="poweredBy">
+        <img class="poweredBy"  alt="Build with Maven" src="http://maven.apache.org/images/logos/maven-feather.png"    />
       </a>
                        
                 
@@ -172,24 +172,32 @@
             <th>Description</th>
           </tr>
           <tr class="b">
+            <td><b><a href="#addScalacArgs">addScalacArgs</a></b></td>
+            <td><tt>String</tt></td>
+            <td><tt>-</tt></td>
+            <td>Additional parameter to use to call the main class Using this
+parameter only from command line
+(&quot;-DaddScalacArgs=arg1|arg2|arg3|...&quot;), not from pom.xml.<br /></td>
+          </tr>
+          <tr class="a">
             <td><b><a href="#args">args</a></b></td>
             <td><tt>String[]</tt></td>
             <td><tt>-</tt></td>
             <td>compiler additionnals arguments<br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#checkMultipleScalaVersions">checkMultipleScalaVersions</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Check if every dependencies use the same version of scala-library.<br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#compilerPlugins">compilerPlugins</a></b></td>
             <td><tt>BasicArtifact[]</tt></td>
             <td><tt>-</tt></td>
             <td>Compiler plugin dependencies to use when compiling. ex:<br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#dependencies">dependencies</a></b></td>
             <td><tt>BasicArtifact[]</tt></td>
             <td><tt>-</tt></td>
@@ -206,46 +214,46 @@
    &lt;/dependencies&gt;
 </pre></div><br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#failOnMultipleScalaVersions">failOnMultipleScalaVersions</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Determines if a detection of multiple scala versions in the
 dependencies will cause the build to fail.<br /><b>Default value is</b>: <tt>false</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#forceUseArgFile">forceUseArgFile</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Force the use of an external ArgFile to run any forked process.<br /><b>Default value is</b>: <tt>false</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#fork">fork</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Forks the execution of scalac into a separate process.<br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#jvmArgs">jvmArgs</a></b></td>
             <td><tt>String[]</tt></td>
             <td><tt>-</tt></td>
             <td>Jvm Arguments.<br /></td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#scalaVersion">scalaVersion</a></b></td>
             <td><tt>String</tt></td>
             <td><tt>-</tt></td>
             <td>Scala 's version to use. (property 'maven.scala.version' replaced
 by 'scala.version')<br /></td>
           </tr>
-          <tr class="a">
+          <tr class="b">
             <td><b><a href="#useCanonicalPath">useCanonicalPath</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
             <td>Should use CanonicalPath to normalize path (true =&gt;
 getCanonicalPath, false =&gt; getAbsolutePath)<br /><b>Default value is</b>: <tt>true</tt>.</td>
           </tr>
-          <tr class="b">
+          <tr class="a">
             <td><b><a href="#versionOnly">versionOnly</a></b></td>
             <td><tt>boolean</tt></td>
             <td><tt>-</tt></td>
@@ -254,7 +262,15 @@ getCanonicalPath, false =&gt; getAbsolutePath)<br /><b>Default value is</b>: <tt
         </table>
       </div>
       <div class="section"><h3>Parameter Details<a name="Parameter_Details"></a></h3>
-        <p><b><a name="args">args</a>:</b></p>
+        <p><b><a name="addScalacArgs">addScalacArgs</a>:</b></p>
+        <div>Additional parameter to use to call the main class Using this
+parameter only from command line
+(&quot;-DaddScalacArgs=arg1|arg2|arg3|...&quot;), not from pom.xml.</div>
+        <ul>
+          <li><b>Type</b>: <tt>java.lang.String</tt></li>
+          <li><b>Required</b>: <tt>No</tt></li>
+          <li><b>Expression</b>: <tt>${addScalacArgs}</tt></li>
+        </ul><hr /><p><b><a name="args">args</a>:</b></p>
         <div>compiler additionnals arguments</div>
         <ul>
           <li><b>Type</b>: <tt>java.lang.String[]</tt></li>

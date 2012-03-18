@@ -33,7 +33,7 @@
                 scala-maven-plugin
                 </a>
                         <a href="http://www.scala-lang.org/" id="bannerRight">
-                                        <img src="http://www.scala-lang.org/images/scala_logo.png" alt="Scala-lang" />
+                                        <img src="http://www.scala-lang.org/sites/default/files/newsflash_logo.png" alt="Scala-lang" />
                 </a>
             <div class="clear">
         <hr/>
@@ -43,7 +43,7 @@
             
                 
                 <div class="xleft">
-        <span id="publishDate">Last Published: 2012-03-18 17:24</span>
+        <span id="publishDate">Last Published: 2012-03-18 20:13</span>
                   &nbsp;| <span id="projectVersion">Version: 3.0.0-SNAPSHOT</span>
                       </div>
             <div class="xright">                    <a href="http://wiki.github.com/davidB/scala-maven-plugin/" class="externalLink" title="Wiki">Wiki</a>
@@ -142,8 +142,8 @@
               </ul>
         </li>
           </ul>
-                                                                                                                         <a href="http://maven.apache.org" title="Build with Maven" class="poweredBy">
-        <img class="poweredBy"  alt="Build with Maven" src="http://www.scala-lang.org/images/scala_logo.png"    />
+                                                                                                                   <a href="http://maven.apache.org" title="Build with Maven" class="poweredBy">
+        <img class="poweredBy"  alt="Build with Maven" src="http://maven.apache.org/images/logos/maven-feather.png"    />
       </a>
                        
                 
@@ -157,13 +157,7 @@
 cases in continuous (infinite loop). This is an util goal for
 commandline usage only (Do not use or call it in a pom) !!!</td></tr><tr class="a"><td><a href="compile-mojo.html">scala:compile</a></td><td>No</td><td>Compiles a directory of Scala source. Corresponds roughly to the
 compile goal of the maven-compiler-plugin</td></tr><tr class="b"><td><a href="console-mojo.html">scala:console</a></td><td>No</td><td>Run the Scala console with all the classes of the projects
-(dependencies and builded)</td></tr><tr class="a"><td><a href="cs-compile-mojo.html">scala:cs-compile</a></td><td>No</td><td>Request compile to ScalaCS (no more, doesn't create project, check
-if exist, request compile of dependencies,...)</td></tr><tr class="b"><td><a href="cs-compile-all-mojo.html">scala:cs-compile-all</a></td><td>No</td><td>Request compile to ScalaCS (no more, doesn't create project, check
-if exist, request compile of dependencies,...)</td></tr><tr class="a"><td><a href="cs-compile-single-mojo.html">scala:cs-compile-single</a></td><td>No</td><td>Request compile to ScalaCS (no more, doesn't create project, check
-if exist,...), but only the current project</td></tr><tr class="b"><td><a href="cs-init-mojo.html">scala:cs-init</a></td><td>No</td><td>Register the current project into running ScalaCS. If there is no
-running ScalaCS then install (if needed) and start it.</td></tr><tr class="a"><td><a href="cs-remove-mojo.html">scala:cs-remove</a></td><td>No</td><td>Request compile to ScalaCS (no more, doesn't create project, check
-if exist, request compile of dependencies,...)</td></tr><tr class="b"><td><a href="cs-stop-mojo.html">scala:cs-stop</a></td><td>No</td><td>Request compile to ScalaCS (no more, doesn't create project, check
-if exist,...)</td></tr><tr class="a"><td><a href="doc-mojo.html">scala:doc</a></td><td>Yes</td><td>Produces Scala API documentation.</td></tr><tr class="b"><td><a href="doc-jar-mojo.html">scala:doc-jar</a></td><td>Yes</td><td>Creates a jar of the non-aggregated scaladoc and attaches it to the
+(dependencies and builded)</td></tr><tr class="a"><td><a href="doc-mojo.html">scala:doc</a></td><td>Yes</td><td>Produces Scala API documentation.</td></tr><tr class="b"><td><a href="doc-jar-mojo.html">scala:doc-jar</a></td><td>Yes</td><td>Creates a jar of the non-aggregated scaladoc and attaches it to the
 project for distribution.</td></tr><tr class="a"><td><a href="genjson-mojo.html">scala:genjson</a></td><td>No</td><td>Produces Scala API documentation in Json (use vscaladoc2_genjson).</td></tr><tr class="b"><td><a href="help-mojo.html">scala:help</a></td><td>No</td><td>Display the Scala Compiler help</td></tr><tr class="a"><td><a href="run-mojo.html">scala:run</a></td><td>No</td><td>Run a Scala class using the Scala runtime</td></tr><tr class="b"><td><a href="script-mojo.html">scala:script</a></td><td>No</td><td>Run a scala script.</td></tr><tr class="a"><td><a href="testCompile-mojo.html">scala:testCompile</a></td><td>No</td><td>Compile Scala test source into test-classes. Corresponds roughly to
 testCompile in maven-compiler-plugin</td></tr></table><a name="System_Requirements"></a><div class="section"><h3>System Requirements<a name="System_Requirements"></a></h3><p>The following specifies the minimum requirements to run this Maven plugin:</p><table border="0" class="bodyTable"><tr class="b"><td>Maven</td><td>2.2.1</td></tr><tr class="a"><td>JDK</td><td>1.1</td></tr><tr class="b"><td>Memory</td><td>No minimum requirement.</td></tr><tr class="a"><td>Disk Space</td><td>No minimum requirement.</td></tr></table></div><a name="Usage"></a><div class="section"><h3>Usage<a name="Usage"></a></h3><p>You should specify the version in your project's plugin configuration:</p><div class="source"><pre>&lt;project&gt;
   ...
