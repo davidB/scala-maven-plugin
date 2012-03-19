@@ -184,31 +184,6 @@
           <artifactId>maven-changes-plugin</artifactId>
           <version>2.6</version>
         </plugin>
-        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-docck-plugin</artifactId>
-                    <versionRange>[1.0,)</versionRange>
-                    <goals>
-                      <goal>check</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore />
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -403,27 +378,6 @@
       </activation>
       <build>
         <plugins>
-          <!--plugin>
-            Diseable docck as it doesn work with site 3.0 (no longer need to have reporting tag
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-docck-plugin</artifactId>
-            <version>1.0</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
-            Default qdox version is 1.6.3 which fails to parse LogProcessorUtils for some unknown reason, and is quite old
-            <dependencies>
-              <dependency>
-                <groupId>com.thoughtworks.qdox</groupId>
-                <artifactId>qdox</artifactId>
-                <version>1.11</version>
-              </dependency>
-            </dependencies>
-          </plugin-->
           <plugin>
             <artifactId>maven-site-plugin</artifactId>
           </plugin>
