@@ -17,7 +17,7 @@
 'UTF-8'
 -docfilessubdirs
 -doctitle
-'scala-maven-plugin 3.0.0 Test API'
+'scala-maven-plugin 3.0.1 Test API'
 -keywords
 -link
 'http://java.sun.com/j2se/1.5/docs/api'
@@ -28,10 +28,8 @@
 -link
 'http://commons.apache.org/io/api-release'
 -link
-'../apidocs'
--link
 'http://java.sun.com/javase/6/docs/api'
 -use
 -version
 -windowtitle
-'scala-maven-plugin 3.0.0 Test API'
+'scala-maven-plugin 3.0.1 Test API'
