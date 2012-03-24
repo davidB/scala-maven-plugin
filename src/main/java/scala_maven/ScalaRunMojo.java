@@ -1,5 +1,6 @@
 package scala_maven;
 
+import org.apache.maven.toolchain.Toolchain;
 import org.codehaus.plexus.util.StringUtils;
 
 import scala_maven_executions.JavaMainCaller;
@@ -70,19 +71,20 @@ public class ScalaRunMojo extends ScalaMojoSupport {
     @SuppressWarnings("unchecked")
     protected void doExecute() throws Exception {
         JavaMainCaller jcmd = null;
+        Toolchain toolchain = toolchainManager.getToolchainFromBuildContext("jdk", session);
         if (StringUtils.isNotEmpty(mainClass)) {
-            jcmd = new JavaMainCallerByFork(this, mainClass, MainHelper.toMultiPath(project.getTestClasspathElements()), jvmArgs, args, forceUseArgFile);
+            jcmd = new JavaMainCallerByFork(this, mainClass, MainHelper.toMultiPath(project.getTestClasspathElements()), jvmArgs, args, forceUseArgFile, toolchain);
         } else if ((launchers != null) && (launchers.length > 0)) {
             if (StringUtils.isNotEmpty(launcher)) {
                 for(int i = 0; (i < launchers.length) && (jcmd == null); i++) {
                     if (launcher.equals(launchers[i].id)) {
                         getLog().info("launcher '"+ launchers[i].id + "' selected => "+ launchers[i].mainClass );
-                        jcmd = new JavaMainCallerByFork(this, launchers[i].mainClass, MainHelper.toMultiPath(project.getTestClasspathElements()), launchers[i].jvmArgs, launchers[i].args, forceUseArgFile);
+                        jcmd = new JavaMainCallerByFork(this, launchers[i].mainClass, MainHelper.toMultiPath(project.getTestClasspathElements()), launchers[i].jvmArgs, launchers[i].args, forceUseArgFile, toolchain);
                     }
                 }
             } else {
                 getLog().info("launcher '"+ launchers[0].id + "' selected => "+ launchers[0].mainClass );
-                jcmd = new JavaMainCallerByFork(this, launchers[0].mainClass, MainHelper.toMultiPath(project.getTestClasspathElements()), launchers[0].jvmArgs, launchers[0].args, forceUseArgFile);
+                jcmd = new JavaMainCallerByFork(this, launchers[0].mainClass, MainHelper.toMultiPath(project.getTestClasspathElements()), launchers[0].jvmArgs, launchers[0].args, forceUseArgFile, toolchain);
             }
         }
         if (jcmd != null) {

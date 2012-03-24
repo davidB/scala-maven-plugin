@@ -29,6 +29,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Prerequisites;
 import org.apache.maven.model.Profile;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.Resource;
@@ -184,7 +185,7 @@ public class MavenProjectAdapter {
     }
 
 
-    public List<Plugin> getReportPlugins() {
+    public List<ReportPlugin> getReportPlugins() {
         return wrapped.getReportPlugins();
     }
 
@@ -483,10 +484,6 @@ public class MavenProjectAdapter {
         wrapped.addMailingList(mailingList);
     }
 
-    public void addPlugin(Plugin plugin) {
-        wrapped.addPlugin(plugin);
-    }
-
     public void addProjectReference(MavenProject project) {
         wrapped.addProjectReference(project);
     }
@@ -669,10 +666,6 @@ public class MavenProjectAdapter {
         return wrapped.hasParent();
     }
 
-    public void injectPluginManagementInfo(Plugin arg0) {
-        wrapped.injectPluginManagementInfo(arg0);
-    }
-
     public boolean isExecutionRoot() {
         return wrapped.isExecutionRoot();
     }
@@ -804,10 +797,6 @@ public class MavenProjectAdapter {
 
     public void setPluginArtifactRepositories(List pluginArtifactRepositories) {
         wrapped.setPluginArtifactRepositories(pluginArtifactRepositories);
-    }
-
-    public void setPluginArtifacts(Set pluginArtifacts) {
-        wrapped.setPluginArtifacts(pluginArtifacts);
     }
 
     public void setReleaseArtifactRepository(

@@ -17,6 +17,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,6 +34,7 @@ import org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter;
 import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNodeVisitor;
 import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
 import org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNodeVisitor;
+import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.StringUtils;
 import scala_maven_dependency.CheckScalaVersionVisitor;
 import scala_maven_dependency.ScalaDistroArtifactFilter;
@@ -52,6 +54,13 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @readonly
      */
     protected MavenProject project;
+
+    /**
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    protected MavenSession session;
 
     /**
      * Used to look up Artifacts in the remote repository.
@@ -256,6 +265,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @readonly
      */
     private DependencyTreeBuilder dependencyTreeBuilder;
+
+    /**
+     * The toolchain manager to use.
+     *
+     * @component
+     * @required
+     * @readonly
+     */
+    protected ToolchainManager toolchainManager;
 
     private VersionNumber _scalaVersionN;
 
@@ -488,7 +506,8 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
            // * works only since 2.8.0
            // * is buggy (don't manage space in path on windows)
             getLog().debug("use java command with args in file forced : " + forceUseArgFile);
-            cmd = new JavaMainCallerByFork(this, mainClass, getToolClasspath(), null, null, forceUseArgFile);
+
+            cmd = new JavaMainCallerByFork(this, mainClass, getToolClasspath(), null, null, forceUseArgFile, toolchainManager.getToolchainFromBuildContext("jdk", session));
         } else  {
             cmd = new JavaMainCallerInProcess(this, mainClass, getToolClasspath(), null, null);
         }
