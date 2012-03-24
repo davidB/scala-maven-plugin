@@ -13,6 +13,7 @@ import org.apache.commons.exec.OS;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.toolchain.Toolchain;
 import org.codehaus.plexus.util.StringUtils;
 
 import scala_maven_executions.LogProcessorUtils.LevelState;
@@ -34,19 +35,25 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
 
     private boolean _redirectToLog;
 
-    public JavaMainCallerByFork(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args, boolean forceUseArgFile) throws Exception {
+    public JavaMainCallerByFork(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args, boolean forceUseArgFile, Toolchain toolchain) throws Exception {
         super(requester, mainClassName, classpath, jvmArgs, args);
         for (String key : System.getenv().keySet()) {
             env.add(key + "=" + System.getenv(key));
         }
-        _javaExec = System.getProperty("java.home");
-        if (_javaExec == null) {
-            _javaExec = System.getenv("JAVA_HOME");
+
+        if (toolchain != null)
+            _javaExec = toolchain.findTool("java");
+
+        if (toolchain == null || _javaExec == null) {
+            _javaExec = System.getProperty("java.home");
             if (_javaExec == null) {
-                throw new IllegalStateException("Couldn't locate java, try setting JAVA_HOME environment variable.");
+                _javaExec = System.getenv("JAVA_HOME");
+                if (_javaExec == null) {
+                    throw new IllegalStateException("Couldn't locate java, try setting JAVA_HOME environment variable.");
+                }
             }
+            _javaExec += File.separator + "bin" + File.separator + "java";
         }
-        _javaExec += File.separator + "bin" + File.separator + "java";
         _forceUseArgFile = forceUseArgFile;
     }
 
