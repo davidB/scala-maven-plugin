@@ -2,6 +2,7 @@ package scala_maven;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -19,8 +20,6 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.plexus.util.StringUtils;
 
 import scala_maven_executions.JavaMainCaller;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * Produces Scala API documentation in Json (use vscaladoc2_genjson).
