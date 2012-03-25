@@ -5,6 +5,9 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="3.0.2" date="">
+      <action dev="Alex Hvostov" type="update">Use Maven 3.0 toolchain API to configure a specific JDK to build with</action>
+    </release>
     <release version="3.0.0" date="2012-03-18" description="">
       <action dev="Josh Suereth"  type="fix">added docjar task to create scaladoc *and* place it in a jar file attached to the project.</action>
       <action dev="Josh Suereth"  type="fix">modify VersionNumber class so scala-virtualized builds can be used.</action>
