@@ -15,6 +15,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     public static final String ALL = "all";
     public static final String MODIFIED_ONLY = "modified-only";
+    public static final String INCREMENTAL = "incremental";
 
     /**
      * Keeps track of if we get compile errors in incremental mode
@@ -43,12 +44,14 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * @parameter expression="${notifyCompilation}" default-value="true"
      */
     private boolean notifyCompilation = true;
-    
+
     abstract protected File getOutputDir() throws Exception;
 
     abstract protected List<String> getClasspathElements() throws Exception;
 
     private long _lastCompileAt = -1;
+
+    private SbtIncrementalCompiler incremental;
 
     @Override
     protected void doExecute() throws Exception {
@@ -74,13 +77,16 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
     }
 
-
     protected int compile(File sourceDir, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
         //getLog().warn("Using older form of compile");
         return compile(Arrays.asList(sourceDir), outputDir, classpathElements, compileInLoop);
     }
 
     protected int compile(List<File> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
+        if (INCREMENTAL.equals(recompileMode)) {
+            return incrementalCompile(getClasspathElements(), getSourceDirectories(), outputDir);
+        }
+
         long t0 = System.currentTimeMillis();
         if (_lastCompileAt < 0) {
             _lastCompileAt = findLastSuccessfullCompilation(outputDir);
@@ -115,8 +121,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         getLog().info(String.format("compile in %d s", (System.currentTimeMillis() - t1) / 1000));
         _lastCompileAt = t1;
         return files.size();
-     }
-
+    }
 
     /**
      * Returns true if the previous compile failed
@@ -198,5 +203,22 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             FileUtils.fileWrite(lastCompileAtFile.getAbsolutePath(), ".");
         }
         lastCompileAtFile.setLastModified(v);
+    }
+
+    protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir) throws Exception, InterruptedException {
+        String scalaVersion = findScalaVersion().toString();
+        File libraryJar = getLibraryJar();
+        File compilerJar = getCompilerJar();
+        String sbtGroupId = "org.scala-sbt";
+        String xsbtiArtifactId = "interface";
+        String compilerInterfaceArtifactId = "compiler-interface";
+        String sbtVersion = findVersionFromPluginArtifacts("org.scala-sbt", "sbt-incremental-compiler");
+        File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
+        File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, "src");
+        if (incremental == null) incremental = new SbtIncrementalCompiler(scalaVersion, libraryJar, compilerJar, sbtVersion, xsbtiJar, interfaceSrcJar, getLog());
+        List<File> sources = findSourceWithFilters(sourceRootDirs);
+        List<String> scalacOptions = getScalaOptions();
+        incremental.compile(classpathElements, sources, outputDir, scalacOptions, new ArrayList<String>());
+        return 1;
     }
 }

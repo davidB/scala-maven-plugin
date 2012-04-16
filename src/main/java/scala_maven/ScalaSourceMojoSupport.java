@@ -68,30 +68,30 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
             includes.add("**/*.java");
         }
       }
-      if (!_filterPrinted && getLog().isInfoEnabled()) {
+      if (!_filterPrinted && getLog().isDebugEnabled()) {
         StringBuilder builder = new StringBuilder("includes = [");
         for (String include : includes) {
             builder.append(include).append(",");
         }
         builder.append("]");
-        getLog().info(builder.toString());
+        getLog().debug(builder.toString());
 
         builder = new StringBuilder("excludes = [");
         for (String exclude : excludes) {
             builder.append(exclude).append(",");
         }
         builder.append("]");
-        getLog().info(builder.toString());
+        getLog().debug(builder.toString());
         _filterPrinted = true;
       }
     }
-    
+
     /**
      * Finds all source files in a set of directories with a given extension.
      */
     protected List<File> findSourceWithFilters(List<File> sourceRootDirs) throws Exception {
         List<File> sourceFiles = new ArrayList<File>();
-        
+
         initFilters();
 
         // TODO - Since we're making files anyway, perhaps we should just test
