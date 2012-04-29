@@ -1,10 +1,10 @@
-package scala_maven;
+package sbt_inc;
 
 import org.apache.maven.plugin.logging.Log;
 import xsbti.F0;
 import xsbti.Logger;
 
-public class SbtLogger implements xsbti.Logger {
+public class SbtLogger implements Logger {
 
     Log log;
 
