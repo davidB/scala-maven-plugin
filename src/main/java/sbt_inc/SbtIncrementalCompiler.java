@@ -1,8 +1,9 @@
 package sbt_inc;
 
 import java.io.File;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
 import org.apache.maven.plugin.logging.Log;
 import sbt.compiler.AnalyzingCompiler;
 import sbt.compiler.CompilerCache;
@@ -16,11 +17,11 @@ import xsbti.Maybe;
 
 public class SbtIncrementalCompiler {
 
-    public static final String SBT_GROUP_ID = "org.scala-sbt";
-    public static final String COMPILER_INTEGRATION_ARTIFACT_ID = "compiler-integration";
+    public static final String SBT_GROUP_ID = "com.typesafe.sbt";
+    public static final String COMPILER_INTEGRATION_ARTIFACT_ID = "incremental-compiler";
     public static final String COMPILER_INTERFACE_ARTIFACT_ID = "compiler-interface";
     public static final String COMPILER_INTERFACE_CLASSIFIER = "sources";
-    public static final String XSBTI_ARTIFACT_ID = "interface";
+    public static final String XSBTI_ARTIFACT_ID = "sbt-interface";
 
     private xsbti.Logger logger;
 
@@ -29,7 +30,7 @@ public class SbtIncrementalCompiler {
     private GlobalsCache compilerCache;
 
     public SbtIncrementalCompiler(String scalaVersion, File libraryJar, File compilerJar, String sbtVersion, File xsbtiJar, File interfaceJar, int maxCompilers, Log log) throws Exception {
-        log.info("Using incremental compilation");
+        log.info("Using incremental recompilation");
         this.logger = new SbtLogger(log);
         this.compilers = new SbtCompilers(scalaVersion, libraryJar, compilerJar, sbtVersion, xsbtiJar, interfaceJar, logger);
         this.compilerCache = (maxCompilers <= 0) ? CompilerCache.fresh() : CompilerCache$.MODULE$.apply(maxCompilers);
@@ -42,7 +43,7 @@ public class SbtIncrementalCompiler {
         String[] soptions = scalacOptions.toArray(new String[scalacOptions.size()]);
         String[] joptions = javacOptions.toArray(new String[javacOptions.size()]);
         Options options = new Options(classpath, sources, classesDirectory, soptions, joptions);
-        Setup setup = new Setup(classesDirectory, compilerCache);
+        Setup setup = new Setup(fullClasspath, classesDirectory, compilerCache);
         Inputs inputs = new Inputs(compilers, options, setup);
         IC.compile(inputs, logger);
     }
@@ -94,19 +95,23 @@ public class SbtIncrementalCompiler {
 
     public static class Setup implements xsbti.compile.Setup<Analysis> {
 
-        private File classesDirectory;
+        private HashMap<File, Maybe<Analysis>> analysisMap;
         private File cacheFile;
         private GlobalsCache compilerCache;
 
-        public Setup(File classesDirectory, GlobalsCache compilerCache) {
-            this.classesDirectory = classesDirectory;
+        public Setup(List<File> fullClasspath, File classesDirectory, GlobalsCache compilerCache) {
+            this.analysisMap = new HashMap<File, Maybe<Analysis>>();
+            for (File file : fullClasspath) {
+                analysisMap.put(file, SbtAnalysis.getAnalysis(file, classesDirectory));
+            }
             this.cacheFile = SbtAnalysis.cacheLocation(classesDirectory);
             this.compilerCache = compilerCache;
         }
 
-        // TODO: in-memory cache in front
+        // TODO: in-memory cache for upstream analysis
         public Maybe<Analysis> analysisMap(File file) {
-            return SbtAnalysis.analysisMap(file, classesDirectory);
+            Maybe<Analysis> analysis = analysisMap.get(file);
+            return (analysis == null) ? SbtAnalysis.JUST_EMPTY_ANALYSIS : analysis;
         }
 
         // TODO: in-memory cache in front
