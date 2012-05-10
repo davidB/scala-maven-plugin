@@ -45,7 +45,8 @@ public class SbtIncrementalCompiler {
         Options options = new Options(classpath, sources, classesDirectory, soptions, joptions);
         Setup setup = new Setup(fullClasspath, classesDirectory, compilerCache);
         Inputs inputs = new Inputs(compilers, options, setup);
-        IC.compile(inputs, logger);
+        Analysis analysis = IC.compile(inputs, logger);
+        SbtAnalysis.put(SbtAnalysis.cacheLocation(classesDirectory), analysis);
     }
 
     public static class Options implements xsbti.compile.Options {
@@ -95,26 +96,24 @@ public class SbtIncrementalCompiler {
 
     public static class Setup implements xsbti.compile.Setup<Analysis> {
 
-        private HashMap<File, Maybe<Analysis>> analysisMap;
         private File cacheFile;
         private GlobalsCache compilerCache;
+        private HashMap<File, Maybe<Analysis>> analysisCache;
 
         public Setup(List<File> fullClasspath, File classesDirectory, GlobalsCache compilerCache) {
-            this.analysisMap = new HashMap<File, Maybe<Analysis>>();
-            for (File file : fullClasspath) {
-                analysisMap.put(file, SbtAnalysis.getAnalysis(file, classesDirectory));
-            }
             this.cacheFile = SbtAnalysis.cacheLocation(classesDirectory);
             this.compilerCache = compilerCache;
+            this.analysisCache = new HashMap<File, Maybe<Analysis>>();
+            for (File file : fullClasspath) {
+                analysisCache.put(file, SbtAnalysis.getAnalysis(file, classesDirectory));
+            }
         }
 
-        // TODO: in-memory cache for upstream analysis
         public Maybe<Analysis> analysisMap(File file) {
-            Maybe<Analysis> analysis = analysisMap.get(file);
+            Maybe<Analysis> analysis = analysisCache.get(file);
             return (analysis == null) ? SbtAnalysis.JUST_EMPTY_ANALYSIS : analysis;
         }
 
-        // TODO: in-memory cache in front
         public DefinesClass definesClass(File file) {
             return SbtLocate.definesClass(file);
         }
