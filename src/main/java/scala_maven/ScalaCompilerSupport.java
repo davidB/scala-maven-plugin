@@ -43,7 +43,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * @parameter expression="${notifyCompilation}" default-value="true"
      */
     private boolean notifyCompilation = true;
-    
+
     abstract protected File getOutputDir() throws Exception;
 
     abstract protected List<String> getClasspathElements() throws Exception;
@@ -82,8 +82,9 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     protected int compile(List<File> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
         long t0 = System.currentTimeMillis();
+        LastCompilationInfo lastCompilationInfo = LastCompilationInfo.find(sourceRootDirs, outputDir);
         if (_lastCompileAt < 0) {
-            _lastCompileAt = findLastSuccessfullCompilation(outputDir);
+            _lastCompileAt = lastCompilationInfo.getLastSuccessfullTS();
         }
 
         List<File> files = getFilesToCompile(sourceRootDirs, _lastCompileAt);
@@ -106,7 +107,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             jcmd.addArgs(f.getAbsolutePath());
         }
         if (jcmd.run(displayCmd, !compileInLoop)) {
-            setLastSuccessfullCompilation(outputDir, t1);
+          lastCompilationInfo.setLastSuccessfullTS(t1);
         }
         else {
             compileErrors = true;
@@ -182,21 +183,36 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
     }
 
-    private long findLastSuccessfullCompilation(File outputDir) throws Exception {
+    private static class LastCompilationInfo {
+      static LastCompilationInfo find(List<File> sourceRootDirs, File outputDir) throws Exception {
+        StringBuilder hash = new StringBuilder();
+        for (File f : sourceRootDirs) {
+          hash.append(f.toString());
+        }
+        return new LastCompilationInfo(new File(outputDir.getAbsolutePath() + "." + hash.toString().hashCode() + ".timestamp"), outputDir);
+      }
+
+      private final File _lastCompileAtFile;
+      private final File _outputDir;
+
+      private LastCompilationInfo(File f, File outputDir) {
+        _lastCompileAtFile = f;
+        _outputDir = outputDir;
+      }
+
+      long getLastSuccessfullTS() throws Exception {
         long back =  -1;
-        final File lastCompileAtFile = new File(outputDir + ".timestamp");
-        if (lastCompileAtFile.exists() && outputDir.exists() && (outputDir.list().length > 0)) {
-            back = lastCompileAtFile.lastModified();
+        if (_lastCompileAtFile.exists() && _outputDir.exists() && (_outputDir.list().length > 0)) {
+            back = _lastCompileAtFile.lastModified();
         }
         return back;
-    }
+      }
 
-    private void setLastSuccessfullCompilation(File outputDir, long v) throws Exception {
-        final File lastCompileAtFile = new File(outputDir + ".timestamp");
-        if (lastCompileAtFile.exists()) {
-        } else {
-            FileUtils.fileWrite(lastCompileAtFile.getAbsolutePath(), ".");
+      void setLastSuccessfullTS(long v) throws Exception {
+        if (!_lastCompileAtFile.exists()) {
+            FileUtils.fileWrite(_lastCompileAtFile.getAbsolutePath(), ".");
         }
-        lastCompileAtFile.setLastModified(v);
+        _lastCompileAtFile.setLastModified(v);
+      }
     }
 }
