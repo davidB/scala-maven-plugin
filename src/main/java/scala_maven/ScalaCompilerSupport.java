@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import sbt_inc.SbtIncrementalCompiler;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
 
@@ -15,6 +15,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     public static final String ALL = "all";
     public static final String MODIFIED_ONLY = "modified-only";
+    public static final String INCREMENTAL = "incremental";
 
     /**
      * Keeps track of if we get compile errors in incremental mode
@@ -31,7 +32,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     /**
      * compilation-mode to use when sources was previously compiled and there is at least one change:
      * "modified-only" => only modified source was recompiled (pre 2.13 behavior), "all" => every source are recompiled
-     * @parameter expression="${recompilation-mode}" default-value="all"
+     * @parameter expression="${recompile-mode}" default-value="all"
      */
     private String recompileMode = ALL;
 
@@ -43,12 +44,21 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * @parameter expression="${notifyCompilation}" default-value="true"
      */
     private boolean notifyCompilation = true;
-    
+
     abstract protected File getOutputDir() throws Exception;
 
     abstract protected List<String> getClasspathElements() throws Exception;
 
     private long _lastCompileAt = -1;
+
+    private SbtIncrementalCompiler incremental;
+
+    /**
+     * Maximum number of resident compilers for sbt incremental compile.
+     *
+     * @parameter expression="${resident-compiler-limit}" default-value="0"
+     */
+    private int residentCompilerLimit;
 
     @Override
     protected void doExecute() throws Exception {
@@ -74,13 +84,16 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
     }
 
-
     protected int compile(File sourceDir, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
         //getLog().warn("Using older form of compile");
         return compile(Arrays.asList(sourceDir), outputDir, classpathElements, compileInLoop);
     }
 
     protected int compile(List<File> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
+        if (INCREMENTAL.equals(recompileMode)) {
+            return incrementalCompile(getClasspathElements(), getSourceDirectories(), outputDir);
+        }
+
         long t0 = System.currentTimeMillis();
         if (_lastCompileAt < 0) {
             _lastCompileAt = findLastSuccessfullCompilation(outputDir);
@@ -115,8 +128,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         getLog().info(String.format("compile in %d s", (System.currentTimeMillis() - t1) / 1000));
         _lastCompileAt = t1;
         return files.size();
-     }
-
+    }
 
     /**
      * Returns true if the previous compile failed
@@ -198,5 +210,23 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             FileUtils.fileWrite(lastCompileAtFile.getAbsolutePath(), ".");
         }
         lastCompileAtFile.setLastModified(v);
+    }
+
+    protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir) throws Exception, InterruptedException {
+        String scalaVersion = findScalaVersion().toString();
+        File libraryJar = getLibraryJar();
+        File compilerJar = getCompilerJar();
+        String sbtGroupId = SbtIncrementalCompiler.SBT_GROUP_ID;
+        String xsbtiArtifactId = SbtIncrementalCompiler.XSBTI_ARTIFACT_ID;
+        String compilerInterfaceArtifactId = SbtIncrementalCompiler.COMPILER_INTERFACE_ARTIFACT_ID;
+        String compilerInterfaceClassifier = SbtIncrementalCompiler.COMPILER_INTERFACE_CLASSIFIER;
+        String sbtVersion = findVersionFromPluginArtifacts(sbtGroupId, SbtIncrementalCompiler.COMPILER_INTEGRATION_ARTIFACT_ID);
+        File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
+        File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
+        if (incremental == null) incremental = new SbtIncrementalCompiler(scalaVersion, libraryJar, compilerJar, sbtVersion, xsbtiJar, interfaceSrcJar, residentCompilerLimit, getLog());
+        List<File> sources = findSourceWithFilters(sourceRootDirs);
+        List<String> scalacOptions = getScalaOptions();
+        incremental.compile(classpathElements, sources, outputDir, scalacOptions, new ArrayList<String>());
+        return 1;
     }
 }
