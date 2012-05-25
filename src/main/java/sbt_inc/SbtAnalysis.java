@@ -3,6 +3,7 @@ package sbt_inc;
 import java.io.File;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
+import java.util.Map;
 import sbt.compiler.IC;
 import sbt.inc.Analysis;
 import xsbti.Maybe;
@@ -15,13 +16,15 @@ public class SbtAnalysis {
 
     private static HashMap<File, SoftReference<Analysis>> cached = new HashMap<File, SoftReference<Analysis>>();
 
-    public static Maybe<Analysis> getAnalysis(File file, File classesDirectory) {
+    public static Maybe<Analysis> getAnalysis(File file, File classesDirectory, Map<File, File> cacheMap) {
         if (file.getName().endsWith("jar")) {
             return JUST_EMPTY_ANALYSIS;
         } else if (file.equals(classesDirectory)) {
             return JUST_EMPTY_ANALYSIS;
         } else if (file.exists() && file.isDirectory()) {
-            return Maybe.just(get(cacheLocation(file)));
+            File cacheFile = cacheMap.get(file);
+            if (cacheFile == null) cacheFile = fallbackCacheLocation(file);
+            return Maybe.just(get(cacheFile));
         } else {
             return JUST_EMPTY_ANALYSIS;
         }
@@ -48,7 +51,7 @@ public class SbtAnalysis {
         cached.put(cacheFile, new SoftReference(analysis));
     }
 
-    public static File cacheLocation(File file) {
-        return new File(new File(file.getParent(), "cache"), file.getName());
+    public static File fallbackCacheLocation(File file) {
+        return new File(new File(file.getParent(), "analysis"), file.getName());
     }
 }

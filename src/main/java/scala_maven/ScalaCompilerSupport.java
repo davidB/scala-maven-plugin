@@ -3,7 +3,13 @@ package scala_maven;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import sbt_inc.SbtIncrementalCompiler;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
@@ -54,6 +60,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     private SbtIncrementalCompiler incremental;
 
     /**
+     * Analysis cache file for incremental recompilation.
+     */
+    abstract protected File getAnalysisCacheFile() throws Exception;
+
+    /**
      * Maximum number of resident compilers for sbt incremental compile.
      *
      * @parameter expression="${resident-compiler-limit}" default-value="0"
@@ -66,12 +77,13 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
+        File analysisCacheFile = FileUtils.fileOf(getAnalysisCacheFile(), useCanonicalPath);
         if (getLog().isDebugEnabled()) {
             for(File directory : getSourceDirectories()) {
                 getLog().debug(FileUtils.pathOf(directory, useCanonicalPath));
             }
         }
-        int nbFiles = compile(getSourceDirectories(), outputDir, getClasspathElements(), false);
+        int nbFiles = compile(getSourceDirectories(), outputDir, analysisCacheFile, getClasspathElements(), false);
         switch (nbFiles) {
             case -1:
                 getLog().warn("No source files found.");
@@ -84,14 +96,14 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
     }
 
-    protected int compile(File sourceDir, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
+    protected int compile(File sourceDir, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
         //getLog().warn("Using older form of compile");
-        return compile(Arrays.asList(sourceDir), outputDir, classpathElements, compileInLoop);
+        return compile(Arrays.asList(sourceDir), outputDir, analysisCacheFile, classpathElements, compileInLoop);
     }
 
-    protected int compile(List<File> sourceRootDirs, File outputDir, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
+    protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
         if (INCREMENTAL.equals(recompileMode)) {
-            return incrementalCompile(getClasspathElements(), getSourceDirectories(), outputDir);
+            return incrementalCompile(getClasspathElements(), getSourceDirectories(), outputDir, analysisCacheFile);
         }
 
         long t0 = System.currentTimeMillis();
@@ -212,7 +224,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         lastCompileAtFile.setLastModified(v);
     }
 
-    protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir) throws Exception, InterruptedException {
+    protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile) throws Exception, InterruptedException {
         String scalaVersion = findScalaVersion().toString();
         File libraryJar = getLibraryJar();
         File compilerJar = getCompilerJar();
@@ -226,7 +238,40 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         if (incremental == null) incremental = new SbtIncrementalCompiler(scalaVersion, libraryJar, compilerJar, sbtVersion, xsbtiJar, interfaceSrcJar, residentCompilerLimit, getLog());
         List<File> sources = findSourceWithFilters(sourceRootDirs);
         List<String> scalacOptions = getScalaOptions();
-        incremental.compile(classpathElements, sources, outputDir, scalacOptions, new ArrayList<String>());
+        Map<File, File> cacheMap = getAnalysisCacheMap();
+        incremental.compile(classpathElements, sources, outputDir, scalacOptions, new ArrayList<String>(), cacheFile, cacheMap);
         return 1;
+    }
+
+    protected Map<File, File> getAnalysisCacheMap() {
+        HashMap<File, File> map = new HashMap<File, File>();
+        String scalaPluginKey = ((PluginDescriptor) getPluginContext().get("pluginDescriptor")).getPluginLookupKey();
+        for (MavenProject project : reactorProjects) {
+            Plugin plugin = project.getPlugin(scalaPluginKey);
+            if (plugin != null) {
+                Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();
+                Xpp3Dom analysisCache = configuration.getChild("analysisCacheFile");
+                File analysisCacheFile = (analysisCache != null) ? new File(analysisCache.getValue()) : defaultAnalysisCacheFile(project);
+                File classesDirectory = new File(project.getBuild().getOutputDirectory());
+                map.put(classesDirectory.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile());
+                Xpp3Dom testAnalysisCache = configuration.getChild("testAnalysisCacheFile");
+                File testAnalysisCacheFile = (testAnalysisCache != null) ? new File(testAnalysisCache.getValue()) : defaultTestAnalysisCacheFile(project);
+                File testClassesDirectory = new File(project.getBuild().getTestOutputDirectory());
+                map.put(testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile());
+            }
+        }
+        return map;
+    }
+
+    protected File defaultAnalysisDirectory(MavenProject project) {
+        return new File(project.getBuild().getDirectory(), "analysis");
+    }
+
+    protected File defaultAnalysisCacheFile(MavenProject project) {
+        return new File(defaultAnalysisDirectory(project), "compile");
+    }
+
+    protected File defaultTestAnalysisCacheFile(MavenProject project) {
+        return new File(defaultAnalysisDirectory(project), "test-compile");
     }
 }

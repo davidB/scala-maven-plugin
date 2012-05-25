@@ -48,6 +48,13 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
         super.execute();
     }
 
+    /**
+     * Analysis cache file for incremental recompilation.
+     *
+     * @parameter expression="${testAnalysisCacheFile}" default-value="${project.build.directory}/analysis/test-compile"
+     */
+    protected File testAnalysisCacheFile;
+
     @SuppressWarnings("unchecked")
     @Override
     protected List<String> getClasspathElements() throws Exception {
@@ -77,5 +84,10 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
             sources.add(scalaSourceDir);
         }
         return normalize(sources);
+    }
+
+    @Override
+    protected File getAnalysisCacheFile() throws Exception {
+        return testAnalysisCacheFile.getAbsoluteFile();
     }
 }
