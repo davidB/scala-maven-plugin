@@ -179,6 +179,21 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     private String scalaVersion;
 
     /**
+     * Arguments for javac (when using incremental compiler).
+     *
+     * @parameter expression="${javacArgs}"
+     */
+    protected String[] javacArgs;
+
+    /**
+     * Alternative method for specifying javac arguments (when using incremental compiler).
+     * Can be used from command line with -DaddJavacArgs=arg1|arg2|arg3|... rather than in pom.xml.
+     *
+     * @parameter expression="${addJavacArgs}"
+     */
+    protected String addJavacArgs;
+
+    /**
      * Display the command line called ?
      * (property 'maven.scala.displayCmd' replaced by 'displayCmd')
      *
@@ -560,6 +575,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             Collections.addAll(options, StringUtils.split(addScalacArgs, "|"));
         }
         options.addAll(getCompilerPluginOptions());
+        return options;
+    }
+
+    protected List<String> getJavacOptions() throws Exception {
+        List<String> options = new ArrayList<String>();
+        if (javacArgs != null) Collections.addAll(options, javacArgs);
+        if (StringUtils.isNotEmpty(addJavacArgs)) {
+            Collections.addAll(options, StringUtils.split(addJavacArgs, "|"));
+        }
         return options;
     }
 

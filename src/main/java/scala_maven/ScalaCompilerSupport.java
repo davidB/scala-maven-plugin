@@ -225,21 +225,24 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile) throws Exception, InterruptedException {
-        String scalaVersion = findScalaVersion().toString();
-        File libraryJar = getLibraryJar();
-        File compilerJar = getCompilerJar();
-        String sbtGroupId = SbtIncrementalCompiler.SBT_GROUP_ID;
-        String xsbtiArtifactId = SbtIncrementalCompiler.XSBTI_ARTIFACT_ID;
-        String compilerInterfaceArtifactId = SbtIncrementalCompiler.COMPILER_INTERFACE_ARTIFACT_ID;
-        String compilerInterfaceClassifier = SbtIncrementalCompiler.COMPILER_INTERFACE_CLASSIFIER;
-        String sbtVersion = findVersionFromPluginArtifacts(sbtGroupId, SbtIncrementalCompiler.COMPILER_INTEGRATION_ARTIFACT_ID);
-        File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
-        File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
-        if (incremental == null) incremental = new SbtIncrementalCompiler(scalaVersion, libraryJar, compilerJar, sbtVersion, xsbtiJar, interfaceSrcJar, residentCompilerLimit, getLog());
+        if (incremental == null) {
+            String scalaVersion = findScalaVersion().toString();
+            File libraryJar = getLibraryJar();
+            File compilerJar = getCompilerJar();
+            String sbtGroupId = SbtIncrementalCompiler.SBT_GROUP_ID;
+            String xsbtiArtifactId = SbtIncrementalCompiler.XSBTI_ARTIFACT_ID;
+            String compilerInterfaceArtifactId = SbtIncrementalCompiler.COMPILER_INTERFACE_ARTIFACT_ID;
+            String compilerInterfaceClassifier = SbtIncrementalCompiler.COMPILER_INTERFACE_CLASSIFIER;
+            String sbtVersion = findVersionFromPluginArtifacts(sbtGroupId, SbtIncrementalCompiler.COMPILER_INTEGRATION_ARTIFACT_ID);
+            File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
+            File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
+            incremental = new SbtIncrementalCompiler(scalaVersion, libraryJar, compilerJar, sbtVersion, xsbtiJar, interfaceSrcJar, residentCompilerLimit, getLog());
+        }
         List<File> sources = findSourceWithFilters(sourceRootDirs);
         List<String> scalacOptions = getScalaOptions();
+        List<String> javacOptions = getJavacOptions();
         Map<File, File> cacheMap = getAnalysisCacheMap();
-        incremental.compile(classpathElements, sources, outputDir, scalacOptions, new ArrayList<String>(), cacheFile, cacheMap);
+        incremental.compile(classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap);
         return 1;
     }
 
