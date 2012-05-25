@@ -65,6 +65,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected MavenSession session;
 
     /**
+     * Contains the full list of projects in the reactor.
+     *
+     * @parameter default-value="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    protected List<MavenProject> reactorProjects;
+
+    /**
      * Used to look up Artifacts in the remote repository.
      *
      * @component
