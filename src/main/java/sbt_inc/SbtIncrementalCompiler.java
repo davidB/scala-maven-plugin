@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 import org.apache.maven.plugin.logging.Log;
 import sbt.compiler.AnalyzingCompiler;
 import sbt.compiler.CompilerCache;
@@ -36,17 +37,18 @@ public class SbtIncrementalCompiler {
         this.compilerCache = (maxCompilers <= 0) ? CompilerCache.fresh() : CompilerCache$.MODULE$.apply(maxCompilers);
     }
 
-    public void compile(List<String> classpathElements, List<File> sourcesList, File classesDirectory, List<String> scalacOptions, List<String> javacOptions) {
+    public void compile(List<String> classpathElements, List<File> sourcesList, File classesDirectory, List<String> scalacOptions, List<String> javacOptions, File cacheFile, Map<File, File> cacheMap) {
         List<File> fullClasspath = pathsToFiles(classpathElements);
         File[] classpath = fullClasspath.toArray(new File[fullClasspath.size()]);
         File[] sources = sourcesList.toArray(new File[sourcesList.size()]);
         String[] soptions = scalacOptions.toArray(new String[scalacOptions.size()]);
         String[] joptions = javacOptions.toArray(new String[javacOptions.size()]);
         Options options = new Options(classpath, sources, classesDirectory, soptions, joptions);
-        Setup setup = new Setup(fullClasspath, classesDirectory, compilerCache);
+        cacheFile = (cacheFile != null) ? cacheFile : SbtAnalysis.fallbackCacheLocation(classesDirectory);
+        Setup setup = new Setup(fullClasspath, classesDirectory, cacheFile, cacheMap, compilerCache);
         Inputs inputs = new Inputs(compilers, options, setup);
         Analysis analysis = IC.compile(inputs, logger);
-        SbtAnalysis.put(SbtAnalysis.cacheLocation(classesDirectory), analysis);
+        SbtAnalysis.put(cacheFile, analysis);
     }
 
     public static class Options implements xsbti.compile.Options {
@@ -100,12 +102,12 @@ public class SbtIncrementalCompiler {
         private GlobalsCache compilerCache;
         private HashMap<File, Maybe<Analysis>> analysisCache;
 
-        public Setup(List<File> fullClasspath, File classesDirectory, GlobalsCache compilerCache) {
-            this.cacheFile = SbtAnalysis.cacheLocation(classesDirectory);
+        public Setup(List<File> fullClasspath, File classesDirectory, File cacheFile, Map<File, File> cacheMap, GlobalsCache compilerCache) {
+            this.cacheFile = cacheFile;
             this.compilerCache = compilerCache;
             this.analysisCache = new HashMap<File, Maybe<Analysis>>();
             for (File file : fullClasspath) {
-                analysisCache.put(file, SbtAnalysis.getAnalysis(file, classesDirectory));
+                analysisCache.put(file, SbtAnalysis.getAnalysis(file, classesDirectory, cacheMap));
             }
         }
 
