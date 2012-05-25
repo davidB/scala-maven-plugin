@@ -1,6 +1,7 @@
  package scala_maven;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.maven.model.Dependency;
@@ -29,14 +30,14 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
      * @parameter expression="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;
-    
+
     @Override
     @SuppressWarnings("unchecked")
     protected List<File> getSourceDirectories() throws Exception {
         List<String> sources = project.getCompileSourceRoots();
-        //Quick fix in case the user has not added the "add-source" goal.
         String scalaSourceDir = FileUtils.pathOf(sourceDir, useCanonicalPath);
         if(!sources.contains(scalaSourceDir)) {
+            sources = new LinkedList<String>(sources); //clone the list to keep the original unmodified
             sources.add(scalaSourceDir);
         }
         return normalize(sources);
