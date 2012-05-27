@@ -26,6 +26,11 @@ The ${developmentTeam} is pleased to announce the [${finalName}](${url}) release
 
 ${introduction}
 
+  * [Documentation](http://davidb.github.com/scala-maven-plugin/index.html)
+  * [Wiki](https://github.com/davidB/maven-scala-plugin/wiki)
+  * [Issues](https://github.com/davidB/maven-scala-plugin/issues/)
+  * [Full changelog](http://davidb.github.com/scala-maven-plugin/changes-report.html)
+
 #if ($release.getActions().size() == 0)
 No changes defined in this version.
 #else
@@ -128,6 +133,8 @@ Removed:
 
 For a manual installation, you can [download the ${finalName}](${urlDownload})
 #end
+
+
 
 Have fun!
 -${developmentTeam}
