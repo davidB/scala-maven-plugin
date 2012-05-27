@@ -3,9 +3,10 @@ scala-maven-plugin
 
 The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling/testing/running/documenting Scala code in Maven.
 
-* [home](http://davidb.github.com/scala-maven-plugin/index.html)
-* [wiki](https://github.com/davidB/maven-scala-plugin/wiki)
-* [issues](https://github.com/davidB/maven-scala-plugin/issues/)
+* [Documentation](http://davidb.github.com/scala-maven-plugin/index.html)
+* [Wiki](https://github.com/davidB/maven-scala-plugin/wiki)
+* [Issues](https://github.com/davidB/maven-scala-plugin/issues/)
+* [Full changelog](http://davidb.github.com/scala-maven-plugin/changes-report.html)
 
 ## Build
 
