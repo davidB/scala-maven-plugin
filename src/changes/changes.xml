@@ -5,10 +5,11 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="3.0.2" date="">
+    <release version="3.0.2" date="2012-05-27">
       <action dev="Alex Hvostov" type="update">Use Maven 3.0 toolchain API to configure a specific JDK to build with</action>
       <action dev="Christoph Radig" type="add">The compilerPlugin element now honors the classifier of the given artifact.</action>
       <action dev="David Bernard" type="fix" issue="86">use a .timestamp file per outputDir + sourceDirs</action>
+      <action dev="David Bernard" type="fix" issue="86">sourceDir is no longer added to project source's roots for compilation during 'compile' goal (but it is used to by the scala plugin), use 'add-source' goal to modify project source's roots</action>
     </release>
     <release version="3.0.0" date="2012-03-18" description="">
       <action dev="Josh Suereth"  type="fix">added docjar task to create scaladoc *and* place it in a jar file attached to the project.</action>
