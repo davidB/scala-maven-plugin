@@ -40,7 +40,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * "modified-only" => only modified source was recompiled (pre 2.13 behavior), "all" => every source are recompiled
      * @parameter expression="${recompile-mode}" default-value="all"
      */
-    private String recompileMode = ALL;
+    protected String recompileMode = ALL;
 
     /**
      * notifyCompilation if true then print a message "path: compiling"
@@ -103,7 +103,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
         if (INCREMENTAL.equals(recompileMode)) {
-            return incrementalCompile(getClasspathElements(), getSourceDirectories(), outputDir, analysisCacheFile);
+            return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
         }
 
         long t0 = System.currentTimeMillis();
@@ -224,7 +224,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         lastCompileAtFile.setLastModified(v);
     }
 
-    protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile) throws Exception, InterruptedException {
+    protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile, Boolean compileInLoop) throws Exception, InterruptedException {
         if (incremental == null) {
             String scalaVersion = findScalaVersion().toString();
             File libraryJar = getLibraryJar();
@@ -242,7 +242,15 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         List<String> scalacOptions = getScalaOptions();
         List<String> javacOptions = getJavacOptions();
         Map<File, File> cacheMap = getAnalysisCacheMap();
-        incremental.compile(classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap);
+        try {
+            incremental.compile(classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap);
+        } catch (xsbti.CompileFailed e) {
+            if (compileInLoop) {
+                compileErrors = true;
+            } else {
+                throw e;
+            }
+        }
         return 1;
     }
 
