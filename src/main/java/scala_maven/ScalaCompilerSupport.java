@@ -96,11 +96,6 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
     }
 
-    protected int compile(File sourceDir, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
-        //getLog().warn("Using older form of compile");
-        return compile(Arrays.asList(sourceDir), outputDir, analysisCacheFile, classpathElements, compileInLoop);
-    }
-
     protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
         if (INCREMENTAL.equals(recompileMode)) {
             return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
