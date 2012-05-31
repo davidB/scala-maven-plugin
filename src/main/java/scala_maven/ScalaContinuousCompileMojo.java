@@ -1,6 +1,7 @@
 package scala_maven;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import scala_maven_executions.JavaMainCaller;
@@ -113,18 +114,24 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
         if (!mainOutputDir.exists()) {
             mainOutputDir.mkdirs();
         }
-        mainSourceDir = FileUtils.fileOf(mainSourceDir, useCanonicalPath);
+
+        List<String> mainSources = new ArrayList<String>(project.getCompileSourceRoots());
+        mainSources.add(FileUtils.pathOf(mainSourceDir, useCanonicalPath));
+        List<File> mainSourceDirs = normalize(mainSources);
 
         testOutputDir = FileUtils.fileOf(testOutputDir, useCanonicalPath);
         if (!testOutputDir.exists()) {
             testOutputDir.mkdirs();
         }
-        testSourceDir = FileUtils.fileOf(testSourceDir, useCanonicalPath);
+
+        List<String> testSources = new ArrayList<String>(project.getTestCompileSourceRoots());
+        testSources.add(FileUtils.pathOf(testSourceDir, useCanonicalPath));
+        List<File> testSourceDirs = normalize(testSources);
 
         analysisCacheFile = FileUtils.fileOf(analysisCacheFile, useCanonicalPath);
         testAnalysisCacheFile = FileUtils.fileOf(testAnalysisCacheFile, useCanonicalPath);
 
-        if (useFsc) {
+        if (useFsc && !INCREMENTAL.equals(recompileMode)) {
             getLog().info("use fsc for compilation");
             scalaClassName = "scala.tools.nsc.CompileClient";
             if (!once) {
@@ -142,15 +149,15 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
             clearCompileErrors();
 
             int nbFile = 0;
-            if (mainSourceDir.exists()) {
-                nbFile = compile(mainSourceDir, mainOutputDir, analysisCacheFile, project.getCompileClasspathElements(), true);
+            if (!mainSourceDirs.isEmpty()) {
+                nbFile = compile(mainSourceDirs, mainOutputDir, analysisCacheFile, project.getCompileClasspathElements(), true);
                 // If there are no source files, the compile method returns -1. Thus, to make sure we
                 // still run the tests if there are test sources, reset nbFile to zero.
                 if (nbFile == -1)
                     nbFile = 0;
             }
-            if (testSourceDir.exists()) {
-                nbFile += compile(testSourceDir, testOutputDir, testAnalysisCacheFile, project.getTestClasspathElements(), true);
+            if (!testSourceDirs.isEmpty()) {
+                nbFile += compile(testSourceDirs, testOutputDir, testAnalysisCacheFile, project.getTestClasspathElements(), true);
             }
             if (nbFile > 0) {
                 if (!hasCompileErrors()) {
