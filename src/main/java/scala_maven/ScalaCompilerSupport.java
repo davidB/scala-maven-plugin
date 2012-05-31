@@ -219,7 +219,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         lastCompileAtFile.setLastModified(v);
     }
 
-    protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile, Boolean compileInLoop) throws Exception, InterruptedException {
+    protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile, boolean compileInLoop) throws Exception, InterruptedException {
         if (incremental == null) {
             String scalaVersion = findScalaVersion().toString();
             File libraryJar = getLibraryJar();
