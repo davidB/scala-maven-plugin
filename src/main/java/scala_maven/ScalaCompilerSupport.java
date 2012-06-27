@@ -52,15 +52,12 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     @Override
     protected void doExecute() throws Exception {
-        File outputDir = FileUtils.fileOf(getOutputDir(), useCanonicalPath);
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
-        }
         if (getLog().isDebugEnabled()) {
             for(File directory : getSourceDirectories()) {
                 getLog().debug(FileUtils.pathOf(directory, useCanonicalPath));
             }
         }
+        File outputDir = FileUtils.fileOf(getOutputDir(), useCanonicalPath);
         int nbFiles = compile(getSourceDirectories(), outputDir, getClasspathElements(), false);
         switch (nbFiles) {
             case -1:
@@ -95,6 +92,9 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
         if (files.size() < 1) {
             return 0;
+        }
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
         }
         long t1 = System.currentTimeMillis();
         getLog().info(String.format("Compiling %d source files to %s at %d", files.size(), outputDir.getAbsolutePath(), t1));
