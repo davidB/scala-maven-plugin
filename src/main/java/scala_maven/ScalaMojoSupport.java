@@ -595,6 +595,14 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         return getArtifactJar(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
     }
 
+    protected List<File> getCompilerDependencies() throws Exception {
+        List<File> dependencies = new ArrayList<File>();
+        for (Artifact artifact : getAllDependencies(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString())) {
+            dependencies.add(artifact.getFile());
+        }
+        return dependencies;
+    }
+
     protected File getArtifactJar(String groupId, String artifactId, String version) throws Exception {
         Artifact artifact = factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar");
         resolver.resolve(artifact, remoteRepos, localRepo);
@@ -605,6 +613,19 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         Artifact artifact = factory.createArtifactWithClassifier(groupId, artifactId, version, "jar", classifier);
         resolver.resolve(artifact, remoteRepos, localRepo);
         return artifact.getFile();
+    }
+
+    protected Set<Artifact> getAllDependencies(String groupId, String artifactId, String version) throws Exception {
+        Set<Artifact> result = new HashSet<Artifact>();
+        Artifact pom = factory.createArtifact(groupId, artifactId, version, "", "pom");
+        MavenProject project = mavenProjectBuilder.buildFromRepository(pom, remoteRepos, localRepo);
+        Set<Artifact> dependencies = resolveDependencyArtifacts(project);
+        result.addAll(dependencies);
+        for (Artifact dependency : dependencies) {
+            Set<Artifact> transitive = getAllDependencies(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion());
+            result.addAll(transitive);
+        }
+        return result;
     }
 
     /**

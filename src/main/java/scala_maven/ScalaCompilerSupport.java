@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.List;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import sbt_inc.SbtIncrementalCompiler;
@@ -65,11 +66,27 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     abstract protected File getAnalysisCacheFile() throws Exception;
 
     /**
-     * Maximum number of resident compilers for sbt incremental compile.
+     * Compile order for Scala and Java sources for sbt incremental compile.
      *
-     * @parameter expression="${resident-compiler-limit}" default-value="0"
+     * Can be Mixed, JavaThenScala, or ScalaThenJava.
+     *
+     * @parameter expression="${compile-order}" default-value="mixed"
      */
-    private int residentCompilerLimit;
+    private String compileOrder;
+
+    /**
+     * Use zinc server for incremental recompilation.
+     *
+     * @parameter expression="${use-zinc-server}" default-value="false"
+     */
+    private boolean useZincServer;
+
+    /**
+     * Zinc server port, if running with incremental zinc server mode.
+     *
+     * @parameter expression="${zinc-port}" default-value="3030"
+     */
+    private int zincPort;
 
     @Override
     protected void doExecute() throws Exception {
@@ -219,11 +236,22 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         lastCompileAtFile.setLastModified(v);
     }
 
+    //
+    // Incremental compilation
+    //
+
     protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile, boolean compileInLoop) throws Exception, InterruptedException {
+        List<File> sources = findSourceWithFilters(sourceRootDirs);
+        if (sources.isEmpty()) {
+            return -1;
+        }
+
         if (incremental == null) {
             String scalaVersion = findScalaVersion().toString();
             File libraryJar = getLibraryJar();
             File compilerJar = getCompilerJar();
+            List<File> extraJars = getCompilerDependencies();
+            extraJars.remove(libraryJar);
             String sbtGroupId = SbtIncrementalCompiler.SBT_GROUP_ID;
             String xsbtiArtifactId = SbtIncrementalCompiler.XSBTI_ARTIFACT_ID;
             String compilerInterfaceArtifactId = SbtIncrementalCompiler.COMPILER_INTERFACE_ARTIFACT_ID;
@@ -231,14 +259,16 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             String sbtVersion = findVersionFromPluginArtifacts(sbtGroupId, SbtIncrementalCompiler.COMPILER_INTEGRATION_ARTIFACT_ID);
             File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
             File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
-            incremental = new SbtIncrementalCompiler(scalaVersion, libraryJar, compilerJar, sbtVersion, xsbtiJar, interfaceSrcJar, residentCompilerLimit, getLog());
+            incremental = new SbtIncrementalCompiler(useZincServer, zincPort, scalaVersion, libraryJar, compilerJar, extraJars, sbtVersion, xsbtiJar, interfaceSrcJar, getLog());
         }
-        List<File> sources = findSourceWithFilters(sourceRootDirs);
+
+        classpathElements.remove(outputDir.getAbsolutePath());
         List<String> scalacOptions = getScalaOptions();
         List<String> javacOptions = getJavacOptions();
         Map<File, File> cacheMap = getAnalysisCacheMap();
+
         try {
-            incremental.compile(classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap);
+            incremental.compile(project.getBasedir(), classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder);
         } catch (xsbti.CompileFailed e) {
             if (compileInLoop) {
                 compileErrors = true;
@@ -246,6 +276,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
                 throw e;
             }
         }
+
         return 1;
     }
 
