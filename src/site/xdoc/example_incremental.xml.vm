@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>scala-maven-plugin</title>
+  </properties>
+  <body>
+    <h1>Incremental Compile</h1>
+
+    <p>
+      Incremental compilation is supported using
+      <a href="https://github.com/typesafehub/zinc">Zinc</a>,
+      a stand-alone version of sbt's incremental compiler.
+    </p>
+
+    <section name="Setup">
+      <p>
+        To enable incremental compilation set the "recompileMode" configuration
+        option to "incremental".
+        For example:
+      </p>
+      <source>
+        <![CDATA[
+<project>
+  ...
+  <plugin>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <version>${project.version}</version>
+    <configuration>
+      <recompileMode>incremental</recompileMode>
+    </configuration>
+  </plugin>
+  ...
+</project>
+        ]]>
+      </source>
+    </section>
+
+    <section name="Increasing Memory">
+      Increasing memory for incremental compilation is different from regular
+      compiles where the "jvmArgs" option is used. The incremental compiler
+      does not fork a separate process for compilation, so increasing memory
+      is done by increasing the memory for the Maven process. This can be done
+      via the "MAVEN_OPTS" environment variable.
+    </section>
+
+    <section name="Zinc Server">
+      <p>
+        Zinc supports much faster compilation by running as a server, keeping the
+        JVM and classloaders warm, and the Scala Maven Plugin can be used as a
+        Zinc client, connecting to a currently running Zinc server. This can
+        improve compilation speeds by a factor of two, or even more, giving the
+        same benefits as using sbt's interactive shell.
+      </p>
+      <p>
+        To use Zinc as a server, first install a local version of Zinc via the
+        <a href="https://github.com/typesafehub/zinc">Zinc homepage</a>.
+        You can start the Zinc server with:
+      </p>
+      <source>zinc -start</source>
+      <p>
+        Configure your project to use the Zinc server with the "useZincServer"
+        configuration option:
+      </p>
+      <source>
+        <![CDATA[
+<project>
+  ...
+  <plugin>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <version>${project.version}</version>
+    <configuration>
+      <recompileMode>incremental</recompileMode>
+      <useZincServer>true</useZincServer>
+    </configuration>
+  </plugin>
+  ...
+</project>
+        ]]>
+      </source>
+      <p>
+        If there is no Zinc server currently running then the plugin falls back
+        to regular incremental compilation. To configure which port to connect
+        to, if Zinc is running on a non-default port, use the "zincPort"
+        configuration option.
+      </p>
+    </section>
+
+    <section name="Mixed Scala and Java Sources">
+      <p>
+        The incremental compiler will compile both Scala and Java sources, rather
+        than deferring to the Maven Compiler Plugin for Java compilation. It does
+        this so that analyses for both Scala and Java sources are calculated,
+        giving incremental compilation across all sources.
+      </p>
+      <p>
+        To configure a project with mixed Scala and Java sources with incremental
+        compilation, the Scala Maven Plugin should always compile before the
+        Maven Compiler Plugin. See the examples for
+        <a href="example_java.html">Mixed Java/Scala Projects</a>.
+      </p>
+      <p>
+        Any javac arguments must be configured for the Scala Maven Plugin, rather
+        than the Maven Compiler Plugin, and are configured with the "javacArgs"
+        configuration option, similar to the "args" option for scalac options.
+        For example:
+      </p>
+      <source>
+        <![CDATA[
+<project>
+  ...
+  <plugin>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <version>${project.version}</version>
+    <configuration>
+      <recompileMode>incremental</recompileMode>
+      <javacArgs>
+        <javacArg>-Xlint:unchecked</javacArg>
+        <javacArg>-Xlint:deprecation</javacArg>
+      </javacArgs>
+    </configuration>
+  </plugin>
+  ...
+</project>
+        ]]>
+      </source>
+      <p>
+        The incremental compiler will by default handle mixed compile order for
+        Scala and Java sources. That is, Scala and Java sources can depend on each
+        other. If you have a specific order, Scala depending on Java, or Java
+        depending on Scala, then you can specify the compile ordering to use with
+        the "compileOrder" configuration option. Possible values are "Mixed" (the
+        default), "JavaThenScala" (alternatively "java-then-scala" or just "java"),
+        and "ScalaThenJava" (alternatively "scala-then-java" or just "scala").
+      </p>
+    </section>
+
+    <section name="Analysis Cache">
+      <p>
+        The incremental compiler creates an extra output file per compilation.
+        This is a cache of the analysis information required by the incremental
+        compiler, used to determine which files to compile after changes. If you
+        set a custom output directory in your project then you may also want to
+        set the location of the analysis cache file. You can do this with the
+        "analysisCacheFile" and "testAnalysisCacheFile" configuration options.
+        For example:
+      </p>
+      <source>
+        <![CDATA[
+<project>
+  ...
+  <plugin>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <version>${project.version}</version>
+    <configuration>
+      <recompileMode>incremental</recompileMode>
+      <analysisCacheFile>path/to/analysis-cache-file</analysisCacheFile>
+      <testAnalysisCacheFile>path/to/test-analysis-cache-file</testAnalysisCacheFile>
+    </configuration>
+  </plugin>
+  ...
+</project>
+        ]]>
+      </source>
+    </section>
+
+  </body>
+</document>
