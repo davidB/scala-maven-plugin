@@ -9,6 +9,18 @@
 	<body>
 		<h1>Frequently Asked Questions</h1>
 
+    <section name="Incremental Compilation (w/ Zinc)">
+      <dl>
+				<dt>Why does the maven plugin compile both Java and Scala sources</dt>
+        <dd>The <a href="https://github.com/typesafehub/zinc">Zinc incremental compilation</a> library needs access to both Java and Scala sources to accurately determine recompilation.            
+				</dd>
+			</dl>
+			<dl>
+				<dt>Can I disable maven's java compilation?</dt>
+				<dd>This is possible through creating a new project lifecycle type, but could cause issues with other maven plugins and requires more testing to ensure it behave well with the ecosystem.  If you'd like to work on creating a Scala lifecycle for incremental compilation that only compiles things once, please do!</dd>
+			</dl>
+    </section>
+
 		<section name="Read-Eval-Print-Loop (aka scala:console)">
 			<dl>
 				<dt>Why does maven not let me call scala:console?</dt>
