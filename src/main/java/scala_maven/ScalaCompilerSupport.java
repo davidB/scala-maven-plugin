@@ -37,8 +37,9 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     protected long loopSleep = 2500;
 
     /**
-     * compilation-mode to use when sources was previously compiled and there is at least one change:
-     * "modified-only" => only modified source was recompiled (pre 2.13 behavior), "all" => every source are recompiled
+     * Recompile mode to use when sources were previously compiled and there is at least one change:
+     * "modified-only" => only modified sources are recompiled (pre 2.13 behavior), "all" => all sources are recompiled,
+     * "incremental" => incrementally recompile modified sources and other affected sources.
      * @parameter expression="${recompile-mode}" default-value="all"
      */
     protected String recompileMode = ALL;
