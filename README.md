@@ -3,11 +3,10 @@ scala-maven-plugin
 
 The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling/testing/running/documenting Scala code in Maven.
 
-* [home](http://alchim31.free.fr/mvnsites/maven-scala-plugin/index.html)
-
-* [wiki](https://github.com/davidB/maven-scala-plugin/wiki)
-
-* [issues](https://github.com/davidB/maven-scala-plugin/issues/)
+* [Documentation](http://davidb.github.com/scala-maven-plugin/index.html)
+* [Wiki](https://github.com/davidB/maven-scala-plugin/wiki)
+* [Issues](https://github.com/davidB/maven-scala-plugin/issues/)
+* [Full changelog](http://davidb.github.com/scala-maven-plugin/changes-report.html)
 
 ## Build
 
@@ -20,7 +19,7 @@ Currently, you need Maven 3.x to build the plugin, create the site, and run `int
 * `mvn integration-test` : `mvn package` + run all integration test
 * `mvn invoker:run -Dinvoker.test=test1` : run integration test 'test1' useful for tuning/debug
 * `mvn install` :  `mvn integration-test` + publish on local maven repository
-* `mvn install -Dmave.test.skip=true` : `mvn install` without run of unit test or run of integration test
+* `mvn install -Dmaven.test.skip=true` : `mvn install` without run of unit test and run of integration test
 * release :
   * `mvn release:prepare && mvn release:perform` : to publish on staging repository via plugin
   * `mvn site source:jar javadoc:jar install:install gpg:sign deploy:deploy changes:announcement-generate`

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>it.scala-maven-plugin</groupId>
+  <artifactId>test_multicompile</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>${project.artifactId}</name>
+  <description>Test call of compilation in several phase</description>
+  <packaging>jar</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version.lastrelease}</version>
+    </dependency>
+  </dependencies>
+  <url>http://sandbox/</url>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
+        <version>@project.version@</version>
+       <executions>
+         <execution>
+           <id>c0</id>
+           <phase>generate-resources</phase>
+           <goals>
+             <goal>compile</goal>
+           </goals>
+           <configuration>
+             <sourceDir>src/c0/scala</sourceDir>
+           </configuration>
+         </execution>
+         <execution>
+           <id>c1</id>
+           <phase>generate-sources</phase>
+           <goals>
+             <goal>compile</goal>
+           </goals>
+           <configuration>
+             <sourceDir>src/c1/scala</sourceDir>
+           </configuration>
+         </execution>
+       </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

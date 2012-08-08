@@ -19,6 +19,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -360,6 +361,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         addToClasspath(factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar"), classpath, addDependencies);
     }
 
+    /**
+     * added for classifier support.
+     * @author Christoph Radig
+     * @todo might want to merge with existing "addToClasspath" methods.
+     */
+    public void addToClasspath(String groupId, String artifactId, String version, String classifier, Set<String> classpath, boolean addDependencies) throws Exception {
+        addToClasspath(factory.createDependencyArtifact(groupId, artifactId, VersionRange.createFromVersion(version), "jar", classifier, Artifact.SCOPE_RUNTIME), classpath, addDependencies);
+    }
+
     protected void addToClasspath(Artifact artifact, Set<String> classpath, boolean addDependencies) throws Exception {
         resolver.resolve(artifact, remoteRepos, localRepo);
         classpath.add(FileUtils.pathOf(artifact.getFile(), useCanonicalPath));
@@ -674,7 +684,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
                 // TODO - Ensure proper scala version for plugins
                 Set<String> pluginClassPath = new HashSet<String>();
                 //TODO - Pull in transitive dependencies.
-                addToClasspath(artifact.groupId, artifact.artifactId, artifact.version, pluginClassPath, false);
+                addToClasspath(artifact.groupId, artifact.artifactId, artifact.version, artifact.classifier, pluginClassPath, false);
                 pluginClassPath.removeAll(ignoreClasspath);
                 plugins.addAll(pluginClassPath);
             }
