@@ -103,6 +103,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
                 }
                 return false;
             }
+            if (!displayCmd) tryDeleteArgFile(cmd);
             return true;
         } catch (ExecuteException exc) {
             if (throwFailure) {
@@ -174,6 +175,15 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         return back;
     }
 
+    private void tryDeleteArgFile(List<String> cmd) throws Exception {
+    	String last = cmd.get(cmd.size() - 1);
+    	if (last.endsWith(MainHelper.argFileSuffix)) {
+    		File f = new File(last);
+    		if (f.exists() && f.getName().startsWith(MainHelper.argFilePrefix)) {
+    			f.delete();
+    		}
+    	}
+    }
     private long lengthOf(List<String> l, long sepLength) throws Exception {
         long back = 0;
         for (String str : l) {

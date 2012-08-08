@@ -28,6 +28,9 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class MainHelper {
 
+	public static final String argFilePrefix = "scala-maven-";
+	public static final String argFileSuffix = ".args";
+	
     public static String toMultiPath(List<String> paths) {
         return StringUtils.join(paths.iterator(), File.pathSeparator);
     }
@@ -110,7 +113,7 @@ public class MainHelper {
      * @throws IOException
      */
     public static File createArgFile(List<String> args) throws IOException {
-       final File argFile = File.createTempFile("scala-maven-", ".args");
+       final File argFile = File.createTempFile(argFilePrefix, argFileSuffix);
        //argFile.deleteOnExit();
        final PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(argFile)));
        try {
