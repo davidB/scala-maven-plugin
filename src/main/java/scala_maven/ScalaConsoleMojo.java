@@ -54,7 +54,6 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     protected File javaRebelPath;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doExecute() throws Exception {
         //TODO - Many other paths uses the getScalaCommand()!!! We should try to use that as much as possibel to help maintainability.
         VersionNumber scalaVersion = findScalaVersion();

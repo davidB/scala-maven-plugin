@@ -7,7 +7,6 @@ import com.typesafe.zinc.ZincClient;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Map;
 import org.apache.maven.plugin.logging.Log;
 import scala_maven_executions.MainHelper;
@@ -36,26 +35,26 @@ public class SbtIncrementalCompiler {
 
     private Compiler compiler;
 
-    public SbtIncrementalCompiler(boolean useZincServer, int zincPort, String scalaVersion, File libraryJar, File compilerJar, List<File> extraJars, String sbtVersion, File xsbtiJar, File interfaceJar, Log log) throws Exception {
-        this.log = log;
+    public SbtIncrementalCompiler(boolean useZincServer, int zincPort, String scalaVersion, File libraryJar, File compilerJar, List<File> extraJars, String sbtVersion, File xsbtiJar, File interfaceJar, Log l) throws Exception {
+        this.log = l;
         if (useZincServer) {
             this.zinc = new ZincClient(zincPort);
             if (zinc.serverAvailable()) {
-                log.info("Using zinc server for incremental compilation");
+                l.info("Using zinc server for incremental compilation");
                 this.useServer = true;
                 this.compilerJar = compilerJar;
                 this.libraryJar = libraryJar;
                 this.extraJars = extraJars;
             } else {
-                log.warn("Zinc server is not available at port " + zincPort + " - reverting to normal incremental compile");
+                l.warn("Zinc server is not available at port " + zincPort + " - reverting to normal incremental compile");
                 this.useServer = false;
             }
         }
         if (!useServer) {
-            log.info("Using incremental compilation");
-            this.logger = new SbtLogger(log);
+            l.info("Using incremental compilation");
+            this.logger = new SbtLogger(l);
             Setup setup = Setup.create(compilerJar, libraryJar, extraJars, xsbtiJar, interfaceJar, null);
-            if (log.isDebugEnabled()) Setup.debug(setup, logger);
+            if (l.isDebugEnabled()) Setup.debug(setup, logger);
             this.compiler = Compiler.create(setup, logger);
         }
     }
@@ -122,11 +121,11 @@ public class SbtIncrementalCompiler {
         return files;
     }
 
-    private String logLevelToString(Log log) {
-        if (log.isDebugEnabled()) return "debug";
-        else if (log.isInfoEnabled()) return "info";
-        else if (log.isWarnEnabled()) return "warn";
-        else if (log.isErrorEnabled()) return "error";
+    private String logLevelToString(Log l) {
+        if (l.isDebugEnabled()) return "debug";
+        else if (l.isInfoEnabled()) return "info";
+        else if (l.isWarnEnabled()) return "warn";
+        else if (l.isErrorEnabled()) return "error";
         else return "info";
     }
 

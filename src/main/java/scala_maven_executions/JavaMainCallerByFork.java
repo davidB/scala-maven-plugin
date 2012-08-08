@@ -35,8 +35,8 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
 
     private boolean _redirectToLog;
 
-    public JavaMainCallerByFork(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args, boolean forceUseArgFile, Toolchain toolchain) throws Exception {
-        super(requester, mainClassName, classpath, jvmArgs, args);
+    public JavaMainCallerByFork(AbstractMojo requester1, String mainClassName1, String classpath, String[] jvmArgs1, String[] args1, boolean forceUseArgFile, Toolchain toolchain) throws Exception {
+        super(requester1, mainClassName1, classpath, jvmArgs1, args1);
         for (String key : System.getenv().keySet()) {
             env.add(key + "=" + System.getenv(key));
         }

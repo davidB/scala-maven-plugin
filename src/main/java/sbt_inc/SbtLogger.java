@@ -8,8 +8,8 @@ public class SbtLogger implements Logger {
 
     Log log;
 
-    public SbtLogger(Log log) {
-        this.log = log;
+    public SbtLogger(Log l) {
+        this.log = l;
     }
 
     public void error(F0<String> msg) {

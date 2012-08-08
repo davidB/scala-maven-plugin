@@ -39,7 +39,6 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     protected File analysisCacheFile;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected List<File> getSourceDirectories() throws Exception {
         List<String> sources = project.getCompileSourceRoots();
         String scalaSourceDir = FileUtils.pathOf(sourceDir, useCanonicalPath);
@@ -50,7 +49,6 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
         return normalize(sources);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected List<String> getClasspathElements() throws Exception {
         List<String> back = project.getCompileClasspathElements();
@@ -60,7 +58,6 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
         return back;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected List<Dependency> getDependencies() {
         return project.getCompileDependencies();

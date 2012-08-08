@@ -55,7 +55,6 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
      */
     protected File testAnalysisCacheFile;
 
-    @SuppressWarnings("unchecked")
     @Override
     protected List<String> getClasspathElements() throws Exception {
       List<String> back = project.getTestClasspathElements();
@@ -64,7 +63,6 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
       return back;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected List<Dependency> getDependencies() {
         return project.getTestDependencies();
@@ -76,7 +74,6 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected List<File> getSourceDirectories() throws Exception {
         List<String> sources = project.getTestCompileSourceRoots();
         String scalaSourceDir = testSourceDir.getAbsolutePath();

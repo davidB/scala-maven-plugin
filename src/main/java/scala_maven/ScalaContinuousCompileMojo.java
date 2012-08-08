@@ -106,7 +106,6 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
         return jcmd;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected final void doExecute() throws Exception {
 

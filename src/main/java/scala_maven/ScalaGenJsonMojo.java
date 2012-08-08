@@ -123,7 +123,6 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   protected List<File> getSourceDirectories() throws Exception {
     List<String> sources = project.getCompileSourceRoots();
     // Quick fix in case the user has not added the "add-source" goal.
@@ -162,22 +161,26 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
     ObjectMapper m = new ObjectMapper();
     JsonFactory jf = new JsonFactory();
     JsonGenerator jg = jf.createJsonGenerator(f, JsonEncoding.UTF8);
-    if (prettyPrint) {
-      jg.useDefaultPrettyPrinter();
+    try {
+	    if (prettyPrint) {
+	      jg.useDefaultPrettyPrinter();
+	    }
+	    ObjectNode tree = m.valueToTree(pojo);
+	
+	    if (StringUtils.isNotEmpty(overrideJson)) {
+	      JsonNode overrideTree = m.readValue(overrideJson, JsonNode.class);
+	      Iterator<String>  ks = overrideTree.getFieldNames();
+	      while( ks.hasNext()) {
+	        String k = ks.next();
+	        JsonNode v = overrideTree.get(k);
+	        tree.put(k, v);
+	      }
+	    }
+	
+	    m.writeTree(jg, tree);
+    } finally {
+    	jg.close();
     }
-    ObjectNode tree = m.valueToTree(pojo);
-
-    if (StringUtils.isNotEmpty(overrideJson)) {
-      JsonNode overrideTree = m.readValue(overrideJson, JsonNode.class);
-      Iterator<String>  ks = overrideTree.getFieldNames();
-      while( ks.hasNext()) {
-        String k = ks.next();
-        JsonNode v = overrideTree.get(k);
-        tree.put(k, v);
-      }
-    }
-
-    m.writeTree(jg, tree);
   }
 
   private File makeJsonCfg(Cfg cfg) throws Exception {
@@ -213,7 +216,6 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
     public List<String> artifacts = Collections.emptyList();
     public List<String> additionnalArgs = Collections.emptyList();
 
-    @SuppressWarnings("unchecked")
     protected Cfg(ScalaGenJsonMojo data) throws Exception {
       groupId = data.project.getGroupId();
       artifactId = data.artifactId;
@@ -224,7 +226,7 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
       tags = data.tags;
       linksources = data.linksources;
       if (StringUtils.isBlank(license) && !data.project.getLicenses().isEmpty()) {
-        License lic = (License) data.project.getLicenses().get(0);
+        License lic = data.project.getLicenses().get(0);
         license = String.format("<a href='%s'>%s</a>", lic.getUrl(), lic.getName());
       }
       dependencies = makeDependencies(data);
@@ -249,7 +251,6 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
 
     protected List<List<String>> makeDependencies(ScalaGenJsonMojo data) throws Exception {
       List<List<String>> back = new ArrayList<List<String>>();
-      @SuppressWarnings("unchecked")
       List<Artifact> deps = data.project.getCompileArtifacts();
       for (Artifact dep : deps) {
         List<String> e = new ArrayList<String>(3);
@@ -277,7 +278,6 @@ public class ScalaGenJsonMojo extends ScalaSourceMojoSupport {
 
     protected List<String> makeArtifacts(ScalaGenJsonMojo data) throws Exception {
       List<String> back = new ArrayList<String>();
-      @SuppressWarnings("unchecked")
       List<MavenProject> modules = data.project.getCollectedProjects();
       for (MavenProject module : modules) {
         back.add(module.getArtifactId() + "/" + module.getVersion());

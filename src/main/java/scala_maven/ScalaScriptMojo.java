@@ -117,14 +117,6 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * @parameter expression="${removeFromClasspath}"
      */
     protected String removeFromClasspath;
-    /**
-     * The Maven Session Object
-     *
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
-     */
-    protected MavenSession session;
 
     private static AtomicInteger _lastScriptIndex = new AtomicInteger(0);
     
@@ -447,14 +439,14 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         PLUGIN {
             @Override
             public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
-                Plugin me = (Plugin) project.getBuild().getPluginsAsMap().get("net.alchim31.maven:scala-maven-plugin");
+                Plugin me = project.getBuild().getPluginsAsMap().get("net.alchim31.maven:scala-maven-plugin");
                 Set<Dependency> back = new HashSet<Dependency>();
                 Dependency dep = new Dependency();
                 dep.setArtifactId(me.getArtifactId());
                 dep.setGroupId(me.getGroupId());
                 dep.setVersion(me.getVersion());
                 back.add(dep);
-                back.addAll((Collection<Dependency>) me.getDependencies());
+                back.addAll(me.getDependencies());
                 return back;
             }
         };

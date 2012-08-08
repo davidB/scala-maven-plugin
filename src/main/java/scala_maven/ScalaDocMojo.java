@@ -183,7 +183,6 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     private List<File> _sourceFiles;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected List<File> getSourceDirectories() throws Exception {
         List<String> sources = project.getCompileSourceRoots();
         //Quick fix in case the user has not added the "add-source" goal.
@@ -270,7 +269,6 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
     protected JavaMainCaller getScalaCommand() throws Exception {
         //This ensures we have a valid scala version...
@@ -316,7 +314,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         return jcmd;
     }
 
-    public void generate(@SuppressWarnings("unused") Sink sink, @SuppressWarnings("unused") Locale locale) throws MavenReportException {
+    public void generate(Sink sink, Locale locale) throws MavenReportException {
         try {
             if (!canGenerateReport()) {
                 getLog().warn("No source files found");
@@ -362,7 +360,6 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected void tryAggregateUpper(MavenProject prj) throws Exception {
         if (prj != null && prj.hasParent() && canAggregate()) {
             MavenProject parent = prj.getParent();
@@ -373,7 +370,6 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected void aggregate(MavenProject parent) throws Exception {
         List<MavenProject> modules = parent.getCollectedProjects();
         File dest = new File(parent.getReporting().getOutputDirectory() +"/" + outputDirectory);

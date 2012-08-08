@@ -59,6 +59,8 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected MavenProject project;
 
     /**
+     * The Maven Session Object
+     *
      * @parameter expression="${session}"
      * @required
      * @readonly
@@ -317,7 +319,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @throws ArtifactNotFoundException
      * @throws InvalidDependencyVersionException
      */
-    @SuppressWarnings("unchecked")
     protected Set<Artifact> resolveDependencyArtifacts(MavenProject theProject) throws Exception {
         AndArtifactFilter filter = new AndArtifactFilter();
         filter.add(new ScopeArtifactFilter(Artifact.SCOPE_TEST));
@@ -408,7 +409,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected List<Dependency> getDependencies() {
         return project.getCompileDependencies();
     }
@@ -606,11 +606,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected List<File> getCompilerDependencies() throws Exception {
-        List<File> dependencies = new ArrayList<File>();
+        List<File> d = new ArrayList<File>();
         for (Artifact artifact : getAllDependencies(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString())) {
-            dependencies.add(artifact.getFile());
+            d.add(artifact.getFile());
         }
-        return dependencies;
+        return d;
     }
 
     protected File getArtifactJar(String groupId, String artifactId, String version) throws Exception {
@@ -628,10 +628,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected Set<Artifact> getAllDependencies(String groupId, String artifactId, String version) throws Exception {
         Set<Artifact> result = new HashSet<Artifact>();
         Artifact pom = factory.createArtifact(groupId, artifactId, version, "", "pom");
-        MavenProject project = mavenProjectBuilder.buildFromRepository(pom, remoteRepos, localRepo);
-        Set<Artifact> dependencies = resolveDependencyArtifacts(project);
-        result.addAll(dependencies);
-        for (Artifact dependency : dependencies) {
+        MavenProject p = mavenProjectBuilder.buildFromRepository(pom, remoteRepos, localRepo);
+        Set<Artifact> d = resolveDependencyArtifacts(p);
+        result.addAll(d);
+        for (Artifact dependency : d) {
             Set<Artifact> transitive = getAllDependencies(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion());
             result.addAll(transitive);
         }
@@ -703,21 +703,22 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected File getPluginArtifactJar(String groupId, String artifactId, String version) throws Exception {
-        Artifact artifact = null;
-        for (Artifact art : pluginArtifacts) {
-            if (groupId.equals(art.getGroupId()) && artifactId.equals(art.getArtifactId()) && version.equals(art.getVersion())) {
-                artifact = art;
-            }
-        }
-        return artifact.getFile();
+        return getPluginArtifactJar(groupId, artifactId, version, null);
     }
 
     protected File getPluginArtifactJar(String groupId, String artifactId, String version, String classifier) throws Exception {
         Artifact artifact = null;
         for (Artifact art : pluginArtifacts) {
-            if (groupId.equals(art.getGroupId()) && artifactId.equals(art.getArtifactId()) && version.equals(art.getVersion()) && classifier.equals(art.getClassifier())) {
-                artifact = art;
+            if (groupId.equals(art.getGroupId()) && artifactId.equals(art.getArtifactId()) && version.equals(art.getVersion())){
+            	if ((classifier == null && art.getClassifier() == null) || (classifier != null && classifier.equals(art.getClassifier()))) {
+            		artifact = art;
+            	}
             }
+        }
+        if (artifact == null) {
+	    	String msg = String.format("can't find artifact %s::%s::%s-%s", groupId, artifactId, version, classifier);
+	    	getLog().error(msg);
+	    	throw new Exception(msg);
         }
         return artifact.getFile();
     }

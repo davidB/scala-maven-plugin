@@ -68,7 +68,6 @@ public class ScalaRunMojo extends ScalaMojoSupport {
     protected String mainClass;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doExecute() throws Exception {
         JavaMainCaller jcmd = null;
         Toolchain toolchain = toolchainManager.getToolchainFromBuildContext("jdk", session);

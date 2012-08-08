@@ -20,20 +20,20 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
     protected List<String> args = new ArrayList<String>();
 
 
-    protected JavaMainCallerSupport(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs, String[] args) throws Exception {
-        this.requester = requester;
+    protected JavaMainCallerSupport(AbstractMojo requester1, String mainClassName1, String classpath, String[] jvmArgs1, String[] args1) throws Exception {
+        this.requester = requester1;
         for (String key : System.getenv().keySet()) {
             env.add(key + "=" + System.getenv(key));
         }
-        this.mainClassName = mainClassName;
+        this.mainClassName = mainClassName1;
         addJvmArgs("-classpath", classpath);
-        addJvmArgs(jvmArgs);
-        addArgs(args);
+        addJvmArgs(jvmArgs1);
+        addArgs(args1);
     }
 
-    public void addJvmArgs(String... args) {
-        if(args != null) {
-            for(String arg : args) {
+    public void addJvmArgs(String... args1) {
+        if(args1 != null) {
+            for(String arg : args1) {
                 if (StringUtils.isNotEmpty(arg)) {
                     this.jvmArgs.add(arg);
                 }
@@ -78,9 +78,9 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         }
         addArgs(key);
     }
-    public void addArgs(String... args) {
-        if(args != null) {
-            for(String arg : args) {
+    public void addArgs(String... args1) {
+        if(args1 != null) {
+            for(String arg : args1) {
                 if (StringUtils.isNotEmpty(arg)) {
                     this.args.add(arg);
                 }
