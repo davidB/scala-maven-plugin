@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>SbtIncrementalCompiler xref</title>
+<link type="text/css" rel="stylesheet" href="../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../apidocs/sbt_inc/SbtIncrementalCompiler.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> sbt_inc;
+<a class="jxr_linenumber" name="2" href="#2">2</a>   
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <strong class="jxr_keyword">import</strong> com.typesafe.zinc.Compiler;
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">import</strong> com.typesafe.zinc.Inputs;
+<a class="jxr_linenumber" name="5" href="#5">5</a>   <strong class="jxr_keyword">import</strong> com.typesafe.zinc.Setup;
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> com.typesafe.zinc.ZincClient;
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <strong class="jxr_keyword">import</strong> java.io.File;
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <strong class="jxr_keyword">import</strong> org.apache.maven.plugin.logging.Log;
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <strong class="jxr_keyword">import</strong> scala_maven_executions.MainHelper;
+<a class="jxr_linenumber" name="13" href="#13">13</a>  
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../sbt_inc/SbtIncrementalCompiler.html">SbtIncrementalCompiler</a> {
+<a class="jxr_linenumber" name="15" href="#15">15</a>  
+<a class="jxr_linenumber" name="16" href="#16">16</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String SBT_GROUP_ID = <span class="jxr_string">"com.typesafe.sbt"</span>;
+<a class="jxr_linenumber" name="17" href="#17">17</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String COMPILER_INTEGRATION_ARTIFACT_ID = <span class="jxr_string">"incremental-compiler"</span>;
+<a class="jxr_linenumber" name="18" href="#18">18</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String COMPILER_INTERFACE_ARTIFACT_ID = <span class="jxr_string">"compiler-interface"</span>;
+<a class="jxr_linenumber" name="19" href="#19">19</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String COMPILER_INTERFACE_CLASSIFIER = <span class="jxr_string">"sources"</span>;
+<a class="jxr_linenumber" name="20" href="#20">20</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String XSBTI_ARTIFACT_ID = <span class="jxr_string">"sbt-interface"</span>;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  
+<a class="jxr_linenumber" name="22" href="#22">22</a>      <strong class="jxr_keyword">private</strong> Log log;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  
+<a class="jxr_linenumber" name="24" href="#24">24</a>      <strong class="jxr_keyword">private</strong> ZincClient zinc;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  
+<a class="jxr_linenumber" name="26" href="#26">26</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> useServer = false;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  
+<a class="jxr_linenumber" name="28" href="#28">28</a>      <strong class="jxr_keyword">private</strong> File compilerJar;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  
+<a class="jxr_linenumber" name="30" href="#30">30</a>      <strong class="jxr_keyword">private</strong> File libraryJar;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  
+<a class="jxr_linenumber" name="32" href="#32">32</a>      <strong class="jxr_keyword">private</strong> List&lt;File&gt; extraJars;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  
+<a class="jxr_linenumber" name="34" href="#34">34</a>      <strong class="jxr_keyword">private</strong> xsbti.Logger logger;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  
+<a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">private</strong> Compiler compiler;
+<a class="jxr_linenumber" name="37" href="#37">37</a>  
+<a class="jxr_linenumber" name="38" href="#38">38</a>      <strong class="jxr_keyword">public</strong> <a href="../sbt_inc/SbtIncrementalCompiler.html">SbtIncrementalCompiler</a>(<strong class="jxr_keyword">boolean</strong> useZincServer, <strong class="jxr_keyword">int</strong> zincPort, String scalaVersion, File libraryJar, File compilerJar, List&lt;File&gt; extraJars, String sbtVersion, File xsbtiJar, File interfaceJar, Log l) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="39" href="#39">39</a>          <strong class="jxr_keyword">this</strong>.log = l;
+<a class="jxr_linenumber" name="40" href="#40">40</a>          <strong class="jxr_keyword">if</strong> (useZincServer) {
+<a class="jxr_linenumber" name="41" href="#41">41</a>              <strong class="jxr_keyword">this</strong>.zinc = <strong class="jxr_keyword">new</strong> ZincClient(zincPort);
+<a class="jxr_linenumber" name="42" href="#42">42</a>              <strong class="jxr_keyword">if</strong> (zinc.serverAvailable()) {
+<a class="jxr_linenumber" name="43" href="#43">43</a>                  l.info(<span class="jxr_string">"Using zinc server for incremental compilation"</span>);
+<a class="jxr_linenumber" name="44" href="#44">44</a>                  <strong class="jxr_keyword">this</strong>.useServer = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="45" href="#45">45</a>                  <strong class="jxr_keyword">this</strong>.compilerJar = compilerJar;
+<a class="jxr_linenumber" name="46" href="#46">46</a>                  <strong class="jxr_keyword">this</strong>.libraryJar = libraryJar;
+<a class="jxr_linenumber" name="47" href="#47">47</a>                  <strong class="jxr_keyword">this</strong>.extraJars = extraJars;
+<a class="jxr_linenumber" name="48" href="#48">48</a>              } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="49" href="#49">49</a>                  l.warn(<span class="jxr_string">"Zinc server is not available at port "</span> + zincPort + <span class="jxr_string">" - reverting to normal incremental compile"</span>);
+<a class="jxr_linenumber" name="50" href="#50">50</a>                  <strong class="jxr_keyword">this</strong>.useServer = false;
+<a class="jxr_linenumber" name="51" href="#51">51</a>              }
+<a class="jxr_linenumber" name="52" href="#52">52</a>          }
+<a class="jxr_linenumber" name="53" href="#53">53</a>          <strong class="jxr_keyword">if</strong> (!useServer) {
+<a class="jxr_linenumber" name="54" href="#54">54</a>              l.info(<span class="jxr_string">"Using incremental compilation"</span>);
+<a class="jxr_linenumber" name="55" href="#55">55</a>              <strong class="jxr_keyword">this</strong>.logger = <strong class="jxr_keyword">new</strong> <a href="../sbt_inc/SbtLogger.html">SbtLogger</a>(l);
+<a class="jxr_linenumber" name="56" href="#56">56</a>              Setup setup = Setup.create(compilerJar, libraryJar, extraJars, xsbtiJar, interfaceJar, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="57" href="#57">57</a>              <strong class="jxr_keyword">if</strong> (l.isDebugEnabled()) Setup.debug(setup, logger);
+<a class="jxr_linenumber" name="58" href="#58">58</a>              <strong class="jxr_keyword">this</strong>.compiler = Compiler.create(setup, logger);
+<a class="jxr_linenumber" name="59" href="#59">59</a>          }
+<a class="jxr_linenumber" name="60" href="#60">60</a>      }
+<a class="jxr_linenumber" name="61" href="#61">61</a>  
+<a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> compile(File baseDir, List&lt;String&gt; classpathElements, List&lt;File&gt; sources, File classesDirectory, List&lt;String&gt; scalacOptions, List&lt;String&gt; javacOptions, File cacheFile, Map&lt;File, File&gt; cacheMap, String compileOrder) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="63" href="#63">63</a>          <strong class="jxr_keyword">if</strong> (useServer) {
+<a class="jxr_linenumber" name="64" href="#64">64</a>              zincCompile(baseDir, classpathElements, sources, classesDirectory, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder);
+<a class="jxr_linenumber" name="65" href="#65">65</a>          } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="66" href="#66">66</a>              <strong class="jxr_keyword">if</strong> (log.isDebugEnabled()) log.debug(<span class="jxr_string">"Incremental compiler = "</span> + compiler + <span class="jxr_string">" ["</span> + Integer.toHexString(compiler.hashCode()) + <span class="jxr_string">"]"</span>);
+<a class="jxr_linenumber" name="67" href="#67">67</a>              List&lt;File&gt; classpath = pathsToFiles(classpathElements);
+<a class="jxr_linenumber" name="68" href="#68">68</a>              Inputs inputs = Inputs.create(classpath, sources, classesDirectory, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder);
+<a class="jxr_linenumber" name="69" href="#69">69</a>              <strong class="jxr_keyword">if</strong> (log.isDebugEnabled()) Inputs.debug(inputs, logger);
+<a class="jxr_linenumber" name="70" href="#70">70</a>              compiler.compile(inputs, logger);
+<a class="jxr_linenumber" name="71" href="#71">71</a>          }
+<a class="jxr_linenumber" name="72" href="#72">72</a>      }
+<a class="jxr_linenumber" name="73" href="#73">73</a>  
+<a class="jxr_linenumber" name="74" href="#74">74</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> zincCompile(File baseDir, List&lt;String&gt; classpathElements, List&lt;File&gt; sources, File classesDirectory, List&lt;String&gt; scalacOptions, List&lt;String&gt; javacOptions, File cacheFile, Map&lt;File, File&gt; cacheMap, String compileOrder) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="75" href="#75">75</a>          List&lt;String&gt; arguments = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
+<a class="jxr_linenumber" name="76" href="#76">76</a>          arguments.add(<span class="jxr_string">"-log-level"</span>);
+<a class="jxr_linenumber" name="77" href="#77">77</a>          arguments.add(logLevelToString(log));
+<a class="jxr_linenumber" name="78" href="#78">78</a>          arguments.add(<span class="jxr_string">"-scala-compiler"</span>);
+<a class="jxr_linenumber" name="79" href="#79">79</a>          arguments.add(compilerJar.getAbsolutePath());
+<a class="jxr_linenumber" name="80" href="#80">80</a>          arguments.add(<span class="jxr_string">"-scala-library"</span>);
+<a class="jxr_linenumber" name="81" href="#81">81</a>          arguments.add(libraryJar.getAbsolutePath());
+<a class="jxr_linenumber" name="82" href="#82">82</a>          arguments.add(<span class="jxr_string">"-scala-extra"</span>);
+<a class="jxr_linenumber" name="83" href="#83">83</a>          List&lt;String&gt; extraPaths = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
+<a class="jxr_linenumber" name="84" href="#84">84</a>          <strong class="jxr_keyword">for</strong> (File extraJar : extraJars) {
+<a class="jxr_linenumber" name="85" href="#85">85</a>              extraPaths.add(extraJar.getAbsolutePath());
+<a class="jxr_linenumber" name="86" href="#86">86</a>          }
+<a class="jxr_linenumber" name="87" href="#87">87</a>          arguments.add(MainHelper.toMultiPath(extraPaths));
+<a class="jxr_linenumber" name="88" href="#88">88</a>          arguments.add(<span class="jxr_string">"-classpath"</span>);
+<a class="jxr_linenumber" name="89" href="#89">89</a>          arguments.add(MainHelper.toMultiPath(classpathElements));
+<a class="jxr_linenumber" name="90" href="#90">90</a>          arguments.add(<span class="jxr_string">"-d"</span>);
+<a class="jxr_linenumber" name="91" href="#91">91</a>          arguments.add(classesDirectory.getAbsolutePath());
+<a class="jxr_linenumber" name="92" href="#92">92</a>          <strong class="jxr_keyword">for</strong> (String scalacOption : scalacOptions) {
+<a class="jxr_linenumber" name="93" href="#93">93</a>              arguments.add(<span class="jxr_string">"-S"</span> + scalacOption);
+<a class="jxr_linenumber" name="94" href="#94">94</a>          }
+<a class="jxr_linenumber" name="95" href="#95">95</a>          <strong class="jxr_keyword">for</strong> (String javacOption : javacOptions) {
+<a class="jxr_linenumber" name="96" href="#96">96</a>              arguments.add(<span class="jxr_string">"-J"</span> + javacOption);
+<a class="jxr_linenumber" name="97" href="#97">97</a>          }
+<a class="jxr_linenumber" name="98" href="#98">98</a>          arguments.add(<span class="jxr_string">"-compile-order"</span>);
+<a class="jxr_linenumber" name="99" href="#99">99</a>          arguments.add(compileOrder);
+<a class="jxr_linenumber" name="100" href="#100">100</a>         arguments.add(<span class="jxr_string">"-analysis-cache"</span>);
+<a class="jxr_linenumber" name="101" href="#101">101</a>         arguments.add(cacheFile.getAbsolutePath());
+<a class="jxr_linenumber" name="102" href="#102">102</a>         arguments.add(<span class="jxr_string">"-analysis-map"</span>);
+<a class="jxr_linenumber" name="103" href="#103">103</a>         arguments.add(cacheMapToString(cacheMap));
+<a class="jxr_linenumber" name="104" href="#104">104</a>         <strong class="jxr_keyword">for</strong> (File source : sources) {
+<a class="jxr_linenumber" name="105" href="#105">105</a>             arguments.add(source.getAbsolutePath());
+<a class="jxr_linenumber" name="106" href="#106">106</a>         }
+<a class="jxr_linenumber" name="107" href="#107">107</a> 
+<a class="jxr_linenumber" name="108" href="#108">108</a>         <strong class="jxr_keyword">int</strong> exitCode = zinc.run(arguments, baseDir, System.out, System.err);
+<a class="jxr_linenumber" name="109" href="#109">109</a> 
+<a class="jxr_linenumber" name="110" href="#110">110</a>         <strong class="jxr_keyword">if</strong> (exitCode != 0) {
+<a class="jxr_linenumber" name="111" href="#111">111</a>             xsbti.Problem[] problems = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="112" href="#112">112</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> sbt.compiler.CompileFailed(arguments.toArray(<strong class="jxr_keyword">new</strong> String[arguments.size()]), <span class="jxr_string">"Compile failed via zinc server"</span>, problems);
+<a class="jxr_linenumber" name="113" href="#113">113</a>         }
+<a class="jxr_linenumber" name="114" href="#114">114</a>     }
+<a class="jxr_linenumber" name="115" href="#115">115</a> 
+<a class="jxr_linenumber" name="116" href="#116">116</a>     <strong class="jxr_keyword">private</strong> List&lt;File&gt; pathsToFiles(List&lt;String&gt; paths) {
+<a class="jxr_linenumber" name="117" href="#117">117</a>         List&lt;File&gt; files = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;(paths.size());
+<a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">for</strong> (String path : paths) {
+<a class="jxr_linenumber" name="119" href="#119">119</a>             files.add(<strong class="jxr_keyword">new</strong> File(path));
+<a class="jxr_linenumber" name="120" href="#120">120</a>         }
+<a class="jxr_linenumber" name="121" href="#121">121</a>         <strong class="jxr_keyword">return</strong> files;
+<a class="jxr_linenumber" name="122" href="#122">122</a>     }
+<a class="jxr_linenumber" name="123" href="#123">123</a> 
+<a class="jxr_linenumber" name="124" href="#124">124</a>     <strong class="jxr_keyword">private</strong> String logLevelToString(Log l) {
+<a class="jxr_linenumber" name="125" href="#125">125</a>         <strong class="jxr_keyword">if</strong> (l.isDebugEnabled()) <strong class="jxr_keyword">return</strong> <span class="jxr_string">"debug"</span>;
+<a class="jxr_linenumber" name="126" href="#126">126</a>         <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (l.isInfoEnabled()) <strong class="jxr_keyword">return</strong> <span class="jxr_string">"info"</span>;
+<a class="jxr_linenumber" name="127" href="#127">127</a>         <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (l.isWarnEnabled()) <strong class="jxr_keyword">return</strong> <span class="jxr_string">"warn"</span>;
+<a class="jxr_linenumber" name="128" href="#128">128</a>         <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (l.isErrorEnabled()) <strong class="jxr_keyword">return</strong> <span class="jxr_string">"error"</span>;
+<a class="jxr_linenumber" name="129" href="#129">129</a>         <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">return</strong> <span class="jxr_string">"info"</span>;
+<a class="jxr_linenumber" name="130" href="#130">130</a>     }
+<a class="jxr_linenumber" name="131" href="#131">131</a> 
+<a class="jxr_linenumber" name="132" href="#132">132</a>     <strong class="jxr_keyword">private</strong> String cacheMapToString(Map&lt;File, File&gt; cacheMap) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="133" href="#133">133</a>         String analysisMap = <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="134" href="#134">134</a>         <strong class="jxr_keyword">boolean</strong> addComma = false;
+<a class="jxr_linenumber" name="135" href="#135">135</a>         <strong class="jxr_keyword">for</strong> (Map.Entry&lt;File, File&gt; entry : cacheMap.entrySet()) {
+<a class="jxr_linenumber" name="136" href="#136">136</a>             <strong class="jxr_keyword">if</strong> (addComma) analysisMap += <span class="jxr_string">","</span>;
+<a class="jxr_linenumber" name="137" href="#137">137</a>             analysisMap += entry.getKey().getAbsolutePath();
+<a class="jxr_linenumber" name="138" href="#138">138</a>             analysisMap += <span class="jxr_string">":"</span>;
+<a class="jxr_linenumber" name="139" href="#139">139</a>             analysisMap += entry.getValue().getAbsolutePath();
+<a class="jxr_linenumber" name="140" href="#140">140</a>             addComma = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="141" href="#141">141</a>         }
+<a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">return</strong> analysisMap;
+<a class="jxr_linenumber" name="143" href="#143">143</a>     }
+<a class="jxr_linenumber" name="144" href="#144">144</a> }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+

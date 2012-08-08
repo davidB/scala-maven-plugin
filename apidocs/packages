@@ -1,4 +1,5 @@
 scala_maven_model
 scala_maven_executions
+sbt_inc
 scala_maven_dependency
 scala_maven
