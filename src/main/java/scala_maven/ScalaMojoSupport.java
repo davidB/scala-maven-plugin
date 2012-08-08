@@ -1,6 +1,8 @@
 package scala_maven;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,6 +64,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @readonly
      */
     protected MavenSession session;
+
+    /**
+     * Contains the full list of projects in the reactor.
+     *
+     * @parameter default-value="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    protected List<MavenProject> reactorProjects;
 
     /**
      * Used to look up Artifacts in the remote repository.
@@ -150,7 +161,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter expression="${addScalacArgs}"
      */
     protected String addScalacArgs;
-    
+
     /**
      * className (FQN) of the scala tool to provide as
      *
@@ -167,6 +178,21 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter expression="${scala.version}"
      */
     private String scalaVersion;
+
+    /**
+     * Arguments for javac (when using incremental compiler).
+     *
+     * @parameter expression="${javacArgs}"
+     */
+    protected String[] javacArgs;
+
+    /**
+     * Alternative method for specifying javac arguments (when using incremental compiler).
+     * Can be used from command line with -DaddJavacArgs=arg1|arg2|arg3|... rather than in pom.xml.
+     *
+     * @parameter expression="${addJavacArgs}"
+     */
+    protected String addJavacArgs;
 
     /**
      * Display the command line called ?
@@ -205,14 +231,14 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter default-value="false"
      */
     protected boolean failOnMultipleScalaVersions = false;
-    
+
     /**
      * Should use CanonicalPath to normalize path (true => getCanonicalPath, false => getAbsolutePath)
      * @see https://github.com/davidB/maven-scala-plugin/issues/50
      * @parameter expression="${maven.scala.useCanonicalPath}" default-value="true"
      */
     protected boolean useCanonicalPath = true;
-    
+
     /**
      * Artifact factory, needed to download source jars.
      *
@@ -275,6 +301,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @readonly
      */
     protected ToolchainManager toolchainManager;
+
+    /** @parameter default-value="${plugin.artifacts}" */
+    private List<Artifact> pluginArtifacts;
 
     private VersionNumber _scalaVersionN;
 
@@ -383,7 +412,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected List<Dependency> getDependencies() {
         return project.getCompileDependencies();
     }
-   
+
     protected VersionNumber findScalaVersion() throws Exception {
         if (_scalaVersionN == null) {
             String detectedScalaVersion = scalaVersion;
@@ -419,27 +448,31 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         return _scalaVersionN;
     }
 
-    //TODO refactor to do only one scan of dependency to find all scala-version
     private String findScalaVersionFromDependencies() throws Exception {
-        String detectedScalaVersion = null;
+        return findVersionFromDependencies(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID);
+    }
+
+    //TODO refactor to do only one scan of dependencies to find version
+    protected String findVersionFromDependencies(String groupId, String artifactId) throws Exception {
+        String version = null;
         for (Dependency dep : getDependencies()) {
-            if (SCALA_GROUPID.equals(dep.getGroupId()) && SCALA_LIBRARY_ARTIFACTID.equals(dep.getArtifactId())) {
-                detectedScalaVersion = dep.getVersion();
+            if (groupId.equals(dep.getGroupId()) && artifactId.equals(dep.getArtifactId())) {
+                version = dep.getVersion();
             }
         }
-        if (StringUtils.isEmpty(detectedScalaVersion)) {
+        if (StringUtils.isEmpty(version)) {
             List<Dependency> deps = new ArrayList<Dependency>();
             deps.addAll(project.getModel().getDependencies());
             if (project.getModel().getDependencyManagement() != null) {
                 deps.addAll(project.getModel().getDependencyManagement().getDependencies());
             }
             for (Dependency dep : deps) {
-                if (SCALA_GROUPID.equals(dep.getGroupId()) && SCALA_LIBRARY_ARTIFACTID.equals(dep.getArtifactId())) {
-                    detectedScalaVersion = dep.getVersion();
+                if (groupId.equals(dep.getGroupId()) && artifactId.equals(dep.getArtifactId())) {
+                    version = dep.getVersion();
                 }
             }
         }
-        return detectedScalaVersion;
+        return version;
     }
 
     protected void checkScalaVersion() throws Exception {
@@ -447,11 +480,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             checkCorrectVersionsOfScalaLibrary(findScalaVersion().toString());
         }
     }
-    
+
     /** this method checks to see if there are multiple versions of the scala library
      * @throws Exception */
     private void checkCorrectVersionsOfScalaLibrary(String requiredScalaVersion) throws Exception {
-        getLog().info("Checking for multiple versions of scala");
+        getLog().debug("Checking for multiple versions of scala");
         //TODO - Make sure we handle bad artifacts....
         // TODO: note that filter does not get applied due to MNG-3236
             checkArtifactForScalaVersion(requiredScalaVersion, dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
@@ -502,7 +535,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         cmd.addArgs(args);
         if (StringUtils.isNotEmpty(addScalacArgs)) {
           cmd.addArgs(StringUtils.split(addScalacArgs, "|"));
-        }        
+        }
         addCompilerPluginOptions(cmd);
         cmd.addJvmArgs(jvmArgs);
         return cmd;
@@ -545,6 +578,66 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         return MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
     }
 
+    protected List<String> getScalaOptions() throws Exception {
+        List<String> options = new ArrayList<String>();
+        if (args != null) Collections.addAll(options, args);
+        if (StringUtils.isNotEmpty(addScalacArgs)) {
+            Collections.addAll(options, StringUtils.split(addScalacArgs, "|"));
+        }
+        options.addAll(getCompilerPluginOptions());
+        return options;
+    }
+
+    protected List<String> getJavacOptions() throws Exception {
+        List<String> options = new ArrayList<String>();
+        if (javacArgs != null) Collections.addAll(options, javacArgs);
+        if (StringUtils.isNotEmpty(addJavacArgs)) {
+            Collections.addAll(options, StringUtils.split(addJavacArgs, "|"));
+        }
+        return options;
+    }
+
+    protected File getLibraryJar() throws Exception {
+        return getArtifactJar(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString());
+    }
+
+    protected File getCompilerJar() throws Exception {
+        return getArtifactJar(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
+    }
+
+    protected List<File> getCompilerDependencies() throws Exception {
+        List<File> dependencies = new ArrayList<File>();
+        for (Artifact artifact : getAllDependencies(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString())) {
+            dependencies.add(artifact.getFile());
+        }
+        return dependencies;
+    }
+
+    protected File getArtifactJar(String groupId, String artifactId, String version) throws Exception {
+        Artifact artifact = factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar");
+        resolver.resolve(artifact, remoteRepos, localRepo);
+        return artifact.getFile();
+    }
+
+    protected File getArtifactJar(String groupId, String artifactId, String version, String classifier) throws Exception {
+        Artifact artifact = factory.createArtifactWithClassifier(groupId, artifactId, version, "jar", classifier);
+        resolver.resolve(artifact, remoteRepos, localRepo);
+        return artifact.getFile();
+    }
+
+    protected Set<Artifact> getAllDependencies(String groupId, String artifactId, String version) throws Exception {
+        Set<Artifact> result = new HashSet<Artifact>();
+        Artifact pom = factory.createArtifact(groupId, artifactId, version, "", "pom");
+        MavenProject project = mavenProjectBuilder.buildFromRepository(pom, remoteRepos, localRepo);
+        Set<Artifact> dependencies = resolveDependencyArtifacts(project);
+        result.addAll(dependencies);
+        for (Artifact dependency : dependencies) {
+            Set<Artifact> transitive = getAllDependencies(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion());
+            result.addAll(transitive);
+        }
+        return result;
+    }
+
     /**
      * @return
      *           This returns whether or not the scala version can support having java sent into the compiler
@@ -560,10 +653,19 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @throws Exception
      */
     protected void addCompilerPluginOptions(JavaMainCaller scalac) throws Exception {
-        for (String plugin : getCompilerPlugins()) {
-            scalac.addArgs("-Xplugin:" + plugin);
+        for (String option : getCompilerPluginOptions()) {
+            scalac.addArgs(option);
         }
     }
+
+    protected List<String> getCompilerPluginOptions() throws Exception {
+        List<String> options = new ArrayList<String>();
+        for (String plugin : getCompilerPlugins()) {
+            options.add("-Xplugin:" + plugin);
+        }
+        return options;
+    }
+
     /**
      * Retrieves a list of paths to scala compiler plugins.
      *
@@ -590,5 +692,33 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         return plugins;
     }
 
+    protected String findVersionFromPluginArtifacts(String groupId, String artifactId) throws Exception {
+        String version = null;
+        for (Artifact art : pluginArtifacts) {
+            if (groupId.equals(art.getGroupId()) && artifactId.equals(art.getArtifactId())) {
+                version = art.getVersion();
+            }
+        }
+        return version;
+    }
 
+    protected File getPluginArtifactJar(String groupId, String artifactId, String version) throws Exception {
+        Artifact artifact = null;
+        for (Artifact art : pluginArtifacts) {
+            if (groupId.equals(art.getGroupId()) && artifactId.equals(art.getArtifactId()) && version.equals(art.getVersion())) {
+                artifact = art;
+            }
+        }
+        return artifact.getFile();
+    }
+
+    protected File getPluginArtifactJar(String groupId, String artifactId, String version, String classifier) throws Exception {
+        Artifact artifact = null;
+        for (Artifact art : pluginArtifacts) {
+            if (groupId.equals(art.getGroupId()) && artifactId.equals(art.getArtifactId()) && version.equals(art.getVersion()) && classifier.equals(art.getClassifier())) {
+                artifact = art;
+            }
+        }
+        return artifact.getFile();
+    }
 }

@@ -29,6 +29,7 @@
     </menu>
     <menu name="Examples">
       <item name="Compiling" href="example_compile.html" />
+      <item name="Incremental Compile" href="example_incremental.html" />
       <item name="Continuous Compilation" href="example_cc.html" />
       <item name="Continuous Testing" href="example_cctest.html" />
       <item name="Scaladoc" href="example_doc.html" />

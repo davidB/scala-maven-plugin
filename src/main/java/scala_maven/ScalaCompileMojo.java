@@ -31,6 +31,13 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
      */
     protected File sourceDir;
 
+    /**
+     * Analysis cache file for incremental recompilation.
+     *
+     * @parameter expression="${analysisCacheFile}" default-value="${project.build.directory}/analysis/compile"
+     */
+    protected File analysisCacheFile;
+
     @Override
     @SuppressWarnings("unchecked")
     protected List<File> getSourceDirectories() throws Exception {
@@ -62,5 +69,10 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     @Override
     protected File getOutputDir() throws Exception {
         return outputDir.getAbsoluteFile();
+    }
+
+    @Override
+    protected File getAnalysisCacheFile() throws Exception {
+        return analysisCacheFile.getAbsoluteFile();
     }
 }
