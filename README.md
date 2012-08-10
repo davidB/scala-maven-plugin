@@ -4,8 +4,8 @@ scala-maven-plugin
 The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling/testing/running/documenting Scala code in Maven.
 
 * [Documentation](http://davidb.github.com/scala-maven-plugin/index.html)
-* [Wiki](https://github.com/davidB/maven-scala-plugin/wiki)
-* [Issues](https://github.com/davidB/maven-scala-plugin/issues/)
+* [Wiki](https://github.com/davidB/scala-maven-plugin/wiki)
+* [Issues](https://github.com/davidB/scala-maven-plugin/issues/)
 * [Full changelog](http://davidb.github.com/scala-maven-plugin/changes-report.html)
 
 ## Build
@@ -30,7 +30,7 @@ Currently, you need Maven 3.x to build the plugin, create the site, and run `int
   
 # TODO
 
-* close issues from https://github.com/davidB/maven-scala-plugin/issues/
+* close issues from https://github.com/davidB/scala-maven-plugin/issues/
 * try to integrate the "dependency builder" of SBT 0.10
 * try to use aether to manage dependencies  
 * refactor :
