@@ -135,7 +135,7 @@ public class SbtIncrementalCompiler {
         for (Map.Entry<File, File> entry : cacheMap.entrySet()) {
             if (addComma) analysisMap += ",";
             analysisMap += entry.getKey().getAbsolutePath();
-            analysisMap += ":";
+            analysisMap += ";";
             analysisMap += entry.getValue().getAbsolutePath();
             addComma = true;
         }
