@@ -278,7 +278,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             String sbtVersion = findVersionFromPluginArtifacts(sbtGroupId, SbtIncrementalCompiler.COMPILER_INTEGRATION_ARTIFACT_ID);
             File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
             File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
-            incremental = new SbtIncrementalCompiler(useZincServer, zincPort, scalaVersion, libraryJar, compilerJar, extraJars, sbtVersion, xsbtiJar, interfaceSrcJar, getLog());
+           	incremental = new SbtIncrementalCompiler(useZincServer, zincPort, scalaVersion, libraryJar, compilerJar, extraJars, sbtVersion, xsbtiJar, interfaceSrcJar, getLog());
         }
 
         classpathElements.remove(outputDir.getAbsolutePath());
