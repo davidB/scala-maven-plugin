@@ -178,7 +178,7 @@
     <dependency>
       <groupId>com.typesafe.zinc</groupId>
       <artifactId>zinc</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
+      <version>0.1.4</version>
     </dependency>
   </dependencies>
 
