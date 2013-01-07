@@ -38,7 +38,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * Recompile mode to use when sources were previously compiled and there is at least one change:
      * "modified-only" => only modified sources are recompiled (pre 2.13 behavior), "all" => all sources are recompiled,
      * "incremental" => incrementally recompile modified sources and other affected sources.
-     * @parameter expression="${recompile-mode}" default-value="all"
+     * @parameter expression="${recompileMode}" default-value="all"
      */
     protected String recompileMode = ALL;
 
@@ -69,21 +69,21 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      *
      * Can be Mixed, JavaThenScala, or ScalaThenJava.
      *
-     * @parameter expression="${compile-order}" default-value="mixed"
+     * @parameter expression="${compileOrder}" default-value="mixed"
      */
     private String compileOrder;
 
     /**
      * Use zinc server for incremental recompilation.
      *
-     * @parameter expression="${use-zinc-server}" default-value="false"
+     * @parameter expression="${useZincServer}" default-value="false"
      */
     private boolean useZincServer;
 
     /**
      * Zinc server port, if running with incremental zinc server mode.
      *
-     * @parameter expression="${zinc-port}" default-value="3030"
+     * @parameter expression="${zincPort}" default-value="3030"
      */
     private int zincPort;
 
