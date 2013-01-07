@@ -306,11 +306,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             Plugin plugin = project1.getPlugin(scalaPluginKey);
             if (plugin != null) {
                 Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();
-                Xpp3Dom analysisCache = configuration.getChild("analysisCacheFile");
+                Xpp3Dom analysisCache = (configuration != null) ? configuration.getChild("analysisCacheFile") : null;
                 File analysisCacheFile = (analysisCache != null) ? new File(analysisCache.getValue()) : defaultAnalysisCacheFile(project1);
                 File classesDirectory = new File(project1.getBuild().getOutputDirectory());
                 map.put(classesDirectory.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile());
-                Xpp3Dom testAnalysisCache = configuration.getChild("testAnalysisCacheFile");
+                Xpp3Dom testAnalysisCache = (configuration != null) ? configuration.getChild("testAnalysisCacheFile") : null;
                 File testAnalysisCacheFile = (testAnalysisCache != null) ? new File(testAnalysisCache.getValue()) : defaultTestAnalysisCacheFile(project1);
                 File testClassesDirectory = new File(project1.getBuild().getTestOutputDirectory());
                 map.put(testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile());
