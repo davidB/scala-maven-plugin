@@ -18,6 +18,9 @@ public class SbtIncrementalCompiler {
     public static final String COMPILER_INTERFACE_ARTIFACT_ID = "compiler-interface";
     public static final String COMPILER_INTERFACE_CLASSIFIER = "sources";
     public static final String XSBTI_ARTIFACT_ID = "sbt-interface";
+    
+    private static final String ANALYSIS_MAP_ARG_SEPARATOR = ",";
+    private static final String ANALYSIS_MAP_PAIR_SEPARATOR = File.pathSeparator;
 
     private Log log;
 
@@ -131,13 +134,13 @@ public class SbtIncrementalCompiler {
 
     private String cacheMapToString(Map<File, File> cacheMap) throws Exception {
         String analysisMap = "";
-        boolean addComma = false;
+        boolean addArgSeparator = false;
         for (Map.Entry<File, File> entry : cacheMap.entrySet()) {
-            if (addComma) analysisMap += ",";
+            if (addArgSeparator) analysisMap += ANALYSIS_MAP_ARG_SEPARATOR;
             analysisMap += entry.getKey().getAbsolutePath();
-            analysisMap += ":";
+            analysisMap += ANALYSIS_MAP_PAIR_SEPARATOR;
             analysisMap += entry.getValue().getAbsolutePath();
-            addComma = true;
+            addArgSeparator = true;
         }
         return analysisMap;
     }
