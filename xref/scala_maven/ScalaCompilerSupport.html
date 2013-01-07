@@ -48,7 +48,7 @@
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">     * Recompile mode to use when sources were previously compiled and there is at least one change:</em>
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     * "modified-only" =&gt; only modified sources are recompiled (pre 2.13 behavior), "all" =&gt; all sources are recompiled,</em>
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">     * "incremental" =&gt; incrementally recompile modified sources and other affected sources.</em>
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * @parameter expression="${recompile-mode}" default-value="all"</em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * @parameter expression="${recompileMode}" default-value="all"</em>
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="43" href="#43">43</a>      <strong class="jxr_keyword">protected</strong> String recompileMode = ALL;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  
@@ -79,21 +79,21 @@
 <a class="jxr_linenumber" name="69" href="#69">69</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_javadoccomment">     * Can be Mixed, JavaThenScala, or ScalaThenJava.</em>
 <a class="jxr_linenumber" name="71" href="#71">71</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="72" href="#72">72</a>  <em class="jxr_javadoccomment">     * @parameter expression="${compile-order}" default-value="mixed"</em>
+<a class="jxr_linenumber" name="72" href="#72">72</a>  <em class="jxr_javadoccomment">     * @parameter expression="${compileOrder}" default-value="mixed"</em>
 <a class="jxr_linenumber" name="73" href="#73">73</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="74" href="#74">74</a>      <strong class="jxr_keyword">private</strong> String compileOrder;
 <a class="jxr_linenumber" name="75" href="#75">75</a>  
 <a class="jxr_linenumber" name="76" href="#76">76</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="77" href="#77">77</a>  <em class="jxr_javadoccomment">     * Use zinc server for incremental recompilation.</em>
 <a class="jxr_linenumber" name="78" href="#78">78</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="79" href="#79">79</a>  <em class="jxr_javadoccomment">     * @parameter expression="${use-zinc-server}" default-value="false"</em>
+<a class="jxr_linenumber" name="79" href="#79">79</a>  <em class="jxr_javadoccomment">     * @parameter expression="${useZincServer}" default-value="false"</em>
 <a class="jxr_linenumber" name="80" href="#80">80</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="81" href="#81">81</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> useZincServer;
 <a class="jxr_linenumber" name="82" href="#82">82</a>  
 <a class="jxr_linenumber" name="83" href="#83">83</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="84" href="#84">84</a>  <em class="jxr_javadoccomment">     * Zinc server port, if running with incremental zinc server mode.</em>
 <a class="jxr_linenumber" name="85" href="#85">85</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="86" href="#86">86</a>  <em class="jxr_javadoccomment">     * @parameter expression="${zinc-port}" default-value="3030"</em>
+<a class="jxr_linenumber" name="86" href="#86">86</a>  <em class="jxr_javadoccomment">     * @parameter expression="${zincPort}" default-value="3030"</em>
 <a class="jxr_linenumber" name="87" href="#87">87</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="88" href="#88">88</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> zincPort;
 <a class="jxr_linenumber" name="89" href="#89">89</a>  
@@ -288,7 +288,7 @@
 <a class="jxr_linenumber" name="278" href="#278">278</a>             String sbtVersion = findVersionFromPluginArtifacts(sbtGroupId, SbtIncrementalCompiler.COMPILER_INTEGRATION_ARTIFACT_ID);
 <a class="jxr_linenumber" name="279" href="#279">279</a>             File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
 <a class="jxr_linenumber" name="280" href="#280">280</a>             File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
-<a class="jxr_linenumber" name="281" href="#281">281</a>             incremental = <strong class="jxr_keyword">new</strong> <a href="../sbt_inc/SbtIncrementalCompiler.html">SbtIncrementalCompiler</a>(useZincServer, zincPort, scalaVersion, libraryJar, compilerJar, extraJars, sbtVersion, xsbtiJar, interfaceSrcJar, getLog());
+<a class="jxr_linenumber" name="281" href="#281">281</a>            	incremental = <strong class="jxr_keyword">new</strong> <a href="../sbt_inc/SbtIncrementalCompiler.html">SbtIncrementalCompiler</a>(useZincServer, zincPort, scalaVersion, libraryJar, compilerJar, extraJars, sbtVersion, xsbtiJar, interfaceSrcJar, getLog());
 <a class="jxr_linenumber" name="282" href="#282">282</a>         }
 <a class="jxr_linenumber" name="283" href="#283">283</a> 
 <a class="jxr_linenumber" name="284" href="#284">284</a>         classpathElements.remove(outputDir.getAbsolutePath());
@@ -316,11 +316,11 @@
 <a class="jxr_linenumber" name="306" href="#306">306</a>             Plugin plugin = project1.getPlugin(scalaPluginKey);
 <a class="jxr_linenumber" name="307" href="#307">307</a>             <strong class="jxr_keyword">if</strong> (plugin != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="308" href="#308">308</a>                 Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();
-<a class="jxr_linenumber" name="309" href="#309">309</a>                 Xpp3Dom analysisCache = configuration.getChild(<span class="jxr_string">"analysisCacheFile"</span>);
+<a class="jxr_linenumber" name="309" href="#309">309</a>                 Xpp3Dom analysisCache = (configuration != <strong class="jxr_keyword">null</strong>) ? configuration.getChild(<span class="jxr_string">"analysisCacheFile"</span>) : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="310" href="#310">310</a>                 File analysisCacheFile = (analysisCache != <strong class="jxr_keyword">null</strong>) ? <strong class="jxr_keyword">new</strong> File(analysisCache.getValue()) : defaultAnalysisCacheFile(project1);
 <a class="jxr_linenumber" name="311" href="#311">311</a>                 File classesDirectory = <strong class="jxr_keyword">new</strong> File(project1.getBuild().getOutputDirectory());
 <a class="jxr_linenumber" name="312" href="#312">312</a>                 map.put(classesDirectory.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile());
-<a class="jxr_linenumber" name="313" href="#313">313</a>                 Xpp3Dom testAnalysisCache = configuration.getChild(<span class="jxr_string">"testAnalysisCacheFile"</span>);
+<a class="jxr_linenumber" name="313" href="#313">313</a>                 Xpp3Dom testAnalysisCache = (configuration != <strong class="jxr_keyword">null</strong>) ? configuration.getChild(<span class="jxr_string">"testAnalysisCacheFile"</span>) : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="314" href="#314">314</a>                 File testAnalysisCacheFile = (testAnalysisCache != <strong class="jxr_keyword">null</strong>) ? <strong class="jxr_keyword">new</strong> File(testAnalysisCache.getValue()) : defaultTestAnalysisCacheFile(project1);
 <a class="jxr_linenumber" name="315" href="#315">315</a>                 File testClassesDirectory = <strong class="jxr_keyword">new</strong> File(project1.getBuild().getTestOutputDirectory());
 <a class="jxr_linenumber" name="316" href="#316">316</a>                 map.put(testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile());
