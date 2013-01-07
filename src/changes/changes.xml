@@ -8,7 +8,9 @@
 
     <release version="3.1.1" date="2013-01-07">
       <action dev="Peter Vlugter" type="fix">Safeguard against null plugin configuration (previously NPE)</action>
-      <action dev="David Bernard" type="update">upgrade to jdk 1.6</action>
+      <action dev="Peter Vlugter" type="fix">Consistently use camel case for system's properties used in configuration</action>
+      <action dev="David Bernard" type="update">upgrade jdk 1.5->1.6, maven 3.0 -> 3.0.4, zinc 0.1.0 -> 0.2.0</action>
+      <action dev="justwrote" type="update">zinc: changed from colon to platform-specific path separator</action>
     </release>
     <release version="3.1.0" date="2012-08-08">
       <action dev="Peter Vlugter" type="update">Zinc integration for incremental compilation of Scala and Java sources.</action>
