@@ -5,6 +5,11 @@
     <author>David Bernard</author>
   </properties>
   <body>
+
+    <release version="3.1.1" date="2013-01-07">
+      <action dev="Peter Vlugter" type="fix">Safeguard against null plugin configuration (previously NPE)</action>
+      <action dev="David Bernard" type="update">upgrade to jdk 1.6</action>
+    </release>
     <release version="3.1.0" date="2012-08-08">
       <action dev="Peter Vlugter" type="update">Zinc integration for incremental compilation of Scala and Java sources.</action>
       <action dev="David Bernard" type="fix" issue="96">remove temporary scala-maven-RANDOM.args after run if displayCmd != true</action>
