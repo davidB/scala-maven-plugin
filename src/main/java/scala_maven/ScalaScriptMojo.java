@@ -27,10 +27,11 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
+
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
-import scala_maven_model.MavenProjectAdapter;
 
 
 /**
@@ -174,8 +175,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
     }
 
-    private boolean hasMavenProjectDependency(Set<String> classpath)
-            throws MalformedURLException {
+    private boolean hasMavenProjectDependency(Set<String> classpath) throws MalformedURLException {
         try {
             List<URL> urls = new ArrayList<URL>();
 
@@ -187,7 +187,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             URLClassLoader loader = new URLClassLoader(urls
                     .toArray(new URL[urls.size()]));
 
-            loader.loadClass(MavenProjectAdapter.class.getCanonicalName());
+            loader.loadClass(MavenProject.class.getCanonicalName());
             return true;
         } catch (ClassNotFoundException e) {
             return false;
@@ -203,8 +203,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             try {
                 Object instance;
                 if (mavenProjectDependency) {
-                    Constructor<?> constructor = compiledScript.getConstructor(MavenProjectAdapter.class, MavenSession.class, Log.class);
-                    instance = constructor.newInstance(new MavenProjectAdapter(project), session, getLog());
+                    Constructor<?> constructor = compiledScript.getConstructor(MavenProject.class, MavenSession.class, Log.class);
+                    instance = constructor.newInstance(project, session, getLog());
                 } else {
                     instance = compiledScript.newInstance();
                 }
@@ -271,10 +271,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         jcmd.run(displayCmd);
     }
 
-    private void configureClasspath(Set<String> classpath) throws Exception,
-            DependencyResolutionRequiredException {
-        MavenProjectAdapter projectAdapter = new MavenProjectAdapter(project);
-
+    private void configureClasspath(Set<String> classpath) throws Exception, DependencyResolutionRequiredException {
         Collection<Dependency> toInclude = new ArrayList<Dependency>();
         if (includeScopes == null || includeScopes.length() == 0) {
             getLog().warn("No scopes were included");
@@ -284,7 +281,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             for (String string : include) {
                 Scopes scope = Scopes.lookup(string.toUpperCase());
                 if (scope != null) {
-                    toInclude.addAll(scope.elements(projectAdapter));
+                    toInclude.addAll(scope.elements(project));
                 } else {
                     getLog().warn(
                             "Included Scope: " + string + " is not one of: "
@@ -298,7 +295,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             for (String string : exclude) {
                 Scopes scope = Scopes.lookup(string.toUpperCase());
                 if (scope != null) {
-                    toInclude.removeAll(scope.elements(projectAdapter));
+                    toInclude.removeAll(scope.elements(project));
                 } else {
                     getLog().warn(
                             "Excluded Scope: " + string + " is not one of: "
@@ -377,7 +374,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             if (mavenProjectDependency) {
 //                out.println("import scala.collection.jcl.Conversions._");
                 out.println("class " + baseName 
-                        + "(project :" + MavenProjectAdapter.class.getCanonicalName()
+                        + "(project :" + MavenProject.class.getCanonicalName()
                         + ",session :" + MavenSession.class.getCanonicalName()
                         + ",log :"+Log.class.getCanonicalName()
                         +") {"
@@ -414,31 +411,31 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     private enum Scopes {
         COMPILE {
             @Override
-            public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
+            public Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException {
                 return project.getCompileDependencies();
             }
         },
         RUNTIME {
             @Override
-            public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
+            public Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException {
                 return project.getRuntimeDependencies();
             }
         },
         TEST {
             @Override
-            public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
+            public Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException {
                 return project.getTestDependencies();
             }
         },
         SYSTEM {
             @Override
-            public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
+            public Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException {
                 return project.getSystemDependencies();
             }
         },
         PLUGIN {
             @Override
-            public Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException {
+            public Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException {
                 Plugin me = project.getBuild().getPluginsAsMap().get("net.alchim31.maven:scala-maven-plugin");
                 Set<Dependency> back = new HashSet<Dependency>();
                 Dependency dep = new Dependency();
@@ -451,7 +448,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             }
         };
 
-        public abstract Collection<Dependency> elements(MavenProjectAdapter project) throws DependencyResolutionRequiredException;
+        public abstract Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException;
 
         public static Scopes lookup(String name) {
             for (Scopes scope : Scopes.values()) {
