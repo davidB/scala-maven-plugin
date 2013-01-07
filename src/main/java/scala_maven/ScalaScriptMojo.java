@@ -28,6 +28,10 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.classworlds.ClassWorld;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
+import org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy;
+import org.codehaus.plexus.classworlds.strategy.Strategy;
 import org.codehaus.plexus.util.StringUtils;
 
 import scala_maven_executions.JavaMainCaller;
@@ -159,13 +163,13 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         Set<String> classpath = new HashSet<String>();
         configureClasspath(classpath);
 
-        URLClassLoader loader = createScriptClassloader(scriptDir, classpath);
 
-        boolean mavenProjectDependency = hasMavenProjectDependency(classpath);
+        boolean mavenProjectDependency = true;//hasMavenProjectDependency(loader);
         wrapScript(destFile, mavenProjectDependency);
 
         try {
             compileScript(scriptDir, destFile, classpath);
+            URLClassLoader loader = createScriptClassloader(scriptDir, classpath);
             runScript(mavenProjectDependency, loader, baseName);
         } finally {
             if (!keepGeneratedScript) {
@@ -175,24 +179,14 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
     }
 
-    private boolean hasMavenProjectDependency(Set<String> classpath) throws MalformedURLException {
-        try {
-            List<URL> urls = new ArrayList<URL>();
-
-            // add the script directory to the classpath
-            for (String string : classpath) {
-                urls.add(new File (string).toURI().toURL());
-            }
-
-            URLClassLoader loader = new URLClassLoader(urls
-                    .toArray(new URL[urls.size()]));
-
-            loader.loadClass(MavenProject.class.getCanonicalName());
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
+//    private boolean hasMavenProjectDependency(URLClassLoader loader) throws Exception {
+//        try {
+//            loader.loadClass(MavenProject.class.getCanonicalName());
+//            return true;
+//        } catch (ClassNotFoundException e) {
+//            return false;
+//        }
+//    }
 
     private void runScript(boolean mavenProjectDependency, URLClassLoader loader, String baseName) throws Exception {
         Class<?> compiledScript = loader.loadClass(baseName);
@@ -244,20 +238,22 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         }
     }
 
-    private URLClassLoader createScriptClassloader(File scriptDir,
-            Set<String> classpath) throws MalformedURLException {
-        List<URL> urls = new ArrayList<URL>();
-
+    private URLClassLoader createScriptClassloader(File scriptDir, Set<String> classpath) throws Exception {
+        ClassWorld w = new ClassWorld("zero", null);
+        ClassRealm rMojo = w.newRealm("mojo", getClass().getClassLoader());
+        Strategy s = new SelfFirstStrategy(w.newRealm("scalaScript", null));
+        ClassRealm rScript = s.getRealm();
+        rScript.setParentClassLoader(getClass().getClassLoader());
+        rScript.importFrom("mojo", MavenProject.class.getPackage().getName());
+        rScript.importFrom("mojo", MavenSession.class.getPackage().getName());
+        rScript.importFrom("mojo", Log.class.getPackage().getName());        
         // add the script directory to the classpath
-        urls.add(scriptDir.toURI().toURL());
+        rScript.addURL(scriptDir.toURI().toURL());
 
         for (String string : classpath) {
-        	urls.add(new File(string).toURI().toURL());
+        	rScript.addURL(new File(string).toURI().toURL());
         }
-
-        URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls
-                .size()]), getClass().getClassLoader());
-        return loader;
+        return rScript;
     }
 
     private void compileScript(File scriptDir, File destFile,

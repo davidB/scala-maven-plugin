@@ -5,7 +5,9 @@
     <author>David Bernard</author>
   </properties>
   <body>
-
+    <release version="" date="">
+      <action dev="David Bernard" type="fix" issue="108">ScalaScriptMojo use class from its classpath before read from parent.</action>
+    </release>
     <release version="3.1.1" date="2013-01-07">
       <action dev="Peter Vlugter" type="fix">Safeguard against null plugin configuration (previously NPE)</action>
       <action dev="Peter Vlugter" type="fix">Consistently use camel case for system's properties used in configuration</action>

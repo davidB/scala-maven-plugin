@@ -5,7 +5,17 @@
 
 package scala_maven;
 
+import java.io.File;
+
 import junit.framework.TestCase;
+
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.classworlds.ClassWorld;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
+import org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy;
+import org.codehaus.plexus.classworlds.strategy.Strategy;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -25,5 +35,34 @@ public class MiscTest extends TestCase {
         assertEquals(1, StringUtils.split("hello|", "|").length);
         assertEquals(2, StringUtils.split("hel|lo", "|").length);
         assertEquals(2, StringUtils.split("hel||lo", "|").length);
+    }
+    
+    public void testClassworldSeftFirstStrategy() throws Exception {
+      ClassWorld w = new ClassWorld("zero", null);
+      ClassRealm rMojo = w.newRealm("mojo", getClass().getClassLoader());
+      Strategy s = new SelfFirstStrategy(w.newRealm("scalaScript", null));
+      ClassRealm rScript = s.getRealm();
+      rScript.setParentClassLoader(getClass().getClassLoader());
+      rScript.importFrom("mojo", MavenProject.class.getPackage().getName());
+      rScript.importFrom("mojo", MavenSession.class.getPackage().getName());
+      rScript.importFrom("mojo", Log.class.getPackage().getName());        
+
+      
+
+      assertEquals(rScript, rScript.getStrategy().getRealm());
+      assertEquals(SelfFirstStrategy.class, rScript.getStrategy().getClass());
+      
+      File olderjar = new File(System.getProperty("user.home"), ".m2/repository/net/alchim31/maven/scala-maven-plugin/3.1.0/scala-maven-plugin-3.1.0.jar");
+      if (olderjar.exists()) {
+        System.out.println("found older jar");
+        rScript.addURL(olderjar.toURI().toURL());
+        String clname = "scala_maven.ScalaScriptMojo";
+        //assertNotSame(s.loadClass(clname), getClass().getClassLoader().loadClass(clname));
+        assertNotSame(rScript.loadClass(clname), getClass().getClassLoader().loadClass(clname));
+        assertSame(rMojo.loadClass(clname), getClass().getClassLoader().loadClass(clname));
+        assertSame(rScript.loadClass(MavenProject.class.getCanonicalName()), MavenProject.class);
+        assertSame(rScript.loadClass(MavenSession.class.getCanonicalName()), MavenSession.class);
+        assertSame(rScript.loadClass(Log.class.getCanonicalName()), Log.class);
+      }
     }
 }
