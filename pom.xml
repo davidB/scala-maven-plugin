@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
-    <version>5</version>
+    <version>7</version>
   </parent>
 
   <groupId>net.alchim31.maven</groupId>
@@ -85,9 +85,10 @@
 
   <properties>
     <maven.version>3.0</maven.version>
-    <maven.compiler.source>1.5</maven.compiler.source>
-    <maven.compiler.target>1.5</maven.compiler.target>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
     <encoding>UTF-8</encoding>
+    <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
   </properties>
 
   <prerequisites>
@@ -99,6 +100,7 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <version>${maven.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
@@ -236,6 +238,7 @@
                   <link>http://slf4j.org/api/</link>
                   <link>http://commons.apache.org/lang/api-release/</link>
                   <link>http://commons.apache.org/io/api-release/</link>
+                  <link>http://junit.sourceforge.net/javadoc/</link>
                 </links>
                 <!-- additionalparam>-nopackagediagram</additionalparam-->
                 <!-- additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam-->
@@ -336,7 +339,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.5</version>
+            <version>1.8</version>
             <configuration>
               <settingsFile>src/it/settings.xml</settingsFile>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
