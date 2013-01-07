@@ -159,10 +159,10 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     protected String vscaladocVersion;
 
     /**
-     * To allow running aggregation only from command line use "-Dforce-aggregate=true" (avoid using in pom.xml).
+     * To allow running aggregation only from command line use "-DforceAggregate=true" (avoid using in pom.xml).
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${force-aggregate}" default-value="false"
+     * @parameter expression="${forceAggregate}" default-value="false"
      */
     protected boolean forceAggregate = false;
 
