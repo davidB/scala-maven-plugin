@@ -189,6 +189,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected String[] javacArgs;
 
     /**
+     * Whether to instruct javac to generate debug symbols (when using incremental compiler)
+     * @see {@link http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug}
+     *
+     * @parameter expression="${javacGenerateDebugSymbols}"
+     *            default-value="true"
+     */
+    protected boolean javacGenerateDebugSymbols = true;
+
+    /**
      * Alternative method for specifying javac arguments (when using incremental compiler).
      * Can be used from command line with -DaddJavacArgs=arg1|arg2|arg3|... rather than in pom.xml.
      *
@@ -594,6 +603,12 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         if (StringUtils.isNotEmpty(addJavacArgs)) {
             Collections.addAll(options, StringUtils.split(addJavacArgs, "|"));
         }
+
+        // issue #116
+        if (javacGenerateDebugSymbols) {
+            options.add("-g");
+        }
+
         return options;
     }
 
