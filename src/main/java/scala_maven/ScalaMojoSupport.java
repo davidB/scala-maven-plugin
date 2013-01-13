@@ -205,6 +205,28 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      */
     protected String addJavacArgs;
 
+    
+    /**
+     * The -source argument for the Java compiler (when using incremental compiler).
+     *
+     * @parameter expression="${maven.compiler.source}"
+     */
+    protected String source;
+    
+    /**
+     * The -target argument for the Java compiler (when using incremental compiler).
+     *
+     * @parameter expression="${maven.compiler.target}"
+     */
+    protected String target;
+    
+    /**
+     * The -encoding argument for the Java compiler. (when using incremental compiler).
+     *
+     * @parameter expression="${project.build.sourceEncoding}"
+     */
+    protected String encoding;
+    
     /**
      * Display the command line called ?
      * (property 'maven.scala.displayCmd' replaced by 'displayCmd')
@@ -608,7 +630,18 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         if (javacGenerateDebugSymbols) {
             options.add("-g");
         }
-
+        if (target != null) {
+            options.add("-target");
+            options.add(target);
+        }
+        if (source != null) {
+          options.add("-source");
+          options.add(source);
+        }
+        if (encoding != null) {
+          options.add("-encoding");
+          options.add(encoding);
+        }
         return options;
     }
 

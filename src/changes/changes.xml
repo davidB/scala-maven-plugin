@@ -5,9 +5,10 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="" date="">
+    <release version="3.1.2" date="2013-01-14">
       <action dev="David Bernard" type="fix" issue="108">ScalaScriptMojo use class from its classpath before read from parent.</action>
       <action dev="David Bernard" type="fix" issue="5" due-to="Chris Severs">ScalaScriptMojo use class from its classpath before read from parent.</action>
+      <action dev="David Bernard" type="fix" issue="115" due-to="Shai Yallin">add "source", "target", "encoding" to configure java compiler via zinc.</action>
     </release>
     <release version="3.1.1" date="2013-01-07">
       <action dev="Peter Vlugter" type="fix">Safeguard against null plugin configuration (previously NPE)</action>
