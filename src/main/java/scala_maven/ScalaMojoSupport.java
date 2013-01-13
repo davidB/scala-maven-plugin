@@ -583,7 +583,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     private String getBootClasspath() throws Exception {
         Set<String> classpath = new HashSet<String>();
         addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString(), classpath);
-        addToClasspath(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString(), classpath);
+        //addToClasspath(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString(), classpath);
         return MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
     }
 
