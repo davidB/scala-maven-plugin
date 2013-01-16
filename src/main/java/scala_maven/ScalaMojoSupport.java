@@ -421,28 +421,18 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         }
     }
 
-    protected void addCompilerToClasspath(String version, Set<String> classpath) throws Exception {
-        if(StringUtils.isEmpty(scalaHome)) {
-            addToClasspath(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, version, classpath);
-        } else {
-            // Note that in this case we have to ignore dependencies.
-            File lib = new File(scalaHome, "lib");
-            File compilerJar = new File(lib, "scala-compiler.jar");
-            classpath.add(compilerJar.toString());
-        }
+    protected void addCompilerToClasspath(Set<String> classpath) throws Exception {
+      classpath.add(FileUtils.pathOf(getCompilerJar(), useCanonicalPath));
+      for (File dep : getCompilerDependencies()) {
+        classpath.add(FileUtils.pathOf(dep, useCanonicalPath));
+      }
     }
 
-    protected void addLibraryToClasspath(String version, Set<String> classpath) throws Exception {
-        if(StringUtils.isEmpty(scalaHome)) {
-            addToClasspath(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, version, classpath);
-        } else {
-            // Note that in this case we have to ignore dependencies.
-            File lib = new File(scalaHome, "lib");
-            File libraryJar = new File(lib, "scala-library.jar");
-            classpath.add(libraryJar.toString());
-        }
+    protected void addLibraryToClasspath(Set<String> classpath) throws Exception {
+      classpath.add(FileUtils.pathOf(getLibraryJar(), useCanonicalPath));
     }
 
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
             String oldWay = System.getProperty("maven.scala.version");
@@ -622,7 +612,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     private String getToolClasspath() throws Exception {
         Set<String> classpath = new LinkedHashSet<String>();
-        addCompilerToClasspath(findScalaVersion().toString(), classpath);
+        addCompilerToClasspath(classpath);
 //        addToClasspath(SCALA_GROUPID, "scala-decoder", scalaVersion, classpath);
 //        addToClasspath(SCALA_GROUPID, "scala-dbc", scalaVersion, classpath);
         if (dependencies != null) {
@@ -635,7 +625,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     private String getBootClasspath() throws Exception {
         Set<String> classpath = new LinkedHashSet<String>();
-        addLibraryToClasspath(findScalaVersion().toString(), classpath);
+        addLibraryToClasspath(classpath);
         return MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
     }
 
@@ -676,19 +666,29 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected File getLibraryJar() throws Exception {
-        return getArtifactJar(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString());
+      if (!StringUtils.isEmpty(scalaHome)) {
+        File lib = new File(scalaHome, "lib");
+        return new File(lib, "scala-library.jar");
+      }
+      return getArtifactJar(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString());
     }
 
     protected File getCompilerJar() throws Exception {
-        return getArtifactJar(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
+      if(!StringUtils.isEmpty(scalaHome)) {
+        File lib = new File(scalaHome, "lib");
+        return new File(lib, "scala-compiler.jar");
+      }
+      return getArtifactJar(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
     }
 
     protected List<File> getCompilerDependencies() throws Exception {
-        List<File> d = new ArrayList<File>();
+      List<File> d = new ArrayList<File>();
+      if(StringUtils.isEmpty(scalaHome)) {
         for (Artifact artifact : getAllDependencies(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString())) {
-            d.add(artifact.getFile());
+          d.add(artifact.getFile());
         }
-        return d;
+      }
+      return d;
     }
 
     protected File getArtifactJar(String groupId, String artifactId, String version) throws Exception {
@@ -754,9 +754,8 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         Set<String> plugins = new HashSet<String>();
         if (compilerPlugins != null) {
             Set<String> ignoreClasspath = new LinkedHashSet<String>();
-            String sv = findScalaVersion().toString();
-            addCompilerToClasspath(sv, ignoreClasspath);
-            addLibraryToClasspath(sv, ignoreClasspath);
+            addCompilerToClasspath(ignoreClasspath);
+            addLibraryToClasspath(ignoreClasspath);
             for (BasicArtifact artifact : compilerPlugins) {
                 getLog().info("compiler plugin: " + artifact.toString());
                 // TODO - Ensure proper scala version for plugins

@@ -59,12 +59,11 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     protected void doExecute() throws Exception {
         //TODO - Many other paths uses the getScalaCommand()!!! We should try to use that as much as possibel to help maintainability.
         VersionNumber scalaVersion = findScalaVersion();
-        String sv = scalaVersion.toString();
         Set<String> classpath = new LinkedHashSet<String>();
-        addCompilerToClasspath(sv, classpath);
-        addLibraryToClasspath(sv, classpath);
+        addCompilerToClasspath(classpath);
+        addLibraryToClasspath(classpath);
         if (new VersionNumber("2.9.0").compareTo(scalaVersion) <= 0) {
-          addToClasspath("org.scala-lang", "jline", sv, classpath);
+          addToClasspath("org.scala-lang", "jline", scalaVersion.toString(), classpath);
         } else {
           addToClasspath("jline", "jline", "0.9.94", classpath);
         }
