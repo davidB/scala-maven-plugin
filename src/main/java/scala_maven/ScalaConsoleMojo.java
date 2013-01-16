@@ -3,6 +3,7 @@ package scala_maven;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -54,13 +55,14 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     protected File javaRebelPath;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doExecute() throws Exception {
         //TODO - Many other paths uses the getScalaCommand()!!! We should try to use that as much as possibel to help maintainability.
         VersionNumber scalaVersion = findScalaVersion();
         String sv = scalaVersion.toString();
-        Set<String> classpath = new HashSet<String>();
-        addToClasspath("org.scala-lang", "scala-compiler", sv, classpath);
-        addToClasspath("org.scala-lang", "scala-library", sv, classpath);
+        Set<String> classpath = new LinkedHashSet<String>();
+        addCompilerToClasspath(sv, classpath);
+        addLibraryToClasspath(sv, classpath);
         if (new VersionNumber("2.9.0").compareTo(scalaVersion) <= 0) {
           addToClasspath("org.scala-lang", "jline", sv, classpath);
         } else {
@@ -93,7 +95,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         addCompilerPluginOptions(jcmd);
         if (javaRebelPath != null) {
             if (!javaRebelPath.exists()) {
-                getLog().warn("javaRevelPath '"+ javaRebelPath.getCanonicalPath()+"' not found");
+                getLog().warn("javaRevelPath '"+javaRebelPath.getCanonicalPath()+"' not found");
             } else {
                 jcmd.addJvmArgs("-noverify", "-javaagent:" + javaRebelPath.getCanonicalPath());
             }
