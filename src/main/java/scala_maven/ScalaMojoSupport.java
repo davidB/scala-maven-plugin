@@ -2,6 +2,7 @@ package scala_maven;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -361,20 +362,19 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @throws InvalidDependencyVersionException
      */
     protected Set<Artifact> resolveDependencyArtifacts(MavenProject theProject) throws Exception {
-//        AndArtifactFilter filter = new AndArtifactFilter();
-//        filter.add(new ScopeArtifactFilter(Artifact.SCOPE_TEST));
-//        filter.add(new ArtifactFilter(){
-//            public boolean include(Artifact artifact) {
-//                return !artifact.isOptional();
-//            }
-//        });
-//        //TODO follow the dependenciesManagement and override rules
-//        Set<Artifact> artifacts = theProject.createArtifacts(factory, Artifact.SCOPE_RUNTIME, filter);
-//        for (Artifact artifact : artifacts) {
-//            resolver.resolve(artifact, remoteRepos, localRepo);
-//        }
-//        return artifacts;
-      return theProject.getArtifacts();
+        AndArtifactFilter filter = new AndArtifactFilter();
+        filter.add(new ScopeArtifactFilter(Artifact.SCOPE_TEST));
+        filter.add(new ArtifactFilter(){
+            public boolean include(Artifact artifact) {
+                return !artifact.isOptional();
+            }
+        });
+        //TODO follow the dependenciesManagement and override rules
+        Set<Artifact> artifacts = theProject.createArtifacts(artifactFactory, Artifact.SCOPE_RUNTIME, filter);
+        for (Artifact artifact : artifacts) {
+            resolver.resolve(artifact, remoteRepos, localRepo);
+        }
+        return artifacts;
     }
 
     /**
