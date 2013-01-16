@@ -39,15 +39,16 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
 
 
     @Override
-    public void addJvmArgs(String... args) {
+    public void addJvmArgs(String... args0) {
         //TODO - Ignore classpath
-        if (args != null) {
-            for (String arg : args) {
+        if (args0 != null) {
+            for (String arg : args0) {
                 requester.getLog().warn("jvmArgs are ignored when run in process :" + arg);
             }
         }
     }
 
+    @Override
     public boolean run(boolean displayCmd, boolean throwFailure) throws Exception {
         try {
             runInternal(displayCmd);
@@ -63,6 +64,7 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
     /**
      *  spawns a thread to run the method
      */
+    @Override
     public SpawnMonitor spawn(final boolean displayCmd) throws Exception {
         final Thread t = new Thread() {
             @Override
@@ -76,6 +78,7 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
         };
         t.start();
         return new SpawnMonitor() {
+            @Override
             public boolean isRunning() throws Exception {
                 return t.isAlive();
             }
@@ -93,6 +96,7 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
 
 
 
+    @Override
     public void redirectToLog() {
         requester.getLog().warn("redirection to log is not supported for 'inProcess' mode");
     }

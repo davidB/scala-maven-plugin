@@ -31,9 +31,10 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         addArgs(args1);
     }
 
-    public void addJvmArgs(String... args1) {
-        if(args1 != null) {
-            for(String arg : args1) {
+    @Override
+    public void addJvmArgs(String... args0) {
+        if(args0 != null) {
+            for(String arg : args0) {
                 if (StringUtils.isNotEmpty(arg)) {
                     this.jvmArgs.add(arg);
                 }
@@ -58,6 +59,7 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         }
     }
 
+    @Override
     public void addOption(String key, String value) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
             return;
@@ -65,6 +67,7 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         addArgs(key, value);
     }
 
+    @Override
     public void addOption(String key, File value) {
         if ( (value == null) || StringUtils.isEmpty(key)) {
             return;
@@ -72,12 +75,14 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         addArgs(key, value.getAbsolutePath());
     }
 
+    @Override
     public void addOption(String key, boolean value) {
         if ((!value) || StringUtils.isEmpty(key)) {
             return;
         }
         addArgs(key);
     }
+    @Override
     public void addArgs(String... args1) {
         if(args1 != null) {
             for(String arg : args1) {
@@ -88,10 +93,12 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         }
     }
 
+    @Override
     public void addEnvVar(String key, String value) {
         this.env.add(key + "=" + value);
 
     }
+    @Override
     public void run(boolean displayCmd) throws Exception {
         run(displayCmd, true);
     }

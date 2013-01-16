@@ -193,6 +193,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         return normalize(sources);
     }
 
+    @Override
     public boolean canGenerateReport() {
         // there is modules to aggregate
         boolean back = ((project.isExecutionRoot() || forceAggregate) && canAggregate() && project.getCollectedProjects().size() > 0);
@@ -219,32 +220,38 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         return StringUtils.isNotEmpty(vscaladocVersion) && (new VersionNumber(vscaladocVersion).compareTo(new VersionNumber("1.1")) >= 0);
     }
 
+    @Override
     public boolean isExternalReport() {
         return true;
     }
 
+    @Override
     public String getCategoryName() {
         return CATEGORY_PROJECT_REPORTS;
     }
 
-    public String getDescription(@SuppressWarnings("unused") Locale locale) {
+    @Override
+    public String getDescription(Locale locale) {
         if (StringUtils.isEmpty(description)) {
             return "ScalaDoc API documentation";
         }
         return description;
     }
 
-    public String getName(@SuppressWarnings("unused") Locale locale) {
+    @Override
+    public String getName(Locale locale) {
         if (StringUtils.isEmpty(name)) {
             return "ScalaDocs";
         }
         return name;
     }
 
+    @Override
     public String getOutputName() {
         return outputDirectory + "/index";
     }
 
+    @Override
     public File getReportOutputDirectory() {
         if (reportOutputDirectory == null) {
             reportOutputDirectory = new File(project.getBasedir(), project.getReporting().getOutputDirectory() + "/" + outputDirectory).getAbsoluteFile();
@@ -252,6 +259,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         return reportOutputDirectory;
     }
 
+    @Override
     public void setReportOutputDirectory(File v) {
         if (v != null && outputDirectory != null && !v.getAbsolutePath().endsWith(outputDirectory)) {
             this.reportOutputDirectory = new File(v, outputDirectory);
@@ -314,6 +322,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         return jcmd;
     }
 
+    @Override
     public void generate(Sink sink, Locale locale) throws MavenReportException {
         try {
             if (!canGenerateReport()) {

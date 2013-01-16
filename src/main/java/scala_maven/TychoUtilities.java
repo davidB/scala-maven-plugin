@@ -31,6 +31,7 @@ public class TychoUtilities {
         try {
             final Class<?> mpClazz = MavenProject.class;
             getContextValueMethod0 = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>() {
+                @Override
                 public Method run() throws Exception {
                     Method m = mpClazz.getDeclaredMethod("getContextValue", String.class);
                     m.setAccessible(true);
@@ -40,6 +41,7 @@ public class TychoUtilities {
 
             final Class<?> cpeClazz = Class.forName("org.codehaus.tycho.ClasspathEntry");
             getLocationsMethod0 = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>() {
+                @Override
                 public Method run() throws Exception {
                     Method m = cpeClazz.getDeclaredMethod("getLocations");
                     m.setAccessible(true);

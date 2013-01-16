@@ -49,6 +49,7 @@ public class VersionNumber /*implements Serializable*/ implements Comparable<Ver
     /**
      * Doesn't compare modifier
      */
+    @Override
     public int compareTo(VersionNumber o) {
         int back = 0;
         if ((back == 0) && (major > o.major)) {

@@ -45,6 +45,7 @@ public class AddSourceMojo extends AbstractMojo {
      */
     protected boolean useCanonicalPath = true;
     
+    @Override
     public void execute() throws MojoExecutionException {
         try {
             if (sourceDir != null) {

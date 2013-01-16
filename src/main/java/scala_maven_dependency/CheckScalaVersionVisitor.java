@@ -23,7 +23,8 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
 
     private List<String> scalaDependentArtifactStrings = new ArrayList<String>();
 
-    public boolean endVisit(@SuppressWarnings("unused") DependencyNode node) {
+    @Override
+    public boolean endVisit(DependencyNode node) {
         return !_failed;
     }
 
@@ -36,6 +37,7 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
         return SCALA_DISTRO_GROUP.equalsIgnoreCase(artifact.getGroupId()) &&
         SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId());
     }
+    @Override
     public boolean visit(DependencyNode node) {
         //TODO - Do we care about provided scope?
         Artifact artifact = node.getArtifact();

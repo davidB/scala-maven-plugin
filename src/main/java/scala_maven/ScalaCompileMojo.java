@@ -59,6 +59,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     }
 
     @Override
+    @Deprecated
     protected List<Dependency> getDependencies() {
         return project.getCompileDependencies();
     }

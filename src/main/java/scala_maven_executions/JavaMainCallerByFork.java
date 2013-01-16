@@ -57,6 +57,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         _forceUseArgFile = forceUseArgFile;
     }
 
+    @Override
     public boolean run(boolean displayCmd, boolean throwFailure) throws Exception {
         List<String> cmd = buildCommand();
         displayCmd(displayCmd, cmd);
@@ -113,6 +114,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         }
     }
 
+    @Override
     public SpawnMonitor spawn(boolean displayCmd) throws Exception {
         List<String> cmd = buildCommand();
         File out = new File(System.getProperty("java.io.tmpdir"), mainClassName +".out");
@@ -137,6 +139,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         //pb.redirectErrorStream(true);
         final Process p = pb.start();
         return new SpawnMonitor(){
+            @Override
             public boolean isRunning() throws Exception {
                 try {
                     p.exitValue();
@@ -192,6 +195,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         return back;
     }
 
+    @Override
     public void redirectToLog() {
         _redirectToLog = true;
     }

@@ -9,14 +9,11 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -240,7 +237,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
     private URLClassLoader createScriptClassloader(File scriptDir, Set<String> classpath) throws Exception {
         ClassWorld w = new ClassWorld("zero", null);
-        ClassRealm rMojo = w.newRealm("mojo", getClass().getClassLoader());
+        w.newRealm("mojo", getClass().getClassLoader());
         Strategy s = new SelfFirstStrategy(w.newRealm("scalaScript", null));
         ClassRealm rScript = s.getRealm();
         rScript.setParentClassLoader(getClass().getClassLoader());

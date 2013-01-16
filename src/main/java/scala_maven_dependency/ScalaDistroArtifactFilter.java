@@ -12,12 +12,14 @@ import static scala_maven_dependency.ScalaConstants.*;
  * @author JSuereth
  */
 public class ScalaDistroArtifactFilter implements DependencyNodeFilter, ArtifactFilter {
-	public boolean include(Artifact artifact) {
+	@Override
+  public boolean include(Artifact artifact) {
 		//TODO - Are we checking the right artifacts?
 		return SCALA_DISTRO_GROUP.equalsIgnoreCase(artifact.getGroupId()) && 
 		SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId());
 	}
-	public boolean accept(DependencyNode node) {
+	@Override
+  public boolean accept(DependencyNode node) {
 		return include(node.getArtifact());
 	}
 
