@@ -30,6 +30,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.filter.AncestorOrSelfDependencyNodeFilter;
@@ -85,7 +86,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @required
      * @readonly
      */
-    protected ArtifactFactory factory;
+    protected RepositorySystem factory;
 
     /**
      * Used to look up Artifacts in the remote repository.
@@ -195,7 +196,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      *
      * @parameter expression="${javacArgs}"
      */
-    protected String[] javacArgs;
+    protected String[] javacArgs;@SuppressWarnings("unused") 
 
     /**
      * Whether to instruct javac to generate debug symbols (when using incremental compiler)
@@ -360,19 +361,20 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @throws InvalidDependencyVersionException
      */
     protected Set<Artifact> resolveDependencyArtifacts(MavenProject theProject) throws Exception {
-        AndArtifactFilter filter = new AndArtifactFilter();
-        filter.add(new ScopeArtifactFilter(Artifact.SCOPE_TEST));
-        filter.add(new ArtifactFilter(){
-            public boolean include(Artifact artifact) {
-                return !artifact.isOptional();
-            }
-        });
-        //TODO follow the dependenciesManagement and override rules
-        Set<Artifact> artifacts = theProject.createArtifacts(factory, Artifact.SCOPE_RUNTIME, filter);
-        for (Artifact artifact : artifacts) {
-            resolver.resolve(artifact, remoteRepos, localRepo);
-        }
-        return artifacts;
+//        AndArtifactFilter filter = new AndArtifactFilter();
+//        filter.add(new ScopeArtifactFilter(Artifact.SCOPE_TEST));
+//        filter.add(new ArtifactFilter(){
+//            public boolean include(Artifact artifact) {
+//                return !artifact.isOptional();
+//            }
+//        });
+//        //TODO follow the dependenciesManagement and override rules
+//        Set<Artifact> artifacts = theProject.createArtifacts(factory, Artifact.SCOPE_RUNTIME, filter);
+//        for (Artifact artifact : artifacts) {
+//            resolver.resolve(artifact, remoteRepos, localRepo);
+//        }
+//        return artifacts;
+      return theProject.getArtifacts();
     }
 
     /**
@@ -408,7 +410,14 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @todo might want to merge with existing "addToClasspath" methods.
      */
     public void addToClasspath(String groupId, String artifactId, String version, String classifier, Set<String> classpath, boolean addDependencies) throws Exception {
-        addToClasspath(factory.createDependencyArtifact(groupId, artifactId, VersionRange.createFromVersion(version), "jar", classifier, Artifact.SCOPE_RUNTIME), classpath, addDependencies);
+      Dependency d = new Dependency();
+      d.setGroupId(groupId);
+      d.setArtifactId(artifactId);
+      d.setVersion(version);
+      d.setType("jar");
+      d.setClassifier(classifier);
+      d.setScope(Artifact.SCOPE_RUNTIME);
+      addToClasspath(factory.createDependencyArtifact(d), classpath, addDependencies);
     }
 
     protected void addToClasspath(Artifact artifact, Set<String> classpath, boolean addDependencies) throws Exception {

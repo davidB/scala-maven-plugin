@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
@@ -298,11 +297,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         }
 
         for (Dependency dependency : toInclude) {
-            addToClasspath(factory.createDependencyArtifact(dependency
-                    .getGroupId(), dependency.getArtifactId(), VersionRange
-                    .createFromVersion(dependency.getVersion()), dependency
-                    .getType(), dependency.getClassifier(), dependency
-                    .getScope(), dependency.isOptional()), classpath, true);
+            addToClasspath(factory.createDependencyArtifact(dependency), classpath, true);
         }
 
 
