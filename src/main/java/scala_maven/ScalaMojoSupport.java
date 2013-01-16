@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -51,6 +52,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     public static final String SCALA_GROUPID= "org.scala-lang";
     public static final String SCALA_LIBRARY_ARTIFACTID= "scala-library";
     public static final String SCALA_COMPILER_ARTIFACTID= "scala-compiler";
+    
     /**
      * @parameter expression="${project}"
      * @required
