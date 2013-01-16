@@ -125,5 +125,19 @@ one error found
 </project>
                 ]]></source>
     </section>
+    <section name="Use local scala's jar">
+        <p>If you want to try to compile with a local installation of scala for any reason like :
+            <ul>
+            <li>testing an unreleased version of Scala, for instance to report/reproduce a bug in a maven project</li>
+            <li>running integration builds against a different branch of the Scala compiler (community build)</li>
+            <li>using special flavors of Scala, such as paradise/macros </li>
+            </ul>
+        </p>
+        <p>You should define property "scala.home". DO NOT DEPLOY (or install) with this option, it'll break user's projects.</p>
+        <p>In this case ${scala.home}/lib/scala-library.jar and ${scala.home}/lib/scala-compiler.jar are used to compile, to run,...</p>
+        <source><![CDATA[
+mvn compile -Dscala.home=<path/of/scalaHome>
+                ]]></source>
+    </section>
   </body>
 </document>

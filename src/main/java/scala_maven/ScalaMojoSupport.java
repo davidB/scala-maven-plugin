@@ -186,7 +186,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     private String scalaVersion;
 
     /**
-     * Path to Scala installation.
+     * Path to Scala installation to use instead of the artifact (define as dependencies).
      *
      * @parameter expression="${scala.home}"
      */
@@ -537,8 +537,12 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected void checkScalaVersion() throws Exception {
+        String sv = findScalaVersion().toString();
+        if (StringUtils.isNotEmpty(scalaHome)) {
+            getLog().warn(String.format("local scala-library.jar and scala-compiler.jar from scalaHome(%s) used instead of scala %s", scalaHome, sv));
+        }
         if (checkMultipleScalaVersions) {
-            checkCorrectVersionsOfScalaLibrary(findScalaVersion().toString());
+            checkCorrectVersionsOfScalaLibrary(sv);
         }
     }
 
