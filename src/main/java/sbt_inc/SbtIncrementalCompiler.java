@@ -38,7 +38,7 @@ public class SbtIncrementalCompiler {
 
     private Compiler compiler;
 
-    public SbtIncrementalCompiler(boolean useZincServer, int zincPort, String scalaVersion, File libraryJar, File compilerJar, List<File> extraJars, String sbtVersion, File xsbtiJar, File interfaceJar, Log l) throws Exception {
+    public SbtIncrementalCompiler(boolean useZincServer, int zincPort, File libraryJar, File compilerJar, List<File> extraJars, File xsbtiJar, File interfaceJar, Log l) throws Exception {
         this.log = l;
         if (useZincServer) {
             this.zinc = new ZincClient(zincPort);
