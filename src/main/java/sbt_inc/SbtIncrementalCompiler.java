@@ -96,7 +96,7 @@ public class SbtIncrementalCompiler {
             arguments.add("-S" + scalacOption);
         }
         for (String javacOption : javacOptions) {
-            arguments.add("-J" + javacOption);
+            arguments.add("-C" + javacOption);
         }
         arguments.add("-compile-order");
         arguments.add(compileOrder);
