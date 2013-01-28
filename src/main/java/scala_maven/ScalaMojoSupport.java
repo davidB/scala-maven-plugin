@@ -619,7 +619,17 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         } else  {
             cmd = new JavaMainCallerInProcess(this, mainClass, getToolClasspath(), null, null);
         }
-        cmd.addJvmArgs("-Xbootclasspath/a:"+ getBootClasspath());
+        // HACK (better may need refactor)
+        boolean bootcp = true;
+        if (args != null) {
+          for(String arg : args) {
+            bootcp = bootcp && !"-nobootcp".equals(arg);
+          }
+        }
+        bootcp = bootcp && !(StringUtils.isNotEmpty(addScalacArgs) && addScalacArgs.contains("-nobootcp"));
+        if (bootcp) {
+          cmd.addJvmArgs("-Xbootclasspath/a:"+ getBootClasspath());
+        }
         return cmd;
     }
 
