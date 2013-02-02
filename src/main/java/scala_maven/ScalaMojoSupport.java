@@ -607,18 +607,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected JavaMainCaller getEmptyScalaCommand(String mainClass) throws Exception {
-        //TODO - Fork or not depending on configuration?
-        JavaMainCaller cmd;
-        if(fork) {
-           // scalac with args in files
-           // * works only since 2.8.0
-           // * is buggy (don't manage space in path on windows)
-            getLog().debug("use java command with args in file forced : " + forceUseArgFile);
-
-            cmd = new JavaMainCallerByFork(this, mainClass, getToolClasspath(), null, null, forceUseArgFile, toolchainManager.getToolchainFromBuildContext("jdk", session));
-        } else  {
-            cmd = new JavaMainCallerInProcess(this, mainClass, getToolClasspath(), null, null);
-        }
+      
+      //TODO - Fork or not depending on configuration?
+      JavaMainCaller cmd;
+      String toolcp = getToolClasspath();
+      if(fork) {
         // HACK (better may need refactor)
         boolean bootcp = true;
         if (args != null) {
@@ -626,11 +619,20 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             bootcp = bootcp && !"-nobootcp".equals(arg);
           }
         }
+        String cp = bootcp ? "" : toolcp;
         bootcp = bootcp && !(StringUtils.isNotEmpty(addScalacArgs) && addScalacArgs.contains("-nobootcp"));
+        // scalac with args in files
+        // * works only since 2.8.0
+        // * is buggy (don't manage space in path on windows)
+        getLog().debug("use java command with args in file forced : " + forceUseArgFile);
+        cmd = new JavaMainCallerByFork(this, mainClass, cp, null, null, forceUseArgFile, toolchainManager.getToolchainFromBuildContext("jdk", session));
         if (bootcp) {
-          cmd.addJvmArgs("-Xbootclasspath/a:"+ getBootClasspath());
+          cmd.addJvmArgs("-Xbootclasspath/a:" + toolcp);
         }
-        return cmd;
+      } else  {
+        cmd = new JavaMainCallerInProcess(this, mainClass, toolcp, null, null);
+      }
+      return cmd;
     }
 
     private String getToolClasspath() throws Exception {
@@ -643,12 +645,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
                 addToClasspath(artifact.groupId, artifact.artifactId, artifact.version, classpath);
             }
         }
-        return MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
-    }
-
-    private String getBootClasspath() throws Exception {
-        Set<String> classpath = new LinkedHashSet<String>();
-        addLibraryToClasspath(classpath);
         return MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
     }
 
@@ -709,6 +705,13 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       if(StringUtils.isEmpty(scalaHome)) {
         for (Artifact artifact : getAllDependencies(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString())) {
           d.add(artifact.getFile());
+        }
+      } else {
+        for(File f : new File(scalaHome, "lib").listFiles()) {
+          String name = f.getName();
+          if (name.endsWith(".jar") && !name.contains("scala-library") && !name.contains("scala-compiler")) {
+            d.add(f);
+          }
         }
       }
       return d;
