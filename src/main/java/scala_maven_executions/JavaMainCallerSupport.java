@@ -26,7 +26,9 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
             env.add(key + "=" + System.getenv(key));
         }
         this.mainClassName = mainClassName1;
-        addJvmArgs("-classpath", classpath);
+        if (StringUtils.isNotEmpty(classpath)) {
+          addJvmArgs("-classpath", classpath);
+        }
         addJvmArgs(jvmArgs1);
         addArgs(args1);
     }
@@ -46,6 +48,7 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         if ((entry == null) || !entry.exists()) {
             return;
         }
+        boolean found = false;
         boolean isClasspath = false;
         for (int i = 0; i < jvmArgs.size(); i++) {
             String item = jvmArgs.get(i);
@@ -53,9 +56,13 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
                 item = item + File.pathSeparator + entry.getCanonicalPath();
                 jvmArgs.set(i, item);
                 isClasspath = false;
+                found = true;
                 break;
             }
             isClasspath = "-classpath".equals(item);
+        }
+        if (!found) {
+          addJvmArgs("-classpath", entry.getCanonicalPath());
         }
     }
 

@@ -637,6 +637,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     private String getToolClasspath() throws Exception {
         Set<String> classpath = new LinkedHashSet<String>();
+        addLibraryToClasspath(classpath);
         addCompilerToClasspath(classpath);
 //        addToClasspath(SCALA_GROUPID, "scala-decoder", scalaVersion, classpath);
 //        addToClasspath(SCALA_GROUPID, "scala-dbc", scalaVersion, classpath);
@@ -685,7 +686,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected File getLibraryJar() throws Exception {
-      if (!StringUtils.isEmpty(scalaHome)) {
+      if (StringUtils.isNotEmpty(scalaHome)) {
         File lib = new File(scalaHome, "lib");
         return new File(lib, "scala-library.jar");
       }
@@ -693,7 +694,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected File getCompilerJar() throws Exception {
-      if(!StringUtils.isEmpty(scalaHome)) {
+      if(StringUtils.isNotEmpty(scalaHome)) {
         File lib = new File(scalaHome, "lib");
         return new File(lib, "scala-compiler.jar");
       }

@@ -281,7 +281,8 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     protected JavaMainCaller getScalaCommand() throws Exception {
         //This ensures we have a valid scala version...
         checkScalaVersion();
-        boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(findScalaVersion()) > 0);
+        VersionNumber sv = findScalaVersion();
+        boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(sv) > 0 && !sv.isZero());
         if (StringUtils.isEmpty(scaladocClassName)) {
             if (!isPreviousScala271) {
                 scaladocClassName = "scala.tools.nsc.ScalaDoc";
@@ -303,7 +304,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
         //jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
 
-        boolean isScaladoc2 = (new VersionNumber("2.8.0").compareTo(findScalaVersion()) <= 0) && ("scala.tools.nsc.ScalaDoc".equals(scaladocClassName));
+        boolean isScaladoc2 = (new VersionNumber("2.8.0").compareTo(sv) <= 0 || sv.isZero()) && ("scala.tools.nsc.ScalaDoc".equals(scaladocClassName));
         if (isScaladoc2) {
             jcmd.addArgs("-doc-format:html");
             jcmd.addOption("-doc-title", doctitle);

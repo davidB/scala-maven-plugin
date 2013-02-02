@@ -14,6 +14,9 @@ public class VersionNumber /*implements Serializable*/ implements Comparable<Ver
     public String modifier;
 
     public VersionNumber(){
+      major = 0;
+      minor = 0;
+      bugfix = 0;
     }
 
     public VersionNumber(String s) {
@@ -71,6 +74,10 @@ public class VersionNumber /*implements Serializable*/ implements Comparable<Ver
             back = -1;
         }
         return back;
+    }
+    
+    public boolean isZero() {
+      return (major == 0) && (minor == 0) && (bugfix == 0);
     }
 
 
