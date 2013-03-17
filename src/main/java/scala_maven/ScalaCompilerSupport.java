@@ -99,7 +99,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         int nbFiles = compile(getSourceDirectories(), outputDir, analysisCacheFile, getClasspathElements(), false);
         switch (nbFiles) {
             case -1:
-                getLog().warn("No source files found.");
+                getLog().info("No sources to compile");
                 break;
             case 0:
                 getLog().info("Nothing to compile - all classes are up to date");;
