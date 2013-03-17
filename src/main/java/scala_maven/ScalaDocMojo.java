@@ -327,7 +327,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     public void generate(Sink sink, Locale locale) throws MavenReportException {
         try {
             if (!canGenerateReport()) {
-                getLog().warn("No source files found");
+                getLog().info("No source files found");
                 return;
             }
 
