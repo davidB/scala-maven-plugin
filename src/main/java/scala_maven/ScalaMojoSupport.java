@@ -1,14 +1,5 @@
 package scala_maven;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -21,7 +12,6 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -48,6 +38,14 @@ import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.JavaMainCallerByFork;
 import scala_maven_executions.JavaMainCallerInProcess;
 import scala_maven_executions.MainHelper;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public abstract class ScalaMojoSupport extends AbstractMojo {
 
@@ -197,15 +195,16 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      *
      * @parameter expression="${javacArgs}"
      */
-    protected String[] javacArgs;@SuppressWarnings("unused") 
+    protected String[] javacArgs;
 
     /**
      * Whether to instruct javac to generate debug symbols (when using incremental compiler)
-     * @see {@link http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug}
+     * @see <a href="http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug">://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug</a>
      *
      * @parameter expression="${javacGenerateDebugSymbols}"
      *            default-value="true"
      */
+    @SuppressWarnings("unused")
     protected boolean javacGenerateDebugSymbols = true;
 
     /**
@@ -278,7 +277,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * Should use CanonicalPath to normalize path (true => getCanonicalPath, false => getAbsolutePath)
-     * @see https://github.com/davidB/maven-scala-plugin/issues/50
+     * @see <a href="https://github.com/davidB/maven-scala-plugin/issues/50">https://github.com/davidB/maven-scala-plugin/issues/50</a>
      * @parameter expression="${maven.scala.useCanonicalPath}" default-value="true"
      */
     protected boolean useCanonicalPath = true;

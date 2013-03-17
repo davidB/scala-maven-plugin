@@ -1,19 +1,18 @@
 package scala_maven;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
-
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Produces Scala API documentation.
@@ -414,7 +413,6 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * Method that sets the bottom text that will be displayed on the bottom of
      * the javadocs.
      *
-     * @param inceptionYear the year when the project was started
      * @return a String that contains the text that will be displayed at the
      *         bottom of the javadoc
      */
