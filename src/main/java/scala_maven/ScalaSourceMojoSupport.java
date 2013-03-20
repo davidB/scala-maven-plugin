@@ -1,13 +1,13 @@
 package scala_maven;
 
+import scala_maven_executions.MainHelper;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import scala_maven_executions.MainHelper;
 
 /**
  * @author david.bernard
@@ -48,7 +48,7 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
     protected Set<String> excludes = new HashSet<String>();
 
     /**
-     * Retreives the list of *all* root source directories.  We need to pass all .java and .scala files into the scala compiler
+     * Retrieves the list of *all* root source directories.  We need to pass all .java and .scala files into the scala compiler
      */
     abstract protected List<File> getSourceDirectories() throws Exception;
 
@@ -103,8 +103,8 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
                 sourceFiles.add(tmpAbsFile);
             }
         }
-        //scalac is sensible to scala file order, file system can't garanty file order => unreproductible build error across platform
-        // to garanty reproductible command line we order file by path (os dependend).
+        // scalac is sensitive to scala file order, file system can't guarantee file order => unreproducible build error across platforms
+        // sort files by path (OS dependent) to guarantee reproducible command line.
         Collections.sort(sourceFiles);
         return sourceFiles;
     }

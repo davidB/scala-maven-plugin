@@ -25,6 +25,7 @@ Currently, you need Maven 3.x to build the plugin, create the site, and run `int
 * `mvn package` : generate jar
 * `mvn site` : generate the plugin website
 * `mvn integration-test` : `mvn package` + run all integration test
+  * note: to run _test\_scalaHome_: you have to set `scala.home` property in `src/it/test_scalaHome/pom.xml` to correspond to your environment
 * `mvn invoker:run -Dinvoker.test=test1` : run integration test 'test1' useful for tuning/debug
 * `mvn install` :  `mvn integration-test` + publish on local maven repository
 * `mvn install -Dmaven.test.skip=true` : `mvn install` without run of unit test and run of integration test
