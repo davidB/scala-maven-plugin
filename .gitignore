@@ -40,6 +40,7 @@ interpolated-*.xml
 #SHITTY output not in target directory
 build.log
 
-/maven-scala-plugin.iml
-/maven-scala-plugin.ipr
-/maven-scala-plugin.iws
+# IDEA conf files
+*.iml
+*.ipr
+*.iws

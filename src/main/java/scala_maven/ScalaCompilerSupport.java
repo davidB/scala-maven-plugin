@@ -1,10 +1,5 @@
 package scala_maven;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
@@ -12,6 +7,12 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import sbt_inc.SbtIncrementalCompiler;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract parent of all Scala Mojo who run compilation
@@ -27,17 +28,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      */
     private boolean compileErrors;
 
-
-    /**
-     * Pause duration between to scan to detect changed file to compile.
-     * Used only if compileInLoop or testCompileInLoop is true.
-     */
-    protected long loopSleep = 2500;
-
     /**
      * Recompile mode to use when sources were previously compiled and there is at least one change:
      * "modified-only" => only modified sources are recompiled (pre 2.13 behavior), "all" => all sources are recompiled,
      * "incremental" => incrementally recompile modified sources and other affected sources.
+     *
      * @parameter expression="${recompileMode}" default-value="all"
      */
     protected String recompileMode = ALL;
@@ -45,7 +40,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     /**
      * notifyCompilation if true then print a message "path: compiling"
      * for each root directory or files that will be compiled.
-     * Usefull for debug, and for integration with Editor/IDE to reset markers only for compiled files.
+     * Useful for debug, and for integration with Editor/IDE to reset markers only for compiled files.
      *
      * @parameter expression="${notifyCompilation}" default-value="true"
      */
