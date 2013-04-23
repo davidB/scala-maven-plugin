@@ -8,6 +8,7 @@
     <release version="3.1.4" date="">
       <action dev="Libor Rysavy" type="update">Log only to INFO level when no sources to compile found</action>
       <action dev="David Bernard" type="fix" issue="121">fix support of space in jvmArgs and args</action>
+      <action dev="David Bernard" type="delete">remove genjson goal</action>
     </release>
     <release version="3.1.3" date="2013-02-04">
       <action dev="David Bernard" type="add" issue="42" due-to="mephi42">Add ability to specify Scala installation directory (-Dscala.home=....)</action>
