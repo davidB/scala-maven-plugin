@@ -104,7 +104,7 @@
 <a class="jxr_linenumber" name="94" href="#94">94</a>  
 <a class="jxr_linenumber" name="95" href="#95">95</a>          CommandLine cl = <strong class="jxr_keyword">new</strong> CommandLine(cmd.get(0));
 <a class="jxr_linenumber" name="96" href="#96">96</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 1; i &lt; cmd.size(); i++) {
-<a class="jxr_linenumber" name="97" href="#97">97</a>              cl.addArgument(cmd.get(i));
+<a class="jxr_linenumber" name="97" href="#97">97</a>              cl.addArgument(cmd.get(i), false);
 <a class="jxr_linenumber" name="98" href="#98">98</a>          }
 <a class="jxr_linenumber" name="99" href="#99">99</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="100" href="#100">100</a>             <strong class="jxr_keyword">int</strong> exitValue = exec.execute(cl);
@@ -134,83 +134,82 @@
 <a class="jxr_linenumber" name="124" href="#124">124</a>         err.delete();
 <a class="jxr_linenumber" name="125" href="#125">125</a>         cmd.add(<span class="jxr_string">"2&gt;"</span>+ err.getCanonicalPath());
 <a class="jxr_linenumber" name="126" href="#126">126</a>         List&lt;String&gt; cmd2 = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
-<a class="jxr_linenumber" name="127" href="#127">127</a>         String cmdStr = StringUtils.join(cmd.iterator(), <span class="jxr_string">" "</span>);
-<a class="jxr_linenumber" name="128" href="#128">128</a>         <strong class="jxr_keyword">if</strong> (OS.isFamilyDOS()) {
-<a class="jxr_linenumber" name="129" href="#129">129</a>             cmd2.add(<span class="jxr_string">"cmd.exe"</span>);
-<a class="jxr_linenumber" name="130" href="#130">130</a>             cmd2.add(<span class="jxr_string">"/C"</span>);
-<a class="jxr_linenumber" name="131" href="#131">131</a>             cmd2.add(cmdStr);
-<a class="jxr_linenumber" name="132" href="#132">132</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="133" href="#133">133</a>             cmd2.add(<span class="jxr_string">"/bin/sh"</span>);
-<a class="jxr_linenumber" name="134" href="#134">134</a>             cmd2.add(<span class="jxr_string">"-c"</span>);
-<a class="jxr_linenumber" name="135" href="#135">135</a>             cmd2.add(cmdStr);
-<a class="jxr_linenumber" name="136" href="#136">136</a>         }
-<a class="jxr_linenumber" name="137" href="#137">137</a>         displayCmd(displayCmd, cmd2);
-<a class="jxr_linenumber" name="138" href="#138">138</a>         ProcessBuilder pb = <strong class="jxr_keyword">new</strong> ProcessBuilder(cmd2);
-<a class="jxr_linenumber" name="139" href="#139">139</a>         <em class="jxr_comment">//pb.redirectErrorStream(true);</em>
-<a class="jxr_linenumber" name="140" href="#140">140</a>         <strong class="jxr_keyword">final</strong> Process p = pb.start();
-<a class="jxr_linenumber" name="141" href="#141">141</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../scala_maven_executions/SpawnMonitor.html">SpawnMonitor</a>(){
-<a class="jxr_linenumber" name="142" href="#142">142</a>             @Override
-<a class="jxr_linenumber" name="143" href="#143">143</a>             <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isRunning() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="144" href="#144">144</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="145" href="#145">145</a>                     p.exitValue();
-<a class="jxr_linenumber" name="146" href="#146">146</a>                     <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="147" href="#147">147</a>                 } <strong class="jxr_keyword">catch</strong>(IllegalThreadStateException e) {
-<a class="jxr_linenumber" name="148" href="#148">148</a>                     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="149" href="#149">149</a>                 }
-<a class="jxr_linenumber" name="150" href="#150">150</a>             }
-<a class="jxr_linenumber" name="151" href="#151">151</a>         };
-<a class="jxr_linenumber" name="152" href="#152">152</a>     }
-<a class="jxr_linenumber" name="153" href="#153">153</a> 
-<a class="jxr_linenumber" name="154" href="#154">154</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> displayCmd(<strong class="jxr_keyword">boolean</strong> displayCmd, List&lt;String&gt; cmd) {
-<a class="jxr_linenumber" name="155" href="#155">155</a>         <strong class="jxr_keyword">if</strong> (displayCmd) {
-<a class="jxr_linenumber" name="156" href="#156">156</a>             requester.getLog().info(<span class="jxr_string">"cmd: "</span> + <span class="jxr_string">" "</span> + StringUtils.join(cmd.iterator(), <span class="jxr_string">" "</span>));
-<a class="jxr_linenumber" name="157" href="#157">157</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (requester.getLog().isDebugEnabled()) {
-<a class="jxr_linenumber" name="158" href="#158">158</a>             requester.getLog().debug(<span class="jxr_string">"cmd: "</span> + <span class="jxr_string">" "</span> + StringUtils.join(cmd.iterator(), <span class="jxr_string">" "</span>));
-<a class="jxr_linenumber" name="159" href="#159">159</a>         }
-<a class="jxr_linenumber" name="160" href="#160">160</a>     }
-<a class="jxr_linenumber" name="161" href="#161">161</a> 
-<a class="jxr_linenumber" name="162" href="#162">162</a>     <strong class="jxr_keyword">protected</strong> List&lt;String&gt; buildCommand() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="163" href="#163">163</a>         ArrayList&lt;String&gt; back = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(2 + jvmArgs.size() + args.size());
-<a class="jxr_linenumber" name="164" href="#164">164</a>         back.add(_javaExec);
-<a class="jxr_linenumber" name="165" href="#165">165</a>         <strong class="jxr_keyword">if</strong> (!_forceUseArgFile &amp;&amp; (lengthOf(args, 1) + lengthOf(jvmArgs, 1) &lt; 400)) {
-<a class="jxr_linenumber" name="166" href="#166">166</a>             back.addAll(jvmArgs);
-<a class="jxr_linenumber" name="167" href="#167">167</a>             back.add(mainClassName);
-<a class="jxr_linenumber" name="168" href="#168">168</a>             back.addAll(args);
-<a class="jxr_linenumber" name="169" href="#169">169</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="170" href="#170">170</a>             File jarPath = <strong class="jxr_keyword">new</strong> File(MainHelper.locateJar(MainHelper.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="171" href="#171">171</a>             requester.getLog().debug(<span class="jxr_string">"plugin jar to add :"</span> + jarPath);
-<a class="jxr_linenumber" name="172" href="#172">172</a>             addToClasspath(jarPath);
-<a class="jxr_linenumber" name="173" href="#173">173</a>             back.addAll(jvmArgs);
-<a class="jxr_linenumber" name="174" href="#174">174</a>             back.add(MainWithArgsInFile.<strong class="jxr_keyword">class</strong>.getName());
-<a class="jxr_linenumber" name="175" href="#175">175</a>             back.add(mainClassName);
-<a class="jxr_linenumber" name="176" href="#176">176</a>             back.add(MainHelper.createArgFile(args).getCanonicalPath());
-<a class="jxr_linenumber" name="177" href="#177">177</a>         }
-<a class="jxr_linenumber" name="178" href="#178">178</a>         <strong class="jxr_keyword">return</strong> back;
-<a class="jxr_linenumber" name="179" href="#179">179</a>     }
-<a class="jxr_linenumber" name="180" href="#180">180</a> 
-<a class="jxr_linenumber" name="181" href="#181">181</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> tryDeleteArgFile(List&lt;String&gt; cmd) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="182" href="#182">182</a>     	String last = cmd.get(cmd.size() - 1);
-<a class="jxr_linenumber" name="183" href="#183">183</a>     	<strong class="jxr_keyword">if</strong> (last.endsWith(MainHelper.argFileSuffix)) {
-<a class="jxr_linenumber" name="184" href="#184">184</a>     		File f = <strong class="jxr_keyword">new</strong> File(last);
-<a class="jxr_linenumber" name="185" href="#185">185</a>     		<strong class="jxr_keyword">if</strong> (f.exists() &amp;&amp; f.getName().startsWith(MainHelper.argFilePrefix)) {
-<a class="jxr_linenumber" name="186" href="#186">186</a>     			f.delete();
-<a class="jxr_linenumber" name="187" href="#187">187</a>     		}
-<a class="jxr_linenumber" name="188" href="#188">188</a>     	}
-<a class="jxr_linenumber" name="189" href="#189">189</a>     }
-<a class="jxr_linenumber" name="190" href="#190">190</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">long</strong> lengthOf(List&lt;String&gt; l, <strong class="jxr_keyword">long</strong> sepLength) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="191" href="#191">191</a>         <strong class="jxr_keyword">long</strong> back = 0;
-<a class="jxr_linenumber" name="192" href="#192">192</a>         <strong class="jxr_keyword">for</strong> (String str : l) {
-<a class="jxr_linenumber" name="193" href="#193">193</a>             back += str.length() + sepLength;
-<a class="jxr_linenumber" name="194" href="#194">194</a>         }
-<a class="jxr_linenumber" name="195" href="#195">195</a>         <strong class="jxr_keyword">return</strong> back;
-<a class="jxr_linenumber" name="196" href="#196">196</a>     }
-<a class="jxr_linenumber" name="197" href="#197">197</a> 
-<a class="jxr_linenumber" name="198" href="#198">198</a>     @Override
-<a class="jxr_linenumber" name="199" href="#199">199</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> redirectToLog() {
-<a class="jxr_linenumber" name="200" href="#200">200</a>         _redirectToLog = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="201" href="#201">201</a>     }
-<a class="jxr_linenumber" name="202" href="#202">202</a>     
-<a class="jxr_linenumber" name="203" href="#203">203</a> }
+<a class="jxr_linenumber" name="127" href="#127">127</a>         <strong class="jxr_keyword">if</strong> (OS.isFamilyDOS()) {
+<a class="jxr_linenumber" name="128" href="#128">128</a>             cmd2.add(<span class="jxr_string">"cmd.exe"</span>);
+<a class="jxr_linenumber" name="129" href="#129">129</a>             cmd2.add(<span class="jxr_string">"/C"</span>);
+<a class="jxr_linenumber" name="130" href="#130">130</a>             cmd2.addAll(cmd);
+<a class="jxr_linenumber" name="131" href="#131">131</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="132" href="#132">132</a>             cmd2.add(<span class="jxr_string">"/bin/sh"</span>);
+<a class="jxr_linenumber" name="133" href="#133">133</a>             cmd2.add(<span class="jxr_string">"-c"</span>);
+<a class="jxr_linenumber" name="134" href="#134">134</a>             cmd2.addAll(cmd);
+<a class="jxr_linenumber" name="135" href="#135">135</a>         }
+<a class="jxr_linenumber" name="136" href="#136">136</a>         displayCmd(displayCmd, cmd2);
+<a class="jxr_linenumber" name="137" href="#137">137</a>         ProcessBuilder pb = <strong class="jxr_keyword">new</strong> ProcessBuilder(cmd2);
+<a class="jxr_linenumber" name="138" href="#138">138</a>         <em class="jxr_comment">//pb.redirectErrorStream(true);</em>
+<a class="jxr_linenumber" name="139" href="#139">139</a>         <strong class="jxr_keyword">final</strong> Process p = pb.start();
+<a class="jxr_linenumber" name="140" href="#140">140</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../scala_maven_executions/SpawnMonitor.html">SpawnMonitor</a>(){
+<a class="jxr_linenumber" name="141" href="#141">141</a>             @Override
+<a class="jxr_linenumber" name="142" href="#142">142</a>             <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isRunning() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="143" href="#143">143</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="144" href="#144">144</a>                     p.exitValue();
+<a class="jxr_linenumber" name="145" href="#145">145</a>                     <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="146" href="#146">146</a>                 } <strong class="jxr_keyword">catch</strong>(IllegalThreadStateException e) {
+<a class="jxr_linenumber" name="147" href="#147">147</a>                     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="148" href="#148">148</a>                 }
+<a class="jxr_linenumber" name="149" href="#149">149</a>             }
+<a class="jxr_linenumber" name="150" href="#150">150</a>         };
+<a class="jxr_linenumber" name="151" href="#151">151</a>     }
+<a class="jxr_linenumber" name="152" href="#152">152</a> 
+<a class="jxr_linenumber" name="153" href="#153">153</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> displayCmd(<strong class="jxr_keyword">boolean</strong> displayCmd, List&lt;String&gt; cmd) {
+<a class="jxr_linenumber" name="154" href="#154">154</a>         <strong class="jxr_keyword">if</strong> (displayCmd) {
+<a class="jxr_linenumber" name="155" href="#155">155</a>             requester.getLog().info(<span class="jxr_string">"cmd: "</span> + <span class="jxr_string">" "</span> + StringUtils.join(cmd.iterator(), <span class="jxr_string">" "</span>));
+<a class="jxr_linenumber" name="156" href="#156">156</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (requester.getLog().isDebugEnabled()) {
+<a class="jxr_linenumber" name="157" href="#157">157</a>             requester.getLog().debug(<span class="jxr_string">"cmd: "</span> + <span class="jxr_string">" "</span> + StringUtils.join(cmd.iterator(), <span class="jxr_string">" "</span>));
+<a class="jxr_linenumber" name="158" href="#158">158</a>         }
+<a class="jxr_linenumber" name="159" href="#159">159</a>     }
+<a class="jxr_linenumber" name="160" href="#160">160</a> 
+<a class="jxr_linenumber" name="161" href="#161">161</a>     <strong class="jxr_keyword">protected</strong> List&lt;String&gt; buildCommand() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="162" href="#162">162</a>         ArrayList&lt;String&gt; back = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(2 + jvmArgs.size() + args.size());
+<a class="jxr_linenumber" name="163" href="#163">163</a>         back.add(_javaExec);
+<a class="jxr_linenumber" name="164" href="#164">164</a>         <strong class="jxr_keyword">if</strong> (!_forceUseArgFile &amp;&amp; (lengthOf(args, 1) + lengthOf(jvmArgs, 1) &lt; 400)) {
+<a class="jxr_linenumber" name="165" href="#165">165</a>             back.addAll(jvmArgs);
+<a class="jxr_linenumber" name="166" href="#166">166</a>             back.add(mainClassName);
+<a class="jxr_linenumber" name="167" href="#167">167</a>             back.addAll(args);
+<a class="jxr_linenumber" name="168" href="#168">168</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="169" href="#169">169</a>             File jarPath = <strong class="jxr_keyword">new</strong> File(MainHelper.locateJar(MainHelper.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="170" href="#170">170</a>             requester.getLog().debug(<span class="jxr_string">"plugin jar to add :"</span> + jarPath);
+<a class="jxr_linenumber" name="171" href="#171">171</a>             addToClasspath(jarPath);
+<a class="jxr_linenumber" name="172" href="#172">172</a>             back.addAll(jvmArgs);
+<a class="jxr_linenumber" name="173" href="#173">173</a>             back.add(MainWithArgsInFile.<strong class="jxr_keyword">class</strong>.getName());
+<a class="jxr_linenumber" name="174" href="#174">174</a>             back.add(mainClassName);
+<a class="jxr_linenumber" name="175" href="#175">175</a>             back.add(MainHelper.createArgFile(args).getCanonicalPath());
+<a class="jxr_linenumber" name="176" href="#176">176</a>         }
+<a class="jxr_linenumber" name="177" href="#177">177</a>         <strong class="jxr_keyword">return</strong> back;
+<a class="jxr_linenumber" name="178" href="#178">178</a>     }
+<a class="jxr_linenumber" name="179" href="#179">179</a> 
+<a class="jxr_linenumber" name="180" href="#180">180</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> tryDeleteArgFile(List&lt;String&gt; cmd) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="181" href="#181">181</a>     	String last = cmd.get(cmd.size() - 1);
+<a class="jxr_linenumber" name="182" href="#182">182</a>     	<strong class="jxr_keyword">if</strong> (last.endsWith(MainHelper.argFileSuffix)) {
+<a class="jxr_linenumber" name="183" href="#183">183</a>     		File f = <strong class="jxr_keyword">new</strong> File(last);
+<a class="jxr_linenumber" name="184" href="#184">184</a>     		<strong class="jxr_keyword">if</strong> (f.exists() &amp;&amp; f.getName().startsWith(MainHelper.argFilePrefix)) {
+<a class="jxr_linenumber" name="185" href="#185">185</a>     			f.delete();
+<a class="jxr_linenumber" name="186" href="#186">186</a>     		}
+<a class="jxr_linenumber" name="187" href="#187">187</a>     	}
+<a class="jxr_linenumber" name="188" href="#188">188</a>     }
+<a class="jxr_linenumber" name="189" href="#189">189</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">long</strong> lengthOf(List&lt;String&gt; l, <strong class="jxr_keyword">long</strong> sepLength) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="190" href="#190">190</a>         <strong class="jxr_keyword">long</strong> back = 0;
+<a class="jxr_linenumber" name="191" href="#191">191</a>         <strong class="jxr_keyword">for</strong> (String str : l) {
+<a class="jxr_linenumber" name="192" href="#192">192</a>             back += str.length() + sepLength;
+<a class="jxr_linenumber" name="193" href="#193">193</a>         }
+<a class="jxr_linenumber" name="194" href="#194">194</a>         <strong class="jxr_keyword">return</strong> back;
+<a class="jxr_linenumber" name="195" href="#195">195</a>     }
+<a class="jxr_linenumber" name="196" href="#196">196</a> 
+<a class="jxr_linenumber" name="197" href="#197">197</a>     @Override
+<a class="jxr_linenumber" name="198" href="#198">198</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> redirectToLog() {
+<a class="jxr_linenumber" name="199" href="#199">199</a>         _redirectToLog = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="200" href="#200">200</a>     }
+<a class="jxr_linenumber" name="201" href="#201">201</a>     
+<a class="jxr_linenumber" name="202" href="#202">202</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
