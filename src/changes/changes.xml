@@ -5,7 +5,7 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="3.1.4" date="">
+    <release version="3.1.4" date="2013-04-23">
       <action dev="Libor Rysavy" type="update">Log only to INFO level when no sources to compile found</action>
       <action dev="David Bernard" type="fix" issue="121">fix support of space in jvmArgs and args</action>
       <action dev="David Bernard" type="delete">remove genjson goal</action>
