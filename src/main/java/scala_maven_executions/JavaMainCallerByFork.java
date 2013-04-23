@@ -94,7 +94,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
 
         CommandLine cl = new CommandLine(cmd.get(0));
         for (int i = 1; i < cmd.size(); i++) {
-            cl.addArgument(cmd.get(i));
+            cl.addArgument(cmd.get(i), false);
         }
         try {
             int exitValue = exec.execute(cl);
@@ -124,15 +124,14 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         err.delete();
         cmd.add("2>"+ err.getCanonicalPath());
         List<String> cmd2 = new ArrayList<String>();
-        String cmdStr = StringUtils.join(cmd.iterator(), " ");
         if (OS.isFamilyDOS()) {
             cmd2.add("cmd.exe");
             cmd2.add("/C");
-            cmd2.add(cmdStr);
+            cmd2.addAll(cmd);
         } else {
             cmd2.add("/bin/sh");
             cmd2.add("-c");
-            cmd2.add(cmdStr);
+            cmd2.addAll(cmd);
         }
         displayCmd(displayCmd, cmd2);
         ProcessBuilder pb = new ProcessBuilder(cmd2);

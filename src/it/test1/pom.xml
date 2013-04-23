@@ -41,6 +41,9 @@
              <goal>compile</goal>
            </goals>
            <configuration>
+             <jvmArgs>
+               <jvmArg>-DwordWithSpace=hello world</jvmArg>
+             </jvmArgs>
              <args>
                <arg>-make:transitive</arg>
                <arg>-dependencyfile</arg>
