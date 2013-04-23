@@ -3,14 +3,17 @@ package scala_maven;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import sbt_inc.SbtIncrementalCompiler;
+import scala.actors.threadpool.Arrays;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +84,13 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * @parameter expression="${zincPort}" default-value="3030"
      */
     private int zincPort;
+
+    /**
+     * Additional parameter to use to call zinc server
+     * It is a pipe '|' separated list of arguments, so it can be used from command line ("-DaddZincArgs=arg1|arg2|arg3|...").
+     * @parameter expression="${addZincArgs}"
+     */
+    private String addZincArgs = "";
 
     @Override
     protected void doExecute() throws Exception {
@@ -254,6 +264,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     // Incremental compilation
     //
 
+    @SuppressWarnings("unchecked")
     protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile, boolean compileInLoop) throws Exception, InterruptedException {
         List<File> sources = findSourceWithFilters(sourceRootDirs);
         if (sources.isEmpty()) {
@@ -271,8 +282,9 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             String compilerInterfaceClassifier = SbtIncrementalCompiler.COMPILER_INTERFACE_CLASSIFIER;
             String sbtVersion = findVersionFromPluginArtifacts(sbtGroupId, SbtIncrementalCompiler.COMPILER_INTEGRATION_ARTIFACT_ID);
             File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
+            List<String> zincArgs = StringUtils.isEmpty(addZincArgs) ? new LinkedList<String>() : (List<String>) Arrays.asList(addZincArgs.split("\\|"));
             File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
-           	incremental = new SbtIncrementalCompiler(useZincServer, zincPort, libraryJar, compilerJar, extraJars, xsbtiJar, interfaceSrcJar, getLog());
+           	incremental = new SbtIncrementalCompiler(useZincServer, zincPort, libraryJar, compilerJar, extraJars, xsbtiJar, interfaceSrcJar, getLog(), zincArgs);
         }
 
         classpathElements.remove(outputDir.getAbsolutePath());

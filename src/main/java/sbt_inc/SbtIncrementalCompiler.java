@@ -34,11 +34,13 @@ public class SbtIncrementalCompiler {
 
     private List<File> extraJars;
 
+    private List<String> extraArgs;
+
     private xsbti.Logger logger;
 
     private Compiler compiler;
 
-    public SbtIncrementalCompiler(boolean useZincServer, int zincPort, File libraryJar, File compilerJar, List<File> extraJars, File xsbtiJar, File interfaceJar, Log l) throws Exception {
+    public SbtIncrementalCompiler(boolean useZincServer, int zincPort, File libraryJar, File compilerJar, List<File> extraJars, File xsbtiJar, File interfaceJar, Log l, List<String> args) throws Exception {
         this.log = l;
         if (useZincServer) {
             this.zinc = new ZincClient(zincPort);
@@ -48,6 +50,7 @@ public class SbtIncrementalCompiler {
                 this.compilerJar = compilerJar;
                 this.libraryJar = libraryJar;
                 this.extraJars = extraJars;
+                this.extraArgs = args;
             } else {
                 l.warn("Zinc server is not available at port " + zincPort + " - reverting to normal incremental compile");
                 this.useServer = false;
@@ -55,6 +58,7 @@ public class SbtIncrementalCompiler {
         }
         if (!useServer) {
             l.info("Using incremental compilation");
+            if (args.size() > 0) l.warn("extra args for zinc are ignored in non-server mode");
             this.logger = new SbtLogger(l);
             Setup setup = Setup.create(compilerJar, libraryJar, extraJars, xsbtiJar, interfaceJar, null);
             if (l.isDebugEnabled()) Setup.debug(setup, logger);
@@ -75,7 +79,7 @@ public class SbtIncrementalCompiler {
     }
 
     private void zincCompile(File baseDir, List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions, File cacheFile, Map<File, File> cacheMap, String compileOrder) throws Exception {
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<String>(extraArgs);
         arguments.add("-log-level");
         arguments.add(logLevelToString(log));
         arguments.add("-scala-compiler");
