@@ -17,7 +17,7 @@
 'UTF-8'
 -docfilessubdirs
 -doctitle
-'scala-maven-plugin 3.1.4 API'
+'scala-maven-plugin 3.1.5 API'
 -keywords
 -link
 'http://java.sun.com/j2se/1.6/docs/api'
@@ -30,4 +30,4 @@
 -use
 -version
 -windowtitle
-'scala-maven-plugin 3.1.4 API'
+'scala-maven-plugin 3.1.5 API'
