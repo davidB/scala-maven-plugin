@@ -5,8 +5,9 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="3.1.5" date="2013-04-23">
+    <release version="3.1.5" date="2013-05-24">
       <action dev="David Bernard" type="fix" issue="131" due-to="Juha Heljoranta">fix LinkageError when using project.xxx into script section</action>
+      <action dev="David Bernard" type="update">change the way classpath of script is defined from artifact (to match maven api)</action>
     </release>
     <release version="3.1.4" date="2013-04-23">
       <action dev="Libor Rysavy" type="update">Log only to INFO level when no sources to compile found</action>

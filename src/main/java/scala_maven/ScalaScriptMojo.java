@@ -12,15 +12,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -146,8 +145,11 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             if (scriptFile != null) {
                 includeScopes = "compile, test, runtime";
             } else {
-                includeScopes= Scopes.PLUGIN.name();
+                includeScopes = "plugin";
             }
+        }
+        if (excludeScopes == null) {
+          excludeScopes = "";
         }
 
         // prepare
@@ -265,43 +267,22 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     }
 
     private void configureClasspath(Set<String> classpath) throws Exception, DependencyResolutionRequiredException {
-        Collection<Dependency> toInclude = new ArrayList<Dependency>();
-        if (includeScopes == null || includeScopes.length() == 0) {
-            getLog().warn("No scopes were included");
-        } else {
+        Set<String> includes = new TreeSet<String>(Arrays.asList(includeScopes.toLowerCase().split(",")));
+        Set<String> excludes = new TreeSet<String>(Arrays.asList(excludeScopes.toLowerCase().split(",")));
 
-            String[] include = includeScopes.split(",");
-            for (String string : include) {
-                Scopes scope = Scopes.lookup(string.toUpperCase());
-                if (scope != null) {
-                    toInclude.addAll(scope.elements(project));
-                } else {
-                    getLog().warn(
-                            "Included Scope: " + string + " is not one of: "
-                                    + Arrays.asList(Scopes.values()));
-                }
+        for(Artifact a : project.getArtifacts()) {
+          if (includes.contains(a.getScope().toLowerCase()) && !excludes.contains(a.getScope())) {
+            addToClasspath(a, classpath, true);
+          }
+        }
+
+        if (includes.contains("plugin") && !excludes.contains("plugin")) {
+          for(Artifact a : project.getPluginArtifacts()) {
+            if ("scala-maven-plugin".equals(a.getArtifactId())) {
+              addToClasspath(a, classpath, true);
             }
+          }
         }
-        if (excludeScopes != null && excludeScopes.length() > 0) {
-
-            String[] exclude = excludeScopes.split(",");
-            for (String string : exclude) {
-                Scopes scope = Scopes.lookup(string.toUpperCase());
-                if (scope != null) {
-                    toInclude.removeAll(scope.elements(project));
-                } else {
-                    getLog().warn(
-                            "Excluded Scope: " + string + " is not one of: "
-                                    + Arrays.asList(Scopes.values()));
-                }
-            }
-        }
-
-        for (Dependency dependency : toInclude) {
-            addToClasspath(factory.createDependencyArtifact(dependency), classpath, true);
-        }
-
-
 
         if (addToClasspath != null) {
             classpath.addAll(Arrays.asList(addToClasspath.split(",")));
@@ -394,57 +375,5 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
         scriptDir.deleteOnExit();
         scriptDir.delete();
-    }
-
-    private enum Scopes {
-        COMPILE {
-            @Override
-            public Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException {
-                return project.getCompileDependencies();
-            }
-        },
-        RUNTIME {
-            @Override
-            public Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException {
-                return project.getRuntimeDependencies();
-            }
-        },
-        TEST {
-            @Override
-            public Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException {
-                return project.getTestDependencies();
-            }
-        },
-        SYSTEM {
-            @Override
-            public Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException {
-                return project.getSystemDependencies();
-            }
-        },
-        PLUGIN {
-            @Override
-            public Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException {
-                Plugin me = project.getBuild().getPluginsAsMap().get("net.alchim31.maven:scala-maven-plugin");
-                Set<Dependency> back = new HashSet<Dependency>();
-                Dependency dep = new Dependency();
-                dep.setArtifactId(me.getArtifactId());
-                dep.setGroupId(me.getGroupId());
-                dep.setVersion(me.getVersion());
-                back.add(dep);
-                back.addAll(me.getDependencies());
-                return back;
-            }
-        };
-
-        public abstract Collection<Dependency> elements(MavenProject project) throws DependencyResolutionRequiredException;
-
-        public static Scopes lookup(String name) {
-            for (Scopes scope : Scopes.values()) {
-                if (scope.name().trim().equalsIgnoreCase(name.trim())) {
-                    return scope;
-                }
-            }
-            return null;
-        }
     }
 }
