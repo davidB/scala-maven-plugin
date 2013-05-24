@@ -240,9 +240,10 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         Strategy s = new SelfFirstStrategy(w.newRealm("scalaScript", null));
         ClassRealm rScript = s.getRealm();
         rScript.setParentClassLoader(getClass().getClassLoader());
-        rScript.importFrom("mojo", MavenProject.class.getPackage().getName());
-        rScript.importFrom("mojo", MavenSession.class.getPackage().getName());
-        rScript.importFrom("mojo", Log.class.getPackage().getName());        
+        //rScript.importFrom("mojo", MavenProject.class.getPackage().getName());
+        //rScript.importFrom("mojo", MavenSession.class.getPackage().getName());
+        //rScript.importFrom("mojo", Log.class.getPackage().getName());
+        rScript.importFrom("mojo", "org.apache.maven");
         // add the script directory to the classpath
         rScript.addURL(scriptDir.toURI().toURL());
 

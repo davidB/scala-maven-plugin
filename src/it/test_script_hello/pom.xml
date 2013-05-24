@@ -36,18 +36,21 @@
               <script>
                 <![CDATA[
                 println("hello from scala script constructor")
-
+                println("project.build.directory = " + project.getBuild().getDirectory())
+                run()
+                
                 def run() {
                   import java.io.PrintWriter
-//                  import scala.collection.jcl.Conversions._
-
+//                  import org.apache.maven.model.Dependency
+//                  import scala.collection.JavaConversions._
+//
                   println("hello from scala script run method")
-//                log.info( project("scala.version") )
+                  log.info( project.getProperties.getProperty("scala.version") )
                   val fo = new PrintWriter("target/hello.txt")
                   try {
-//                    fo.println(project.getArtifactId())
-//                    for( d <- project.getDependencies() ) {
-//                      fo.println (d.getArtifactId)
+                    fo.println(project.getArtifactId())
+//                    for( d <- asScalaIterator[Dependency](project.getDependencies) ) {
+//                      fo.println(d.getArtifactId)
 //                    }
                   } finally {
                     fo.close()
