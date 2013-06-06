@@ -115,11 +115,12 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
-        if (INCREMENTAL.equals(recompileMode)) {
+        if (!compileInLoop && INCREMENTAL.equals(recompileMode)) {
             // TODO - Do we really need this dupliated here?
             if (!outputDir.exists()) {
               outputDir.mkdirs();
             }
+            // if not compileInLoop, invoke incrementalCompile immediately
             return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
         }
 
@@ -142,6 +143,17 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             outputDir.mkdirs();
         }
         long t1 = System.currentTimeMillis();
+
+        if (compileInLoop && INCREMENTAL.equals(recompileMode)) {
+            // if compileInLoop, do not invoke incrementalCompile when there's no change
+            int retCode = incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
+            _lastCompileAt = t1;
+            if (retCode == 1) {
+                lastCompilationInfo.setLastSuccessfullTS(t1);
+            }
+            return retCode;
+        }
+
         getLog().info(String.format("Compiling %d source files to %s at %d", files.size(), outputDir.getAbsolutePath(), t1));
         JavaMainCaller jcmd = getScalaCommand();
         jcmd.redirectToLog();
