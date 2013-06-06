@@ -28,8 +28,8 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
         return !_failed;
     }
 
-    public CheckScalaVersionVisitor(String projectVerison, Log log) {
-        this._version = new VersionNumber(projectVerison);
+    public CheckScalaVersionVisitor(VersionNumber version, Log log) {
+        this._version = version;
         this._log = log;
     }
 
@@ -45,7 +45,7 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
         //TODO - Handle version ranges???? does that make sense given scala's binary incompatability!
         if(isScalaDistroArtifact(artifact) && artifact.getVersion() != null) {
             VersionNumber originalVersion = new VersionNumber(artifact.getVersion());
-            if(originalVersion.compareTo(_version) != 0) {
+            if(_version.compareTo(originalVersion) != 0) { //_version can be a VersionNumberMask
                 _failed = true;
             }
             //If this dependency is transitive, we want to track which artifact requires this...

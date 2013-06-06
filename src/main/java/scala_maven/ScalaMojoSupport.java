@@ -182,7 +182,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter expression="${scala.version}"
      */
     private String scalaVersion;
-
+    
+    /**
+     * Scala 's version to use to check binary compatibility (like suffix in artifactId of dependency).
+     * If it is defined then it is used to checkMultipleScalaVersions
+     *
+     * @parameter expression="${scala.compat.version}"
+     */
+    private String scalaCompatVersion;
+    
     /**
      * Path to Scala installation to use instead of the artifact (define as dependencies).
      *
@@ -262,7 +270,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected boolean forceUseArgFile = false;
 
     /**
-     * Check if every dependencies use the same version of scala-library.
+     * Check if every dependencies use the same version of scala-library or scala.compat.version.
      *
      * @parameter expression="${maven.scala.checkConsistency}" default-value="true"
      */
@@ -547,17 +555,27 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     /** this method checks to see if there are multiple versions of the scala library
      * @throws Exception */
-    private void checkCorrectVersionsOfScalaLibrary(String requiredScalaVersion) throws Exception {
+    private void checkCorrectVersionsOfScalaLibrary(String scalaDefVersion) throws Exception {
         getLog().debug("Checking for multiple versions of scala");
         //TODO - Make sure we handle bad artifacts....
         // TODO: note that filter does not get applied due to MNG-3236
-            checkArtifactForScalaVersion(requiredScalaVersion, dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
+        VersionNumber sv = new VersionNumber(scalaDefVersion);
+        VersionNumber requiredScalaVersion = StringUtils.isNotEmpty(scalaCompatVersion) ? new VersionNumberMask(scalaCompatVersion) : sv;
+        if (requiredScalaVersion.compareTo(sv) != 0) {
+          String msg = String.format("Scala library detected %s doesn't match scala.compat.version : %s", sv, requiredScalaVersion);
+          if(failOnMultipleScalaVersions) {
+            getLog().error(msg);
+            throw new MojoFailureException(msg);
+          }
+          getLog().warn(msg);
+        }
+        checkArtifactForScalaVersion(requiredScalaVersion, dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
                     artifactMetadataSource, null, artifactCollector ));
     }
 
 
     /** Visits a node (and all dependencies) to see if it contains duplicate scala versions */
-    private void checkArtifactForScalaVersion(String requiredScalaVersion, DependencyNode rootNode) throws Exception {
+    private void checkArtifactForScalaVersion(VersionNumber requiredScalaVersion, DependencyNode rootNode) throws Exception {
         final CheckScalaVersionVisitor visitor = new CheckScalaVersionVisitor(requiredScalaVersion, getLog());
 
         CollectingDependencyNodeVisitor collectingVisitor = new CollectingDependencyNodeVisitor();
