@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>it.scala-maven-plugin.test_macroparadise</groupId>
+    <artifactId>test_macroparadise</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <description>Test macro paradise compilation</description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <scala.standard.organisation>org.scala-lang</scala.standard.organisation>
+        <scala.standard.version>2.10.0</scala.standard.version>
+        <scala.macroparadise.organisation>org.scala-lang.macro-paradise</scala.macroparadise.organisation>
+        <scala.macroparadise.version>2.10.2-SNAPSHOT</scala.macroparadise.version>
+    </properties>
+
+    <url>http://sandbox/</url>
+
+    <modules>
+        <module>macro</module>
+        <module>core</module>
+    </modules>
+
+</project>

@@ -49,10 +49,9 @@ import java.util.Set;
 
 public abstract class ScalaMojoSupport extends AbstractMojo {
 
-    public static final String SCALA_GROUPID= "org.scala-lang";
     public static final String SCALA_LIBRARY_ARTIFACTID= "scala-library";
     public static final String SCALA_COMPILER_ARTIFACTID= "scala-compiler";
-    
+
     /**
      * @parameter expression="${project}"
      * @required
@@ -182,7 +181,22 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter expression="${scala.version}"
      */
     private String scalaVersion;
-    
+
+    /**
+     * Organization/group ID of the Scala used in the project.
+     * Default value is 'org.scala-lang'.
+     * This is an advanced setting used for clones of the Scala Language.
+     * It should be disregarded in standard use cases.
+     *
+     * @parameter expression="${scala.organization}"
+     *            default-value="org.scala-lang"
+     */
+    private String scalaOrganization;
+
+    public String getScalaOrganization(){
+        return scalaOrganization;
+    }
+
     /**
      * Scala 's version to use to check binary compatibility (like suffix in artifactId of dependency).
      * If it is defined then it is used to checkMultipleScalaVersions
@@ -489,7 +503,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             }
             if (StringUtils.isEmpty(detectedScalaVersion)) {
                 if (!"pom".equals( project.getPackaging().toLowerCase() )) {
-                    getLog().warn("you don't define "+SCALA_GROUPID + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
+                    getLog().warn("you don't define "+ getScalaOrganization() + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
                 }
                 detectedScalaVersion = "0.0.0";
             } else {
@@ -517,7 +531,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     private String findScalaVersionFromDependencies() throws Exception {
-        return findVersionFromDependencies(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID);
+        return findVersionFromDependencies(getScalaOrganization(), SCALA_LIBRARY_ARTIFACTID);
     }
 
     //TODO refactor to do only one scan of dependencies to find version
@@ -576,7 +590,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     /** Visits a node (and all dependencies) to see if it contains duplicate scala versions */
     private void checkArtifactForScalaVersion(VersionNumber requiredScalaVersion, DependencyNode rootNode) throws Exception {
-        final CheckScalaVersionVisitor visitor = new CheckScalaVersionVisitor(requiredScalaVersion, getLog());
+        final CheckScalaVersionVisitor visitor = new CheckScalaVersionVisitor(requiredScalaVersion, getLog(), getScalaOrganization());
 
         CollectingDependencyNodeVisitor collectingVisitor = new CollectingDependencyNodeVisitor();
         DependencyNodeVisitor firstPassVisitor = new FilteringDependencyNodeVisitor( collectingVisitor, createScalaDistroDependencyFilter() );
@@ -603,7 +617,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      */
     private DependencyNodeFilter createScalaDistroDependencyFilter() {
         List<ArtifactFilter> filters = new ArrayList<ArtifactFilter>();
-        filters.add(new ScalaDistroArtifactFilter());
+        filters.add(new ScalaDistroArtifactFilter(getScalaOrganization()));
         return new AndDependencyNodeFilter(filters);
     }
 
@@ -707,7 +721,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         File lib = new File(scalaHome, "lib");
         return new File(lib, "scala-library.jar");
       }
-      return getArtifactJar(SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString());
+      return getArtifactJar(getScalaOrganization(), SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString());
     }
 
     protected File getCompilerJar() throws Exception {
@@ -715,13 +729,13 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         File lib = new File(scalaHome, "lib");
         return new File(lib, "scala-compiler.jar");
       }
-      return getArtifactJar(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
+      return getArtifactJar(getScalaOrganization(), SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
     }
 
     protected List<File> getCompilerDependencies() throws Exception {
       List<File> d = new ArrayList<File>();
       if(StringUtils.isEmpty(scalaHome)) {
-        for (Artifact artifact : getAllDependencies(SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString())) {
+        for (Artifact artifact : getAllDependencies(getScalaOrganization(), SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString())) {
           d.add(artifact.getFile());
         }
       } else {
