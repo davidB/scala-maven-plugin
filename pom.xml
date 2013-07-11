@@ -340,6 +340,7 @@
     <profile>
       <id>integration-tests</id>
       <activation>
+          <activeByDefault>true</activeByDefault>
         <property>
           <name>maven.test.skip</name>
           <value>!true</value>
@@ -358,6 +359,8 @@
                 <scala.version.28>2.8.2</scala.version.28>
                 <scala.version.lastrelease>2.10.1</scala.version.lastrelease>
                 <scala.version.next>2.10.1</scala.version.next>
+                <scala.macroparadise.version>2.10.2-SNAPSHOT</scala.macroparadise.version>
+                <scala.macroparadise.organisation>org.scala-lang.macro-paradise</scala.macroparadise.organisation>
               </properties>
               <debug>false</debug>
               <streamLogs>true</streamLogs>
@@ -369,6 +372,8 @@
                 <pomExclude>**/off-*/pom.xml</pomExclude>
                 <!-- submodule -->
                 <pomExclude>**/m*/pom.xml</pomExclude>
+                <pomExclude>**/test_macroparadise/macro/pom.xml</pomExclude>
+                <pomExclude>**/test_macroparadise/core/pom.xml</pomExclude>
                 <pomExclude>scalac-plugin/src/it/**/pom.xml</pomExclude>
               </pomExcludes>
               <preBuildHookScript>setup.groovy</preBuildHookScript>
