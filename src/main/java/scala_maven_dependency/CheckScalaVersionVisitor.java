@@ -20,6 +20,7 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
     private VersionNumber _version;
     private boolean _failed = false;
     private Log _log;
+    private String _scalaOrganization;
 
     private List<String> scalaDependentArtifactStrings = new ArrayList<String>();
 
@@ -28,13 +29,14 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
         return !_failed;
     }
 
-    public CheckScalaVersionVisitor(VersionNumber version, Log log) {
+    public CheckScalaVersionVisitor(VersionNumber version, Log log,String scalaOrganization) {
         this._version = version;
         this._log = log;
+        this._scalaOrganization=scalaOrganization;
     }
 
     public boolean isScalaDistroArtifact(Artifact artifact) {
-        return SCALA_DISTRO_GROUP.equalsIgnoreCase(artifact.getGroupId()) &&
+        return _scalaOrganization.equalsIgnoreCase(artifact.getGroupId()) &&
         SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId());
     }
     @Override
