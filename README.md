@@ -20,6 +20,14 @@ The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling
 
 Currently, you need Maven 3.x to build the plugin, create the site, and run `integration-test`.
 
+An existing installation of Scala is also tested against (in integration-test).
+Supposing the scala-library.jar of your existing scala library lives
+at `/usr/local/Cellar/scala/2.10.2/libexec` then you will need to set a symbolic link up as
+follows (on Unix):
+
+`ln -s /usr/local/Cellar/scala/2.10.2/libexec ~/bin/soft-jvm/scala
+ 
+
 ## commands
 
 * `mvn package` : generate jar
