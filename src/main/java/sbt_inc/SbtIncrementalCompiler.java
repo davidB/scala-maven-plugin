@@ -72,7 +72,7 @@ public class SbtIncrementalCompiler {
         } else {
             if (log.isDebugEnabled()) log.debug("Incremental compiler = " + compiler + " [" + Integer.toHexString(compiler.hashCode()) + "]");
             List<File> classpath = pathsToFiles(classpathElements);
-            Inputs inputs = Inputs.create(classpath, sources, classesDirectory, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder);
+            Inputs inputs = Inputs.create(classpath, sources, classesDirectory, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder, true);
             if (log.isDebugEnabled()) Inputs.debug(inputs, logger);
             compiler.compile(inputs, logger);
         }
@@ -92,8 +92,10 @@ public class SbtIncrementalCompiler {
             extraPaths.add(extraJar.getAbsolutePath());
         }
         arguments.add(MainHelper.toMultiPath(extraPaths));
-        arguments.add("-classpath");
-        arguments.add(MainHelper.toMultiPath(classpathElements));
+        if (!classpathElements.isEmpty()) {
+          arguments.add("-classpath");
+          arguments.add(MainHelper.toMultiPath(classpathElements));
+        }
         arguments.add("-d");
         arguments.add(classesDirectory.getAbsolutePath());
         for (String scalacOption : scalacOptions) {

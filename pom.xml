@@ -183,14 +183,15 @@
     <dependency>
       <groupId>com.typesafe.zinc</groupId>
       <artifactId>zinc</artifactId>
-      <version>0.2.0</version>
+      <version>0.2.5</version>
     </dependency>
+<!--     
     <dependency>
       <groupId>com.typesafe.sbt</groupId>
       <artifactId>incremental-compiler</artifactId>
       <version>0.12.1</version>
     </dependency>
-
+-->
 
   </dependencies>
 

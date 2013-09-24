@@ -258,7 +258,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     private void compileScript(File scriptDir, File destFile,
             Set<String> classpath) throws Exception {
         JavaMainCaller jcmd = getScalaCommand();
-        jcmd.addArgs("-classpath", MainHelper.toMultiPath(new ArrayList<String>(classpath)));
+        if(!classpath.isEmpty()) jcmd.addArgs("-classpath", MainHelper.toMultiPath(new ArrayList<String>(classpath)));
         jcmd.addArgs("-d", scriptDir.getAbsolutePath());
         jcmd.addArgs("-sourcepath", scriptDir.getAbsolutePath());
         jcmd.addArgs(destFile.getAbsolutePath());

@@ -300,7 +300,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         // copy the classpathElements to not modify the global project definition see https://github.com/davidB/maven-scala-plugin/issues/60
         List<String> paths = new ArrayList<String>(project.getCompileClasspathElements());
         paths.remove(project.getBuild().getOutputDirectory()); //remove output to avoid "error for" : error:  XXX is already defined as package XXX ... object XXX {
-        jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
+        if (!paths.isEmpty())jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
         //jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
 
         boolean isScaladoc2 = (new VersionNumber("2.8.0").compareTo(sv) <= 0 || sv.isZero()) && ("scala.tools.nsc.ScalaDoc".equals(scaladocClassName));

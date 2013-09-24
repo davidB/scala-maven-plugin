@@ -5,6 +5,10 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="3.1.6" date="2013-09-24">
+      <action dev="David Bernard" type="update">update zinc from 0.2.0 to 0.2.5</action>
+      <action dev="David Bernard" type="fix">remove the buid directory from the classpath when compiling</action>
+    </release>
     <release version="3.1.5" date="2013-05-24">
       <action dev="David Bernard" type="fix" issue="131" due-to="Juha Heljoranta">fix LinkageError when using project.xxx into script section</action>
       <action dev="David Bernard" type="update">change the way classpath of script is defined from artifact (to match maven api)</action>

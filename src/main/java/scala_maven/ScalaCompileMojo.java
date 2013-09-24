@@ -53,7 +53,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     protected List<String> getClasspathElements() throws Exception {
         List<String> back = project.getCompileClasspathElements();
         back.remove(project.getBuild().getOutputDirectory());
-        back.add(getOutputDir().getAbsolutePath());
+        //back.add(getOutputDir().getAbsolutePath());
         back = TychoUtilities.addOsgiClasspathElements(project, back);
         return back;
     }
