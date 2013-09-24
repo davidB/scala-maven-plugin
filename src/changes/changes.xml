@@ -8,6 +8,9 @@
     <release version="3.1.6" date="2013-09-24">
       <action dev="David Bernard" type="update">update zinc from 0.2.0 to 0.2.5</action>
       <action dev="David Bernard" type="fix">remove the buid directory from the classpath when compiling</action>
+      <action dev="David Bernard" type="add">add 'scalaCompatVersion' Scala 's version to use to check binary compatibility</action>
+      <action dev="Eric Vantillard" type="add">add 'scalaOrganization' as a configurable parameter</action>
+      <action dev="Kohsuke Yatoh" type="fix" issue="102">check for file changes in incremental and continuous compilation mode</action>
     </release>
     <release version="3.1.5" date="2013-05-24">
       <action dev="David Bernard" type="fix" issue="131" due-to="Juha Heljoranta">fix LinkageError when using project.xxx into script section</action>
