@@ -63,7 +63,7 @@
 <a class="jxr_linenumber" name="53" href="#53">53</a>      <strong class="jxr_keyword">protected</strong> List&lt;String&gt; getClasspathElements() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="54" href="#54">54</a>          List&lt;String&gt; back = project.getCompileClasspathElements();
 <a class="jxr_linenumber" name="55" href="#55">55</a>          back.remove(project.getBuild().getOutputDirectory());
-<a class="jxr_linenumber" name="56" href="#56">56</a>          back.add(getOutputDir().getAbsolutePath());
+<a class="jxr_linenumber" name="56" href="#56">56</a>          <em class="jxr_comment">//back.add(getOutputDir().getAbsolutePath());</em>
 <a class="jxr_linenumber" name="57" href="#57">57</a>          back = TychoUtilities.addOsgiClasspathElements(project, back);
 <a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">return</strong> back;
 <a class="jxr_linenumber" name="59" href="#59">59</a>      }

@@ -125,228 +125,240 @@
 <a class="jxr_linenumber" name="115" href="#115">115</a>     }
 <a class="jxr_linenumber" name="116" href="#116">116</a> 
 <a class="jxr_linenumber" name="117" href="#117">117</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">int</strong> compile(List&lt;File&gt; sourceRootDirs, File outputDir, File analysisCacheFile, List&lt;String&gt; classpathElements, <strong class="jxr_keyword">boolean</strong> compileInLoop) <strong class="jxr_keyword">throws</strong> Exception, InterruptedException {
-<a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">if</strong> (INCREMENTAL.equals(recompileMode)) {
+<a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">if</strong> (!compileInLoop &amp;&amp; INCREMENTAL.equals(recompileMode)) {
 <a class="jxr_linenumber" name="119" href="#119">119</a>             <em class="jxr_comment">// TODO - Do we really need this dupliated here?</em>
 <a class="jxr_linenumber" name="120" href="#120">120</a>             <strong class="jxr_keyword">if</strong> (!outputDir.exists()) {
 <a class="jxr_linenumber" name="121" href="#121">121</a>               outputDir.mkdirs();
 <a class="jxr_linenumber" name="122" href="#122">122</a>             }
-<a class="jxr_linenumber" name="123" href="#123">123</a>             <strong class="jxr_keyword">return</strong> incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
-<a class="jxr_linenumber" name="124" href="#124">124</a>         }
-<a class="jxr_linenumber" name="125" href="#125">125</a> 
-<a class="jxr_linenumber" name="126" href="#126">126</a>         <strong class="jxr_keyword">long</strong> t0 = System.currentTimeMillis();
-<a class="jxr_linenumber" name="127" href="#127">127</a>         <a href="../scala_maven/ScalaCompilerSupport.html">LastCompilationInfo</a> lastCompilationInfo = LastCompilationInfo.find(sourceRootDirs, outputDir);
-<a class="jxr_linenumber" name="128" href="#128">128</a>         <strong class="jxr_keyword">if</strong> (_lastCompileAt &lt; 0) {
-<a class="jxr_linenumber" name="129" href="#129">129</a>             _lastCompileAt = lastCompilationInfo.getLastSuccessfullTS();
-<a class="jxr_linenumber" name="130" href="#130">130</a>         }
-<a class="jxr_linenumber" name="131" href="#131">131</a> 
-<a class="jxr_linenumber" name="132" href="#132">132</a>         List&lt;File&gt; files = getFilesToCompile(sourceRootDirs, _lastCompileAt);
-<a class="jxr_linenumber" name="133" href="#133">133</a> 
-<a class="jxr_linenumber" name="134" href="#134">134</a>         <strong class="jxr_keyword">if</strong> (files == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="135" href="#135">135</a>             <strong class="jxr_keyword">return</strong> -1;
-<a class="jxr_linenumber" name="136" href="#136">136</a>         }
-<a class="jxr_linenumber" name="137" href="#137">137</a> 
-<a class="jxr_linenumber" name="138" href="#138">138</a>         <strong class="jxr_keyword">if</strong> (files.size() &lt; 1) {
-<a class="jxr_linenumber" name="139" href="#139">139</a>             <strong class="jxr_keyword">return</strong> 0;
-<a class="jxr_linenumber" name="140" href="#140">140</a>         }
-<a class="jxr_linenumber" name="141" href="#141">141</a>         <strong class="jxr_keyword">if</strong> (!outputDir.exists()) {
-<a class="jxr_linenumber" name="142" href="#142">142</a>             outputDir.mkdirs();
-<a class="jxr_linenumber" name="143" href="#143">143</a>         }
-<a class="jxr_linenumber" name="144" href="#144">144</a>         <strong class="jxr_keyword">long</strong> t1 = System.currentTimeMillis();
-<a class="jxr_linenumber" name="145" href="#145">145</a>         getLog().info(String.format(<span class="jxr_string">"Compiling %d source files to %s at %d"</span>, files.size(), outputDir.getAbsolutePath(), t1));
-<a class="jxr_linenumber" name="146" href="#146">146</a>         <a href="../scala_maven_executions/JavaMainCaller.html">JavaMainCaller</a> jcmd = getScalaCommand();
-<a class="jxr_linenumber" name="147" href="#147">147</a>         jcmd.redirectToLog();
-<a class="jxr_linenumber" name="148" href="#148">148</a>         jcmd.addArgs(<span class="jxr_string">"-classpath"</span>, MainHelper.toMultiPath(classpathElements));
-<a class="jxr_linenumber" name="149" href="#149">149</a>         jcmd.addArgs(<span class="jxr_string">"-d"</span>, outputDir.getAbsolutePath());
-<a class="jxr_linenumber" name="150" href="#150">150</a>         <em class="jxr_comment">//jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());</em>
-<a class="jxr_linenumber" name="151" href="#151">151</a>         <strong class="jxr_keyword">for</strong> (File f : files) {
-<a class="jxr_linenumber" name="152" href="#152">152</a>             jcmd.addArgs(f.getAbsolutePath());
-<a class="jxr_linenumber" name="153" href="#153">153</a>         }
-<a class="jxr_linenumber" name="154" href="#154">154</a>         <strong class="jxr_keyword">if</strong> (jcmd.run(displayCmd, !compileInLoop)) {
-<a class="jxr_linenumber" name="155" href="#155">155</a>           lastCompilationInfo.setLastSuccessfullTS(t1);
-<a class="jxr_linenumber" name="156" href="#156">156</a>         }
-<a class="jxr_linenumber" name="157" href="#157">157</a>         <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="158" href="#158">158</a>             compileErrors = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="159" href="#159">159</a>         }
-<a class="jxr_linenumber" name="160" href="#160">160</a>         getLog().info(String.format(<span class="jxr_string">"prepare-compile in %d s"</span>, (t1 - t0) / 1000));
-<a class="jxr_linenumber" name="161" href="#161">161</a>         getLog().info(String.format(<span class="jxr_string">"compile in %d s"</span>, (System.currentTimeMillis() - t1) / 1000));
-<a class="jxr_linenumber" name="162" href="#162">162</a>         _lastCompileAt = t1;
-<a class="jxr_linenumber" name="163" href="#163">163</a>         <strong class="jxr_keyword">return</strong> files.size();
-<a class="jxr_linenumber" name="164" href="#164">164</a>     }
-<a class="jxr_linenumber" name="165" href="#165">165</a> 
-<a class="jxr_linenumber" name="166" href="#166">166</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     * Returns true if the previous compile failed</em>
-<a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="169" href="#169">169</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> hasCompileErrors() {
-<a class="jxr_linenumber" name="170" href="#170">170</a>         <strong class="jxr_keyword">return</strong> compileErrors;
-<a class="jxr_linenumber" name="171" href="#171">171</a>     }
-<a class="jxr_linenumber" name="172" href="#172">172</a> 
-<a class="jxr_linenumber" name="173" href="#173">173</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> clearCompileErrors() {
-<a class="jxr_linenumber" name="174" href="#174">174</a>         compileErrors = false;
-<a class="jxr_linenumber" name="175" href="#175">175</a>     }
-<a class="jxr_linenumber" name="176" href="#176">176</a> 
-<a class="jxr_linenumber" name="177" href="#177">177</a>     <strong class="jxr_keyword">protected</strong> List&lt;File&gt; getFilesToCompile(List&lt;File&gt; sourceRootDirs, <strong class="jxr_keyword">long</strong> lastSuccessfullCompileTime) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="178" href="#178">178</a>         List&lt;File&gt; sourceFiles = findSourceWithFilters(sourceRootDirs);
-<a class="jxr_linenumber" name="179" href="#179">179</a>         <strong class="jxr_keyword">if</strong> (sourceFiles.size() == 0) {
-<a class="jxr_linenumber" name="180" href="#180">180</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="181" href="#181">181</a>         }
-<a class="jxr_linenumber" name="182" href="#182">182</a> 
-<a class="jxr_linenumber" name="183" href="#183">183</a>         <em class="jxr_comment">// filter uptodate</em>
-<a class="jxr_linenumber" name="184" href="#184">184</a>         <em class="jxr_comment">// filter is not applied to .java, because scalac failed to used existing .class for unmodified .java</em>
-<a class="jxr_linenumber" name="185" href="#185">185</a>         <em class="jxr_comment">//   failed with "error while loading Xxx, class file '.../target/classes/.../Xxxx.class' is broken"</em>
-<a class="jxr_linenumber" name="186" href="#186">186</a>         <em class="jxr_comment">//   (restore how it work in 2.11 and failed in 2.12)</em>
-<a class="jxr_linenumber" name="187" href="#187">187</a>         <em class="jxr_comment">//TODO a better behavior : if there is at least one .scala to compile then add all .java, if there is at least one .java then add all .scala (because we don't manage class dependency)</em>
-<a class="jxr_linenumber" name="188" href="#188">188</a>         List&lt;File&gt; files = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;(sourceFiles.size());
-<a class="jxr_linenumber" name="189" href="#189">189</a>         <strong class="jxr_keyword">if</strong> (_lastCompileAt &gt; 0 || (!ALL.equals(recompileMode) &amp;&amp; (lastSuccessfullCompileTime &gt; 0))) {
-<a class="jxr_linenumber" name="190" href="#190">190</a>             ArrayList&lt;File&gt; modifiedScalaFiles = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;(sourceFiles.size());
-<a class="jxr_linenumber" name="191" href="#191">191</a>             ArrayList&lt;File&gt; modifiedJavaFiles = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;(sourceFiles.size());
-<a class="jxr_linenumber" name="192" href="#192">192</a>             ArrayList&lt;File&gt; allJavaFiles = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;(sourceFiles.size());
-<a class="jxr_linenumber" name="193" href="#193">193</a>             <strong class="jxr_keyword">for</strong> (File f : sourceFiles) {
-<a class="jxr_linenumber" name="194" href="#194">194</a>                 <strong class="jxr_keyword">if</strong> (f.getName().endsWith(<span class="jxr_string">".java"</span>)) {
-<a class="jxr_linenumber" name="195" href="#195">195</a>                     allJavaFiles.add(f);
-<a class="jxr_linenumber" name="196" href="#196">196</a>                 }
-<a class="jxr_linenumber" name="197" href="#197">197</a>                 <strong class="jxr_keyword">if</strong> (f.lastModified() &gt;= lastSuccessfullCompileTime) {
-<a class="jxr_linenumber" name="198" href="#198">198</a>                     <strong class="jxr_keyword">if</strong> (f.getName().endsWith(<span class="jxr_string">".java"</span>)) {
-<a class="jxr_linenumber" name="199" href="#199">199</a>                         modifiedJavaFiles.add(f);
-<a class="jxr_linenumber" name="200" href="#200">200</a>                     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="201" href="#201">201</a>                         modifiedScalaFiles.add(f);
-<a class="jxr_linenumber" name="202" href="#202">202</a>                     }
-<a class="jxr_linenumber" name="203" href="#203">203</a>                 }
-<a class="jxr_linenumber" name="204" href="#204">204</a>             }
-<a class="jxr_linenumber" name="205" href="#205">205</a>             <strong class="jxr_keyword">if</strong> ((modifiedScalaFiles.size() != 0) || (modifiedJavaFiles.size() != 0)) {
-<a class="jxr_linenumber" name="206" href="#206">206</a>                 <strong class="jxr_keyword">if</strong> ((modifiedScalaFiles.size() != 0) &amp;&amp; MODIFIED_ONLY.equals(recompileMode)) {
-<a class="jxr_linenumber" name="207" href="#207">207</a>                     files.addAll(allJavaFiles);
-<a class="jxr_linenumber" name="208" href="#208">208</a>                     files.addAll(modifiedScalaFiles);
-<a class="jxr_linenumber" name="209" href="#209">209</a>                     notifyCompilation(files);
-<a class="jxr_linenumber" name="210" href="#210">210</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="211" href="#211">211</a>                     files.addAll(sourceFiles);
-<a class="jxr_linenumber" name="212" href="#212">212</a>                     notifyCompilation(sourceRootDirs);
-<a class="jxr_linenumber" name="213" href="#213">213</a>                 }
-<a class="jxr_linenumber" name="214" href="#214">214</a>             }
-<a class="jxr_linenumber" name="215" href="#215">215</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="216" href="#216">216</a>             files.addAll(sourceFiles);
-<a class="jxr_linenumber" name="217" href="#217">217</a>             notifyCompilation(sourceRootDirs);
-<a class="jxr_linenumber" name="218" href="#218">218</a>         }
-<a class="jxr_linenumber" name="219" href="#219">219</a>         <strong class="jxr_keyword">return</strong> files;
-<a class="jxr_linenumber" name="220" href="#220">220</a>     }
-<a class="jxr_linenumber" name="221" href="#221">221</a> 
-<a class="jxr_linenumber" name="222" href="#222">222</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> notifyCompilation(List&lt;File&gt; files) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="223" href="#223">223</a>         <strong class="jxr_keyword">if</strong> (notifyCompilation) {
-<a class="jxr_linenumber" name="224" href="#224">224</a>             <strong class="jxr_keyword">for</strong> (File f : files) {
-<a class="jxr_linenumber" name="225" href="#225">225</a>                 getLog().info(String.format(<span class="jxr_string">"%s:-1: info: compiling"</span>, FileUtils.pathOf(f, useCanonicalPath)));
+<a class="jxr_linenumber" name="123" href="#123">123</a>             <em class="jxr_comment">// if not compileInLoop, invoke incrementalCompile immediately</em>
+<a class="jxr_linenumber" name="124" href="#124">124</a>             <strong class="jxr_keyword">return</strong> incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
+<a class="jxr_linenumber" name="125" href="#125">125</a>         }
+<a class="jxr_linenumber" name="126" href="#126">126</a> 
+<a class="jxr_linenumber" name="127" href="#127">127</a>         <strong class="jxr_keyword">long</strong> t0 = System.currentTimeMillis();
+<a class="jxr_linenumber" name="128" href="#128">128</a>         <a href="../scala_maven/ScalaCompilerSupport.html">LastCompilationInfo</a> lastCompilationInfo = LastCompilationInfo.find(sourceRootDirs, outputDir);
+<a class="jxr_linenumber" name="129" href="#129">129</a>         <strong class="jxr_keyword">if</strong> (_lastCompileAt &lt; 0) {
+<a class="jxr_linenumber" name="130" href="#130">130</a>             _lastCompileAt = lastCompilationInfo.getLastSuccessfullTS();
+<a class="jxr_linenumber" name="131" href="#131">131</a>         }
+<a class="jxr_linenumber" name="132" href="#132">132</a> 
+<a class="jxr_linenumber" name="133" href="#133">133</a>         List&lt;File&gt; files = getFilesToCompile(sourceRootDirs, _lastCompileAt);
+<a class="jxr_linenumber" name="134" href="#134">134</a> 
+<a class="jxr_linenumber" name="135" href="#135">135</a>         <strong class="jxr_keyword">if</strong> (files == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="136" href="#136">136</a>             <strong class="jxr_keyword">return</strong> -1;
+<a class="jxr_linenumber" name="137" href="#137">137</a>         }
+<a class="jxr_linenumber" name="138" href="#138">138</a> 
+<a class="jxr_linenumber" name="139" href="#139">139</a>         <strong class="jxr_keyword">if</strong> (files.size() &lt; 1) {
+<a class="jxr_linenumber" name="140" href="#140">140</a>             <strong class="jxr_keyword">return</strong> 0;
+<a class="jxr_linenumber" name="141" href="#141">141</a>         }
+<a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">if</strong> (!outputDir.exists()) {
+<a class="jxr_linenumber" name="143" href="#143">143</a>             outputDir.mkdirs();
+<a class="jxr_linenumber" name="144" href="#144">144</a>         }
+<a class="jxr_linenumber" name="145" href="#145">145</a>         <strong class="jxr_keyword">long</strong> t1 = System.currentTimeMillis();
+<a class="jxr_linenumber" name="146" href="#146">146</a> 
+<a class="jxr_linenumber" name="147" href="#147">147</a>         <strong class="jxr_keyword">if</strong> (compileInLoop &amp;&amp; INCREMENTAL.equals(recompileMode)) {
+<a class="jxr_linenumber" name="148" href="#148">148</a>             <em class="jxr_comment">// if compileInLoop, do not invoke incrementalCompile when there's no change</em>
+<a class="jxr_linenumber" name="149" href="#149">149</a>             <strong class="jxr_keyword">int</strong> retCode = incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
+<a class="jxr_linenumber" name="150" href="#150">150</a>             _lastCompileAt = t1;
+<a class="jxr_linenumber" name="151" href="#151">151</a>             <strong class="jxr_keyword">if</strong> (retCode == 1) {
+<a class="jxr_linenumber" name="152" href="#152">152</a>                 lastCompilationInfo.setLastSuccessfullTS(t1);
+<a class="jxr_linenumber" name="153" href="#153">153</a>             }
+<a class="jxr_linenumber" name="154" href="#154">154</a>             <strong class="jxr_keyword">return</strong> retCode;
+<a class="jxr_linenumber" name="155" href="#155">155</a>         }
+<a class="jxr_linenumber" name="156" href="#156">156</a> 
+<a class="jxr_linenumber" name="157" href="#157">157</a>         getLog().info(String.format(<span class="jxr_string">"Compiling %d source files to %s at %d"</span>, files.size(), outputDir.getAbsolutePath(), t1));
+<a class="jxr_linenumber" name="158" href="#158">158</a>         <a href="../scala_maven_executions/JavaMainCaller.html">JavaMainCaller</a> jcmd = getScalaCommand();
+<a class="jxr_linenumber" name="159" href="#159">159</a>         jcmd.redirectToLog();
+<a class="jxr_linenumber" name="160" href="#160">160</a>         <strong class="jxr_keyword">if</strong> (!classpathElements.isEmpty()) jcmd.addArgs(<span class="jxr_string">"-classpath"</span>, MainHelper.toMultiPath(classpathElements));
+<a class="jxr_linenumber" name="161" href="#161">161</a>         jcmd.addArgs(<span class="jxr_string">"-d"</span>, outputDir.getAbsolutePath());
+<a class="jxr_linenumber" name="162" href="#162">162</a>         <em class="jxr_comment">//jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());</em>
+<a class="jxr_linenumber" name="163" href="#163">163</a>         <strong class="jxr_keyword">for</strong> (File f : files) {
+<a class="jxr_linenumber" name="164" href="#164">164</a>             jcmd.addArgs(f.getAbsolutePath());
+<a class="jxr_linenumber" name="165" href="#165">165</a>         }
+<a class="jxr_linenumber" name="166" href="#166">166</a>         <strong class="jxr_keyword">if</strong> (jcmd.run(displayCmd, !compileInLoop)) {
+<a class="jxr_linenumber" name="167" href="#167">167</a>           lastCompilationInfo.setLastSuccessfullTS(t1);
+<a class="jxr_linenumber" name="168" href="#168">168</a>         }
+<a class="jxr_linenumber" name="169" href="#169">169</a>         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="170" href="#170">170</a>             compileErrors = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="171" href="#171">171</a>         }
+<a class="jxr_linenumber" name="172" href="#172">172</a>         getLog().info(String.format(<span class="jxr_string">"prepare-compile in %d s"</span>, (t1 - t0) / 1000));
+<a class="jxr_linenumber" name="173" href="#173">173</a>         getLog().info(String.format(<span class="jxr_string">"compile in %d s"</span>, (System.currentTimeMillis() - t1) / 1000));
+<a class="jxr_linenumber" name="174" href="#174">174</a>         _lastCompileAt = t1;
+<a class="jxr_linenumber" name="175" href="#175">175</a>         <strong class="jxr_keyword">return</strong> files.size();
+<a class="jxr_linenumber" name="176" href="#176">176</a>     }
+<a class="jxr_linenumber" name="177" href="#177">177</a> 
+<a class="jxr_linenumber" name="178" href="#178">178</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="179" href="#179">179</a> <em class="jxr_javadoccomment">     * Returns true if the previous compile failed</em>
+<a class="jxr_linenumber" name="180" href="#180">180</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="181" href="#181">181</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> hasCompileErrors() {
+<a class="jxr_linenumber" name="182" href="#182">182</a>         <strong class="jxr_keyword">return</strong> compileErrors;
+<a class="jxr_linenumber" name="183" href="#183">183</a>     }
+<a class="jxr_linenumber" name="184" href="#184">184</a> 
+<a class="jxr_linenumber" name="185" href="#185">185</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> clearCompileErrors() {
+<a class="jxr_linenumber" name="186" href="#186">186</a>         compileErrors = false;
+<a class="jxr_linenumber" name="187" href="#187">187</a>     }
+<a class="jxr_linenumber" name="188" href="#188">188</a> 
+<a class="jxr_linenumber" name="189" href="#189">189</a>     <strong class="jxr_keyword">protected</strong> List&lt;File&gt; getFilesToCompile(List&lt;File&gt; sourceRootDirs, <strong class="jxr_keyword">long</strong> lastSuccessfullCompileTime) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="190" href="#190">190</a>         List&lt;File&gt; sourceFiles = findSourceWithFilters(sourceRootDirs);
+<a class="jxr_linenumber" name="191" href="#191">191</a>         <strong class="jxr_keyword">if</strong> (sourceFiles.size() == 0) {
+<a class="jxr_linenumber" name="192" href="#192">192</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="193" href="#193">193</a>         }
+<a class="jxr_linenumber" name="194" href="#194">194</a> 
+<a class="jxr_linenumber" name="195" href="#195">195</a>         <em class="jxr_comment">// filter uptodate</em>
+<a class="jxr_linenumber" name="196" href="#196">196</a>         <em class="jxr_comment">// filter is not applied to .java, because scalac failed to used existing .class for unmodified .java</em>
+<a class="jxr_linenumber" name="197" href="#197">197</a>         <em class="jxr_comment">//   failed with "error while loading Xxx, class file '.../target/classes/.../Xxxx.class' is broken"</em>
+<a class="jxr_linenumber" name="198" href="#198">198</a>         <em class="jxr_comment">//   (restore how it work in 2.11 and failed in 2.12)</em>
+<a class="jxr_linenumber" name="199" href="#199">199</a>         <em class="jxr_comment">//TODO a better behavior : if there is at least one .scala to compile then add all .java, if there is at least one .java then add all .scala (because we don't manage class dependency)</em>
+<a class="jxr_linenumber" name="200" href="#200">200</a>         List&lt;File&gt; files = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;(sourceFiles.size());
+<a class="jxr_linenumber" name="201" href="#201">201</a>         <strong class="jxr_keyword">if</strong> (_lastCompileAt &gt; 0 || (!ALL.equals(recompileMode) &amp;&amp; (lastSuccessfullCompileTime &gt; 0))) {
+<a class="jxr_linenumber" name="202" href="#202">202</a>             ArrayList&lt;File&gt; modifiedScalaFiles = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;(sourceFiles.size());
+<a class="jxr_linenumber" name="203" href="#203">203</a>             ArrayList&lt;File&gt; modifiedJavaFiles = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;(sourceFiles.size());
+<a class="jxr_linenumber" name="204" href="#204">204</a>             ArrayList&lt;File&gt; allJavaFiles = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;(sourceFiles.size());
+<a class="jxr_linenumber" name="205" href="#205">205</a>             <strong class="jxr_keyword">for</strong> (File f : sourceFiles) {
+<a class="jxr_linenumber" name="206" href="#206">206</a>                 <strong class="jxr_keyword">if</strong> (f.getName().endsWith(<span class="jxr_string">".java"</span>)) {
+<a class="jxr_linenumber" name="207" href="#207">207</a>                     allJavaFiles.add(f);
+<a class="jxr_linenumber" name="208" href="#208">208</a>                 }
+<a class="jxr_linenumber" name="209" href="#209">209</a>                 <strong class="jxr_keyword">if</strong> (f.lastModified() &gt;= lastSuccessfullCompileTime) {
+<a class="jxr_linenumber" name="210" href="#210">210</a>                     <strong class="jxr_keyword">if</strong> (f.getName().endsWith(<span class="jxr_string">".java"</span>)) {
+<a class="jxr_linenumber" name="211" href="#211">211</a>                         modifiedJavaFiles.add(f);
+<a class="jxr_linenumber" name="212" href="#212">212</a>                     } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="213" href="#213">213</a>                         modifiedScalaFiles.add(f);
+<a class="jxr_linenumber" name="214" href="#214">214</a>                     }
+<a class="jxr_linenumber" name="215" href="#215">215</a>                 }
+<a class="jxr_linenumber" name="216" href="#216">216</a>             }
+<a class="jxr_linenumber" name="217" href="#217">217</a>             <strong class="jxr_keyword">if</strong> ((modifiedScalaFiles.size() != 0) || (modifiedJavaFiles.size() != 0)) {
+<a class="jxr_linenumber" name="218" href="#218">218</a>                 <strong class="jxr_keyword">if</strong> ((modifiedScalaFiles.size() != 0) &amp;&amp; MODIFIED_ONLY.equals(recompileMode)) {
+<a class="jxr_linenumber" name="219" href="#219">219</a>                     files.addAll(allJavaFiles);
+<a class="jxr_linenumber" name="220" href="#220">220</a>                     files.addAll(modifiedScalaFiles);
+<a class="jxr_linenumber" name="221" href="#221">221</a>                     notifyCompilation(files);
+<a class="jxr_linenumber" name="222" href="#222">222</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="223" href="#223">223</a>                     files.addAll(sourceFiles);
+<a class="jxr_linenumber" name="224" href="#224">224</a>                     notifyCompilation(sourceRootDirs);
+<a class="jxr_linenumber" name="225" href="#225">225</a>                 }
 <a class="jxr_linenumber" name="226" href="#226">226</a>             }
-<a class="jxr_linenumber" name="227" href="#227">227</a>         }
-<a class="jxr_linenumber" name="228" href="#228">228</a>     }
-<a class="jxr_linenumber" name="229" href="#229">229</a> 
-<a class="jxr_linenumber" name="230" href="#230">230</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../scala_maven/ScalaCompilerSupport.html">LastCompilationInfo</a> {
-<a class="jxr_linenumber" name="231" href="#231">231</a>       <strong class="jxr_keyword">static</strong> <a href="../scala_maven/ScalaCompilerSupport.html">LastCompilationInfo</a> find(List&lt;File&gt; sourceRootDirs, File outputDir) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="232" href="#232">232</a>         StringBuilder hash = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="233" href="#233">233</a>         <strong class="jxr_keyword">for</strong> (File f : sourceRootDirs) {
-<a class="jxr_linenumber" name="234" href="#234">234</a>           hash.append(f.toString());
-<a class="jxr_linenumber" name="235" href="#235">235</a>         }
-<a class="jxr_linenumber" name="236" href="#236">236</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../scala_maven/ScalaCompilerSupport.html">LastCompilationInfo</a>(<strong class="jxr_keyword">new</strong> File(outputDir.getAbsolutePath() + <span class="jxr_string">"."</span> + hash.toString().hashCode() + <span class="jxr_string">".timestamp"</span>), outputDir);
-<a class="jxr_linenumber" name="237" href="#237">237</a>       }
-<a class="jxr_linenumber" name="238" href="#238">238</a> 
-<a class="jxr_linenumber" name="239" href="#239">239</a>       <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> File _lastCompileAtFile;
-<a class="jxr_linenumber" name="240" href="#240">240</a>       <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> File _outputDir;
+<a class="jxr_linenumber" name="227" href="#227">227</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="228" href="#228">228</a>             files.addAll(sourceFiles);
+<a class="jxr_linenumber" name="229" href="#229">229</a>             notifyCompilation(sourceRootDirs);
+<a class="jxr_linenumber" name="230" href="#230">230</a>         }
+<a class="jxr_linenumber" name="231" href="#231">231</a>         <strong class="jxr_keyword">return</strong> files;
+<a class="jxr_linenumber" name="232" href="#232">232</a>     }
+<a class="jxr_linenumber" name="233" href="#233">233</a> 
+<a class="jxr_linenumber" name="234" href="#234">234</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> notifyCompilation(List&lt;File&gt; files) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="235" href="#235">235</a>         <strong class="jxr_keyword">if</strong> (notifyCompilation) {
+<a class="jxr_linenumber" name="236" href="#236">236</a>             <strong class="jxr_keyword">for</strong> (File f : files) {
+<a class="jxr_linenumber" name="237" href="#237">237</a>                 getLog().info(String.format(<span class="jxr_string">"%s:-1: info: compiling"</span>, FileUtils.pathOf(f, useCanonicalPath)));
+<a class="jxr_linenumber" name="238" href="#238">238</a>             }
+<a class="jxr_linenumber" name="239" href="#239">239</a>         }
+<a class="jxr_linenumber" name="240" href="#240">240</a>     }
 <a class="jxr_linenumber" name="241" href="#241">241</a> 
-<a class="jxr_linenumber" name="242" href="#242">242</a>       <strong class="jxr_keyword">private</strong> <a href="../scala_maven/ScalaCompilerSupport.html">LastCompilationInfo</a>(File f, File outputDir) {
-<a class="jxr_linenumber" name="243" href="#243">243</a>         _lastCompileAtFile = f;
-<a class="jxr_linenumber" name="244" href="#244">244</a>         _outputDir = outputDir;
-<a class="jxr_linenumber" name="245" href="#245">245</a>       }
-<a class="jxr_linenumber" name="246" href="#246">246</a> 
-<a class="jxr_linenumber" name="247" href="#247">247</a>       <strong class="jxr_keyword">long</strong> getLastSuccessfullTS() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="248" href="#248">248</a>         <strong class="jxr_keyword">long</strong> back =  -1;
-<a class="jxr_linenumber" name="249" href="#249">249</a>         <strong class="jxr_keyword">if</strong> (_lastCompileAtFile.exists() &amp;&amp; _outputDir.exists() &amp;&amp; (_outputDir.list().length &gt; 0)) {
-<a class="jxr_linenumber" name="250" href="#250">250</a>             back = _lastCompileAtFile.lastModified();
-<a class="jxr_linenumber" name="251" href="#251">251</a>         }
-<a class="jxr_linenumber" name="252" href="#252">252</a>         <strong class="jxr_keyword">return</strong> back;
-<a class="jxr_linenumber" name="253" href="#253">253</a>       }
-<a class="jxr_linenumber" name="254" href="#254">254</a> 
-<a class="jxr_linenumber" name="255" href="#255">255</a>       <strong class="jxr_keyword">void</strong> setLastSuccessfullTS(<strong class="jxr_keyword">long</strong> v) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="256" href="#256">256</a>         <strong class="jxr_keyword">if</strong> (!_lastCompileAtFile.exists()) {
-<a class="jxr_linenumber" name="257" href="#257">257</a>             FileUtils.fileWrite(_lastCompileAtFile.getAbsolutePath(), <span class="jxr_string">"."</span>);
-<a class="jxr_linenumber" name="258" href="#258">258</a>         }
-<a class="jxr_linenumber" name="259" href="#259">259</a>         _lastCompileAtFile.setLastModified(v);
-<a class="jxr_linenumber" name="260" href="#260">260</a>       }
-<a class="jxr_linenumber" name="261" href="#261">261</a>     }
-<a class="jxr_linenumber" name="262" href="#262">262</a> 
-<a class="jxr_linenumber" name="263" href="#263">263</a>     <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="264" href="#264">264</a>     <em class="jxr_comment">// Incremental compilation</em>
-<a class="jxr_linenumber" name="265" href="#265">265</a>     <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="242" href="#242">242</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../scala_maven/ScalaCompilerSupport.html">LastCompilationInfo</a> {
+<a class="jxr_linenumber" name="243" href="#243">243</a>       <strong class="jxr_keyword">static</strong> <a href="../scala_maven/ScalaCompilerSupport.html">LastCompilationInfo</a> find(List&lt;File&gt; sourceRootDirs, File outputDir) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="244" href="#244">244</a>         StringBuilder hash = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="245" href="#245">245</a>         <strong class="jxr_keyword">for</strong> (File f : sourceRootDirs) {
+<a class="jxr_linenumber" name="246" href="#246">246</a>           hash.append(f.toString());
+<a class="jxr_linenumber" name="247" href="#247">247</a>         }
+<a class="jxr_linenumber" name="248" href="#248">248</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../scala_maven/ScalaCompilerSupport.html">LastCompilationInfo</a>(<strong class="jxr_keyword">new</strong> File(outputDir.getAbsolutePath() + <span class="jxr_string">"."</span> + hash.toString().hashCode() + <span class="jxr_string">".timestamp"</span>), outputDir);
+<a class="jxr_linenumber" name="249" href="#249">249</a>       }
+<a class="jxr_linenumber" name="250" href="#250">250</a> 
+<a class="jxr_linenumber" name="251" href="#251">251</a>       <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> File _lastCompileAtFile;
+<a class="jxr_linenumber" name="252" href="#252">252</a>       <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> File _outputDir;
+<a class="jxr_linenumber" name="253" href="#253">253</a> 
+<a class="jxr_linenumber" name="254" href="#254">254</a>       <strong class="jxr_keyword">private</strong> <a href="../scala_maven/ScalaCompilerSupport.html">LastCompilationInfo</a>(File f, File outputDir) {
+<a class="jxr_linenumber" name="255" href="#255">255</a>         _lastCompileAtFile = f;
+<a class="jxr_linenumber" name="256" href="#256">256</a>         _outputDir = outputDir;
+<a class="jxr_linenumber" name="257" href="#257">257</a>       }
+<a class="jxr_linenumber" name="258" href="#258">258</a> 
+<a class="jxr_linenumber" name="259" href="#259">259</a>       <strong class="jxr_keyword">long</strong> getLastSuccessfullTS() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="260" href="#260">260</a>         <strong class="jxr_keyword">long</strong> back =  -1;
+<a class="jxr_linenumber" name="261" href="#261">261</a>         <strong class="jxr_keyword">if</strong> (_lastCompileAtFile.exists() &amp;&amp; _outputDir.exists() &amp;&amp; (_outputDir.list().length &gt; 0)) {
+<a class="jxr_linenumber" name="262" href="#262">262</a>             back = _lastCompileAtFile.lastModified();
+<a class="jxr_linenumber" name="263" href="#263">263</a>         }
+<a class="jxr_linenumber" name="264" href="#264">264</a>         <strong class="jxr_keyword">return</strong> back;
+<a class="jxr_linenumber" name="265" href="#265">265</a>       }
 <a class="jxr_linenumber" name="266" href="#266">266</a> 
-<a class="jxr_linenumber" name="267" href="#267">267</a>     @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="268" href="#268">268</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">int</strong> incrementalCompile(List&lt;String&gt; classpathElements, List&lt;File&gt; sourceRootDirs, File outputDir, File cacheFile, <strong class="jxr_keyword">boolean</strong> compileInLoop) <strong class="jxr_keyword">throws</strong> Exception, InterruptedException {
-<a class="jxr_linenumber" name="269" href="#269">269</a>         List&lt;File&gt; sources = findSourceWithFilters(sourceRootDirs);
-<a class="jxr_linenumber" name="270" href="#270">270</a>         <strong class="jxr_keyword">if</strong> (sources.isEmpty()) {
-<a class="jxr_linenumber" name="271" href="#271">271</a>             <strong class="jxr_keyword">return</strong> -1;
-<a class="jxr_linenumber" name="272" href="#272">272</a>         }
-<a class="jxr_linenumber" name="273" href="#273">273</a> 
-<a class="jxr_linenumber" name="274" href="#274">274</a>         <strong class="jxr_keyword">if</strong> (incremental == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="275" href="#275">275</a>             File libraryJar = getLibraryJar();
-<a class="jxr_linenumber" name="276" href="#276">276</a>             File compilerJar = getCompilerJar();
-<a class="jxr_linenumber" name="277" href="#277">277</a>             List&lt;File&gt; extraJars = getCompilerDependencies();
-<a class="jxr_linenumber" name="278" href="#278">278</a>             extraJars.remove(libraryJar);
-<a class="jxr_linenumber" name="279" href="#279">279</a>             String sbtGroupId = SbtIncrementalCompiler.SBT_GROUP_ID;
-<a class="jxr_linenumber" name="280" href="#280">280</a>             String xsbtiArtifactId = SbtIncrementalCompiler.XSBTI_ARTIFACT_ID;
-<a class="jxr_linenumber" name="281" href="#281">281</a>             String compilerInterfaceArtifactId = SbtIncrementalCompiler.COMPILER_INTERFACE_ARTIFACT_ID;
-<a class="jxr_linenumber" name="282" href="#282">282</a>             String compilerInterfaceClassifier = SbtIncrementalCompiler.COMPILER_INTERFACE_CLASSIFIER;
-<a class="jxr_linenumber" name="283" href="#283">283</a>             String sbtVersion = findVersionFromPluginArtifacts(sbtGroupId, SbtIncrementalCompiler.COMPILER_INTEGRATION_ARTIFACT_ID);
-<a class="jxr_linenumber" name="284" href="#284">284</a>             File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
-<a class="jxr_linenumber" name="285" href="#285">285</a>             List&lt;String&gt; zincArgs = StringUtils.isEmpty(addZincArgs) ? <strong class="jxr_keyword">new</strong> LinkedList&lt;String&gt;() : (List&lt;String&gt;) Arrays.asList(addZincArgs.split(<span class="jxr_string">"&#92;&#92;|"</span>));
-<a class="jxr_linenumber" name="286" href="#286">286</a>             File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
-<a class="jxr_linenumber" name="287" href="#287">287</a>            	incremental = <strong class="jxr_keyword">new</strong> <a href="../sbt_inc/SbtIncrementalCompiler.html">SbtIncrementalCompiler</a>(useZincServer, zincPort, libraryJar, compilerJar, extraJars, xsbtiJar, interfaceSrcJar, getLog(), zincArgs);
-<a class="jxr_linenumber" name="288" href="#288">288</a>         }
-<a class="jxr_linenumber" name="289" href="#289">289</a> 
-<a class="jxr_linenumber" name="290" href="#290">290</a>         classpathElements.remove(outputDir.getAbsolutePath());
-<a class="jxr_linenumber" name="291" href="#291">291</a>         List&lt;String&gt; scalacOptions = getScalaOptions();
-<a class="jxr_linenumber" name="292" href="#292">292</a>         List&lt;String&gt; javacOptions = getJavacOptions();
-<a class="jxr_linenumber" name="293" href="#293">293</a>         Map&lt;File, File&gt; cacheMap = getAnalysisCacheMap();
-<a class="jxr_linenumber" name="294" href="#294">294</a> 
-<a class="jxr_linenumber" name="295" href="#295">295</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="296" href="#296">296</a>             incremental.compile(project.getBasedir(), classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder);
-<a class="jxr_linenumber" name="297" href="#297">297</a>         } <strong class="jxr_keyword">catch</strong> (xsbti.CompileFailed e) {
-<a class="jxr_linenumber" name="298" href="#298">298</a>             <strong class="jxr_keyword">if</strong> (compileInLoop) {
-<a class="jxr_linenumber" name="299" href="#299">299</a>                 compileErrors = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="300" href="#300">300</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="301" href="#301">301</a>                 <strong class="jxr_keyword">throw</strong> e;
-<a class="jxr_linenumber" name="302" href="#302">302</a>             }
-<a class="jxr_linenumber" name="303" href="#303">303</a>         }
-<a class="jxr_linenumber" name="304" href="#304">304</a> 
-<a class="jxr_linenumber" name="305" href="#305">305</a>         <strong class="jxr_keyword">return</strong> 1;
-<a class="jxr_linenumber" name="306" href="#306">306</a>     }
-<a class="jxr_linenumber" name="307" href="#307">307</a> 
-<a class="jxr_linenumber" name="308" href="#308">308</a>     <strong class="jxr_keyword">protected</strong> Map&lt;File, File&gt; getAnalysisCacheMap() {
-<a class="jxr_linenumber" name="309" href="#309">309</a>         HashMap&lt;File, File&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;File, File&gt;();
-<a class="jxr_linenumber" name="310" href="#310">310</a>         String scalaPluginKey = ((PluginDescriptor) getPluginContext().get(<span class="jxr_string">"pluginDescriptor"</span>)).getPluginLookupKey();
-<a class="jxr_linenumber" name="311" href="#311">311</a>         <strong class="jxr_keyword">for</strong> (MavenProject project1 : reactorProjects) {
-<a class="jxr_linenumber" name="312" href="#312">312</a>             Plugin plugin = project1.getPlugin(scalaPluginKey);
-<a class="jxr_linenumber" name="313" href="#313">313</a>             <strong class="jxr_keyword">if</strong> (plugin != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="314" href="#314">314</a>                 Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();
-<a class="jxr_linenumber" name="315" href="#315">315</a>                 Xpp3Dom analysisCache = (configuration != <strong class="jxr_keyword">null</strong>) ? configuration.getChild(<span class="jxr_string">"analysisCacheFile"</span>) : <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="316" href="#316">316</a>                 File analysisCacheFile = (analysisCache != <strong class="jxr_keyword">null</strong>) ? <strong class="jxr_keyword">new</strong> File(analysisCache.getValue()) : defaultAnalysisCacheFile(project1);
-<a class="jxr_linenumber" name="317" href="#317">317</a>                 File classesDirectory = <strong class="jxr_keyword">new</strong> File(project1.getBuild().getOutputDirectory());
-<a class="jxr_linenumber" name="318" href="#318">318</a>                 map.put(classesDirectory.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile());
-<a class="jxr_linenumber" name="319" href="#319">319</a>                 Xpp3Dom testAnalysisCache = (configuration != <strong class="jxr_keyword">null</strong>) ? configuration.getChild(<span class="jxr_string">"testAnalysisCacheFile"</span>) : <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="320" href="#320">320</a>                 File testAnalysisCacheFile = (testAnalysisCache != <strong class="jxr_keyword">null</strong>) ? <strong class="jxr_keyword">new</strong> File(testAnalysisCache.getValue()) : defaultTestAnalysisCacheFile(project1);
-<a class="jxr_linenumber" name="321" href="#321">321</a>                 File testClassesDirectory = <strong class="jxr_keyword">new</strong> File(project1.getBuild().getTestOutputDirectory());
-<a class="jxr_linenumber" name="322" href="#322">322</a>                 map.put(testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile());
-<a class="jxr_linenumber" name="323" href="#323">323</a>             }
-<a class="jxr_linenumber" name="324" href="#324">324</a>         }
-<a class="jxr_linenumber" name="325" href="#325">325</a>         <strong class="jxr_keyword">return</strong> map;
-<a class="jxr_linenumber" name="326" href="#326">326</a>     }
-<a class="jxr_linenumber" name="327" href="#327">327</a> 
-<a class="jxr_linenumber" name="328" href="#328">328</a>     <strong class="jxr_keyword">protected</strong> File defaultAnalysisDirectory(MavenProject p) {
-<a class="jxr_linenumber" name="329" href="#329">329</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> File(p.getBuild().getDirectory(), <span class="jxr_string">"analysis"</span>);
-<a class="jxr_linenumber" name="330" href="#330">330</a>     }
-<a class="jxr_linenumber" name="331" href="#331">331</a> 
-<a class="jxr_linenumber" name="332" href="#332">332</a>     <strong class="jxr_keyword">protected</strong> File defaultAnalysisCacheFile(MavenProject p) {
-<a class="jxr_linenumber" name="333" href="#333">333</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> File(defaultAnalysisDirectory(p), <span class="jxr_string">"compile"</span>);
-<a class="jxr_linenumber" name="334" href="#334">334</a>     }
-<a class="jxr_linenumber" name="335" href="#335">335</a> 
-<a class="jxr_linenumber" name="336" href="#336">336</a>     <strong class="jxr_keyword">protected</strong> File defaultTestAnalysisCacheFile(MavenProject p) {
-<a class="jxr_linenumber" name="337" href="#337">337</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> File(defaultAnalysisDirectory(p), <span class="jxr_string">"test-compile"</span>);
+<a class="jxr_linenumber" name="267" href="#267">267</a>       <strong class="jxr_keyword">void</strong> setLastSuccessfullTS(<strong class="jxr_keyword">long</strong> v) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="268" href="#268">268</a>         <strong class="jxr_keyword">if</strong> (!_lastCompileAtFile.exists()) {
+<a class="jxr_linenumber" name="269" href="#269">269</a>             FileUtils.fileWrite(_lastCompileAtFile.getAbsolutePath(), <span class="jxr_string">"."</span>);
+<a class="jxr_linenumber" name="270" href="#270">270</a>         }
+<a class="jxr_linenumber" name="271" href="#271">271</a>         _lastCompileAtFile.setLastModified(v);
+<a class="jxr_linenumber" name="272" href="#272">272</a>       }
+<a class="jxr_linenumber" name="273" href="#273">273</a>     }
+<a class="jxr_linenumber" name="274" href="#274">274</a> 
+<a class="jxr_linenumber" name="275" href="#275">275</a>     <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="276" href="#276">276</a>     <em class="jxr_comment">// Incremental compilation</em>
+<a class="jxr_linenumber" name="277" href="#277">277</a>     <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="278" href="#278">278</a> 
+<a class="jxr_linenumber" name="279" href="#279">279</a>     @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
+<a class="jxr_linenumber" name="280" href="#280">280</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">int</strong> incrementalCompile(List&lt;String&gt; classpathElements, List&lt;File&gt; sourceRootDirs, File outputDir, File cacheFile, <strong class="jxr_keyword">boolean</strong> compileInLoop) <strong class="jxr_keyword">throws</strong> Exception, InterruptedException {
+<a class="jxr_linenumber" name="281" href="#281">281</a>         List&lt;File&gt; sources = findSourceWithFilters(sourceRootDirs);
+<a class="jxr_linenumber" name="282" href="#282">282</a>         <strong class="jxr_keyword">if</strong> (sources.isEmpty()) {
+<a class="jxr_linenumber" name="283" href="#283">283</a>             <strong class="jxr_keyword">return</strong> -1;
+<a class="jxr_linenumber" name="284" href="#284">284</a>         }
+<a class="jxr_linenumber" name="285" href="#285">285</a> 
+<a class="jxr_linenumber" name="286" href="#286">286</a>         <strong class="jxr_keyword">if</strong> (incremental == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="287" href="#287">287</a>             File libraryJar = getLibraryJar();
+<a class="jxr_linenumber" name="288" href="#288">288</a>             File compilerJar = getCompilerJar();
+<a class="jxr_linenumber" name="289" href="#289">289</a>             List&lt;File&gt; extraJars = getCompilerDependencies();
+<a class="jxr_linenumber" name="290" href="#290">290</a>             extraJars.remove(libraryJar);
+<a class="jxr_linenumber" name="291" href="#291">291</a>             String sbtGroupId = SbtIncrementalCompiler.SBT_GROUP_ID;
+<a class="jxr_linenumber" name="292" href="#292">292</a>             String xsbtiArtifactId = SbtIncrementalCompiler.XSBTI_ARTIFACT_ID;
+<a class="jxr_linenumber" name="293" href="#293">293</a>             String compilerInterfaceArtifactId = SbtIncrementalCompiler.COMPILER_INTERFACE_ARTIFACT_ID;
+<a class="jxr_linenumber" name="294" href="#294">294</a>             String compilerInterfaceClassifier = SbtIncrementalCompiler.COMPILER_INTERFACE_CLASSIFIER;
+<a class="jxr_linenumber" name="295" href="#295">295</a>             String sbtVersion = findVersionFromPluginArtifacts(sbtGroupId, SbtIncrementalCompiler.COMPILER_INTEGRATION_ARTIFACT_ID);
+<a class="jxr_linenumber" name="296" href="#296">296</a>             File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
+<a class="jxr_linenumber" name="297" href="#297">297</a>             List&lt;String&gt; zincArgs = StringUtils.isEmpty(addZincArgs) ? <strong class="jxr_keyword">new</strong> LinkedList&lt;String&gt;() : (List&lt;String&gt;) Arrays.asList(addZincArgs.split(<span class="jxr_string">"&#92;&#92;|"</span>));
+<a class="jxr_linenumber" name="298" href="#298">298</a>             File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
+<a class="jxr_linenumber" name="299" href="#299">299</a>            	incremental = <strong class="jxr_keyword">new</strong> <a href="../sbt_inc/SbtIncrementalCompiler.html">SbtIncrementalCompiler</a>(useZincServer, zincPort, libraryJar, compilerJar, extraJars, xsbtiJar, interfaceSrcJar, getLog(), zincArgs);
+<a class="jxr_linenumber" name="300" href="#300">300</a>         }
+<a class="jxr_linenumber" name="301" href="#301">301</a> 
+<a class="jxr_linenumber" name="302" href="#302">302</a>         classpathElements.remove(outputDir.getAbsolutePath());
+<a class="jxr_linenumber" name="303" href="#303">303</a>         List&lt;String&gt; scalacOptions = getScalaOptions();
+<a class="jxr_linenumber" name="304" href="#304">304</a>         List&lt;String&gt; javacOptions = getJavacOptions();
+<a class="jxr_linenumber" name="305" href="#305">305</a>         Map&lt;File, File&gt; cacheMap = getAnalysisCacheMap();
+<a class="jxr_linenumber" name="306" href="#306">306</a> 
+<a class="jxr_linenumber" name="307" href="#307">307</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="308" href="#308">308</a>             incremental.compile(project.getBasedir(), classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder);
+<a class="jxr_linenumber" name="309" href="#309">309</a>         } <strong class="jxr_keyword">catch</strong> (xsbti.CompileFailed e) {
+<a class="jxr_linenumber" name="310" href="#310">310</a>             <strong class="jxr_keyword">if</strong> (compileInLoop) {
+<a class="jxr_linenumber" name="311" href="#311">311</a>                 compileErrors = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="312" href="#312">312</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="313" href="#313">313</a>                 <strong class="jxr_keyword">throw</strong> e;
+<a class="jxr_linenumber" name="314" href="#314">314</a>             }
+<a class="jxr_linenumber" name="315" href="#315">315</a>         }
+<a class="jxr_linenumber" name="316" href="#316">316</a> 
+<a class="jxr_linenumber" name="317" href="#317">317</a>         <strong class="jxr_keyword">return</strong> 1;
+<a class="jxr_linenumber" name="318" href="#318">318</a>     }
+<a class="jxr_linenumber" name="319" href="#319">319</a> 
+<a class="jxr_linenumber" name="320" href="#320">320</a>     <strong class="jxr_keyword">protected</strong> Map&lt;File, File&gt; getAnalysisCacheMap() {
+<a class="jxr_linenumber" name="321" href="#321">321</a>         HashMap&lt;File, File&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;File, File&gt;();
+<a class="jxr_linenumber" name="322" href="#322">322</a>         String scalaPluginKey = ((PluginDescriptor) getPluginContext().get(<span class="jxr_string">"pluginDescriptor"</span>)).getPluginLookupKey();
+<a class="jxr_linenumber" name="323" href="#323">323</a>         <strong class="jxr_keyword">for</strong> (MavenProject project1 : reactorProjects) {
+<a class="jxr_linenumber" name="324" href="#324">324</a>             Plugin plugin = project1.getPlugin(scalaPluginKey);
+<a class="jxr_linenumber" name="325" href="#325">325</a>             <strong class="jxr_keyword">if</strong> (plugin != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="326" href="#326">326</a>                 Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();
+<a class="jxr_linenumber" name="327" href="#327">327</a>                 Xpp3Dom analysisCache = (configuration != <strong class="jxr_keyword">null</strong>) ? configuration.getChild(<span class="jxr_string">"analysisCacheFile"</span>) : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="328" href="#328">328</a>                 File analysisCacheFile = (analysisCache != <strong class="jxr_keyword">null</strong>) ? <strong class="jxr_keyword">new</strong> File(analysisCache.getValue()) : defaultAnalysisCacheFile(project1);
+<a class="jxr_linenumber" name="329" href="#329">329</a>                 File classesDirectory = <strong class="jxr_keyword">new</strong> File(project1.getBuild().getOutputDirectory());
+<a class="jxr_linenumber" name="330" href="#330">330</a>                 map.put(classesDirectory.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile());
+<a class="jxr_linenumber" name="331" href="#331">331</a>                 Xpp3Dom testAnalysisCache = (configuration != <strong class="jxr_keyword">null</strong>) ? configuration.getChild(<span class="jxr_string">"testAnalysisCacheFile"</span>) : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="332" href="#332">332</a>                 File testAnalysisCacheFile = (testAnalysisCache != <strong class="jxr_keyword">null</strong>) ? <strong class="jxr_keyword">new</strong> File(testAnalysisCache.getValue()) : defaultTestAnalysisCacheFile(project1);
+<a class="jxr_linenumber" name="333" href="#333">333</a>                 File testClassesDirectory = <strong class="jxr_keyword">new</strong> File(project1.getBuild().getTestOutputDirectory());
+<a class="jxr_linenumber" name="334" href="#334">334</a>                 map.put(testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile());
+<a class="jxr_linenumber" name="335" href="#335">335</a>             }
+<a class="jxr_linenumber" name="336" href="#336">336</a>         }
+<a class="jxr_linenumber" name="337" href="#337">337</a>         <strong class="jxr_keyword">return</strong> map;
 <a class="jxr_linenumber" name="338" href="#338">338</a>     }
-<a class="jxr_linenumber" name="339" href="#339">339</a> }
+<a class="jxr_linenumber" name="339" href="#339">339</a> 
+<a class="jxr_linenumber" name="340" href="#340">340</a>     <strong class="jxr_keyword">protected</strong> File defaultAnalysisDirectory(MavenProject p) {
+<a class="jxr_linenumber" name="341" href="#341">341</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> File(p.getBuild().getDirectory(), <span class="jxr_string">"analysis"</span>);
+<a class="jxr_linenumber" name="342" href="#342">342</a>     }
+<a class="jxr_linenumber" name="343" href="#343">343</a> 
+<a class="jxr_linenumber" name="344" href="#344">344</a>     <strong class="jxr_keyword">protected</strong> File defaultAnalysisCacheFile(MavenProject p) {
+<a class="jxr_linenumber" name="345" href="#345">345</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> File(defaultAnalysisDirectory(p), <span class="jxr_string">"compile"</span>);
+<a class="jxr_linenumber" name="346" href="#346">346</a>     }
+<a class="jxr_linenumber" name="347" href="#347">347</a> 
+<a class="jxr_linenumber" name="348" href="#348">348</a>     <strong class="jxr_keyword">protected</strong> File defaultTestAnalysisCacheFile(MavenProject p) {
+<a class="jxr_linenumber" name="349" href="#349">349</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> File(defaultAnalysisDirectory(p), <span class="jxr_string">"test-compile"</span>);
+<a class="jxr_linenumber" name="350" href="#350">350</a>     }
+<a class="jxr_linenumber" name="351" href="#351">351</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

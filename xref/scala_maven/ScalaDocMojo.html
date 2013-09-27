@@ -310,7 +310,7 @@
 <a class="jxr_linenumber" name="300" href="#300">300</a>         <em class="jxr_comment">// copy the classpathElements to not modify the global project definition see https://github.com/davidB/maven-scala-plugin/issues/60</em>
 <a class="jxr_linenumber" name="301" href="#301">301</a>         List&lt;String&gt; paths = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(project.getCompileClasspathElements());
 <a class="jxr_linenumber" name="302" href="#302">302</a>         paths.remove(project.getBuild().getOutputDirectory()); <em class="jxr_comment">//remove output to avoid "error for" : error:  XXX is already defined as package XXX ... object XXX {</em>
-<a class="jxr_linenumber" name="303" href="#303">303</a>         jcmd.addOption(<span class="jxr_string">"-classpath"</span>, MainHelper.toMultiPath(paths));
+<a class="jxr_linenumber" name="303" href="#303">303</a>         <strong class="jxr_keyword">if</strong> (!paths.isEmpty())jcmd.addOption(<span class="jxr_string">"-classpath"</span>, MainHelper.toMultiPath(paths));
 <a class="jxr_linenumber" name="304" href="#304">304</a>         <em class="jxr_comment">//jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());</em>
 <a class="jxr_linenumber" name="305" href="#305">305</a> 
 <a class="jxr_linenumber" name="306" href="#306">306</a>         <strong class="jxr_keyword">boolean</strong> isScaladoc2 = (<strong class="jxr_keyword">new</strong> VersionNumber(<span class="jxr_string">"2.8.0"</span>).compareTo(sv) &lt;= 0 || sv.isZero()) &amp;&amp; (<span class="jxr_string">"scala.tools.nsc.ScalaDoc"</span>.equals(scaladocClassName));

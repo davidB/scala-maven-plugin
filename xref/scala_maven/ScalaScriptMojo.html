@@ -268,7 +268,7 @@
 <a class="jxr_linenumber" name="258" href="#258">258</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> compileScript(File scriptDir, File destFile,
 <a class="jxr_linenumber" name="259" href="#259">259</a>             Set&lt;String&gt; classpath) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="260" href="#260">260</a>         <a href="../scala_maven_executions/JavaMainCaller.html">JavaMainCaller</a> jcmd = getScalaCommand();
-<a class="jxr_linenumber" name="261" href="#261">261</a>         jcmd.addArgs(<span class="jxr_string">"-classpath"</span>, MainHelper.toMultiPath(<strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(classpath)));
+<a class="jxr_linenumber" name="261" href="#261">261</a>         <strong class="jxr_keyword">if</strong>(!classpath.isEmpty()) jcmd.addArgs(<span class="jxr_string">"-classpath"</span>, MainHelper.toMultiPath(<strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(classpath)));
 <a class="jxr_linenumber" name="262" href="#262">262</a>         jcmd.addArgs(<span class="jxr_string">"-d"</span>, scriptDir.getAbsolutePath());
 <a class="jxr_linenumber" name="263" href="#263">263</a>         jcmd.addArgs(<span class="jxr_string">"-sourcepath"</span>, scriptDir.getAbsolutePath());
 <a class="jxr_linenumber" name="264" href="#264">264</a>         jcmd.addArgs(destFile.getAbsolutePath());
