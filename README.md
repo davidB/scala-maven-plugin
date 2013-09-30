@@ -39,8 +39,7 @@ follows (on Unix):
 * `mvn install -Dmaven.test.skip=true` : `mvn install` without run of unit test and run of integration test
 * release :
   * `mvn release:prepare && mvn release:perform` : to publish on staging repository via plugin
-  * `mvn site source:jar javadoc:jar install:install gpg:sign deploy:deploy changes:announcement-generate`
-    `-Dmaven.test.skip=true -DperformRelease=true` : manual
+  * `mvn site package source:jar javadoc:jar install:install gpg:sign deploy:deploy changes:announcement-generate -Dmaven.test.skip=true -DperformRelease=true` : manual
   * connect to http://oss.sonatype.org/ close and release the request(about scala-maven-plugin) in staging repositories
   * browse the updated [mvnsite](http://davidb.github.com/scala-maven-plugin/) (check version into samples, ...)
   * email the content of `target/checkout/target/announcement/announcement.md.vm` to post@implicitly.posterous.com, and to maven-and-scala@googlegroups.com (same subject but without tag part)
