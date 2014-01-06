@@ -53,7 +53,12 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
    * @parameter expression="${attach}" default-value="true"
    */
   private boolean attach;
-  
+  /**
+   * Specifies the classifier of the generated artifact.
+   * 
+   * @parameter expression="${classifier}" default-value="javadoc"
+   */
+  private String classifier;
   /**
    * Specifies whether to skip generating scaladoc.
    * <br/>
@@ -178,7 +183,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
   }
   
   protected String getClassifier() {
-    return "javadoc";
+    return classifier;
   }
 
   protected void failOnError(String prefix, Exception e)
