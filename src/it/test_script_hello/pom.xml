@@ -25,7 +25,7 @@
         <version>@project.version@</version>
         <executions>
           <execution>
-            <id>generate-hello</id>
+            <id>generate-hello-inline</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>script</goal>
@@ -46,7 +46,7 @@
 //
                   println("hello from scala script run method")
                   log.info( project.getProperties.getProperty("scala.version") )
-                  val fo = new PrintWriter("target/hello.txt")
+                  val fo = new PrintWriter("target/hello-from-inline.txt")
                   try {
                     fo.println(project.getArtifactId())
 //                    for( d <- asScalaIterator[Dependency](project.getDependencies) ) {
@@ -58,6 +58,18 @@
                 }
               ]]>
               </script>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-hello-external</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>script</goal>
+            </goals>
+            <configuration>
+              <scalaVersion>${scala.version}</scalaVersion>
+              <keepGeneratedScript>true</keepGeneratedScript>
+              <scriptFile>${basedir}/build.scala</scriptFile>
             </configuration>
           </execution>
         </executions>

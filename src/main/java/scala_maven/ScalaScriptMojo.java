@@ -151,7 +151,6 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         if (excludeScopes == null) {
           excludeScopes = "";
         }
-
         // prepare
         File scriptDir = new File(outputDir, ".scalaScriptGen");
         scriptDir.mkdirs();
@@ -162,12 +161,13 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         configureClasspath(classpath);
 
 
-        boolean mavenProjectDependency = true;//hasMavenProjectDependency(loader);
+        boolean mavenProjectDependency = includeScopes.contains("plugin");
         wrapScript(destFile, mavenProjectDependency);
 
         try {
-            compileScript(scriptDir, destFile, classpath);
             URLClassLoader loader = createScriptClassloader(scriptDir, classpath);
+        	getLog().debug(("classpath : " + Arrays.asList(loader.getURLs())));
+            compileScript(scriptDir, destFile, loader);
             runScript(mavenProjectDependency, loader, baseName);
         } finally {
             if (!keepGeneratedScript) {
@@ -176,15 +176,6 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         }
 
     }
-
-//    private boolean hasMavenProjectDependency(URLClassLoader loader) throws Exception {
-//        try {
-//            loader.loadClass(MavenProject.class.getCanonicalName());
-//            return true;
-//        } catch (ClassNotFoundException e) {
-//            return false;
-//        }
-//    }
 
     private void runScript(boolean mavenProjectDependency, URLClassLoader loader, String baseName) throws Exception {
         Class<?> compiledScript = loader.loadClass(baseName);
@@ -255,10 +246,9 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         return rScript;
     }
 
-    private void compileScript(File scriptDir, File destFile,
-            Set<String> classpath) throws Exception {
+    private void compileScript(File scriptDir, File destFile, URLClassLoader loader) throws Exception {
         JavaMainCaller jcmd = getScalaCommand();
-        if(!classpath.isEmpty()) jcmd.addArgs("-classpath", MainHelper.toMultiPath(new ArrayList<String>(classpath)));
+        jcmd.addArgs("-classpath", MainHelper.toClasspathString(loader));
         jcmd.addArgs("-d", scriptDir.getAbsolutePath());
         jcmd.addArgs("-sourcepath", scriptDir.getAbsolutePath());
         jcmd.addArgs(destFile.getAbsolutePath());
