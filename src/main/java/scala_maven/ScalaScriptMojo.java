@@ -12,13 +12,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -237,6 +240,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         //rScript.importFrom("mojo", MavenSession.class.getPackage().getName());
         //rScript.importFrom("mojo", Log.class.getPackage().getName());
         rScript.importFrom("mojo", "org.apache.maven");
+        rScript.importFrom("mojo", "org.codehaus.plexus");
         // add the script directory to the classpath
         rScript.addURL(scriptDir.toURI().toURL());
 
@@ -256,22 +260,60 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         jcmd.run(displayCmd);
     }
 
+    private static String getManagementKey(final Artifact artifact) {
+        return artifact.getGroupId ()
+            + ":" + artifact.getArtifactId () + ":" + artifact.getType()
+            + (artifact.getClassifier () != null ? ":" + artifact.getClassifier () : "");
+    }
+    
+    @SuppressWarnings ("unchecked")
     private void configureClasspath(Set<String> classpath) throws Exception, DependencyResolutionRequiredException {
         Set<String> includes = new TreeSet<String>(Arrays.asList(includeScopes.toLowerCase().split(",")));
         Set<String> excludes = new TreeSet<String>(Arrays.asList(excludeScopes.toLowerCase().split(",")));
 
+        final Set<String> fixedArtifactKeys = new HashSet<String>();
+        final Map<String, Artifact> addedArtifacts = new HashMap<String, Artifact>();
+        
+        // Toplevel artifacts take precedence
         for(Artifact a : project.getArtifacts()) {
-          if (includes.contains(a.getScope().toLowerCase()) && !excludes.contains(a.getScope())) {
-            addToClasspath(a, classpath, true);
-          }
+            if (includes.contains(a.getScope().toLowerCase()) && !excludes.contains(a.getScope())) {
+                final String key = getManagementKey(a);
+                fixedArtifactKeys.add (key);
+                addedArtifacts.put (key, a);
+            }
         }
 
         if (includes.contains("plugin") && !excludes.contains("plugin")) {
-          for(Artifact a : project.getPluginArtifacts()) {
-            if ("scala-maven-plugin".equals(a.getArtifactId())) {
-              addToClasspath(a, classpath, true);
+            for(Artifact a : project.getPluginArtifacts()) {
+                if ("scala-maven-plugin".equals(a.getArtifactId())) {
+                    final String key = getManagementKey(a);
+                    addedArtifacts.put (key, a);
+                }
             }
-          }
+        }
+        
+        // Collect transients
+        for (Artifact a : new ArrayList<Artifact>(addedArtifacts.values())) {
+            for (final Artifact dep : resolveArtifactDependencies(a)) {
+                final String depKey = getManagementKey(dep);
+                if (!fixedArtifactKeys.contains (depKey)) {
+                    if (addedArtifacts.containsKey (depKey)) {
+                        final ArtifactVersion addedVer = addedArtifacts.get (depKey).getSelectedVersion ();
+                        final ArtifactVersion depVer = dep.getSelectedVersion();
+                        
+                        if (addedVer.compareTo(depVer) < 0) {
+                            addedArtifacts.put (depKey, dep);                            
+                        }                        
+                    } else {
+                        addedArtifacts.put (depKey, dep);
+                    }
+                }
+            }
+        }
+        
+        for (Artifact a : addedArtifacts.values()) {
+            resolver.resolve(a, remoteRepos, localRepo);
+            classpath.add(FileUtils.pathOf(a.getFile(), useCanonicalPath));
         }
 
         if (addToClasspath != null) {

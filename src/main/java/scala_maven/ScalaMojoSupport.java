@@ -8,7 +8,10 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.ResolutionErrorHandler;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
@@ -21,6 +24,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.project.artifact.ProjectArtifact;
 import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
@@ -41,10 +45,13 @@ import scala_maven_executions.MainHelper;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class ScalaMojoSupport extends AbstractMojo {
@@ -94,6 +101,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @readonly
      */
     protected ArtifactResolver resolver;
+    
     /**
      * Location of the local repository.
      *
@@ -332,6 +340,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     private ArtifactFactory artifactFactory;
 
     /**
+     * The resolution error handler to use.
+     *
+     * @component
+     * @required
+     * @readonly
+     */
+    private ResolutionErrorHandler resolutionErrorHandler;
+    
+    /**
      * The artifact metadata source to use.
      *
      * @component
@@ -383,19 +400,41 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @throws InvalidDependencyVersionException
      */
     protected Set<Artifact> resolveDependencyArtifacts(MavenProject theProject) throws Exception {
-        AndArtifactFilter filter = new AndArtifactFilter();
-        filter.add(new ScopeArtifactFilter(Artifact.SCOPE_TEST));
+        final AndArtifactFilter filter = new AndArtifactFilter();
+        filter.add(new ScopeArtifactFilter(Artifact.SCOPE_RUNTIME));
         filter.add(new ArtifactFilter(){
             public boolean include(Artifact artifact) {
                 return !artifact.isOptional();
             }
         });
-        //TODO follow the dependenciesManagement and override rules
-        Set<Artifact> artifacts = theProject.createArtifacts(artifactFactory, Artifact.SCOPE_RUNTIME, filter);
-        for (Artifact artifact : artifacts) {
-            resolver.resolve(artifact, remoteRepos, localRepo);
-        }
-        return artifacts;
+        
+        final Map<String, Artifact> managedVersionMap =
+                new HashMap<String, Artifact>(theProject.getManagedVersionMap ());
+        
+        managedVersionMap.putAll(project.getManagedVersionMap ());
+        
+        final ArtifactResolutionRequest request =
+                new ArtifactResolutionRequest ().setResolveRoot (false)
+                                                .setResolveTransitively (true)
+                                                .setCollectionFilter (filter)
+                                                .setResolutionFilter (filter)
+                                                .setLocalRepository (session.getLocalRepository ())
+                                                .setOffline (session.isOffline ())
+                                                .setForceUpdate (session.getRequest ().isUpdateSnapshots ());
+        request.setServers (session.getRequest ().getServers ());
+        request.setMirrors (session.getRequest ().getMirrors ());
+        request.setProxies (session.getRequest ().getProxies ());
+        request.setArtifact (new ProjectArtifact (theProject));
+        request.setArtifactDependencies (theProject.getDependencyArtifacts ());
+        request.setManagedVersionMap (managedVersionMap);
+        request.setRemoteRepositories (theProject.getRemoteArtifactRepositories ());
+
+        final ArtifactResolutionResult result = factory.resolve (request);
+        resolutionErrorHandler.throwErrors (request, result);
+
+        //System.out.println ("About to resolve: " + theProject);
+
+        return result.getArtifacts ();
     }
 
     /**
@@ -444,9 +483,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected void addToClasspath(Artifact artifact, Set<String> classpath, boolean addDependencies) throws Exception {
         resolver.resolve(artifact, remoteRepos, localRepo);
         classpath.add(FileUtils.pathOf(artifact.getFile(), useCanonicalPath));
+        
         if (addDependencies) {
             for (Artifact dep : resolveArtifactDependencies(artifact)) {
-                addToClasspath(dep, classpath, addDependencies);
+                resolver.resolve(dep, remoteRepos, localRepo);
+                classpath.add(FileUtils.pathOf(dep.getFile(), useCanonicalPath));
             }
         }
     }
