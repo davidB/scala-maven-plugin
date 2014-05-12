@@ -61,7 +61,8 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         addCompilerToClasspath(classpath);
         addLibraryToClasspath(classpath);
         if (new VersionNumber("2.11.0").compareTo(scalaVersion) <= 0) {
-          addToClasspath("jline", "jline", scalaVersion.toString(), classpath);
+          String version = scalaVersion.major + "." + scalaVersion.minor;
+          addToClasspath("jline", "jline", version, classpath);
         } else if (new VersionNumber("2.9.0").compareTo(scalaVersion) <= 0) {
           addToClasspath("org.scala-lang", "jline", scalaVersion.toString(), classpath);
         } else {
