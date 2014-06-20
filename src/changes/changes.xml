@@ -5,6 +5,9 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="3.1.7" date="">
+      <action dev="Alexey Ermakov" type="fix" issue="151">fix scala 2.11 incremental compilation by updating to zinc 0.3.5</action>
+    </release>
     <release version="3.1.6" date="2013-09-24">
       <action dev="David Bernard" type="update">update zinc from 0.2.0 to 0.2.5</action>
       <action dev="David Bernard" type="fix">remove the buid directory from the classpath when compiling</action>
