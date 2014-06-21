@@ -6,16 +6,11 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import sbt_inc.SbtIncrementalCompiler;
-import scala.actors.threadpool.Arrays;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Abstract parent of all Scala Mojo who run compilation

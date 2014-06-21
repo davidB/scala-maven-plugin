@@ -45,7 +45,6 @@
                <jvmArg>-DwordWithSpace=hello world</jvmArg>
              </jvmArgs>
              <args>
-               <arg>-make:transitive</arg>
                <arg>-dependencyfile</arg>
                <arg>${project.build.directory}/.main_scala_dependencies</arg>
              </args>
@@ -58,7 +57,6 @@
            </goals>
            <configuration>
              <args>
-               <arg>-make:transitive</arg>
                <arg>-dependencyfile</arg>
                <arg>${project.build.directory}/.test_scala_dependencies</arg>
              </args>

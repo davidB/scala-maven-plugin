@@ -1,15 +1,15 @@
 package sbt_inc;
 
 import com.typesafe.zinc.Compiler;
-import com.typesafe.zinc.Inputs;
-import com.typesafe.zinc.Setup;
-import com.typesafe.zinc.ZincClient;
+import com.typesafe.zinc.*;
+import org.apache.maven.plugin.logging.Log;
+import scala.Option;
+import scala_maven_executions.MainHelper;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.maven.plugin.logging.Log;
-import scala_maven_executions.MainHelper;
 
 public class SbtIncrementalCompiler {
 
@@ -18,7 +18,7 @@ public class SbtIncrementalCompiler {
     public static final String COMPILER_INTERFACE_ARTIFACT_ID = "compiler-interface";
     public static final String COMPILER_INTERFACE_CLASSIFIER = "sources";
     public static final String XSBTI_ARTIFACT_ID = "sbt-interface";
-    
+
     private static final String ANALYSIS_MAP_ARG_SEPARATOR = ",";
     private static final String ANALYSIS_MAP_PAIR_SEPARATOR = File.pathSeparator;
 
@@ -60,10 +60,25 @@ public class SbtIncrementalCompiler {
             l.info("Using incremental compilation");
             if (args.size() > 0) l.warn("extra args for zinc are ignored in non-server mode");
             this.logger = new SbtLogger(l);
-            Setup setup = Setup.create(compilerJar, libraryJar, extraJars, xsbtiJar, interfaceJar, null);
+            Setup setup = Setup.create(compilerJar, libraryJar, extraJars, xsbtiJar, interfaceJar, null, false);
             if (l.isDebugEnabled()) Setup.debug(setup, logger);
             this.compiler = Compiler.create(setup, logger);
         }
+    }
+
+    private IncOptions defaultOptions() {
+        sbt.inc.IncOptions defaultSbtOptions = sbt.inc.IncOptions.Default();
+        return new IncOptions(
+                defaultSbtOptions.transitiveStep(),
+                defaultSbtOptions.recompileAllFraction(),
+                defaultSbtOptions.relationsDebug(),
+                defaultSbtOptions.apiDebug(),
+                defaultSbtOptions.apiDiffContextSize(),
+                defaultSbtOptions.apiDumpDirectory(),
+                false,
+                Option.<File>empty(),
+                defaultSbtOptions.recompileOnMacroDef(),
+                defaultSbtOptions.nameHashing());
     }
 
     public void compile(File baseDir, List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions, File cacheFile, Map<File, File> cacheMap, String compileOrder) throws Exception {
@@ -72,7 +87,7 @@ public class SbtIncrementalCompiler {
         } else {
             if (log.isDebugEnabled()) log.debug("Incremental compiler = " + compiler + " [" + Integer.toHexString(compiler.hashCode()) + "]");
             List<File> classpath = pathsToFiles(classpathElements);
-            Inputs inputs = Inputs.create(classpath, sources, classesDirectory, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder, true);
+            Inputs inputs = Inputs.create(classpath, sources, classesDirectory, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder, defaultOptions(), true);
             if (log.isDebugEnabled()) Inputs.debug(inputs, logger);
             compiler.compile(inputs, logger);
         }

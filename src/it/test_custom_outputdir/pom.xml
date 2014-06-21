@@ -43,7 +43,6 @@
            <configuration>
              <outputDir>${project.build.directory}/classes2</outputDir>
              <args>
-               <arg>-make:transitive</arg>
                <arg>-dependencyfile</arg>
                <arg>${project.build.directory}/.main_scala_dependencies</arg>
              </args>
@@ -56,7 +55,6 @@
            </goals>
            <configuration>
              <args>
-               <arg>-make:transitive</arg>
                <arg>-dependencyfile</arg>
                <arg>${project.build.directory}/.test_scala_dependencies</arg>
              </args>
