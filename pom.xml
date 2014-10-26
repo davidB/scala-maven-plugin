@@ -206,6 +206,31 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jxr-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>taglist-maven-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>2.7</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.8.1</version>
         </plugin>
@@ -230,19 +255,16 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.3</version>
         <configuration>
           <templateFile>${basedir}/src/site/template-site.vm</templateFile>
           <reportPlugins>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-plugin-plugin</artifactId>
-              <version>2.6</version>
             </plugin>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-project-info-reports-plugin</artifactId>
-              <version>2.2</version>
             </plugin>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
@@ -261,9 +283,9 @@
                 <keywords>true</keywords>
                 <attach>false</attach>
                 <!--
-                <doctitle>${project.name} API Reference (${project.version}, r${buildNumber})</doctitle>
-                <windowtitle>${project.name} API Reference (${project.version}, r${buildNumber})</windowtitle>
-                 -->
+               <doctitle>${project.name} API Reference (${project.version}, r${buildNumber})</doctitle>
+               <windowtitle>${project.name} API Reference (${project.version}, r${buildNumber})</windowtitle>
+                -->
                 <links>
                   <link>http://java.sun.com/j2se/${maven.compiler.source}/docs/api/</link>
                   <link>http://slf4j.org/api/</link>
@@ -292,12 +314,10 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-jxr-plugin</artifactId>
-              <version>2.2</version>
             </plugin>
             <plugin>
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>taglist-maven-plugin</artifactId>
-              <version>2.4</version>
               <configuration>
                 <tags>
                   <tag>TODO</tag>
@@ -352,10 +372,21 @@
           <releaseProfiles>release</releaseProfiles>
           <goals>changes:changes-validate install animal-sniffer:check site deploy changes:announcement-generate</goals>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.scm</groupId>
+            <artifactId>maven-scm-api</artifactId>
+            <version>1.8.1</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.maven.scm</groupId>
+            <artifactId>maven-scm-provider-gitexe</artifactId>
+            <version>1.8.1</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>
-
 
   <profiles>
     <profile>
@@ -429,7 +460,7 @@
           <plugin>
             <groupId>com.github.github</groupId>
             <artifactId>site-maven-plugin</artifactId>
-            <version>0.9</version>
+            <version>0.10</version>
             <configuration>
               <message>Building site for ${project.version}</message>
             </configuration>
