@@ -54,3 +54,7 @@ follows (on Unix):
   * file path management can be improve (a lot) 
   * clean the code
   
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/davidB/scala-maven-plugin/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
