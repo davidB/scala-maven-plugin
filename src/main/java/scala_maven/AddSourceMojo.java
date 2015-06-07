@@ -18,7 +18,7 @@ import org.apache.maven.project.MavenProject;
 public class AddSourceMojo extends AbstractMojo {
 
     /**
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -27,21 +27,21 @@ public class AddSourceMojo extends AbstractMojo {
     /**
      * The directory in which scala source is found
      *
-     * @parameter expression="${project.build.sourceDirectory}/../scala"
+     * @parameter default-value="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;
 
     /**
      * The directory in which testing scala source is found
      *
-     * @parameter expression="${project.build.testSourceDirectory}/../scala"
+     * @parameter default-value="${project.build.testSourceDirectory}/../scala"
      */
     protected File testSourceDir;
 
     /**
      * Should use CanonicalPath to normalize path (true => getCanonicalPath, false => getAbsolutePath)
      * @see https://github.com/davidB/maven-scala-plugin/issues/50
-     * @parameter expression="${maven.scala.useCanonicalPath}" default-value="true"
+     * @parameter property="maven.scala.useCanonicalPath" default-value="true"
      */
     protected boolean useCanonicalPath = true;
     

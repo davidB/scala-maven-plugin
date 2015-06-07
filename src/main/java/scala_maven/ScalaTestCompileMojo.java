@@ -22,21 +22,21 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
      * Set this to 'true' to bypass unit tests entirely.
      * Its use is NOT RECOMMENDED, but quite convenient on occasion.
      *
-     * @parameter expression="${maven.test.skip}"
+     * @parameter property="maven.test.skip"
      */
     protected boolean skip;
 
     /**
      * The directory in which to place test compilation output
      *
-     * @parameter expression="${project.build.testOutputDirectory}
+     * @parameter default-value="${project.build.testOutputDirectory}
      */
     protected File testOutputDir;
 
     /**
      * The directory in which to find test scala source code
      *
-     * @parameter expression="${project.build.testSourceDirectory}/../scala"
+     * @parameter default-value="${project.build.testSourceDirectory}/../scala"
      */
     protected File testSourceDir;
 
@@ -51,7 +51,7 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     /**
      * Analysis cache file for incremental recompilation.
      *
-     * @parameter expression="${testAnalysisCacheFile}" default-value="${project.build.directory}/analysis/test-compile"
+     * @parameter property="testAnalysisCacheFile" default-value="${project.build.directory}/analysis/test-compile"
      */
     protected File testAnalysisCacheFile;
 

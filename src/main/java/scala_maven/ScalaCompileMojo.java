@@ -20,21 +20,21 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     /**
      * The directory in which to place compilation output
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter property="project.build.outputDirectory"
      */
     protected File outputDir;
 
     /**
      * The directory which contains scala/java source files
      *
-     * @parameter expression="${project.build.sourceDirectory}/../scala"
+     * @parameter default-value="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;
 
     /**
      * Analysis cache file for incremental recompilation.
      *
-     * @parameter expression="${analysisCacheFile}" default-value="${project.build.directory}/analysis/compile"
+     * @parameter property="analysisCacheFile" default-value="${project.build.directory}/analysis/compile"
      */
     protected File analysisCacheFile;
 

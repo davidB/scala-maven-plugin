@@ -21,14 +21,14 @@ public class ScalaRunMojo extends ScalaMojoSupport {
     /**
      * The class to use when launching a scala program
      *
-     * @parameter expression="${launcher}"
+     * @parameter property="launcher"
      */
     protected String launcher;
 
     /**
      * Additional parameter to use to call the main class
      * Using this parameter only from command line ("-DaddArgs=arg1|arg2|arg3|..."), not from pom.xml.
-     * @parameter expression="${addArgs}"
+     * @parameter property="addArgs"
      */
     protected String addArgs;
 
@@ -63,7 +63,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
      *
      * Higher priority to launcher parameter)
      * Using this parameter only from command line (-DmainClass=...), not from pom.xml.
-     * @parameter expression="${mainClass}"
+     * @parameter property="mainClass"
      */
     protected String mainClass;
 

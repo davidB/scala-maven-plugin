@@ -27,7 +27,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * Specify window title of generated HTML documentation.
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${windowtitle}"
+     * @parameter property="windowtitle"
      *            default-value="${project.name} ${project.version} API"
      */
     protected String windowtitle;
@@ -39,7 +39,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * href="http://www.mycompany.com">MyCompany, Inc.&lt;a>]]&gt;
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${bottom}"
+     * @parameter property="bottom"
      *            default-value="Copyright (c) {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved."
      */
     protected String bottom;
@@ -48,7 +48,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * Charset for cross-platform viewing of generated documentation.
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${charset}" default-value="ISO-8859-1"
+     * @parameter property="charset" default-value="ISO-8859-1"
      */
     protected String charset;
 
@@ -56,7 +56,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * Include title for the overview page.
      * [scaladoc, scaladoc2, vscaladoc]
      *
-     * @parameter expression="${doctitle}"
+     * @parameter property="doctitle"
      *            default-value="${project.name} ${project.version} API"
      */
     protected String doctitle;
@@ -65,7 +65,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * Include footer text for each page.
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${footer}"
+     * @parameter property="footer"
      */
     protected String footer;
 
@@ -73,7 +73,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * Include header text for each page
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${header}"
+     * @parameter property="header"
      */
     protected String header;
 
@@ -81,7 +81,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * Generate source in HTML
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${linksource}" default-value="true"
+     * @parameter property="linksource" default-value="true"
      */
     protected boolean linksource;
 
@@ -89,7 +89,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * Suppress description and tags, generate only declarations
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${nocomment}" default-value="false"
+     * @parameter property="nocomment" default-value="false"
      */
     protected boolean nocomment;
 
@@ -97,7 +97,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * File to change style of the generated documentation
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${stylesheetfile}"
+     * @parameter property="stylesheetfile"
      */
     protected File stylesheetfile;
 
@@ -105,7 +105,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * Include top text for each page
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${top}"
+     * @parameter property="top"
      */
     protected String top;
 
@@ -113,7 +113,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * Specifies the destination directory where scalaDoc saves the generated
      * HTML files.
      *
-     * @parameter expression="scaladocs"
+     * @parameter default-value="scaladocs"
      * @required
      */
     protected String outputDirectory;
@@ -121,7 +121,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
      *
-     * @parameter expression="${project.reporting.outputDirectory}/scaladocs"
+     * @parameter default-value="${project.reporting.outputDirectory}/scaladocs"
      * @required
      */
     protected File reportOutputDirectory;
@@ -130,7 +130,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * The name of the Scaladoc report.
      *
      * @since 2.1
-     * @parameter expression="${name}" default-value="ScalaDocs"
+     * @parameter property="name" default-value="ScalaDocs"
      */
     private String name;
 
@@ -138,7 +138,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * The description of the Scaladoc report.
      *
      * @since 2.1
-     * @parameter expression="${description}" default-value="ScalaDoc API
+     * @parameter property="description" default-value="ScalaDoc API
      *            documentation."
      */
     private String description;
@@ -146,14 +146,14 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     /**
      * className (FQN) of the main scaladoc to use, if not define, the the scalaClassName is used
      *
-     * @parameter expression="${maven.scaladoc.className}"
+     * @parameter property="maven.scaladoc.className"
      */
     protected String scaladocClassName;
 
     /**
      * If you want to use vscaladoc to generate api instead of regular scaladoc, set the version of vscaladoc you want to use.
      *
-     * @parameter expression="${maven.scaladoc.vscaladocVersion}"
+     * @parameter property="maven.scaladoc.vscaladocVersion"
      */
     protected String vscaladocVersion;
 
@@ -161,21 +161,21 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * To allow running aggregation only from command line use "-DforceAggregate=true" (avoid using in pom.xml).
      * [scaladoc, vscaladoc]
      *
-     * @parameter expression="${forceAggregate}" default-value="false"
+     * @parameter property="forceAggregate" default-value="false"
      */
     protected boolean forceAggregate = false;
 
     /**
      * If you want to aggregate only direct sub modules.
      *
-     * @parameter expression="${maven.scaladoc.aggregateDirectOnly}" default-value="true"
+     * @parameter property="maven.scaladoc.aggregateDirectOnly" default-value="true"
      */
     protected boolean aggregateDirectOnly = true;
 
     /**
      * The directory which contains scala/java source files
      *
-     * @parameter expression="${project.build.sourceDirectory}/../scala"
+     * @parameter default-value="${project.build.sourceDirectory}/../scala"
      */
     protected File sourceDir;
 

@@ -24,7 +24,7 @@ import org.codehaus.plexus.archiver.jar.ManifestException;
  *
  */
 public class ScalaDocJarMojo extends ScalaDocMojo {
-  
+
   private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
   private static final String[] DEFAULT_EXCLUDES = new String[] {};
   /**
@@ -33,6 +33,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
    * @component role="org.codehaus.plexus.archiver.Archiver" roleHint="jar"
    */
   private JarArchiver jarArchiver;
+
   /**
   * Used for attaching the artifact in the project.
   *
@@ -43,33 +44,33 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
    * Specifies the filename that will be used for the generated jar file. Please note that <code>-javadoc</code>
    * or <code>-test-javadoc</code> will be appended to the file name.
    *
-   * @parameter expression="${project.build.finalName}"
+   * @parameter property="project.build.finalName"
    */
   private String finalName;
   /**
    * Specifies whether to attach the generated artifact to the project helper.
    * <br/>
    *
-   * @parameter expression="${attach}" default-value="true"
+   * @parameter property="attach" default-value="true"
    */
   private boolean attach;
   /**
    * Specifies the classifier of the generated artifact.
-   * 
-   * @parameter expression="${classifier}" default-value="javadoc"
+   *
+   * @parameter property="classifier" default-value="javadoc"
    */
   private String classifier;
   /**
    * Specifies whether to skip generating scaladoc.
    * <br/>
    *
-   * @parameter expression="${skip}" default-value="false"
+   * @parameter property="skip" default-value="false"
    */
   private boolean skip;
   /**
    * Specifies the directory where the generated jar file will be put.
    *
-   * @parameter expression="${project.build.directory}"
+   * @parameter property="project.build.directory"
    */
   private String jarOutputDirectory;
   /**
@@ -79,17 +80,17 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
    * @parameter
    */
   private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
-  
+
   /**
    * Path to the default MANIFEST file to use. It will be used if
    * <code>useDefaultManifestFile</code> is set to <code>true</code>.
    *
-   * @parameter expression="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
+   * @parameter default-value=="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
    * @required
    * @readonly
    */
   private File defaultManifestFile;
-  
+
   /**
    * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>.
    * <br/>
@@ -97,15 +98,15 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
    * @parameter default-value="false"
    */
   private boolean useDefaultManifestFile;
-  
+
   /**
    * Specifies if the build will fail if there are errors during javadoc execution or not.
    *
-   * @parameter expression="${maven.javadoc.failOnError}" default-value="true"
+   * @parameter property="maven.javadoc.failOnError" default-value="true"
    * @since 2.5
    */
   protected boolean failOnError;
-  
+
   @Override
   public void doExecute() throws Exception {
     if(skip) {
@@ -134,8 +135,8 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
       failOnError( "RuntimeException: Error while creating archive", e );
     }
   }
-  
-  
+
+
 
   /**
    * Method that creates the jar file
@@ -144,7 +145,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
    * @param jarFileName the filename of the generated jar file
    * @return a File object that contains the generated jar file
    * @throws ArchiverException
-   * @throws IOException 
+   * @throws IOException
    */
   private File generateArchive( File javadocFiles, String jarFileName ) throws ArchiverException, IOException {
     final File javadocJar = new File( jarOutputDirectory, jarFileName );
@@ -181,7 +182,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
     }
     return javadocJar;
   }
-  
+
   protected String getClassifier() {
     return classifier;
   }

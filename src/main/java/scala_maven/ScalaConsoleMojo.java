@@ -24,7 +24,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     /**
      * The console to run.
      *
-     * @parameter expression="${mainConsole}" default-value="scala.tools.nsc.MainGenericRunner"
+     * @parameter property="mainConsole" default-value="scala.tools.nsc.MainGenericRunner"
      * @required
      */
     protected String mainConsole;
@@ -32,7 +32,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     /**
      * Add the test classpath (include classes from test directory), to the console's classpath ?
      *
-     * @parameter expression="${maven.scala.console.useTestClasspath}" default-value="true"
+     * @parameter property="maven.scala.console.useTestClasspath" default-value="true"
      * @required
      */
     protected boolean useTestClasspath;
@@ -40,7 +40,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     /**
      * Add the runtime classpath, to the console's classpath ?
      *
-     * @parameter expression="${maven.scala.console.useRuntimeClasspath}" default-value="true"
+     * @parameter property="maven.scala.console.useRuntimeClasspath" default-value="true"
      * @required
      */
     protected boolean useRuntimeClasspath;
@@ -49,7 +49,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
      * Path of the javaRebel jar. If this option is set then the console run
      * with <a href="http://www.zeroturnaround.com/javarebel/">javarebel</a> enabled.
      *
-     * @parameter expression="${javarebel.jar.path}"
+     * @parameter property="javarebel.jar.path"
      */
     protected File javaRebelPath;
 

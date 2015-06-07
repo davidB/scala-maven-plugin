@@ -36,7 +36,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      * repository like <code>${project.build.directory}/it-repo</code>. Otherwise, your ordinary local repository will
      * be used, potentially soiling it with broken artifacts.
      *
-     * @parameter expression="${invoker.localRepositoryPath}" default-value="${settings.localRepository}"
+     * @parameter property="invoker.localRepositoryPath}" default-value="${settings.localRepository"
      */
     protected File localRepositoryPath;
 
@@ -47,7 +47,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      * to run a single test called "foo/MyTest.java".  This parameter will override the TestNG suiteXmlFiles
      * parameter.
      *
-     * @parameter expression="${test}"
+     * @parameter property="test"
      */
     protected String test;
 
@@ -81,7 +81,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      *    &lt;/plugin&gt;
      * </pre>
      *
-     * @parameter expression="${cctest.goals}" default-value="surefire:test"
+     * @parameter property="cctest.goals" default-value="surefire:test"
      */
     protected String ccTestGoals;
 

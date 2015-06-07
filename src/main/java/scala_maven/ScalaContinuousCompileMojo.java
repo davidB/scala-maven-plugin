@@ -17,42 +17,42 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     /**
      * The output directory for compilation.
      *
-     * @parameter expression="${project.build.outputDirectory}"
+     * @parameter property="project.build.outputDirectory"
      */
     protected File mainOutputDir;
 
     /**
      * The main directory containing scala source for compilation
      *
-     * @parameter expression="${project.build.sourceDirectory}/../scala"
+     * @parameter default-value="${project.build.sourceDirectory}/../scala"
      */
     protected File mainSourceDir;
 
     /**
      * The directory to place test compilation output in
      *
-     * @parameter expression="${project.build.testOutputDirectory}
+     * @parameter default-value="${project.build.testOutputDirectory}
      */
     protected File testOutputDir;
 
     /**
      * The directory containing test source for compilation
      *
-     * @parameter expression="${project.build.testSourceDirectory}/../scala"
+     * @parameter default-value="${project.build.testSourceDirectory}/../scala"
      */
     protected File testSourceDir;
 
     /**
      * Analysis cache file for incremental recompilation.
      *
-     * @parameter expression="${analysisCacheFile}" default-value="${project.build.directory}/analysis/compile"
+     * @parameter property="analysisCacheFile" default-value="${project.build.directory}/analysis/compile"
      */
     protected File analysisCacheFile;
 
     /**
      * Analysis cache file for incremental recompilation.
      *
-     * @parameter expression="${testAnalysisCacheFile}" default-value="${project.build.directory}/analysis/test-compile"
+     * @parameter property="testAnalysisCacheFile" default-value="${project.build.directory}/analysis/test-compile"
      */
     protected File testAnalysisCacheFile;
 
@@ -60,20 +60,20 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
      * Define if fsc should be used, else scalac is used.
      * fsc => scala.tools.nsc.CompileClient, scalac => scala.tools.nsc.Main.
      *
-     * @parameter expression="${fsc}" default-value="true"
+     * @parameter property="fsc" default-value="true"
      */
     protected boolean useFsc = true;
 
     /**
      * Define if cc should run once or in infinite loop. (useful for test or working with editor)
-     * @parameter expression="${once}" default-value="false"
+     * @parameter property="once" default-value="false"
      */
     protected boolean once = false;
 
     /**
      * Turns verbose output on.
      *
-     * @parameter expression="${verbose}" default-value="false"
+     * @parameter property="verbose" default-value="false"
      */
     protected boolean verbose = false;
 

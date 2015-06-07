@@ -53,7 +53,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     public static final String SCALA_COMPILER_ARTIFACTID= "scala-compiler";
 
     /**
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -62,7 +62,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * The Maven Session Object
      *
-     * @parameter expression="${session}"
+     * @parameter property="session"
      * @required
      * @readonly
      */
@@ -97,7 +97,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Location of the local repository.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter property="localRepository"
      * @readonly
      * @required
      */
@@ -106,7 +106,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * List of Remote Repositories used by the resolver
      *
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter property="project.remoteArtifactRepositories"
      * @readonly
      * @required
      */
@@ -161,7 +161,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Additional parameter to use to call the main class
      * Using this parameter only from command line ("-DaddScalacArgs=arg1|arg2|arg3|..."), not from pom.xml.
-     * @parameter expression="${addScalacArgs}"
+     * @parameter property="addScalacArgs"
      */
     protected String addScalacArgs;
 
@@ -169,7 +169,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * className (FQN) of the scala tool to provide as
      *
      * @required
-     * @parameter expression="${maven.scala.className}"
+     * @parameter property="maven.scala.className"
      *            default-value="scala.tools.nsc.Main"
      */
     protected String scalaClassName;
@@ -178,7 +178,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * Scala 's version to use.
      * (property 'maven.scala.version' replaced by 'scala.version')
      *
-     * @parameter expression="${scala.version}"
+     * @parameter property="scala.version"
      */
     private String scalaVersion;
 
@@ -188,7 +188,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * This is an advanced setting used for clones of the Scala Language.
      * It should be disregarded in standard use cases.
      *
-     * @parameter expression="${scala.organization}"
+     * @parameter property="scala.organization"
      *            default-value="org.scala-lang"
      */
     private String scalaOrganization;
@@ -201,21 +201,21 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * Scala 's version to use to check binary compatibility (like suffix in artifactId of dependency).
      * If it is defined then it is used to checkMultipleScalaVersions
      *
-     * @parameter expression="${scala.compat.version}"
+     * @parameter property="scala.compat.version"
      */
     private String scalaCompatVersion;
     
     /**
      * Path to Scala installation to use instead of the artifact (define as dependencies).
      *
-     * @parameter expression="${scala.home}"
+     * @parameter property="scala.home"
      */
     private String scalaHome;
 
     /**
      * Arguments for javac (when using incremental compiler).
      *
-     * @parameter expression="${javacArgs}"
+     * @parameter property="javacArgs"
      */
     protected String[] javacArgs;
 
@@ -223,7 +223,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * Whether to instruct javac to generate debug symbols (when using incremental compiler)
      * @see <a href="http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug">://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug</a>
      *
-     * @parameter expression="${javacGenerateDebugSymbols}"
+     * @parameter property="javacGenerateDebugSymbols"
      *            default-value="true"
      */
     @SuppressWarnings("unused")
@@ -233,7 +233,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * Alternative method for specifying javac arguments (when using incremental compiler).
      * Can be used from command line with -DaddJavacArgs=arg1|arg2|arg3|... rather than in pom.xml.
      *
-     * @parameter expression="${addJavacArgs}"
+     * @parameter property="addJavacArgs"
      */
     protected String addJavacArgs;
 
@@ -241,21 +241,21 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * The -source argument for the Java compiler (when using incremental compiler).
      *
-     * @parameter expression="${maven.compiler.source}"
+     * @parameter property="maven.compiler.source"
      */
     protected String source;
     
     /**
      * The -target argument for the Java compiler (when using incremental compiler).
      *
-     * @parameter expression="${maven.compiler.target}"
+     * @parameter property="maven.compiler.target"
      */
     protected String target;
     
     /**
      * The -encoding argument for the Java compiler. (when using incremental compiler).
      *
-     * @parameter expression="${project.build.sourceEncoding}"
+     * @parameter property="project.build.sourceEncoding"
      */
     protected String encoding;
     
@@ -264,7 +264,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * (property 'maven.scala.displayCmd' replaced by 'displayCmd')
      *
      * @required
-     * @parameter expression="${displayCmd}"
+     * @parameter property="displayCmd"
      *            default-value="false"
      */
     public boolean displayCmd;
@@ -286,7 +286,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Check if every dependencies use the same version of scala-library or scala.compat.version.
      *
-     * @parameter expression="${maven.scala.checkConsistency}" default-value="true"
+     * @parameter property="maven.scala.checkConsistency" default-value="true"
      */
     protected boolean checkMultipleScalaVersions;
 
@@ -300,7 +300,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Should use CanonicalPath to normalize path (true => getCanonicalPath, false => getAbsolutePath)
      * @see <a href="https://github.com/davidB/maven-scala-plugin/issues/50">https://github.com/davidB/maven-scala-plugin/issues/50</a>
-     * @parameter expression="${maven.scala.useCanonicalPath}" default-value="true"
+     * @parameter property="maven.scala.useCanonicalPath" default-value="true"
      */
     protected boolean useCanonicalPath = true;
 
@@ -316,7 +316,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * The artifact repository to use.
      *
-     * @parameter expression="${localRepository}"
+     * @parameter property="localRepository"
      * @required
      * @readonly
      */

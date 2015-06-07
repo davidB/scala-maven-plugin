@@ -31,7 +31,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * "modified-only" => only modified sources are recompiled (pre 2.13 behavior), "all" => all sources are recompiled,
      * "incremental" => incrementally recompile modified sources and other affected sources.
      *
-     * @parameter expression="${recompileMode}" default-value="all"
+     * @parameter property="recompileMode" default-value="all"
      */
     protected String recompileMode = ALL;
 
@@ -40,7 +40,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * for each root directory or files that will be compiled.
      * Useful for debug, and for integration with Editor/IDE to reset markers only for compiled files.
      *
-     * @parameter expression="${notifyCompilation}" default-value="true"
+     * @parameter property="notifyCompilation" default-value="true"
      */
     private boolean notifyCompilation = true;
 
@@ -62,28 +62,28 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      *
      * Can be Mixed, JavaThenScala, or ScalaThenJava.
      *
-     * @parameter expression="${compileOrder}" default-value="mixed"
+     * @parameter property="compileOrder" default-value="mixed"
      */
     private String compileOrder;
 
     /**
      * Use zinc server for incremental recompilation.
      *
-     * @parameter expression="${useZincServer}" default-value="false"
+     * @parameter property="useZincServer" default-value="false"
      */
     private boolean useZincServer;
 
     /**
      * Zinc server port, if running with incremental zinc server mode.
      *
-     * @parameter expression="${zincPort}" default-value="3030"
+     * @parameter property="zincPort" default-value="3030"
      */
     private int zincPort;
 
     /**
      * Additional parameter to use to call zinc server
      * It is a pipe '|' separated list of arguments, so it can be used from command line ("-DaddZincArgs=arg1|arg2|arg3|...").
-     * @parameter expression="${addZincArgs}"
+     * @parameter property="addZincArgs"
      */
     private String addZincArgs = "";
 
