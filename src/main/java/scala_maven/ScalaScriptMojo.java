@@ -2,14 +2,17 @@ package scala_maven;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,6 +30,7 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy;
 import org.codehaus.plexus.classworlds.strategy.Strategy;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 import scala_maven_executions.JavaMainCaller;
@@ -63,6 +67,13 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * @parameter expression="${scriptFile}"
      */
     protected File scriptFile;
+
+    /**
+     * The encoding of file containing script to be executed.
+     *
+     * @parameter expression="${scriptEncoding}" default="UTF-8"
+     */
+    protected String scriptEncoding;
 
     /**
      * The script that will be executed. Either '<em>scriptFile</em>' or '
@@ -119,7 +130,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     protected String removeFromClasspath;
 
     private static AtomicInteger _lastScriptIndex = new AtomicInteger(0);
-    
+
     private static String scriptBaseNameOf(File scriptFile, int idx) {
       if (scriptFile == null) {
           return "embeddedScript_" + idx;
@@ -179,7 +190,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
     private void runScript(boolean mavenProjectDependency, URLClassLoader loader, String baseName) throws Exception {
         Class<?> compiledScript = loader.loadClass(baseName);
-        
+
         ClassLoader currentCL = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(loader);
         try {
@@ -321,10 +332,10 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
         FileOutputStream fileOutputStream = new FileOutputStream(destFile);
         PrintStream out = new PrintStream(fileOutputStream);
+        BufferedReader reader = null;
         try {
-            BufferedReader reader;
             if (scriptFile != null) {
-                reader = new BufferedReader(new FileReader(scriptFile));
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(scriptFile), Charset.forName(scriptEncoding)));
             } else {
                 reader = new BufferedReader(new StringReader(script));
             }
@@ -332,7 +343,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             String baseName = FileUtils.basename(destFile.getName(), ".scala");
             if (mavenProjectDependency) {
 //                out.println("import scala.collection.jcl.Conversions._");
-                out.println("class " + baseName 
+                out.println("class " + baseName
                         + "(project :" + MavenProject.class.getCanonicalName()
                         + ",session :" + MavenSession.class.getCanonicalName()
                         + ",log :"+Log.class.getCanonicalName()
@@ -351,8 +362,9 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
             out.println("}");
         } finally {
-            out.close();
-            fileOutputStream.close();
+            IOUtil.close(out);
+            IOUtil.close(fileOutputStream);
+            IOUtil.close(reader);
         }
     }
 
