@@ -10,11 +10,6 @@
   <packaging>jar</packaging>
 
   <dependencies>
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>${scala.version.lastrelease}</version>
-    </dependency>
   </dependencies>
 
   <build>
@@ -38,6 +33,7 @@
               <goal>script</goal>
             </goals>
             <configuration>
+              <scalaVersion>2.11.6</scalaVersion>
               <keepGeneratedScript>true</keepGeneratedScript>
               <includeScopes>plugin</includeScopes>
               <script>
@@ -79,7 +75,7 @@
               <goal>script</goal>
             </goals>
             <configuration>
-              <scalaVersion>${scala.version}</scalaVersion>
+              <scalaVersion>2.11.6</scalaVersion>
               <keepGeneratedScript>true</keepGeneratedScript>
               <scriptFile>${basedir}/build.scala</scriptFile>
             </configuration>

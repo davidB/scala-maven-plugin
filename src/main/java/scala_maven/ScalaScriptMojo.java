@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -23,6 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -56,7 +57,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     /**
      * The build directory of the project
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter property="project.build.directory"
      */
     protected File outputDir;
 
@@ -64,14 +65,14 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * The file containing script to be executed. Either '<em>scriptFile</em>'
      * or '<em>script</em>' must be defined.
      *
-     * @parameter expression="${scriptFile}"
+     * @parameter property="scriptFile"
      */
     protected File scriptFile;
 
     /**
      * The encoding of file containing script to be executed.
      *
-     * @parameter expression="${scriptEncoding}" default="UTF-8"
+     * @parameter property="scriptEncoding" default-value="UTF-8"
      */
     protected String scriptEncoding;
 
@@ -79,7 +80,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * The script that will be executed. Either '<em>scriptFile</em>' or '
      * <em>script</em>' must be defined.
      *
-     * @parameter expression="${script}"
+     * @parameter property="script"
      */
     protected String script;
 
@@ -89,7 +90,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * script especially since line numbers will be wrong because lines are
      * added to the compiled script (see script examples)
      *
-     * @parameter expression="${maven.scala.keepGeneratedScript}"
+     * @parameter property="maven.scala.keepGeneratedScript"
      *            default-value="false"
      */
     protected boolean keepGeneratedScript;
@@ -100,7 +101,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * By default embedded script into pom.xml run with 'plugin' scope
      * and script read from scriptFile run with 'compile, test, runtime'
      *
-     * @parameter expression="${maven.scala.includeScopes}"
+     * @parameter property="maven.scala.includeScopes"
      */
     protected String includeScopes;
 
@@ -108,14 +109,14 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * Comma separated list of scopes to remove from the classpath. Eg:
      * test,compile
      *
-     * @parameter expression="${maven.scala.excludeScopes}"
+     * @parameter property="maven.scala.excludeScopes"
      */
     protected String excludeScopes;
 
     /**
      * Comma seperated list of directories or jars to add to the classpath
      *
-     * @parameter expression="${addToClasspath}"
+     * @parameter property="addToClasspath"
      */
     protected String addToClasspath;
 
@@ -125,7 +126,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * script uses Ant 1.7 and the compiler dependencies pull in Ant 1.5
      * optional which conflicts and causes a crash
      *
-     * @parameter expression="${removeFromClasspath}"
+     * @parameter property="removeFromClasspath"
      */
     protected String removeFromClasspath;
 
@@ -278,11 +279,19 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         }
 
         if (includes.contains("plugin") && !excludes.contains("plugin")) {
-          for(Artifact a : project.getPluginArtifacts()) {
-            if ("scala-maven-plugin".equals(a.getArtifactId())) {
-              addToClasspath(a, classpath, true);
+            //Plugin plugin = project.getPlugin("scala-maven-plugin");
+            for(Plugin p : project.getBuildPlugins()) {
+                if ("scala-maven-plugin".equals(p.getArtifactId())) {
+                    for(Dependency d : p.getDependencies()) {
+                        addToClasspath(factory.createDependencyArtifact(d), classpath, true);
+                    }
+                }
             }
-          }
+            for(Artifact a : project.getPluginArtifacts()) {
+                if ("scala-maven-plugin".equals(a.getArtifactId())) {
+                    addToClasspath(a, classpath, true);
+                }
+            }
         }
 
         if (addToClasspath != null) {
