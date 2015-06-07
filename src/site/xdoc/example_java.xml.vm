@@ -55,9 +55,9 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>${project.artifactId}</artifactId>
-          <version>${project.version}</version>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>${project.artifactId}</artifactId>
+					<version>${project.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -68,14 +68,14 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>${project.artifactId}</artifactId>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>${project.artifactId}</artifactId>
 				<executions>
 					<execution>
 						<id>scala-compile-first</id>
 						<phase>process-resources</phase>
 						<goals>
-						    <goal>add-source</goal>
+							<goal>add-source</goal>
 							<goal>compile</goal>
 						</goals>
 					</execution>
