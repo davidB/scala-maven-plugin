@@ -85,7 +85,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
    * Path to the default MANIFEST file to use. It will be used if
    * <code>useDefaultManifestFile</code> is set to <code>true</code>.
    *
-   * @parameter default-value=="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
+   * @parameter default-value="${project.build.outputDirectory}/META-INF/MANIFEST.MF"
    * @required
    * @readonly
    */
