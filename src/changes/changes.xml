@@ -5,6 +5,10 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="3.2.1" date="2015-06-14">
+      <action dev="David Bernard" type="fix" issue="166">add plugin dependencies into script classpath if "includeScope" includes "plugin"</action>
+      <action dev="David Bernard" type="fix" issue="168">add scriptEncoding</action>
+    </release>
     <release version="3.2.0" date="2014-07-15">
       <action dev="Alexey Ermakov" type="fix" issue="151">fix scala 2.11 incremental compilation by updating to zinc 0.3.5</action>
     </release>
