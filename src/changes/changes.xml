@@ -5,6 +5,9 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="3.2.2" date="2015-06-28">
+      <action dev="David Bernard" type="fix" issue="168">encode generated script with same encoding as scala sourcefile</action>
+    </release>
     <release version="3.2.1" date="2015-06-14">
       <action dev="David Bernard" type="fix" issue="166">add plugin dependencies into script classpath if "includeScope" includes "plugin"</action>
       <action dev="David Bernard" type="fix" issue="168">add scriptEncoding</action>

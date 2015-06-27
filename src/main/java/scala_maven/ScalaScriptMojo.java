@@ -340,7 +340,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         destFile.delete();
 
         FileOutputStream fileOutputStream = new FileOutputStream(destFile);
-        PrintStream out = new PrintStream(fileOutputStream);
+        PrintStream out = new PrintStream(fileOutputStream, false, encoding);
         BufferedReader reader = null;
         try {
             if (scriptFile != null) {
