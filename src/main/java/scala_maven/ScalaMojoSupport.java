@@ -255,7 +255,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * The -encoding argument for the Java compiler. (when using incremental compiler).
      *
-     * @parameter property="project.build.sourceEncoding"
+     * @parameter property="project.build.sourceEncoding" default-value="UTF-8"
      */
     protected String encoding;
     
