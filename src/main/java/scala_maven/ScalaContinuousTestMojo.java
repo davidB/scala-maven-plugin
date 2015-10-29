@@ -36,7 +36,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      * repository like <code>${project.build.directory}/it-repo</code>. Otherwise, your ordinary local repository will
      * be used, potentially soiling it with broken artifacts.
      *
-     * @parameter property="invoker.localRepositoryPath" default-value="${settings.localRepository"
+     * @parameter property="${invoker.localRepositoryPath}" default-value="${settings.localRepository}"
      */
     protected File localRepositoryPath;
 
