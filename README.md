@@ -25,8 +25,8 @@ Supposing the scala-library.jar of your existing scala library lives
 at `/usr/local/Cellar/scala/2.10.2/libexec` then you will need to set a symbolic link up as
 follows (on Unix):
 
-`ln -s /usr/local/Cellar/scala/2.10.2/libexec ~/bin/soft-jvm/scala
- 
+`ln -s /usr/local/Cellar/scala/2.10.2/libexec ~/bin/soft/scala
+
 
 ## commands
 
