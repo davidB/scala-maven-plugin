@@ -24,7 +24,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class MiscTest extends TestCase {
     public void testJdkSplit() throws Exception {
-        assertEquals(6, "hello".split("|").length);
+        assertEquals("Are you using JDK > 7? This failure is expected above JDK 7.", 6, "hello".split("|").length);
         assertEquals(1, "hello".split("\\|").length);
         assertEquals(2, "hel|lo".split("\\|").length);
         assertEquals(3, "hel||lo".split("\\|").length);
