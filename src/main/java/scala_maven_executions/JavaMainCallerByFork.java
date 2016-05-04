@@ -17,6 +17,7 @@ import org.apache.maven.toolchain.Toolchain;
 import org.codehaus.plexus.util.StringUtils;
 
 import scala_maven_executions.LogProcessorUtils.LevelState;
+import util.JavaHomeLocator;
 
 /**
  * forked java commands.
@@ -41,19 +42,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
             env.add(key + "=" + System.getenv(key));
         }
 
-        if (toolchain != null)
-            _javaExec = toolchain.findTool("java");
-
-        if (toolchain == null || _javaExec == null) {
-            _javaExec = System.getProperty("java.home");
-            if (_javaExec == null) {
-                _javaExec = System.getenv("JAVA_HOME");
-                if (_javaExec == null) {
-                    throw new IllegalStateException("Couldn't locate java, try setting JAVA_HOME environment variable.");
-                }
-            }
-            _javaExec += File.separator + "bin" + File.separator + "java";
-        }
+        _javaExec = JavaHomeLocator.fromToolchain(toolchain);
         _forceUseArgFile = forceUseArgFile;
     }
 

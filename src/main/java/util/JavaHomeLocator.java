@@ -1,0 +1,34 @@
+package util;
+
+import org.apache.maven.toolchain.Toolchain;
+
+import java.io.File;
+
+/**
+ * Utilities to aid with finding Java's location
+ *
+ * @Author C. Dessonville
+ */
+public class JavaHomeLocator {
+
+  public static String fromToolchain(Toolchain toolchain) {
+    String _javaExec = null;
+
+    if (toolchain != null)
+      _javaExec = toolchain.findTool("java");
+
+    if (toolchain == null || _javaExec == null) {
+      _javaExec = System.getProperty("java.home");
+      if (_javaExec == null) {
+        _javaExec = System.getenv("JAVA_HOME");
+        if (_javaExec == null) {
+          throw new IllegalStateException("Couldn't locate java, try setting JAVA_HOME environment variable.");
+        }
+      }
+
+      _javaExec += File.separator + "bin" + File.separator + "java";
+    }
+
+    return _javaExec;
+  }
+}
