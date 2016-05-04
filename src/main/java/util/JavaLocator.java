@@ -9,9 +9,9 @@ import java.io.File;
  *
  * @Author C. Dessonville
  */
-public class JavaHomeLocator {
+public class JavaLocator {
 
-  public static String fromToolchain(Toolchain toolchain) {
+  public static String findExecutableFromToolchain(Toolchain toolchain) {
     String _javaExec = null;
 
     if (toolchain != null)
