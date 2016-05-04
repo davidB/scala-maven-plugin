@@ -7,10 +7,10 @@ scala-maven-plugin
 
 The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling/testing/running/documenting Scala code in Maven.
 
-* [Documentation](http://davidb.github.com/scala-maven-plugin/index.html)
+* [Documentation](https://davidb.github.io/scala-maven-plugin/index.html)
 * [Wiki](https://github.com/davidB/scala-maven-plugin/wiki)
 * [Issues](https://github.com/davidB/scala-maven-plugin/issues/)
-* [Full changelog](http://davidb.github.com/scala-maven-plugin/changes-report.html)
+* [Full changelog](https://davidb.github.io/scala-maven-plugin/changes-report.html)
 
 ## Donate
 
@@ -41,7 +41,7 @@ follows (on Unix):
   * `mvn release:prepare && mvn release:perform` : to publish on staging repository via plugin
   * `mvn site package source:jar javadoc:jar install:install gpg:sign deploy:deploy changes:announcement-generate -Dmaven.test.skip=true -DperformRelease=true` : manual
   * connect to http://oss.sonatype.org/ close and release the request(about scala-maven-plugin) in staging repositories
-  * browse the updated [mvnsite](http://davidb.github.com/scala-maven-plugin/) (check version into samples, ...)
+  * browse the updated [mvnsite](https://davidb.github.io/scala-maven-plugin/) (check version into samples, ...)
   * email the content of `target/checkout/target/announcement/announcement.md.vm` to post@implicitly.posterous.com, and to maven-and-scala@googlegroups.com (same subject but without tag part)
   
 # TODO
