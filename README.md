@@ -18,6 +18,8 @@ The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling
 
 ## Build
 
+Due to a problem with older Scala version this build won't work with JDK 8. Switch to JDK 7 to run it.
+
 Currently, you need Maven 3.x to build the plugin, create the site, and run `integration-test`.
 
 An existing installation of Scala is also tested against (in integration-test).
@@ -26,6 +28,9 @@ at `/usr/local/Cellar/scala/2.10.2/libexec` then you will need to set a symbolic
 follows (on Unix):
 
 `ln -s /usr/local/Cellar/scala/2.10.2/libexec ~/bin/soft-jvm/scala
+
+export SCALA_HOME to make it visible to your build.
+
  
 
 ## commands
