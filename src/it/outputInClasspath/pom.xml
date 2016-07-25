@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>it.scala-maven-plugin</groupId>
-    <artifactId>includesExcludes</artifactId>
+    <artifactId>ouputInClasspath</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Test compilation using excludes/includes</name>
+    <name>Test compilation using outputInClasspath</name>
     <description>Test compilation pulls version from dependency</description>
     <packaging>jar</packaging>
     <dependencies>
@@ -22,6 +22,10 @@
                 <groupId>@project.groupId@</groupId>
                 <artifactId>@project.artifactId@</artifactId>
                 <version>@project.version@</version>
+                <configuration>
+                    <outputInClasspath>true</outputInClasspath>
+                    <sendJavaToScalac>false</sendJavaToScalac>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -30,15 +34,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <includes>
-                        <include>**/*.scala</include>
-                        <include>**/TestClass.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>bad.scala</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -50,15 +45,6 @@
                             <groupId>@project.groupId@</groupId>
                             <artifactId>@project.artifactId@</artifactId>
                             <version>@project.version@</version>
-                            <configuration>
-                                <includes>
-                                    <include>**/*.scala</include>
-                                    <include>**/TestClass.java</include>
-                                </includes>
-                                <excludes>
-                                    <exclude>bad.scala</exclude>
-                                </excludes>
-                            </configuration>
                         </plugin>
                     </reportPlugins>
                 </configuration>
