@@ -152,6 +152,10 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         getLog().info(String.format("Compiling %d source files to %s at %d", files.size(), outputDir.getAbsolutePath(), t1));
         JavaMainCaller jcmd = getScalaCommand();
         jcmd.redirectToLog();
+        if(outputInClasspath) {
+            getLog().debug("adding output directory to parsed paths for compiling.");
+            classpathElements.add(getOutputDir().getAbsolutePath());
+        }
         if (!classpathElements.isEmpty()) jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
         jcmd.addArgs("-d", outputDir.getAbsolutePath());
         //jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
