@@ -300,7 +300,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         Map<File, File> cacheMap = getAnalysisCacheMap();
 
         try {
-            incremental.compile(project.getBasedir(), classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder);
+            incremental.compile(project.getBasedir(), classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder, toolchainManager.getToolchainFromBuildContext("jdk", session));
         } catch (xsbti.CompileFailed e) {
             if (compileInLoop) {
                 compileErrors = true;

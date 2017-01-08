@@ -3,8 +3,10 @@ package sbt_inc;
 import com.typesafe.zinc.Compiler;
 import com.typesafe.zinc.*;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.toolchain.Toolchain;
 import scala.Option;
 import scala_maven_executions.MainHelper;
+import util.JavaLocator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -81,9 +83,9 @@ public class SbtIncrementalCompiler {
                 defaultSbtOptions.nameHashing());
     }
 
-    public void compile(File baseDir, List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions, File cacheFile, Map<File, File> cacheMap, String compileOrder) throws Exception {
+    public void compile(File baseDir, List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions, File cacheFile, Map<File, File> cacheMap, String compileOrder, Toolchain toolchain) throws Exception {
         if (useServer) {
-            zincCompile(baseDir, classpathElements, sources, classesDirectory, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder);
+            zincCompile(baseDir, classpathElements, sources, classesDirectory, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder, toolchain);
         } else {
             if (log.isDebugEnabled()) log.debug("Incremental compiler = " + compiler + " [" + Integer.toHexString(compiler.hashCode()) + "]");
             List<File> classpath = pathsToFiles(classpathElements);
@@ -93,7 +95,7 @@ public class SbtIncrementalCompiler {
         }
     }
 
-    private void zincCompile(File baseDir, List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions, File cacheFile, Map<File, File> cacheMap, String compileOrder) throws Exception {
+    private void zincCompile(File baseDir, List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions, File cacheFile, Map<File, File> cacheMap, String compileOrder, Toolchain toolchain) throws Exception {
         List<String> arguments = new ArrayList<String>(extraArgs);
         arguments.add("-log-level");
         arguments.add(logLevelToString(log));
@@ -116,6 +118,14 @@ public class SbtIncrementalCompiler {
         for (String scalacOption : scalacOptions) {
             arguments.add("-S" + scalacOption);
         }
+
+        String javaHome = JavaLocator.findHomeFromToolchain(toolchain);
+        if (javaHome != null) {
+            log.info("Toolchain in scala-maven-plugin: " + javaHome);
+            arguments.add("-java-home");
+            arguments.add(javaHome);
+        }
+
         for (String javacOption : javacOptions) {
             arguments.add("-C" + javacOption);
         }
