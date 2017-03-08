@@ -110,7 +110,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @readonly
      * @required
      */
-    protected List<?> remoteRepos;
+    protected List<ArtifactRepository> remoteRepos;
 
     /**
      * Additional dependencies/jar to add to classpath to run "scalaClassName" (scope and optional field not supported)
@@ -204,7 +204,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @parameter property="scala.compat.version"
      */
     private String scalaCompatVersion;
-    
+
     /**
      * Path to Scala installation to use instead of the artifact (define as dependencies).
      *
@@ -237,28 +237,28 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      */
     protected String addJavacArgs;
 
-    
+
     /**
      * The -source argument for the Java compiler (when using incremental compiler).
      *
      * @parameter property="maven.compiler.source"
      */
     protected String source;
-    
+
     /**
      * The -target argument for the Java compiler (when using incremental compiler).
      *
      * @parameter property="maven.compiler.target"
      */
     protected String target;
-    
+
     /**
      * The -encoding argument for the Java compiler. (when using incremental compiler).
      *
      * @parameter property="project.build.sourceEncoding" default-value="UTF-8"
      */
     protected String encoding;
-    
+
     /**
      * Display the command line called ?
      * (property 'maven.scala.displayCmd' replaced by 'displayCmd')
@@ -638,7 +638,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected JavaMainCaller getEmptyScalaCommand(String mainClass) throws Exception {
-      
+
       //TODO - Fork or not depending on configuration?
       JavaMainCaller cmd;
       String toolcp = getToolClasspath();
