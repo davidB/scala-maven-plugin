@@ -11,11 +11,33 @@
   <packaging>jar</packaging>
 
   <properties>
-    <scala.home>${user.home}/bin/soft/scala</scala.home>
+    <scala.home>${project.build.directory}</scala.home>
   </properties>
   <url>http://sandbox/</url>
+
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>@maven.dependency.plugin.version@</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifact>
+                @scala.organization@:scala-compiler:@scala.version@
+              </artifact>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>@project.groupId@</groupId>
         <artifactId>@project.artifactId@</artifactId>
