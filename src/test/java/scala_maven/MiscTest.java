@@ -23,20 +23,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author david bernard
  */
 public class MiscTest extends TestCase {
-    public void testJdkSplit() throws Exception {
-        assertEquals("Are you using JDK > 7? This failure is expected above JDK 7.", 6, "hello".split("|").length);
-        assertEquals(1, "hello".split("\\|").length);
-        assertEquals(2, "hel|lo".split("\\|").length);
-        assertEquals(3, "hel||lo".split("\\|").length);
-    }
 
-    public void testStringUtilsSplit() throws Exception {
-        assertEquals(1, StringUtils.split("hello", "|").length);
-        assertEquals(1, StringUtils.split("hello|", "|").length);
-        assertEquals(2, StringUtils.split("hel|lo", "|").length);
-        assertEquals(2, StringUtils.split("hel||lo", "|").length);
-    }
-    
     public void testClassworldSeftFirstStrategy() throws Exception {
       ClassWorld w = new ClassWorld("zero", null);
       ClassRealm rMojo = w.newRealm("mojo", getClass().getClassLoader());
@@ -45,13 +32,13 @@ public class MiscTest extends TestCase {
       rScript.setParentClassLoader(getClass().getClassLoader());
       rScript.importFrom("mojo", MavenProject.class.getPackage().getName());
       rScript.importFrom("mojo", MavenSession.class.getPackage().getName());
-      rScript.importFrom("mojo", Log.class.getPackage().getName());        
+      rScript.importFrom("mojo", Log.class.getPackage().getName());
 
-      
+
 
       assertEquals(rScript, rScript.getStrategy().getRealm());
       assertEquals(SelfFirstStrategy.class, rScript.getStrategy().getClass());
-      
+
       File olderjar = new File(System.getProperty("user.home"), ".m2/repository/net/alchim31/maven/scala-maven-plugin/3.1.0/scala-maven-plugin-3.1.0.jar");
       if (olderjar.exists()) {
         System.out.println("found older jar");
