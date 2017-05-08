@@ -1,0 +1,12 @@
+jdk:
+  - openjdk7
+  - oraclejdk7
+env:
+install: true
+language: java
+script:
+  - mvn -e clean verify -Dscala.
+branches:
+  only:
+    - gh-pages
+    - /.*/

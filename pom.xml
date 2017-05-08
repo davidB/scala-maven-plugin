@@ -88,6 +88,8 @@
   </contributors>
 
   <properties>
+    <scala.organization>org.scala-lang</scala.organization>
+    <maven.dependency.plugin.version>3.0.0</maven.dependency.plugin.version>
     <maven.version>3.0.4</maven.version>
     <maven.reporting.version>3.0</maven.reporting.version>
     <maven.compiler.source>1.6</maven.compiler.source>
@@ -95,6 +97,7 @@
     <encoding>UTF-8</encoding>
     <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
     <github.global.server>github</github.global.server>
+    <scala.version>2.11.8</scala.version>
   </properties>
 
   <prerequisites>
