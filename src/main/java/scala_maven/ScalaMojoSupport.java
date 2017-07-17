@@ -8,6 +8,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
@@ -51,6 +52,18 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     public static final String SCALA_LIBRARY_ARTIFACTID= "scala-library";
     public static final String SCALA_COMPILER_ARTIFACTID= "scala-compiler";
+
+    /**
+     * Constant {@link String} for "pom". Used to specify the Maven POM artifact
+     * type.
+     */
+    protected static final String POM = "pom";
+
+    /**
+     * Constant {@link String} for "jar". Used to specify the Maven JAR artifact
+     * type.
+     */
+    protected static final String JAR = "jar";
 
     /**
      * @parameter property="project"
@@ -373,47 +386,136 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     private VersionNumber _scalaVersionN;
 
     /**
-     * This method resolves the dependency artifacts from the project.
+     * Constructs an {@link Artifact} for Scala Compiler.
      *
-     * @param theProject The POM.
-     * @return resolved set of dependency artifacts.
+     * @param scalaVersion the version of the Scala Compiler/Library we are
+     *        using for this execution.
      *
-     * @throws ArtifactResolutionException
-     * @throws ArtifactNotFoundException
-     * @throws InvalidDependencyVersionException
+     * @return a {@link Artifact} for the Scala Compiler.
      */
-    protected Set<Artifact> resolveDependencyArtifacts(MavenProject theProject) throws Exception {
-        AndArtifactFilter filter = new AndArtifactFilter();
-        filter.add(new ScopeArtifactFilter(Artifact.SCOPE_TEST));
-        filter.add(new ArtifactFilter(){
-            public boolean include(Artifact artifact) {
-                return !artifact.isOptional();
-            }
-        });
-        //TODO follow the dependenciesManagement and override rules
-        Set<Artifact> artifacts = theProject.createArtifacts(artifactFactory, Artifact.SCOPE_RUNTIME, filter);
-        for (Artifact artifact : artifacts) {
-            resolver.resolve(artifact, remoteRepos, localRepo);
-        }
-        return artifacts;
+    protected final Artifact scalaCompilerArtifact(final String scalaVersion) {
+        return this.factory.createArtifact(this.getScalaOrganization(),
+                                           ScalaMojoSupport.SCALA_COMPILER_ARTIFACTID,
+                                           scalaVersion,
+                                           "",
+                                           ScalaMojoSupport.POM);
     }
 
     /**
      * This method resolves all transitive dependencies of an artifact.
      *
-     * @param artifact the artifact used to retrieve dependencies
+     * @param artifact the {@link Artifact} used to retrieve dependencies.
      *
-     * @return resolved set of dependencies
+     * @return resolved {@link Set} of dependencies.
      *
-     * @throws ArtifactResolutionException
-     * @throws ArtifactNotFoundException
-     * @throws ProjectBuildingException
-     * @throws InvalidDependencyVersionException
+     * @throws {@link Exception} when various artifact resolution mechanisms fail.
      */
-    protected Set<Artifact> resolveArtifactDependencies(Artifact artifact) throws Exception {
-        Artifact pomArtifact = factory.createArtifact(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), "", "pom");
-        MavenProject pomProject = mavenProjectBuilder.buildFromRepository(pomArtifact, remoteRepos, localRepo);
-        return resolveDependencyArtifacts(pomProject);
+    protected final Set<Artifact> resolveArtifactDependencies(final Artifact artifact) throws Exception {
+        final AndArtifactFilter filter = new AndArtifactFilter();
+        filter.add(new ScopeArtifactFilter(Artifact.SCOPE_TEST));
+        filter.add(new ArtifactFilter(){
+                public boolean include(Artifact artifact) {
+                    return !artifact.isOptional();
+                }
+            });
+
+        // Use the collection filter as the resolution filter.
+        return resolveDependencyArtifacts(artifact,
+                                          filter,
+                                          filter);
+    }
+
+    /**
+     * This method resolves all transitive dependencies of an artifact.
+     *
+     * @param artifact the {@link Artifact} used to retrieve dependencies.
+     * @param collectionFilter an {@link ArtifactFilter} used to determine which
+     *        members of the dependency graph should be included in resolution.
+     * @param collectionFilter an {@link ArtifactFilter} used to determine which
+     *        members dependency graph should be downloaded.
+     *
+     * @return resolved {@link Set} of dependencies.
+     *
+     * @throws {@link Exception} when various artifact resolution mechanisms fail.
+     */
+    protected final Set<Artifact> resolveDependencyArtifacts(final Artifact artifact,
+                                                             final ArtifactFilter collectionFilter,
+                                                             final ArtifactFilter resolutionFilter) throws Exception {
+        return this.resolveDependencyArtifacts(artifact,
+                                               collectionFilter,
+                                               resolutionFilter,
+                                               this.remoteRepos,
+                                               this.localRepo);
+    }
+
+    /**
+     * This method resolves all transitive dependencies of an artifact.
+     *
+     * @param artifact the {@link Artifact} used to retrieve dependencies.
+     * @param collectionFilter an {@link ArtifactFilter} used to determine which
+     *        members of the dependency graph should be included in resolution.
+     * @param collectionFilter an {@link ArtifactFilter} used to determine which
+     *        members dependency graph should be downloaded.
+     * @param remoteRepositories a {@link List} of remote {@link
+     *        ArtifactRespository} values to used for dependency resolution of
+     *        the provided {@link Artifact}.
+     * @param localRepository the local {@link ArtifactRepository} to use for
+     *        dependency resolution of the given {@link Artifact}.
+     *
+     * @return resolved {@link Set} of dependencies.
+     *
+     * @throws {@link Exception} when various artifact resolution mechanisms fail.
+     */
+    protected final Set<Artifact> resolveDependencyArtifacts(final Artifact artifact,
+                                                             final ArtifactFilter collectionFilter,
+                                                             final ArtifactFilter resolutionFilter,
+                                                             final List<ArtifactRepository> remoteRepositories,
+                                                             final ArtifactRepository localRepository) throws Exception {
+        final ArtifactResolutionRequest arr =
+            this.createArtifactResolutionRequest(artifact,
+                                                 collectionFilter,
+                                                 resolutionFilter,
+                                                 remoteRepositories,
+                                                 localRepository);
+
+        //TODO follow the dependenciesManagement and override rules
+        return this.resolver.resolve(arr).getArtifacts();
+    }
+
+    /**
+     * Create a {@link ArtifactResolutionRequest}.
+     *
+     * @param artifact the {@link Artifact} used to retrieve dependencies.
+     * @param collectionFilter an {@link ArtifactFilter} used to determine which
+     *        members of the dependency graph should be included in resolution.
+     * @param collectionFilter an {@link ArtifactFilter} used to determine which
+     *        members dependency graph should be downloaded.
+     * @param remoteRepositories a {@link List} of remote {@link
+     *        ArtifactRespository} values to used for dependency resolution of
+     *        the provided {@link Artifact}.
+     * @param localRepository the local {@link ArtifactRepository} to use for
+     *        dependency resolution of the given {@link Artifact}.
+     *
+     * @return an {@link ArtifactResolutionRequest}, typically used for
+     *         dependency resolution requests against an {@link
+     *         ArtifactResolver}.
+     */
+    private ArtifactResolutionRequest createArtifactResolutionRequest(final Artifact artifact,
+                                                                      final ArtifactFilter collectionFilter,
+                                                                      final ArtifactFilter resolutionFilter,
+                                                                      final List<ArtifactRepository> remoteRepositories,
+                                                                      final ArtifactRepository localRepository) {
+        final ArtifactResolutionRequest arr = new ArtifactResolutionRequest();
+
+        arr.setArtifact(artifact);
+        arr.setCollectionFilter(collectionFilter);
+        arr.setResolutionFilter(resolutionFilter);
+        arr.setResolveRoot(false);
+        arr.setResolveTransitively(true);
+        arr.setRemoteRepositories(remoteRepositories);
+        arr.setLocalRepository(localRepository);
+
+        return arr;
     }
 
     public void addToClasspath(String groupId, String artifactId, String version, Set<String> classpath) throws Exception {
@@ -422,7 +524,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
 
     public void addToClasspath(String groupId, String artifactId, String version, Set<String> classpath, boolean addDependencies) throws Exception {
-        addToClasspath(factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar"), classpath, addDependencies);
+        addToClasspath(factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, ScalaMojoSupport.JAR), classpath, addDependencies);
     }
 
     /**
@@ -435,7 +537,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       d.setGroupId(groupId);
       d.setArtifactId(artifactId);
       d.setVersion(version);
-      d.setType("jar");
+      d.setType(ScalaMojoSupport.JAR);
       d.setClassifier(classifier);
       d.setScope(Artifact.SCOPE_RUNTIME);
       addToClasspath(factory.createDependencyArtifact(d), classpath, addDependencies);
@@ -502,7 +604,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
                 detectedScalaVersion = findScalaVersionFromDependencies();
             }
             if (StringUtils.isEmpty(detectedScalaVersion)) {
-                if (!"pom".equals( project.getPackaging().toLowerCase() )) {
+                if (!ScalaMojoSupport.POM.equals( project.getPackaging().toLowerCase() )) {
                     getLog().warn("you don't define "+ getScalaOrganization() + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
                 }
                 detectedScalaVersion = "0.0.0";
@@ -627,7 +729,28 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
 
     protected JavaMainCaller getScalaCommand() throws Exception {
-        JavaMainCaller cmd = getEmptyScalaCommand(scalaClassName);
+        return this.getScalaCommand(this.fork,
+                                    this.scalaClassName);
+    }
+
+    /**
+     * Get a {@link JavaMainCaller} used invoke a Java process. Typically this
+     * will be one of the Scala utilities (Compiler, ScalaDoc, REPL, etc.).
+     * <p>
+     * This method does some setup on the {@link JavaMainCaller} which is not
+     * done by merely invoking {@code new} on one of the
+     * implementations. Specifically, it adds any Scala compiler plugin options,
+     * JVM options, and Scalac options defined on the plugin.
+     *
+     * @param forkOverride override the setting for {@link #fork}. Currently
+     *        this should only be set if you are invoking the REPL.
+     * @param mainClass the JVM main class to invoke.
+     *
+     * @return a {@link JavaMainCaller} to use to invoke the given command.
+     */
+    protected final JavaMainCaller getScalaCommand(final boolean forkOverride,
+                                                   final String mainClass) throws Exception {
+        JavaMainCaller cmd = getEmptyScalaCommand(mainClass, forkOverride);
         cmd.addArgs(args);
         if (StringUtils.isNotEmpty(addScalacArgs)) {
           cmd.addArgs(StringUtils.split(addScalacArgs, "|"));
@@ -637,33 +760,63 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         return cmd;
     }
 
-    protected JavaMainCaller getEmptyScalaCommand(String mainClass) throws Exception {
+    /**
+     * Get a {@link JavaMainCaller} used invoke a Java process. Typically this
+     * will be one of the Scala utilities (Compiler, ScalaDoc, REPL, etc.).
+     *
+     * @param mainClass the JVM main class to invoke.
+     *
+     * @return a {@link JavaMainCaller} to use to invoke the given command.
+     */
+    protected final JavaMainCaller getEmptyScalaCommand(final String mainClass) throws Exception {
+        return this.getEmptyScalaCommand(mainClass, this.fork);
+    }
 
-      //TODO - Fork or not depending on configuration?
-      JavaMainCaller cmd;
-      String toolcp = getToolClasspath();
-      if(fork) {
-        // HACK (better may need refactor)
-        boolean bootcp = true;
-        if (args != null) {
-          for(String arg : args) {
-            bootcp = bootcp && !"-nobootcp".equals(arg);
-          }
+    /**
+     * Get a {@link JavaMainCaller} used invoke a Java process. Typically this
+     * will be one of the Scala utilities (Compiler, ScalaDoc, REPL, etc.).
+     *
+     * @param mainClass the JVM main class to invoke.
+     * @param forkOverride override the setting for {@link #fork}. Currently
+     *        this should only be set if you are invoking the REPL.
+     *
+     * @return a {@link JavaMainCaller} to use to invoke the given command.
+     */
+    protected JavaMainCaller getEmptyScalaCommand(final String mainClass,
+                                                  final boolean forkOverride) throws Exception {
+
+        // If we are deviating from the plugin settings, let the user know
+        // what's going on.
+        if (forkOverride != this.fork) {
+            super.getLog().info("Fork behavior overridden");
+            super.getLog().info(String.format("Fork for this execution is %s.", String.valueOf(forkOverride)));
         }
-        String cp = bootcp ? "" : toolcp;
-        bootcp = bootcp && !(StringUtils.isNotEmpty(addScalacArgs) && addScalacArgs.contains("-nobootcp"));
-        // scalac with args in files
-        // * works only since 2.8.0
-        // * is buggy (don't manage space in path on windows)
-        getLog().debug("use java command with args in file forced : " + forceUseArgFile);
-        cmd = new JavaMainCallerByFork(this, mainClass, cp, null, null, forceUseArgFile, toolchainManager.getToolchainFromBuildContext("jdk", session));
-        if (bootcp) {
-          cmd.addJvmArgs("-Xbootclasspath/a:" + toolcp);
+
+        //TODO - Fork or not depending on configuration?
+        JavaMainCaller cmd;
+        String toolcp = getToolClasspath();
+        if(forkOverride) {
+            // HACK (better may need refactor)
+            boolean bootcp = true;
+            if (args != null) {
+                for(String arg : args) {
+                    bootcp = bootcp && !"-nobootcp".equals(arg);
+                }
+            }
+            String cp = bootcp ? "" : toolcp;
+            bootcp = bootcp && !(StringUtils.isNotEmpty(addScalacArgs) && addScalacArgs.contains("-nobootcp"));
+            // scalac with args in files
+            // * works only since 2.8.0
+            // * is buggy (don't manage space in path on windows)
+            getLog().debug("use java command with args in file forced : " + forceUseArgFile);
+            cmd = new JavaMainCallerByFork(this, mainClass, cp, null, null, forceUseArgFile, toolchainManager.getToolchainFromBuildContext("jdk", session));
+            if (bootcp) {
+                cmd.addJvmArgs("-Xbootclasspath/a:" + toolcp);
+            }
+        } else  {
+            cmd = new JavaMainCallerInProcess(this, mainClass, toolcp, null, null);
         }
-      } else  {
-        cmd = new JavaMainCallerInProcess(this, mainClass, toolcp, null, null);
-      }
-      return cmd;
+        return cmd;
     }
 
     private String getToolClasspath() throws Exception {
@@ -750,22 +903,21 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected File getArtifactJar(String groupId, String artifactId, String version) throws Exception {
-        Artifact artifact = factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar");
+        Artifact artifact = factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, ScalaMojoSupport.JAR);
         resolver.resolve(artifact, remoteRepos, localRepo);
         return artifact.getFile();
     }
 
     protected File getArtifactJar(String groupId, String artifactId, String version, String classifier) throws Exception {
-        Artifact artifact = factory.createArtifactWithClassifier(groupId, artifactId, version, "jar", classifier);
+        Artifact artifact = factory.createArtifactWithClassifier(groupId, artifactId, version, ScalaMojoSupport.JAR, classifier);
         resolver.resolve(artifact, remoteRepos, localRepo);
         return artifact.getFile();
     }
 
     protected Set<Artifact> getAllDependencies(String groupId, String artifactId, String version) throws Exception {
         Set<Artifact> result = new HashSet<Artifact>();
-        Artifact pom = factory.createArtifact(groupId, artifactId, version, "", "pom");
-        MavenProject p = mavenProjectBuilder.buildFromRepository(pom, remoteRepos, localRepo);
-        Set<Artifact> d = resolveDependencyArtifacts(p);
+        Artifact pom = factory.createArtifact(groupId, artifactId, version, "", ScalaMojoSupport.POM);
+        Set<Artifact> d = resolveArtifactDependencies(pom);
         result.addAll(d);
         for (Artifact dependency : d) {
             Set<Artifact> transitive = getAllDependencies(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion());
