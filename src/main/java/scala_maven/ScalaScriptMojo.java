@@ -269,8 +269,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     }
 
     private void configureClasspath(Set<String> classpath) throws Exception, DependencyResolutionRequiredException {
-        Set<String> includes = new TreeSet<String>(Arrays.asList(includeScopes.toLowerCase().split(",")));
-        Set<String> excludes = new TreeSet<String>(Arrays.asList(excludeScopes.toLowerCase().split(",")));
+        Set<String> includes = new TreeSet<String>(Arrays.asList(StringUtils.split(includeScopes.toLowerCase(),",")));
+        Set<String> excludes = new TreeSet<String>(Arrays.asList(StringUtils.split(excludeScopes.toLowerCase(),",")));
 
         for(Artifact a : project.getArtifacts()) {
           if (includes.contains(a.getScope().toLowerCase()) && !excludes.contains(a.getScope())) {
@@ -295,12 +295,12 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         }
 
         if (addToClasspath != null) {
-            classpath.addAll(Arrays.asList(addToClasspath.split(",")));
+            classpath.addAll(Arrays.asList(StringUtils.split(addToClasspath,",")));
         }
 
         if (removeFromClasspath != null) {
             ArrayList<String> toRemove = new ArrayList<String>();
-            String[] jars = removeFromClasspath.trim().split(",");
+            String[] jars =  StringUtils.split(removeFromClasspath.trim(),",");
             for (String string : classpath) {
                 for (String jar : jars) {
                     if (string.contains(jar.trim())) {

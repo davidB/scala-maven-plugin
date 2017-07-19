@@ -23,6 +23,21 @@ import org.codehaus.plexus.util.StringUtils;
  * @author david bernard
  */
 public class MiscTest extends TestCase {
+// TODO not use String.split, it is not consistent across jdk version
+// see https://github.com/davidB/scala-maven-plugin/pull/206
+//    public void testJdkSplit() throws Exception {
+//        assertEquals("Are you using JDK > 7? This failure is expected above JDK 7.", 6, "hello".split("|").length);
+//        assertEquals(1, "hello".split("\\|").length);
+//        assertEquals(2, "hel|lo".split("\\|").length);
+//        assertEquals(3, "hel||lo".split("\\|").length);
+//    }
+
+    public void testStringUtilsSplit() throws Exception {
+        assertEquals(1, StringUtils.split("hello", "|").length);
+        assertEquals(1, StringUtils.split("hello|", "|").length);
+        assertEquals(2, StringUtils.split("hel|lo", "|").length);
+        assertEquals(2, StringUtils.split("hel||lo", "|").length);
+    }
 
     public void testClassworldSeftFirstStrategy() throws Exception {
       ClassWorld w = new ClassWorld("zero", null);

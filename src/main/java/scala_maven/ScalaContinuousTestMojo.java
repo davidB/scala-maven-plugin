@@ -13,6 +13,7 @@ import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.invoker.SystemOutHandler;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Compile the main and test scala source directory then run unit test cases in continuous (infinite loop).
@@ -132,6 +133,6 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
 
     protected List<String> getMavenGoals() {
         getLog().debug("Running tests with goal(s): " + ccTestGoals);
-        return Arrays.asList(ccTestGoals.split(" "));
+        return Arrays.asList(StringUtils.split(ccTestGoals, " "));
     }
 }
