@@ -1,7 +1,5 @@
-<html>
-<a href='http://www.pledgie.com/campaigns/4750'><img alt='Click here to lend your support to: scala-maven-plugin and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/4750.png?skin_name=chrome' border='0' /></a>
-</html>
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=davidB&url=https://github.com/davidB/scala-maven-plugin&title=scala-maven-plugin&language=&tags=github&category=software)
+[![Build Status](https://travis-ci.org/davidB/scala-maven-plugin.svg?branch=master)](https://travis-ci.org/davidB/scala-maven-plugin)
+
 scala-maven-plugin
 ====================
 
@@ -14,21 +12,16 @@ The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling
 
 ## Donate
 
-
+<html>
+<a href='http://www.pledgie.com/campaigns/4750'><img alt='Click here to lend your support to: scala-maven-plugin and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/4750.png?skin_name=chrome' border='0' /></a>
+</html>
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=davidB&url=https://github.com/davidB/scala-maven-plugin&title=scala-maven-plugin&language=&tags=github&category=software)
 
 ## Build
 
-Currently, you need Maven 3.x to build the plugin, create the site, and run `integration-test`.
+Currently, you need Maven 3.x & JDK 8 to build the plugin, create the site, and run `integration-test`.
 
-An existing installation of Scala is also tested against (in integration-test).
-Supposing the scala-library.jar of your existing scala library lives
-at `/usr/local/Cellar/scala/2.10.2/libexec` then you will need to set a symbolic link up as
-follows (on Unix):
-
-`ln -s /usr/local/Cellar/scala/2.10.2/libexec ~/bin/soft/scala`
- 
-
-## commands
+## Commands
 
 * `mvn package` : generate jar
 * `mvn site` : generate the plugin website
