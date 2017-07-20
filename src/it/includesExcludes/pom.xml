@@ -19,9 +19,9 @@
 	<build>
 		<plugins>
 			<plugin>
-        <groupId>@project.groupId@</groupId>
-        <artifactId>@project.artifactId@</artifactId>
-        <version>@project.version@</version>
+				<groupId>@project.groupId@</groupId>
+				<artifactId>@project.artifactId@</artifactId>
+				<version>@project.version@</version>
 				<executions>
 					<execution>
 						<goals>
@@ -50,6 +50,15 @@
               <groupId>@project.groupId@</groupId>
               <artifactId>@project.artifactId@</artifactId>
               <version>@project.version@</version>
+				<configuration>
+					<includes>
+						<include>**/*.scala</include>
+						<include>**/TestClass.java</include>
+					</includes>
+					<excludes>
+						<exclude>bad.scala</exclude>
+					</excludes>
+				</configuration>
             </plugin>
           </reportPlugins>
         </configuration>
