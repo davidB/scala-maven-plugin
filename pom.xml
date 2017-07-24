@@ -404,7 +404,6 @@
     <profile>
       <id>integration-tests</id>
       <activation>
-          <activeByDefault>true</activeByDefault>
         <property>
           <name>maven.test.skip</name>
           <value>!true</value>
