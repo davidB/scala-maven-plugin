@@ -5,6 +5,13 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="3.3.0" date="2015-07-22">
+      <action dev="David Bernard" type="update">use java 1.8 to build and to support scala 2.12.x => remove test of scala 2.7.x</action>
+      <action dev="David Strawn" type="fix" issue="207">add support to scala console 2.12 (console)</action>
+      <action dev="David Strawn" type="fix" issue="206">add support to java 1.8</action>
+      <action dev="Chris Dessonville" type="fix" issue="192">zinc use maven-toolchains-plugin</action>
+      <action dev="Chris Dessonville" type="update" issue="190">update maven-site-plugin</action>
+    </release>
     <release version="3.2.2" date="2015-06-28">
       <action dev="David Bernard" type="fix" issue="168">encode generated script with same encoding as scala sourcefile</action>
     </release>
