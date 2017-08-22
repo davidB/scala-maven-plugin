@@ -315,6 +315,7 @@
                 <!-- additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam-->
                 <!-- -sourceclasspath ${project.build.outputDirectory} -->
                 <excludePackageNames>${project.groupId}.example*:${project.groupId}.util.internal*</excludePackageNames>
+                <additionalparam>${javadoc.opts}</additionalparam>
               </configuration>
             </plugin>
             <!--
@@ -356,6 +357,13 @@
               </reportSets>
             </plugin>
           </reportPlugins>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <additionalparam>${javadoc.opts}</additionalparam>
         </configuration>
       </plugin>
       <plugin>
@@ -493,6 +501,15 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>java8-doclint-disabled</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+        <javadoc.opts>-Xdoclint:none</javadoc.opts>
+      </properties>
     </profile>
   </profiles>
 </project>
