@@ -297,7 +297,7 @@
 <a class="jxr_linenumber" name="L289" href="#L289">289</a>             String compilerInterfaceClassifier = SbtIncrementalCompiler.COMPILER_INTERFACE_CLASSIFIER;
 <a class="jxr_linenumber" name="L290" href="#L290">290</a>             String sbtVersion = findVersionFromPluginArtifacts(sbtGroupId, SbtIncrementalCompiler.COMPILER_INTEGRATION_ARTIFACT_ID);
 <a class="jxr_linenumber" name="L291" href="#L291">291</a>             File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>             List&lt;String&gt; zincArgs = StringUtils.isEmpty(addZincArgs) ? <strong class="jxr_keyword">new</strong> LinkedList&lt;String&gt;() : (List&lt;String&gt;) Arrays.asList(addZincArgs.split(<span class="jxr_string">"&#92;&#92;|"</span>));
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>             List&lt;String&gt; zincArgs = StringUtils.isEmpty(addZincArgs) ? <strong class="jxr_keyword">new</strong> LinkedList&lt;String&gt;() : (List&lt;String&gt;) Arrays.asList(StringUtils.split(addZincArgs, <span class="jxr_string">"|"</span>));
 <a class="jxr_linenumber" name="L293" href="#L293">293</a>             File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
 <a class="jxr_linenumber" name="L294" href="#L294">294</a>            	incremental = <strong class="jxr_keyword">new</strong> <a href="../sbt_inc/SbtIncrementalCompiler.html">SbtIncrementalCompiler</a>(useZincServer, zincPort, libraryJar, compilerJar, extraJars, xsbtiJar, interfaceSrcJar, getLog(), zincArgs);
 <a class="jxr_linenumber" name="L295" href="#L295">295</a>         }
@@ -308,7 +308,7 @@
 <a class="jxr_linenumber" name="L300" href="#L300">300</a>         Map&lt;File, File&gt; cacheMap = getAnalysisCacheMap();
 <a class="jxr_linenumber" name="L301" href="#L301">301</a> 
 <a class="jxr_linenumber" name="L302" href="#L302">302</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>             incremental.compile(project.getBasedir(), classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder);
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>             incremental.compile(project.getBasedir(), classpathElements, sources, outputDir, scalacOptions, javacOptions, cacheFile, cacheMap, compileOrder, toolchainManager.getToolchainFromBuildContext(<span class="jxr_string">"jdk"</span>, session));
 <a class="jxr_linenumber" name="L304" href="#L304">304</a>         } <strong class="jxr_keyword">catch</strong> (xsbti.CompileFailed e) {
 <a class="jxr_linenumber" name="L305" href="#L305">305</a>             <strong class="jxr_keyword">if</strong> (compileInLoop) {
 <a class="jxr_linenumber" name="L306" href="#L306">306</a>                 compileErrors = <strong class="jxr_keyword">true</strong>;
@@ -354,6 +354,6 @@
 <a class="jxr_linenumber" name="L346" href="#L346">346</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2015. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2017. All rights reserved.</div>
 </body>
 </html>
