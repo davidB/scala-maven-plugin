@@ -144,16 +144,16 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Compiler plugin dependencies to use when compiling.
      * ex:
+     * <pre>
+     * &lt;compilerPlugins>
+     *   &lt;compilerPlugin>
+     *     &lt;groupId>my.scala.plugin&lt;/groupId>
+     *     &lt;artifactId>amazingPlugin&lt;/artifactId>
+     *     &lt;version>1.0-SNAPSHOT&lt;/version>
+     *   &lt;/compilerPlugin>
+     * &lt;/compilerPlugins>
+     * </pre>
      * @parameter
-     * <xmp>
-     * <compilerPlugins>
-     * <compilerPlugin>
-     * <groupId>my.scala.plugin</groupId>
-     * <artifactId>amazingPlugin</artifactId>
-     * <version>1.0-SNAPSHOT</version>
-     * </compilerPlugin>
-     * </compilerPlugins>
-     * </xmp>
      */
     protected BasicArtifact[] compilerPlugins;
 
@@ -165,15 +165,16 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected String[] jvmArgs;
 
     /**
-     * compiler additionnals arguments
+     * compiler additional arguments
      *
      * @parameter
      */
     protected String[] args;
 
     /**
-     * Additional parameter to use to call the main class
-     * Using this parameter only from command line ("-DaddScalacArgs=arg1|arg2|arg3|..."), not from pom.xml.
+     * Additional parameter to use to call the main class.
+     * Use this parameter only from command line ("-DaddScalacArgs=arg1|arg2|arg3|..."), not from pom.xml.
+     * To define compiler arguments in pom.xml see the "args" parameter.
      * @parameter property="addScalacArgs"
      */
     protected String addScalacArgs;
