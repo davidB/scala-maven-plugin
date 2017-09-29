@@ -5,10 +5,6 @@
 
 package scala_maven;
 
-import java.io.File;
-
-import junit.framework.TestCase;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -17,12 +13,18 @@ import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy;
 import org.codehaus.plexus.classworlds.strategy.Strategy;
 import org.codehaus.plexus.util.StringUtils;
+import org.junit.Test;
+
+import java.io.File;
+
+import static org.junit.Assert.*;
 
 /**
  *
  * @author david bernard
  */
-public class MiscTest extends TestCase {
+public class MiscTest {
+
 // TODO not use String.split, it is not consistent across jdk version
 // see https://github.com/davidB/scala-maven-plugin/pull/206
 //    public void testJdkSplit() throws Exception {
@@ -32,14 +34,16 @@ public class MiscTest extends TestCase {
 //        assertEquals(3, "hel||lo".split("\\|").length);
 //    }
 
-    public void testStringUtilsSplit() throws Exception {
+    @Test
+    public void stringUtilsSplit() throws Exception {
         assertEquals(1, StringUtils.split("hello", "|").length);
         assertEquals(1, StringUtils.split("hello|", "|").length);
         assertEquals(2, StringUtils.split("hel|lo", "|").length);
         assertEquals(2, StringUtils.split("hel||lo", "|").length);
     }
 
-    public void testClassworldSeftFirstStrategy() throws Exception {
+    @Test
+    public void classworldSeftFirstStrategy() throws Exception {
       ClassWorld w = new ClassWorld("zero", null);
       ClassRealm rMojo = w.newRealm("mojo", getClass().getClassLoader());
       Strategy s = new SelfFirstStrategy(w.newRealm("scalaScript", null));
@@ -48,8 +52,6 @@ public class MiscTest extends TestCase {
       rScript.importFrom("mojo", MavenProject.class.getPackage().getName());
       rScript.importFrom("mojo", MavenSession.class.getPackage().getName());
       rScript.importFrom("mojo", Log.class.getPackage().getName());
-
-
 
       assertEquals(rScript, rScript.getStrategy().getRealm());
       assertEquals(SelfFirstStrategy.class, rScript.getStrategy().getClass());
