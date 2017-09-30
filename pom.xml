@@ -186,6 +186,13 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.github.stefanbirkner</groupId>
+      <artifactId>system-rules</artifactId>
+      <version>1.16.1</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- sbt incremental compiler -->
     <dependency>
       <groupId>com.typesafe.zinc</groupId>
