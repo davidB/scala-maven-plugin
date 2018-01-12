@@ -19,9 +19,9 @@ public class JavaLocator {
     }
 
     if (toolchain == null || _javaExec == null) {
-      _javaExec = System.getProperty("java.home");
+      _javaExec = System.getenv("JAVA_HOME");
       if (_javaExec == null) {
-        _javaExec = System.getenv("JAVA_HOME");
+        _javaExec = System.getProperty("java.home"); // Points to JRE home
         if (_javaExec == null) {
           throw new IllegalStateException("Couldn't locate java, try setting JAVA_HOME environment variable.");
         }

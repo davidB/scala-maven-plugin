@@ -15,7 +15,7 @@ public class JavaLocatorTest {
     @Test
     public void shouldReturnNullWhenJavaIsNotAvailableOnCommandLineAndJavaHomeIsPresent() {
         Toolchain toolchain = new NullReturningToolChain();
-        System.setProperty("java.home", "test");
+        environmentVariables.set("JAVA_HOME", "test");
         assertEquals("test/bin/java", JavaLocator.findExecutableFromToolchain(toolchain));
     }
 
@@ -45,7 +45,7 @@ public class JavaLocatorTest {
     }
 
     @Test
-    public void shouldReturnWhenFileIsNotPresent() throws Exception {
+    public void shouldReturnNullWhenFileIsNotPresent() throws Exception {
         String home = JavaLocator.findHomeFromToolchain(new ReturningToolChain());
         assertNull(home);
     }
