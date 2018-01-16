@@ -237,7 +237,6 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         final Set<Artifact> compilerDeps =
             super.resolveArtifactDependencies(compilerArtifact);
         for (final Artifact a : compilerDeps) {
-            super.getLog().warn(a.toString());
             if (this.filterForJline(a)) {
                 return a;
             }
