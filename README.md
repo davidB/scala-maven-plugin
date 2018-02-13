@@ -1,21 +1,17 @@
 [![Build Status](https://travis-ci.org/davidB/scala-maven-plugin.svg?branch=master)](https://travis-ci.org/davidB/scala-maven-plugin)
 
-scala-maven-plugin
-====================
+Scala Maven Plugin
+==================
 
 The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling/testing/running/documenting Scala code in Maven.
-
 * [Documentation](https://davidb.github.io/scala-maven-plugin/index.html)
 * [Wiki](https://github.com/davidB/scala-maven-plugin/wiki)
 * [Issues](https://github.com/davidB/scala-maven-plugin/issues/)
 * [Full changelog](https://davidb.github.io/scala-maven-plugin/changes-report.html)
 
-## Donate
-
-<html>
-<a href='http://www.pledgie.com/campaigns/4750'><img alt='Click here to lend your support to: scala-maven-plugin and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/4750.png?skin_name=chrome' border='0' /></a>
-</html>
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=davidB&url=https://github.com/davidB/scala-maven-plugin&title=scala-maven-plugin&language=&tags=github&category=software)
+Similar plugins
+* [scalor-maven-plugin](https://github.com/random-maven/scalor-maven-plugin)
+* [sbt-compiler-maven-plugin](https://github.com/sbt-compiler-maven-plugin/sbt-compiler-maven-plugin)
 
 ## Build
 
@@ -47,7 +43,3 @@ Currently, you need Maven 3.x & JDK 8 to build the plugin, create the site, and 
   * file path management can be improve (a lot) 
   * clean the code
   
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/davidB/scala-maven-plugin/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
