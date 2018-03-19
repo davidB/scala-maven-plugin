@@ -5,7 +5,17 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="3.3.0" date="2015-07-22">
+    <release version="3.3.3" date="2018-03-19">
+    </release>
+    <release version="3.3.2" date="2018-03-19">
+      <action dev="Anton Klaren" type="update">update to zinc 0.3.15</action>
+      <action dev="Anton Klaren" type="fix">Check JAVA_HOME before java.home to locate JDK home</action>
+      <action dev="Bennet Schulz" type="update">update to JUnit 4.12</action>
+    </release>
+    <release version="3.3.1" date="2017-09-05">
+      <action dev="David Bernard" type="update">packaging</action>
+    </release>    
+    <release version="3.3.0" date="2017-08-28">
       <action dev="David Bernard" type="update">use java 1.8 to build and to support scala 2.12.x => remove test of scala 2.7.x</action>
       <action dev="David Strawn" type="fix" issue="207">add support to scala console 2.12 (console)</action>
       <action dev="David Strawn" type="fix" issue="206">add support to java 1.8</action>
