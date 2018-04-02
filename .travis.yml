@@ -3,5 +3,11 @@ sudo: false # faster builds
 jdk:
 #  - oraclejdk7
   - oraclejdk8
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.m2/repository/
 
 script: "./mvnw integration-test"
+
