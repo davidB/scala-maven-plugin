@@ -6,8 +6,6 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
@@ -20,17 +18,15 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.repository.RepositorySystem;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.filter.AncestorOrSelfDependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.filter.AndDependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter;
-import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
-import org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.filter.AncestorOrSelfDependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.filter.AndDependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.filter.DependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.traversal.CollectingDependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
+import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNodeVisitor;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.StringUtils;
 import scala_maven_dependency.CheckScalaVersionVisitor;
@@ -372,7 +368,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @required
      * @readonly
      */
-    private DependencyTreeBuilder dependencyTreeBuilder;
+    private DependencyGraphBuilder dependencyTreeBuilder;
 
     /**
      * The toolchain manager to use.
@@ -692,8 +688,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
           }
           getLog().warn(msg);
         }
-        checkArtifactForScalaVersion(requiredScalaVersion, dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFactory,
-                    artifactMetadataSource, null, artifactCollector ));
+        checkArtifactForScalaVersion(requiredScalaVersion, dependencyTreeBuilder.buildDependencyGraph(project.getProjectBuildingRequest(), null));
     }
 
 
@@ -725,7 +720,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      *          A filter to only extract artifacts deployed from scala distributions
      */
     private DependencyNodeFilter createScalaDistroDependencyFilter() {
-        List<ArtifactFilter> filters = new ArrayList<ArtifactFilter>();
+        List<DependencyNodeFilter> filters = new ArrayList<DependencyNodeFilter>();
         filters.add(new ScalaDistroArtifactFilter(getScalaOrganization()));
         return new AndDependencyNodeFilter(filters);
     }
