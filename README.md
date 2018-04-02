@@ -19,16 +19,16 @@ Currently, you need Maven 3.x & JDK 8 to build the plugin, create the site, and 
 
 ## Commands
 
-* `mvn package` : generate jar
-* `mvn site` : generate the plugin website
-* `mvn integration-test` : `mvn package` + run all integration test
+* `./mvnw package` : generate jar
+* ./mvnw site` : generate the plugin website
+* ./mvnw integration-test` : ./mvnw package` + run all integration test
   * note: to run _test\_scalaHome_: you have to set `scala.home` property in `src/it/test_scalaHome/pom.xml` to correspond to your environment.  See Build section above for a simple setup.
-* `mvn invoker:run -Dinvoker.test=test1` : run integration test 'test1' useful for tuning/debug
-* `mvn install` :  `mvn integration-test` + publish on local maven repository
-* `mvn install -Dmaven.test.skip=true` : `mvn install` without run of unit test and run of integration test
+* ./mvnw invoker:run -Dinvoker.test=test1` : run integration test 'test1' useful for tuning/debug
+* ./mvnw install` :  ./mvnw integration-test` + publish on local maven repository
+* ./mvnw install -Dmaven.test.skip=true` : ./mvnw install` without run of unit test and run of integration test
 * release :
-  * `mvn release:prepare && mvn release:perform` : to publish on staging repository via plugin
-  * `mvn site package source:jar javadoc:jar install:install gpg:sign deploy:deploy changes:announcement-generate -Dmaven.test.skip=true -DperformRelease=true` : manual
+  * ./mvnw release:prepare && mvn release:perform` : to publish on staging repository via plugin
+  * ./mvnw site package source:jar javadoc:jar install:install gpg:sign deploy:deploy changes:announcement-generate -Dmaven.test.skip=true -DperformRelease=true` : manual
   * connect to http://oss.sonatype.org/ close and release the request(about scala-maven-plugin) in staging repositories
   * browse the updated [mvnsite](https://davidb.github.io/scala-maven-plugin/) (check version into samples, ...)
   * email the content of `target/checkout/target/announcement/announcement.md.vm` to post@implicitly.posterous.com, and to maven-and-scala@googlegroups.com (same subject but without tag part)
