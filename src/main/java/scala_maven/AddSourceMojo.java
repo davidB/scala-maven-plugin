@@ -18,6 +18,8 @@ import org.apache.maven.project.MavenProject;
 public class AddSourceMojo extends AbstractMojo {
 
     /**
+     * The maven project
+     *
      * @parameter property="project"
      * @required
      * @readonly

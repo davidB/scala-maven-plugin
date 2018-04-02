@@ -11,6 +11,7 @@ import scala_maven_executions.JavaMainCaller;
 public class ScalaHelpMojo extends ScalaMojoSupport {
     /**
      * Determines if help will only display a version
+     *
      * @parameter property="maven.scala.help.versionOnly" default-value="false"
      */
     private boolean versionOnly;
