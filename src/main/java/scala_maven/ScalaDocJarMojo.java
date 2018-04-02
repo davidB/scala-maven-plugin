@@ -173,7 +173,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
     try {
       // we don't want Maven stuff
       archive.setAddMavenDescriptor( false );
-      archiver.createArchive( project, archive );
+      archiver.createArchive(session, project, archive );
     } catch ( ManifestException e ) {
       throw new ArchiverException( "ManifestException: " + e.getMessage(), e );
     } catch ( DependencyResolutionRequiredException e ) {
