@@ -97,7 +97,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
 
         final InvocationRequest request = new DefaultInvocationRequest();
         request.setLocalRepositoryDirectory(localRepositoryPath);
-        request.setInteractive(false);
+        request.setBatchMode(true);
         request.setErrorHandler(new SystemOutHandler(true));
         request.setOutputHandler(new SystemOutHandler(true));
         request.setBaseDirectory(project.getBasedir());
