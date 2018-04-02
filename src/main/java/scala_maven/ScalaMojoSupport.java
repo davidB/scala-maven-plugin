@@ -66,6 +66,8 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected static final String JAR = "jar";
 
     /**
+     * The maven project.
+     *
      * @parameter property="project"
      * @required
      * @readonly
@@ -381,7 +383,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      */
     protected ToolchainManager toolchainManager;
 
-    /** @parameter default-value="${plugin.artifacts}" */
+    /**
+     * List of artifacts to run plugin
+     * 
+     * @parameter default-value="${plugin.artifacts}"
+     */
     private List<Artifact> pluginArtifacts;
 
     private VersionNumber _scalaVersionN;

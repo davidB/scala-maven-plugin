@@ -3,7 +3,7 @@ package scala_maven;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VersionNumber /* implements Serializable */implements Comparable<VersionNumber> {
+public class VersionNumber implements Comparable<VersionNumber> {
   private static final Pattern _regexp = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+)?([-\\.].+)?");
 
   public int                   major;
