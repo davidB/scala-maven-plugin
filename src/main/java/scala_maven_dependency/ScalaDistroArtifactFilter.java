@@ -2,8 +2,8 @@ package scala_maven_dependency;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.filter.DependencyNodeFilter;
 
 import static scala_maven_dependency.ScalaConstants.*;
 /**
