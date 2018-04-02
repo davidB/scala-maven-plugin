@@ -62,7 +62,6 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
   private String classifier;
   /**
    * Specifies whether to skip generating scaladoc.
-   * <br/>
    *
    * @parameter property="skip" default-value="false"
    */
