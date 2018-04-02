@@ -18,6 +18,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
@@ -688,7 +689,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
           }
           getLog().warn(msg);
         }
-        checkArtifactForScalaVersion(requiredScalaVersion, dependencyTreeBuilder.buildDependencyGraph(project.getProjectBuildingRequest(), null));
+        ProjectBuildingRequest request = project.getProjectBuildingRequest();
+        request.setProject(project);
+        checkArtifactForScalaVersion(requiredScalaVersion, dependencyTreeBuilder.buildDependencyGraph(request, null));
     }
 
 
