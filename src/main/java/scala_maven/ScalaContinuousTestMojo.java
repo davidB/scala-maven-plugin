@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.BuildFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.invoker.CommandLineConfigurationException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -16,45 +20,48 @@ import org.apache.maven.shared.invoker.SystemOutHandler;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Compile the main and test scala source directory then run unit test cases in continuous (infinite loop).
- * This is an util goal for commandline usage only (Do not use or call it in a pom) !!!
+ * Compile the main and test scala source directory then run unit test cases in
+ * continuous (infinite loop).
+ * This is an util goal for commandline usage only (Do not use or call it in a
+ * pom) !!!
  *
- * @version $Revision: 1.1 $
- * @goal cctest
- * @requiresDependencyResolution test
  */
-
+@Mojo(name = "cctest", requiresDependencyResolution = ResolutionScope.TEST)
 public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
 
-    /**
-     * @component
-     */
+    @Component
     protected Invoker invoker;
 
-
     /**
-     * The local repository for caching artifacts. It is strongly recommended to specify a path to an isolated
-     * repository like <code>${project.build.directory}/it-repo</code>. Otherwise, your ordinary local repository will
+     * The local repository for caching artifacts. It is strongly recommended to
+     * specify a path to an isolated
+     * repository like <code>${project.build.directory}/it-repo</code>. Otherwise,
+     * your ordinary local repository will
      * be used, potentially soiling it with broken artifacts.
      *
-     * @parameter property="${invoker.localRepositoryPath}" default-value="${settings.localRepository}"
      */
+    @Parameter(property = "invoker.localRepositoryPath", defaultValue = "${settings.localRepository}")
     protected File localRepositoryPath;
 
     /**
-     * Specify this parameter to run individual tests by file name, overriding the <code>includes/excludes</code>
-     * parameters.  Each pattern you specify here will be used to create an
-     * include pattern formatted like <code>**&#47;${test}.java</code>, so you can just type "-Dtest=MyTest"
-     * to run a single test called "foo/MyTest.java".  This parameter will override the TestNG suiteXmlFiles
+     * Specify this parameter to run individual tests by file name, overriding the
+     * <code>includes/excludes</code>
+     * parameters. Each pattern you specify here will be used to create an
+     * include pattern formatted like <code>**&#47;${test}.java</code>, so you can
+     * just type "-Dtest=MyTest"
+     * to run a single test called "foo/MyTest.java". This parameter will override
+     * the TestNG suiteXmlFiles
      * parameter.
      *
-     * @parameter property="test"
      */
+    @Parameter(property = "test")
     protected String test;
 
     /**
-     * A space-separated list of the goals to execute as part of running the tests. You can use this
-     * setting to run different testing tools other than just JUnit. For example, to run the
+     * A space-separated list of the goals to execute as part of running the tests.
+     * You can use this
+     * setting to run different testing tools other than just JUnit. For example, to
+     * run the
      * ScalaTest (with the maven-scalatest-plugin):
      *
      * <pre>
@@ -67,7 +74,8 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      *   mvn -Dcctest.goals="surefire:test scalatest:test" scala:cctest
      * </pre>
      *
-     * If you need to specify the goal every time you run <code>scala:cctest</code>, you can
+     * If you need to specify the goal every time you run <code>scala:cctest</code>,
+     * you can
      * configure the setting in the pom.xml:
      *
      * <pre>
@@ -82,8 +90,8 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      *    &lt;/plugin&gt;
      * </pre>
      *
-     * @parameter property="cctest.goals" default-value="surefire:test"
      */
+    @Parameter(property = "cctest.goals", defaultValue = "surefire:test")
     protected String ccTestGoals;
 
     @Override

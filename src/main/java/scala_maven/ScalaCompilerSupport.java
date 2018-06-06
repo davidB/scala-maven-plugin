@@ -1,16 +1,23 @@
 package scala_maven;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+
 import sbt_inc.SbtIncrementalCompiler;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
-
-import java.io.File;
-import java.util.*;
 
 /**
  * Abstract parent of all Scala Mojo who run compilation
@@ -27,21 +34,25 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     private boolean compileErrors;
 
     /**
-     * Recompile mode to use when sources were previously compiled and there is at least one change:
-     * "modified-only" => only modified sources are recompiled (pre 2.13 behavior), "all" => all sources are recompiled,
-     * "incremental" => incrementally recompile modified sources and other affected sources.
+     * Recompile mode to use when sources were previously compiled and there is at
+     * least one change:
+     * "modified-only" => only modified sources are recompiled (pre 2.13 behavior),
+     * "all" => all sources are recompiled,
+     * "incremental" => incrementally recompile modified sources and other affected
+     * sources.
      *
-     * @parameter property="recompileMode" default-value="all"
      */
+    @Parameter(property = "recompileMode", defaultValue = "all")
     protected String recompileMode = ALL;
 
     /**
      * notifyCompilation if true then print a message "path: compiling"
      * for each root directory or files that will be compiled.
-     * Useful for debug, and for integration with Editor/IDE to reset markers only for compiled files.
+     * Useful for debug, and for integration with Editor/IDE to reset markers only
+     * for compiled files.
      *
-     * @parameter property="notifyCompilation" default-value="true"
      */
+    @Parameter(property = "notifyCompilation", defaultValue = "true")
     private boolean notifyCompilation = true;
 
     abstract protected File getOutputDir() throws Exception;
@@ -62,29 +73,29 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      *
      * Can be Mixed, JavaThenScala, or ScalaThenJava.
      *
-     * @parameter property="compileOrder" default-value="mixed"
      */
+    @Parameter(property = "compileOrder", defaultValue = "mixed")
     private String compileOrder;
 
     /**
      * Use zinc server for incremental recompilation.
-     *
-     * @parameter property="useZincServer" default-value="false"
      */
+    @Parameter(property = "useZincServer", defaultValue = "false")
     private boolean useZincServer;
 
     /**
      * Zinc server port, if running with incremental zinc server mode.
-     *
-     * @parameter property="zincPort" default-value="3030"
      */
+    @Parameter(property = "zincPort", defaultValue = "3030")
     private int zincPort;
 
     /**
      * Additional parameter to use to call zinc server
-     * It is a pipe '|' separated list of arguments, so it can be used from command line ("-DaddZincArgs=arg1|arg2|arg3|...").
-     * @parameter property="addZincArgs"
+     * It is a pipe '|' separated list of arguments, so it can be used from command
+     * line ("-DaddZincArgs=arg1|arg2|arg3|...").
+     * 
      */
+    @Parameter(property = "addZincArgs")
     private String addZincArgs = "";
 
     @Override

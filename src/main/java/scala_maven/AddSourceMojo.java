@@ -4,67 +4,62 @@ import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Add more source directories to the POM.
- *
- * @executionStrategy always
- * @goal add-source
- * @phase initialize
- * @requiresDirectInvocation false
- * @threadSafe
  */
+@Mojo(name = "add-source", executionStrategy = "always", defaultPhase = LifecyclePhase.INITIALIZE, requiresDirectInvocation = false, threadSafe = true)
 public class AddSourceMojo extends AbstractMojo {
 
     /**
      * The maven project
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     private MavenProject project;
 
     /**
      * The directory in which scala source is found
-     *
-     * @parameter default-value="${project.build.sourceDirectory}/../scala"
      */
+    @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
     protected File sourceDir;
 
     /**
      * The directory in which testing scala source is found
-     *
-     * @parameter default-value="${project.build.testSourceDirectory}/../scala"
      */
+    @Parameter(defaultValue = "${project.build.testSourceDirectory}/../scala")
     protected File testSourceDir;
 
     /**
-     * Should use CanonicalPath to normalize path (true => getCanonicalPath, false => getAbsolutePath)
+     * Should use CanonicalPath to normalize path (true => getCanonicalPath, false
+     * => getAbsolutePath)
+     * 
      * @see https://github.com/davidB/maven-scala-plugin/issues/50
-     * @parameter property="maven.scala.useCanonicalPath" default-value="true"
      */
+    @Parameter(property = "maven.scala.useCanonicalPath", defaultValue = "true")
     protected boolean useCanonicalPath = true;
-    
+
     @Override
     public void execute() throws MojoExecutionException {
         try {
             if (sourceDir != null) {
-                String path = FileUtils.pathOf(sourceDir, useCanonicalPath);
+                final String path = FileUtils.pathOf(sourceDir, useCanonicalPath);
                 if (!project.getCompileSourceRoots().contains(path)) {
                     getLog().info("Add Source directory: " + path);
                     project.addCompileSourceRoot(path);
                 }
             }
             if (testSourceDir != null) {
-                String path = FileUtils.pathOf(testSourceDir, useCanonicalPath);
+                final String path = FileUtils.pathOf(testSourceDir, useCanonicalPath);
                 if (!project.getTestCompileSourceRoots().contains(path)) {
                     getLog().info("Add Test Source directory: " + path);
                     project.addTestCompileSourceRoot(path);
                 }
             }
-        } catch(Exception exc) {
+        } catch (final Exception exc) {
             getLog().warn(exc);
         }
     }

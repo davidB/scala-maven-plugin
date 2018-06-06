@@ -1,41 +1,40 @@
- package scala_maven;
+package scala_maven;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.maven.model.Dependency;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Compiles a directory of Scala source. Corresponds roughly to the compile goal
  * of the maven-compiler-plugin
  *
- * @phase compile
- * @goal compile
- * @requiresDependencyResolution compile
- * @threadSafe
  */
+@Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class ScalaCompileMojo extends ScalaCompilerSupport {
 
     /**
      * The directory in which to place compilation output
-     *
-     * @parameter property="project.build.outputDirectory"
      */
+    @Parameter(property = "project.build.outputDirectory")
     protected File outputDir;
 
     /**
      * The directory which contains scala/java source files
-     *
-     * @parameter default-value="${project.build.sourceDirectory}/../scala"
      */
+    @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
     protected File sourceDir;
 
     /**
      * Analysis cache file for incremental recompilation.
      *
-     * @parameter property="analysisCacheFile" default-value="${project.build.directory}/analysis/compile"
      */
+    @Parameter(property = "analysisCacheFile", defaultValue = "${project.build.directory}/analysis/compile")
     protected File analysisCacheFile;
 
     @Override

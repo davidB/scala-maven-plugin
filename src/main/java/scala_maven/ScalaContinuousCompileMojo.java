@@ -4,77 +4,84 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
 import scala_maven_executions.JavaMainCaller;
 
 /**
- * Compile the main and test scala source directory in continuous (infinite loop). !! This is an util goal for commandline usage only (Do not use or call it in a pom) !!!
+ * Compile the main and test scala source directory in continuous (infinite
+ * loop). !! This is an util goal for commandline usage only (Do not use or call
+ * it in a pom) !!!
  *
- * @goal cc
- * @requiresDependencyResolution test
  */
+@Mojo(name = "cc", requiresDependencyResolution = ResolutionScope.TEST)
 public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
 
     /**
      * The output directory for compilation.
      *
-     * @parameter property="project.build.outputDirectory"
      */
+    @Parameter(property="project.build.outputDirectory")
     protected File mainOutputDir;
 
     /**
      * The main directory containing scala source for compilation
      *
-     * @parameter default-value="${project.build.sourceDirectory}/../scala"
      */
+     @Parameter (defaultValue="${project.build.sourceDirectory}/../scala")
     protected File mainSourceDir;
 
     /**
      * The directory to place test compilation output in
      *
-     * @parameter default-value="${project.build.testOutputDirectory}
      */
+     @Parameter(defaultValue="${project.build.testOutputDirectory}")
     protected File testOutputDir;
 
     /**
      * The directory containing test source for compilation
      *
-     * @parameter default-value="${project.build.testSourceDirectory}/../scala"
      */
+     @Parameter (defaultValue="${project.build.testSourceDirectory}/../scala")
     protected File testSourceDir;
 
     /**
      * Analysis cache file for incremental recompilation.
      *
-     * @parameter property="analysisCacheFile" default-value="${project.build.directory}/analysis/compile"
      */
+     @Parameter (property="analysisCacheFile", defaultValue="${project.build.directory}/analysis/compile")
     protected File analysisCacheFile;
 
     /**
      * Analysis cache file for incremental recompilation.
      *
-     * @parameter property="testAnalysisCacheFile" default-value="${project.build.directory}/analysis/test-compile"
      */
+     @Parameter (property="testAnalysisCacheFile", defaultValue="${project.build.directory}/analysis/test-compile")
     protected File testAnalysisCacheFile;
 
     /**
      * Define if fsc should be used, else scalac is used.
      * fsc => scala.tools.nsc.CompileClient, scalac => scala.tools.nsc.Main.
      *
-     * @parameter property="fsc" default-value="true"
      */
+     @Parameter(property="fsc", defaultValue="true")
     protected boolean useFsc = true;
 
     /**
-     * Define if cc should run once or in infinite loop. (useful for test or working with editor)
-     * @parameter property="once" default-value="false"
+     * Define if cc should run once or in infinite loop. (useful for test or working
+     * with editor)
+     * 
      */
+     @Parameter(property="once", defaultValue="false")
     protected boolean once = false;
 
     /**
      * Turns verbose output on.
      *
-     * @parameter property="verbose" default-value="false"
      */
+     @Parameter(property="verbose", defaultValue="false")
     protected boolean verbose = false;
 
     @Override
