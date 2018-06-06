@@ -1,5 +1,7 @@
 package scala_maven;
 
+import org.apache.maven.plugins.annotations.Parameter;
+
 public class Launcher {
     protected String id;
 
@@ -7,15 +9,13 @@ public class Launcher {
 
     /**
      * Jvm Arguments
-     *
-     * @parameter
      */
+    @Parameter
     protected String[] jvmArgs;
 
     /**
      * compiler additionnals arguments
-     *
-     * @parameter
      */
+    @Parameter
     protected String[] args;
 }

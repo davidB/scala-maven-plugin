@@ -6,38 +6,40 @@ import java.util.List;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
- * Compile Scala test source into test-classes.  Corresponds roughly to testCompile
+ * Compile Scala test source into test-classes. Corresponds roughly to
+ * testCompile
  * in maven-compiler-plugin
  *
- * @phase test-compile
- * @goal testCompile
- * @requiresDependencyResolution test
- * @threadSafe
  */
+@Mojo(name = "testCompile", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class ScalaTestCompileMojo extends ScalaCompilerSupport {
 
     /**
      * Set this to 'true' to bypass unit tests entirely.
      * Its use is NOT RECOMMENDED, but quite convenient on occasion.
      *
-     * @parameter property="maven.test.skip"
      */
+    @Parameter(property = "maven.test.skip")
     protected boolean skip;
 
     /**
      * The directory in which to place test compilation output
      *
-     * @parameter default-value="${project.build.testOutputDirectory}
      */
+    @Parameter(defaultValue="${project.build.testOutputDirectory}")
     protected File testOutputDir;
 
     /**
      * The directory in which to find test scala source code
      *
-     * @parameter default-value="${project.build.testSourceDirectory}/../scala"
      */
+    @Parameter(defaultValue="${project.build.testSourceDirectory}/../scala")
     protected File testSourceDir;
 
     @Override
@@ -51,8 +53,8 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     /**
      * Analysis cache file for incremental recompilation.
      *
-     * @parameter property="testAnalysisCacheFile" default-value="${project.build.directory}/analysis/test-compile"
      */
+    @Parameter(property="testAnalysisCacheFile", defaultValue="${project.build.directory}/analysis/test-compile")
     protected File testAnalysisCacheFile;
 
     @Override

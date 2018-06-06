@@ -1,35 +1,39 @@
 package scala_maven;
 
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.MavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.sink.Sink;
-import org.codehaus.plexus.util.StringUtils;
-import scala_maven_executions.JavaMainCaller;
-import scala_maven_executions.MainHelper;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.doxia.sink.Sink;
+import org.codehaus.plexus.util.StringUtils;
+
+import scala_maven_executions.JavaMainCaller;
+import scala_maven_executions.MainHelper;
+
 /**
  * Produces Scala API documentation.
  *
- * @goal doc
- * @requiresDependencyResolution compile
- * @execute phase="generate-sources"
  */
+@Mojo(name = "doc", requiresDependencyResolution = ResolutionScope.COMPILE)
+@Execute(phase = LifecyclePhase.GENERATE_RESOURCES)
 public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport {
 
     /**
      * Specify window title of generated HTML documentation.
      * [scaladoc, vscaladoc]
      *
-     * @parameter property="windowtitle"
-     *            default-value="${project.name} ${project.version} API"
      */
+    @Parameter(property = "windowtitle", defaultValue = "${project.name} ${project.version} API")
     protected String windowtitle;
 
     /**
@@ -39,144 +43,143 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      * href="http://www.mycompany.com">MyCompany, Inc.&lt;a>]]&gt;
      * [scaladoc, vscaladoc]
      *
-     * @parameter property="bottom"
-     *            default-value="Copyright (c) {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved."
      */
+    @Parameter(property = "bottom", defaultValue = "Copyright (c) {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved.")
     protected String bottom;
 
     /**
      * Charset for cross-platform viewing of generated documentation.
      * [scaladoc, vscaladoc]
      *
-     * @parameter property="charset" default-value="ISO-8859-1"
      */
+    @Parameter(property = "charset", defaultValue = "ISO-8859-1")
     protected String charset;
 
     /**
      * Include title for the overview page.
      * [scaladoc, scaladoc2, vscaladoc]
      *
-     * @parameter property="doctitle"
-     *            default-value="${project.name} ${project.version} API"
      */
+    @Parameter(property = "doctitle", defaultValue = "${project.name} ${project.version} API")
     protected String doctitle;
 
     /**
      * Include footer text for each page.
      * [scaladoc, vscaladoc]
      *
-     * @parameter property="footer"
      */
+    @Parameter(property = "footer")
     protected String footer;
 
     /**
      * Include header text for each page
      * [scaladoc, vscaladoc]
      *
-     * @parameter property="header"
      */
+    @Parameter(property = "header")
     protected String header;
 
     /**
      * Generate source in HTML
      * [scaladoc, vscaladoc]
      *
-     * @parameter property="linksource" default-value="true"
      */
+    @Parameter(property = "linksource", defaultValue = "true")
     protected boolean linksource;
 
     /**
      * Suppress description and tags, generate only declarations
      * [scaladoc, vscaladoc]
      *
-     * @parameter property="nocomment" default-value="false"
      */
+    @Parameter(property = "nocomment", defaultValue = "false")
     protected boolean nocomment;
 
     /**
      * File to change style of the generated documentation
      * [scaladoc, vscaladoc]
      *
-     * @parameter property="stylesheetfile"
      */
+    @Parameter(property = "stylesheetfile")
     protected File stylesheetfile;
 
     /**
      * Include top text for each page
      * [scaladoc, vscaladoc]
      *
-     * @parameter property="top"
      */
+    @Parameter(property = "top")
     protected String top;
 
     /**
      * Specifies the destination directory where scalaDoc saves the generated
      * HTML files.
      *
-     * @parameter default-value="scaladocs"
-     * @required
      */
+    @Parameter(defaultValue = "scaladocs", required = true)
     protected String outputDirectory;
 
     /**
-     * Specifies the destination directory where javadoc saves the generated HTML files.
+     * Specifies the destination directory where javadoc saves the generated HTML
+     * files.
      *
-     * @parameter default-value="${project.reporting.outputDirectory}/scaladocs"
-     * @required
      */
+    @Parameter(defaultValue = "${project.reporting.outputDirectory}/scaladocs", required = true)
     protected File reportOutputDirectory;
 
     /**
      * The name of the Scaladoc report.
      *
      * @since 2.1
-     * @parameter property="name" default-value="ScalaDocs"
      */
+    @Parameter(property = "name", defaultValue = "ScalaDocs")
     private String name;
 
     /**
      * The description of the Scaladoc report.
      *
      * @since 2.1
-     * @parameter property="description" default-value="ScalaDoc API
-     *            documentation."
      */
+    @Parameter(property = "description", defaultValue = "ScalaDoc API documentation.")
     private String description;
 
     /**
-     * className (FQN) of the main scaladoc to use, if not define, the the scalaClassName is used
+     * className (FQN) of the main scaladoc to use, if not define, the the
+     * scalaClassName is used
      *
-     * @parameter property="maven.scaladoc.className"
      */
+    @Parameter(property = "maven.scaladoc.className")
     protected String scaladocClassName;
 
     /**
-     * If you want to use vscaladoc to generate api instead of regular scaladoc, set the version of vscaladoc you want to use.
+     * If you want to use vscaladoc to generate api instead of regular scaladoc, set
+     * the version of vscaladoc you want to use.
      *
-     * @parameter property="maven.scaladoc.vscaladocVersion"
      */
+    @Parameter(property = "maven.scaladoc.vscaladocVersion")
     protected String vscaladocVersion;
 
     /**
-     * To allow running aggregation only from command line use "-DforceAggregate=true" (avoid using in pom.xml).
+     * To allow running aggregation only from command line use
+     * "-DforceAggregate=true" (avoid using in pom.xml).
      * [scaladoc, vscaladoc]
      *
-     * @parameter property="forceAggregate" default-value="false"
      */
+    @Parameter(property = "forceAggregate", defaultValue = "false")
     protected boolean forceAggregate = false;
 
     /**
      * If you want to aggregate only direct sub modules.
      *
-     * @parameter property="maven.scaladoc.aggregateDirectOnly" default-value="true"
      */
+    @Parameter(property = "maven.scaladoc.aggregateDirectOnly", defaultValue = "true")
     protected boolean aggregateDirectOnly = true;
 
     /**
      * The directory which contains scala/java source files
      *
-     * @parameter default-value="${project.build.sourceDirectory}/../scala"
      */
+    @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
     protected File sourceDir;
 
     private List<File> _sourceFiles;

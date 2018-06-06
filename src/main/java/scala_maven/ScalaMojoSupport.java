@@ -1,5 +1,13 @@
 package scala_maven;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -16,6 +24,8 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -30,6 +40,7 @@ import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNodeVisitor;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.StringUtils;
+
 import scala_maven_dependency.CheckScalaVersionVisitor;
 import scala_maven_dependency.ScalaDistroArtifactFilter;
 import scala_maven_executions.JavaMainCaller;
@@ -37,18 +48,10 @@ import scala_maven_executions.JavaMainCallerByFork;
 import scala_maven_executions.JavaMainCallerInProcess;
 import scala_maven_executions.MainHelper;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 public abstract class ScalaMojoSupport extends AbstractMojo {
 
-    public static final String SCALA_LIBRARY_ARTIFACTID= "scala-library";
-    public static final String SCALA_COMPILER_ARTIFACTID= "scala-compiler";
+    public static final String SCALA_LIBRARY_ARTIFACTID = "scala-library";
+    public static final String SCALA_COMPILER_ARTIFACTID = "scala-compiler";
 
     /**
      * Constant {@link String} for "pom". Used to specify the Maven POM artifact
@@ -65,68 +68,57 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * The maven project.
      *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The Maven Session Object
      *
-     * @parameter property="session"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "session", required = true, readonly = true)
     protected MavenSession session;
 
     /**
      * Contains the full list of projects in the reactor.
      *
-     * @parameter default-value="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
     protected List<MavenProject> reactorProjects;
 
     /**
      * Used to look up Artifacts in the remote repository.
      *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     protected RepositorySystem factory;
 
     /**
      * Used to look up Artifacts in the remote repository.
      *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     protected ArtifactResolver resolver;
+
     /**
      * Location of the local repository.
      *
-     * @parameter property="localRepository"
-     * @readonly
-     * @required
      */
+    @Parameter(property = "localRepository", readonly = true, required = true)
     protected ArtifactRepository localRepo;
 
     /**
      * List of Remote Repositories used by the resolver
      *
-     * @parameter property="project.remoteArtifactRepositories"
-     * @readonly
-     * @required
      */
+    @Parameter(property = "project.remoteArtifactRepositories", readonly = true, required = true)
     protected List<ArtifactRepository> remoteRepos;
 
     /**
-     * Additional dependencies/jar to add to classpath to run "scalaClassName" (scope and optional field not supported)
+     * Additional dependencies/jar to add to classpath to run "scalaClassName"
+     * (scope and optional field not supported)
      * ex :
+     * 
      * <pre>
      *    &lt;dependencies>
      *      &lt;dependency>
@@ -136,13 +128,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      *      &lt;/dependency>
      *    &lt;/dependencies>
      * </pre>
-     * @parameter
+     * 
      */
+    @Parameter
     protected BasicArtifact[] dependencies;
 
     /**
      * Compiler plugin dependencies to use when compiling.
      * ex:
+     * 
      * <pre>
      * &lt;compilerPlugins>
      *   &lt;compilerPlugin>
@@ -152,47 +146,48 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      *   &lt;/compilerPlugin>
      * &lt;/compilerPlugins>
      * </pre>
-     * @parameter
+     * 
      */
+    @Parameter
     protected BasicArtifact[] compilerPlugins;
 
     /**
      * Jvm Arguments.
      *
-     * @parameter
      */
+    @Parameter
     protected String[] jvmArgs;
 
     /**
      * compiler additional arguments
      *
-     * @parameter
      */
+    @Parameter
     protected String[] args;
 
     /**
      * Additional parameter to use to call the main class.
-     * Use this parameter only from command line ("-DaddScalacArgs=arg1|arg2|arg3|..."), not from pom.xml.
+     * Use this parameter only from command line
+     * ("-DaddScalacArgs=arg1|arg2|arg3|..."), not from pom.xml.
      * To define compiler arguments in pom.xml see the "args" parameter.
-     * @parameter property="addScalacArgs"
+     * 
      */
+    @Parameter(property = "addScalacArgs")
     protected String addScalacArgs;
 
     /**
      * className (FQN) of the scala tool to provide as
      *
-     * @required
-     * @parameter property="maven.scala.className"
-     *            default-value="scala.tools.nsc.Main"
      */
+    @Parameter(required = true, property = "maven.scala.className", defaultValue = "scala.tools.nsc.Main")
     protected String scalaClassName;
 
     /**
      * Scala 's version to use.
      * (property 'maven.scala.version' replaced by 'scala.version')
      *
-     * @parameter property="scala.version"
      */
+    @Parameter(property = "scala.version")
     private String scalaVersion;
 
     /**
@@ -201,190 +196,181 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * This is an advanced setting used for clones of the Scala Language.
      * It should be disregarded in standard use cases.
      *
-     * @parameter property="scala.organization"
-     *            default-value="org.scala-lang"
      */
+    @Parameter(property = "scala.organization", defaultValue = "org.scala-lang")
     private String scalaOrganization;
 
-    public String getScalaOrganization(){
+    public String getScalaOrganization() {
         return scalaOrganization;
     }
 
     /**
-     * Scala 's version to use to check binary compatibility (like suffix in artifactId of dependency).
+     * Scala 's version to use to check binary compatibility (like suffix in
+     * artifactId of dependency).
      * If it is defined then it is used to checkMultipleScalaVersions
      *
-     * @parameter property="scala.compat.version"
      */
+    @Parameter(property = "scala.compat.version")
     private String scalaCompatVersion;
 
     /**
-     * Path to Scala installation to use instead of the artifact (define as dependencies).
+     * Path to Scala installation to use instead of the artifact (define as
+     * dependencies).
      *
-     * @parameter property="scala.home"
      */
+    @Parameter(property = "scala.home")
     private String scalaHome;
 
     /**
      * Arguments for javac (when using incremental compiler).
      *
-     * @parameter property="javacArgs"
      */
+    @Parameter(property = "javacArgs")
     protected String[] javacArgs;
 
     /**
-     * Whether to instruct javac to generate debug symbols (when using incremental compiler)
-     * @see <a href="http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug">://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug</a>
+     * Whether to instruct javac to generate debug symbols (when using incremental
+     * compiler)
+     * 
+     * @see <a href=
+     *      "http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug">://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug</a>
      *
-     * @parameter property="javacGenerateDebugSymbols"
-     *            default-value="true"
      */
-    @SuppressWarnings("unused")
+    @Parameter(property = "javacGenerateDebugSymbols", defaultValue = "true")
     protected boolean javacGenerateDebugSymbols = true;
 
     /**
-     * Alternative method for specifying javac arguments (when using incremental compiler).
-     * Can be used from command line with -DaddJavacArgs=arg1|arg2|arg3|... rather than in pom.xml.
+     * Alternative method for specifying javac arguments (when using incremental
+     * compiler).
+     * Can be used from command line with -DaddJavacArgs=arg1|arg2|arg3|... rather
+     * than in pom.xml.
      *
-     * @parameter property="addJavacArgs"
      */
+    @Parameter(property = "addJavacArgs")
     protected String addJavacArgs;
-
 
     /**
      * The -source argument for the Java compiler (when using incremental compiler).
      *
-     * @parameter property="maven.compiler.source"
      */
+    @Parameter(property = "maven.compiler.source")
     protected String source;
 
     /**
      * The -target argument for the Java compiler (when using incremental compiler).
      *
-     * @parameter property="maven.compiler.target"
      */
+    @Parameter(property = "maven.compiler.target")
     protected String target;
 
     /**
-     * The -encoding argument for the Java compiler. (when using incremental compiler).
+     * The -encoding argument for the Java compiler. (when using incremental
+     * compiler).
      *
-     * @parameter property="project.build.sourceEncoding" default-value="UTF-8"
      */
+    @Parameter(property = "project.build.sourceEncoding", defaultValue = "UTF-8")
     protected String encoding;
 
     /**
      * Display the command line called ?
      * (property 'maven.scala.displayCmd' replaced by 'displayCmd')
      *
-     * @required
-     * @parameter property="displayCmd"
-     *            default-value="false"
      */
+    @Parameter(property = "displayCmd", defaultValue = "false", required = true)
     public boolean displayCmd;
 
     /**
      * Forks the execution of scalac into a separate process.
      *
-     * @parameter default-value="true"
      */
+    @Parameter(defaultValue = "true")
     protected boolean fork = true;
 
     /**
      * Force the use of an external ArgFile to run any forked process.
      *
-     * @parameter default-value="false"
      */
+    @Parameter(defaultValue = "false")
     protected boolean forceUseArgFile = false;
 
     /**
-     * Check if every dependencies use the same version of scala-library or scala.compat.version.
+     * Check if every dependencies use the same version of scala-library or
+     * scala.compat.version.
      *
-     * @parameter property="maven.scala.checkConsistency" default-value="true"
      */
+    @Parameter(property = "maven.scala.checkConsistency", defaultValue = "true")
     protected boolean checkMultipleScalaVersions;
 
     /**
-     * Determines if a detection of multiple scala versions in the dependencies will cause the build to fail.
+     * Determines if a detection of multiple scala versions in the dependencies will
+     * cause the build to fail.
      *
-     * @parameter default-value="false"
      */
+    @Parameter(defaultValue = "false")
     protected boolean failOnMultipleScalaVersions = false;
 
     /**
-     * Should use CanonicalPath to normalize path (true => getCanonicalPath, false => getAbsolutePath)
-     * @see <a href="https://github.com/davidB/maven-scala-plugin/issues/50">https://github.com/davidB/maven-scala-plugin/issues/50</a>
-     * @parameter property="maven.scala.useCanonicalPath" default-value="true"
+     * Should use CanonicalPath to normalize path (true => getCanonicalPath, false
+     * => getAbsolutePath)
+     * 
+     * @see <a href=
+     *      "https://github.com/davidB/maven-scala-plugin/issues/50">https://github.com/davidB/maven-scala-plugin/issues/50</a>
      */
+    @Parameter(property = "maven.scala.useCanonicalPath", defaultValue = "true")
     protected boolean useCanonicalPath = true;
 
     /**
      * Artifact factory, needed to download source jars.
      *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProjectBuilder mavenProjectBuilder;
 
     /**
      * The artifact repository to use.
      *
-     * @parameter property="localRepository"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "localRepository", required = true, readonly = true)
     private ArtifactRepository localRepository;
 
     /**
      * The artifact factory to use.
      *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
      * The artifact metadata source to use.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * The artifact collector to use.
      *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ArtifactCollector artifactCollector;
 
     /**
      * The dependency tree builder to use.
      *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private DependencyGraphBuilder dependencyTreeBuilder;
 
     /**
      * The toolchain manager to use.
-     *
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     protected ToolchainManager toolchainManager;
 
     /**
      * List of artifacts to run plugin
      * 
-     * @parameter default-value="${plugin.artifacts}"
      */
+    @Parameter(defaultValue="${plugin.artifacts}")
     private List<Artifact> pluginArtifacts;
 
     private VersionNumber _scalaVersionN;

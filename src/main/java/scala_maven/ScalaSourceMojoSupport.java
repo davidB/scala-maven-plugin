@@ -1,13 +1,15 @@
 package scala_maven;
 
-import scala_maven_executions.MainHelper;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.maven.plugins.annotations.Parameter;
+
+import scala_maven_executions.MainHelper;
 
 /**
  * @author david.bernard
@@ -17,8 +19,8 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
     /**
      * Enables/Disables sending java source to the scala compiler.
      *
-     * @parameter default-value="true"
      */
+    @Parameter(defaultValue="true")
     protected boolean sendJavaToScalac = true;
 
     /**
@@ -30,8 +32,8 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
      *    &lt;/includes&gt;
      * </pre>
      *
-     * @parameter
      */
+    @Parameter
     protected Set<String> includes = new HashSet<String>();
 
     /**
@@ -43,8 +45,8 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
      *    &lt;/excludes&gt;
      * </pre>
      *
-     * @parameter
      */
+    @Parameter
     protected Set<String> excludes = new HashSet<String>();
 
     /**

@@ -1,19 +1,22 @@
 package scala_maven;
 
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
 import scala_maven_executions.JavaMainCaller;
 
 
 /**
  * Display the Scala Compiler help
  *
- * @goal help
  */
+@Mojo(name = "help")
 public class ScalaHelpMojo extends ScalaMojoSupport {
     /**
      * Determines if help will only display a version
      *
-     * @parameter property="maven.scala.help.versionOnly" default-value="false"
      */
+    @Parameter(property="maven.scala.help.versionOnly", defaultValue="false")
     private boolean versionOnly;
 
     @Override

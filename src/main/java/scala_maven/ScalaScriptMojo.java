@@ -26,6 +26,9 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
@@ -37,16 +40,12 @@ import org.codehaus.plexus.util.StringUtils;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
 
-
 /**
  * Run a scala script.
  *
- * @goal script
- * @requiresDependencyResolution runtime
- * @executionStrategy always
  * @since 2.7
- * @threadSafe
  */
+@Mojo(name = "script", requiresDependencyResolution = ResolutionScope.RUNTIME, executionStrategy = "always", threadSafe = true)
 public class ScalaScriptMojo extends ScalaMojoSupport {
 
     /*
@@ -57,31 +56,31 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     /**
      * The build directory of the project
      *
-     * @parameter property="project.build.directory"
      */
+    @Parameter(property = "project.build.directory")
     protected File outputDir;
 
     /**
      * The file containing script to be executed. Either '<em>scriptFile</em>'
      * or '<em>script</em>' must be defined.
      *
-     * @parameter property="scriptFile"
      */
+    @Parameter(property = "scriptFile")
     protected File scriptFile;
 
     /**
      * The encoding of file containing script to be executed.
      *
-     * @parameter property="scriptEncoding" default-value="UTF-8"
      */
+    @Parameter(property = "scriptEncoding", defaultValue = "UTF-8")
     protected String scriptEncoding;
 
     /**
      * The script that will be executed. Either '<em>scriptFile</em>' or '
      * <em>script</em>' must be defined.
      *
-     * @parameter property="script"
      */
+    @Parameter(property = "script")
     protected String script;
 
     /**
@@ -90,9 +89,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * script especially since line numbers will be wrong because lines are
      * added to the compiled script (see script examples)
      *
-     * @parameter property="maven.scala.keepGeneratedScript"
-     *            default-value="false"
      */
+    @Parameter(property = "maven.scala.keepGeneratedScript", defaultValue = "false")
     protected boolean keepGeneratedScript;
 
     /**
@@ -101,23 +99,23 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * By default embedded script into pom.xml run with 'plugin' scope
      * and script read from scriptFile run with 'compile, test, runtime'
      *
-     * @parameter property="maven.scala.includeScopes"
      */
+    @Parameter(property = "maven.scala.includeScopes")
     protected String includeScopes;
 
     /**
      * Comma separated list of scopes to remove from the classpath. Eg:
      * test,compile
      *
-     * @parameter property="maven.scala.excludeScopes"
      */
+    @Parameter(property = "maven.scala.excludeScopes")
     protected String excludeScopes;
 
     /**
      * Comma seperated list of directories or jars to add to the classpath
      *
-     * @parameter property="addToClasspath"
      */
+    @Parameter(property="addToClasspath")
     protected String addToClasspath;
 
     /**
@@ -126,8 +124,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * script uses Ant 1.7 and the compiler dependencies pull in Ant 1.5
      * optional which conflicts and causes a crash
      *
-     * @parameter property="removeFromClasspath"
      */
+    @Parameter(property="removeFromClasspath")
     protected String removeFromClasspath;
 
     private static AtomicInteger _lastScriptIndex = new AtomicInteger(0);

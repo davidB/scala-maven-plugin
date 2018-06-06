@@ -2,27 +2,23 @@ package scala_maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
 import scala_maven_executions.JavaMainCaller;
-import scala_maven_executions.JavaMainCallerInProcess;
 import scala_maven_executions.MainHelper;
 
-import org.apache.maven.artifact.Artifact;
-
 /**
- * Run the Scala console with all the classes of the projects (dependencies and builded)
+ * Run the Scala console with all the classes of the projects (dependencies and
+ * builded)
  *
- * @goal console
- * @requiresDependencyResolution test
- * @inheritByDefault false
- * @requiresDirectInvocation true
- * @executionStrategy once-per-session
  */
+@Mojo(name = "console", requiresDependencyResolution = ResolutionScope.TEST, inheritByDefault = false, requiresDirectInvocation = true, executionStrategy = "once-per-session")
 public class ScalaConsoleMojo extends ScalaMojoSupport {
 
     // Private Static Values //
@@ -44,33 +40,32 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     /**
      * The console to run.
      *
-     * @parameter property="mainConsole" default-value="scala.tools.nsc.MainGenericRunner"
-     * @required
      */
+    @Parameter(property = "mainConsole", defaultValue = "scala.tools.nsc.MainGenericRunner", required = true)
     protected String mainConsole;
 
     /**
-     * Add the test classpath (include classes from test directory), to the console's classpath ?
+     * Add the test classpath (include classes from test directory), to the
+     * console's classpath ?
      *
-     * @parameter property="maven.scala.console.useTestClasspath" default-value="true"
-     * @required
      */
+    @Parameter(property = "maven.scala.console.useTestClasspath", defaultValue = "true", required = true)
     protected boolean useTestClasspath;
 
     /**
      * Add the runtime classpath, to the console's classpath ?
      *
-     * @parameter property="maven.scala.console.useRuntimeClasspath" default-value="true"
-     * @required
      */
+    @Parameter(property = "maven.scala.console.useRuntimeClasspath", defaultValue = "true", required = true)
     protected boolean useRuntimeClasspath;
 
     /**
      * Path of the javaRebel jar. If this option is set then the console run
-     * with <a href="http://www.zeroturnaround.com/javarebel/">javarebel</a> enabled.
+     * with <a href="http://www.zeroturnaround.com/javarebel/">javarebel</a>
+     * enabled.
      *
-     * @parameter property="javarebel.jar.path"
      */
+    @Parameter(property = "javarebel.jar.path")
     protected File javaRebelPath;
 
     @Override
@@ -87,7 +82,6 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         }
 
         // Setup the classpath
-
 
         // Build the classpath string.
         final String classpathStr = MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
