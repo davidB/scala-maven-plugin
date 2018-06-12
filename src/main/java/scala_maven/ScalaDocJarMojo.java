@@ -14,6 +14,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.archiver.Archiver;
@@ -26,7 +27,7 @@ import org.codehaus.plexus.archiver.jar.ManifestException;
  * to the project for distribution.
  *
  */
-@Mojo(name = "doc-jar", defaultPhase = LifecyclePhase.PACKAGE)
+@Mojo(name = "doc-jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class ScalaDocJarMojo extends ScalaDocMojo {
 
     private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
