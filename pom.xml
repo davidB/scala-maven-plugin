@@ -94,7 +94,7 @@
   </contributors>
 
   <properties>
-    <maven.version>3.5.3</maven.version>
+    <maven.version>3.5.4</maven.version>
     <maven.reporting.version>3.0</maven.reporting.version>
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
