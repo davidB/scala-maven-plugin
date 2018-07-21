@@ -90,6 +90,12 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     private int zincPort;
 
     /**
+     * Zinc server host, if running with incremental zinc server mode. Defaults to 127.0.0.1.
+     */
+    @Parameter(property = "zincHost", defaultValue = "127.0.0.1")
+    private String zincHost;
+
+    /**
      * Additional parameter to use to call zinc server
      * It is a pipe '|' separated list of arguments, so it can be used from command
      * line ("-DaddZincArgs=arg1|arg2|arg3|...").
@@ -302,7 +308,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             File xsbtiJar = getPluginArtifactJar(sbtGroupId, xsbtiArtifactId, sbtVersion);
             List<String> zincArgs = StringUtils.isEmpty(addZincArgs) ? new LinkedList<String>() : (List<String>) Arrays.asList(StringUtils.split(addZincArgs, "|"));
             File interfaceSrcJar = getPluginArtifactJar(sbtGroupId, compilerInterfaceArtifactId, sbtVersion, compilerInterfaceClassifier);
-           	incremental = new SbtIncrementalCompiler(useZincServer, zincPort, libraryJar, compilerJar, extraJars, xsbtiJar, interfaceSrcJar, getLog(), zincArgs);
+           	incremental = new SbtIncrementalCompiler(useZincServer, zincHost, zincPort, libraryJar, compilerJar, extraJars, xsbtiJar, interfaceSrcJar, getLog(), zincArgs);
         }
 
         classpathElements.remove(outputDir.getAbsolutePath());

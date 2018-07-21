@@ -42,10 +42,10 @@ public class SbtIncrementalCompiler {
 
     private Compiler compiler;
 
-    public SbtIncrementalCompiler(boolean useZincServer, int zincPort, File libraryJar, File compilerJar, List<File> extraJars, File xsbtiJar, File interfaceJar, Log l, List<String> args) throws Exception {
+    public SbtIncrementalCompiler(boolean useZincServer, String zincHost, int zincPort, File libraryJar, File compilerJar, List<File> extraJars, File xsbtiJar, File interfaceJar, Log l, List<String> args) throws Exception {
         this.log = l;
         if (useZincServer) {
-            this.zinc = new ZincClient(zincPort);
+            this.zinc = new ZincClient(zincHost, zincPort);
             if (zinc.serverAvailable()) {
                 l.info("Using zinc server for incremental compilation");
                 this.useServer = true;
