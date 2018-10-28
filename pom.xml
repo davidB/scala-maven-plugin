@@ -103,9 +103,9 @@
     <github.global.server>github</github.global.server>
   </properties>
 
-  <prerequisites>
+  <!-- <prerequisites>
     <maven>${maven.version}</maven>
-  </prerequisites>
+  </prerequisites> -->
 
   <dependencies>
     <dependency>
