@@ -63,7 +63,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
 
     /**
      * Define if fsc should be used, else scalac is used.
-     * fsc => scala.tools.nsc.CompileClient, scalac => scala.tools.nsc.Main.
+     * fsc => scala.tools.nsc.CompileClient, scalac =&gt; scala.tools.nsc.Main.
      *
      */
      @Parameter(property="fsc", defaultValue="true")
@@ -72,7 +72,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     /**
      * Define if cc should run once or in infinite loop. (useful for test or working
      * with editor)
-     * 
+     *
      */
      @Parameter(property="once", defaultValue="false")
     protected boolean once = false;

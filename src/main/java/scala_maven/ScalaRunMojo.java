@@ -39,27 +39,27 @@ public class ScalaRunMojo extends ScalaMojoSupport {
      * A list of launcher definition (to avoid rewriting long command line or share
      * way to call an application)
      * launchers could be define by :
-     * 
+     *
      * <pre>
-     *   &lt;launchers>
-     *     &lt;launcher>
-     *       &lt;id>myLauncher&lt;/id>
-     *       &lt;mainClass>my.project.Main&lt;/mainClass>
-     *       &lt;args>
-     *         &lt;arg>arg1&lt;/arg>
-     *       &lt;/args>
-     *       &lt;jvmArgs>
-     *         &lt;jvmArg>-Xmx64m&lt;/jvmArg>
-     *       &lt;/jvmArgs>
-     *     &lt;/launcher>
-     *     &lt;launcher>
-     *       &lt;id>myLauncher2&lt;/id>
+     *   &lt;launchers&gt;
+     *     &lt;launcher&gt;
+     *       &lt;id&gt;myLauncher&lt;/id&gt;
+     *       &lt;mainClass&gt;my.project.Main&lt;/mainClass&gt;
+     *       &lt;args&gt;
+     *         &lt;arg&gt;arg1&lt;/arg&gt;
+     *       &lt;/args&gt;
+     *       &lt;jvmArgs&gt;
+     *         &lt;jvmArg&gt;-Xmx64m&lt;/jvmArg&gt;
+     *       &lt;/jvmArgs&gt;
+     *     &lt;/launcher&gt;
+     *     &lt;launcher&gt;
+     *       &lt;id&gt;myLauncher2&lt;/id&gt;
      *       ...
-     *       &lt;>&lt;>
-     *     &lt;/launcher>
-     *   &lt;/launchers>
+     *       &lt;&gt;&lt;&gt;
+     *     &lt;/launcher&gt;
+     *   &lt;/launchers&gt;
      * </pre>
-     * 
+     *
      */
     @Parameter
     protected Launcher[] launchers;
@@ -71,7 +71,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
      * Higher priority to launcher parameter)
      * Using this parameter only from command line (-DmainClass=...), not from
      * pom.xml.
-     * 
+     *
      */
     @Parameter(property="mainClass")
     protected String mainClass;

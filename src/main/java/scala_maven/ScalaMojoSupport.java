@@ -118,17 +118,17 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * Additional dependencies/jar to add to classpath to run "scalaClassName"
      * (scope and optional field not supported)
      * ex :
-     * 
+     *
      * <pre>
-     *    &lt;dependencies>
-     *      &lt;dependency>
-     *        &lt;groupId>org.scala-tools&lt;/groupId>
-     *        &lt;artifactId>scala-compiler-addon&lt;/artifactId>
-     *        &lt;version>1.0-SNAPSHOT&lt;/version>
-     *      &lt;/dependency>
-     *    &lt;/dependencies>
+     *    &lt;dependencies&gt;
+     *      &lt;dependency&gt;
+     *        &lt;groupId&gt;org.scala-tools&lt;/groupId&gt;
+     *        &lt;artifactId&gt;scala-compiler-addon&lt;/artifactId&gt;
+     *        &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+     *      &lt;/dependency&gt;
+     *    &lt;/dependencies&gt;
      * </pre>
-     * 
+     *
      */
     @Parameter
     protected BasicArtifact[] dependencies;
@@ -136,17 +136,17 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Compiler plugin dependencies to use when compiling.
      * ex:
-     * 
+     *
      * <pre>
-     * &lt;compilerPlugins>
-     *   &lt;compilerPlugin>
-     *     &lt;groupId>my.scala.plugin&lt;/groupId>
-     *     &lt;artifactId>amazingPlugin&lt;/artifactId>
-     *     &lt;version>1.0-SNAPSHOT&lt;/version>
-     *   &lt;/compilerPlugin>
-     * &lt;/compilerPlugins>
+     * &lt;compilerPlugins&gt;
+     *   &lt;compilerPlugin&gt;
+     *     &lt;groupId&gt;my.scala.plugin&lt;/groupId&gt;
+     *     &lt;artifactId&gt;amazingPlugin&lt;/artifactId&gt;
+     *     &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+     *   &lt;/compilerPlugin&gt;
+     * &lt;/compilerPlugins&gt;
      * </pre>
-     * 
+     *
      */
     @Parameter
     protected BasicArtifact[] compilerPlugins;
@@ -170,7 +170,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * Use this parameter only from command line
      * ("-DaddScalacArgs=arg1|arg2|arg3|..."), not from pom.xml.
      * To define compiler arguments in pom.xml see the "args" parameter.
-     * 
+     *
      */
     @Parameter(property = "addScalacArgs")
     protected String addScalacArgs;
@@ -231,7 +231,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * Whether to instruct javac to generate debug symbols (when using incremental
      * compiler)
-     * 
+     *
      * @see <a href=
      *      "http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug">://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug</a>
      *
@@ -310,9 +310,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected boolean failOnMultipleScalaVersions = false;
 
     /**
-     * Should use CanonicalPath to normalize path (true => getCanonicalPath, false
-     * => getAbsolutePath)
-     * 
+     * Should use CanonicalPath to normalize path (true =&gt; getCanonicalPath, false
+     * =&gt; getAbsolutePath)
+     *
      * @see <a href=
      *      "https://github.com/davidB/maven-scala-plugin/issues/50">https://github.com/davidB/maven-scala-plugin/issues/50</a>
      */
@@ -368,7 +368,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * List of artifacts to run plugin
-     * 
+     *
      */
     @Parameter(defaultValue="${plugin.artifacts}")
     private List<Artifact> pluginArtifacts;

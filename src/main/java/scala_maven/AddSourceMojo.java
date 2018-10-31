@@ -34,9 +34,9 @@ public class AddSourceMojo extends AbstractMojo {
     protected File testSourceDir;
 
     /**
-     * Should use CanonicalPath to normalize path (true => getCanonicalPath, false
-     * => getAbsolutePath)
-     * 
+     * Should use CanonicalPath to normalize path (true =&gt; getCanonicalPath, false
+     * =&gt; getAbsolutePath)
+     *
      * @see https://github.com/davidB/maven-scala-plugin/issues/50
      */
     @Parameter(property = "maven.scala.useCanonicalPath", defaultValue = "true")

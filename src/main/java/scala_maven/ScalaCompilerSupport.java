@@ -36,9 +36,9 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     /**
      * Recompile mode to use when sources were previously compiled and there is at
      * least one change:
-     * "modified-only" => only modified sources are recompiled (pre 2.13 behavior),
-     * "all" => all sources are recompiled,
-     * "incremental" => incrementally recompile modified sources and other affected
+     * "modified-only" =&gt; only modified sources are recompiled (pre 2.13 behavior),
+     * "all" =&gt; all sources are recompiled,
+     * "incremental" =&gt; incrementally recompile modified sources and other affected
      * sources.
      *
      */
@@ -99,7 +99,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * Additional parameter to use to call zinc server
      * It is a pipe '|' separated list of arguments, so it can be used from command
      * line ("-DaddZincArgs=arg1|arg2|arg3|...").
-     * 
+     *
      */
     @Parameter(property = "addZincArgs")
     private String addZincArgs = "";
