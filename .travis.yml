@@ -9,5 +9,5 @@ cache:
     - $HOME/.gradle/wrapper/
     - $HOME/.m2/repository/
 
-script: "./mvnw integration-test"
+script: "./mvnw package integration-test javadoc:jar site"
 
