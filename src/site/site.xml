@@ -7,7 +7,7 @@
   <bannerRight>
     <name>Scala-lang</name>
     <href>http://www.scala-lang.org/</href>
-    <src>http://www.scala-lang.org/sites/default/files/newsflash_logo.png</src>
+    <!-- <src>images/logos/scala.svg</src> -->
   </bannerRight>
   <publishDate position="left" format="yyyy-MM-dd HH:mm" />
   <version position="left"/>
