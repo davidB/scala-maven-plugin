@@ -7,7 +7,6 @@ The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling
 * [Documentation](https://davidb.github.io/scala-maven-plugin/index.html)
 * [Wiki](https://github.com/davidB/scala-maven-plugin/wiki)
 * [Issues](https://github.com/davidB/scala-maven-plugin/issues/)
-* [Full changelog](https://davidb.github.io/scala-maven-plugin/changes-report.html)
 
 ## Similar plugins
 
