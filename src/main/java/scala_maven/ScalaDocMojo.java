@@ -296,6 +296,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         JavaMainCaller jcmd = getEmptyScalaCommand(scaladocClassName);
         jcmd.addArgs(args);
         jcmd.addJvmArgs(jvmArgs);
+        addCompilerPluginOptions(jcmd);
 
         if (isPreviousScala271){
             jcmd.addArgs("-Ydoc");
