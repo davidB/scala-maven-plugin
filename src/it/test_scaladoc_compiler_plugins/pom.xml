@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>it.scala-maven-plugin</groupId>
+  <artifactId>test_scaladoc_compiler_plugin</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <displayCmd>true</displayCmd>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version.lastrelease}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          <args>
+            <arg>-explaintypes</arg>
+            <arg>-deprecation</arg>
+            <arg>-feature</arg>
+            <arg>-unchecked</arg>
+            <arg>-Xcheckinit</arg>
+            <arg>-Xlint</arg>
+            <arg>-Ypartial-unification</arg>
+            <arg>-Ywarn-adapted-args</arg>
+            <arg>-Ywarn-dead-code</arg>
+            <arg>-Ywarn-inaccessible</arg>
+            <arg>-Ywarn-infer-any</arg>
+            <arg>-Ywarn-nullary-override</arg>
+            <arg>-Ywarn-nullary-unit</arg>
+            <arg>-Ywarn-numeric-widen</arg>
+            <arg>-Ywarn-unused</arg>
+            <arg>-Ywarn-unused-import</arg>
+            <arg>-Ywarn-value-discard</arg>
+          </args>
+          <compilerPlugins>
+            <compilerPlugin>
+              <groupId>org.spire-math</groupId>
+              <artifactId>kind-projector_${scala.version.minor}</artifactId>
+              <version>0.9.4</version>
+            </compilerPlugin>
+          </compilerPlugins>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>doc-jar</goal>
+            </goals>
+          </execution>       
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
