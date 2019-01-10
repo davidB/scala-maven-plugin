@@ -48,7 +48,7 @@
           <compilerPlugins>
             <compilerPlugin>
               <groupId>org.spire-math</groupId>
-              <artifactId>kind-projector_${scala.version.binary}</artifactId>
+              <artifactId>kind-projector_${scala.compat.version}</artifactId>
               <version>0.9.4</version>
             </compilerPlugin>
           </compilerPlugins>
