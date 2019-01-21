@@ -304,165 +304,166 @@
 <a class="jxr_linenumber" name="L296" href="#L296">296</a>         <a name="JavaMainCaller" href="../scala_maven_executions/JavaMainCaller.html#JavaMainCaller">JavaMainCaller</a> jcmd = getEmptyScalaCommand(scaladocClassName);
 <a class="jxr_linenumber" name="L297" href="#L297">297</a>         jcmd.addArgs(args);
 <a class="jxr_linenumber" name="L298" href="#L298">298</a>         jcmd.addJvmArgs(jvmArgs);
-<a class="jxr_linenumber" name="L299" href="#L299">299</a> 
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>         <strong class="jxr_keyword">if</strong> (isPreviousScala271){
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>             jcmd.addArgs(<span class="jxr_string">"-Ydoc"</span>);
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>         }
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>         <em class="jxr_comment">// copy the classpathElements to not modify the global project definition see https://github.com/davidB/maven-scala-plugin/issues/60</em>
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>         List&lt;String&gt; paths = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(project.getCompileClasspathElements());
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>         paths.remove(project.getBuild().getOutputDirectory()); <em class="jxr_comment">//remove output to avoid "error for" : error:  XXX is already defined as package XXX ... object XXX {</em>
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>         <strong class="jxr_keyword">if</strong> (!paths.isEmpty())jcmd.addOption(<span class="jxr_string">"-classpath"</span>, MainHelper.toMultiPath(paths));
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>         <em class="jxr_comment">//jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());</em>
-<a class="jxr_linenumber" name="L308" href="#L308">308</a> 
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>         <strong class="jxr_keyword">boolean</strong> isScaladoc2 = (<strong class="jxr_keyword">new</strong> <a name="VersionNumber" href="../scala_maven/VersionNumber.html#VersionNumber">VersionNumber</a>(<span class="jxr_string">"2.8.0"</span>).compareTo(sv) &lt;= 0 || sv.isZero()) &amp;&amp; (<span class="jxr_string">"scala.tools.nsc.ScalaDoc"</span>.equals(scaladocClassName));
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>         <strong class="jxr_keyword">if</strong> (isScaladoc2) {
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>             jcmd.addArgs(<span class="jxr_string">"-doc-format:html"</span>);
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>             jcmd.addOption(<span class="jxr_string">"-doc-title"</span>, doctitle);
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>             jcmd.addOption(<span class="jxr_string">"-bottom"</span>, getBottomText());
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>             jcmd.addOption(<span class="jxr_string">"-charset"</span>, charset);
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>             jcmd.addOption(<span class="jxr_string">"-doctitle"</span>, doctitle);
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>             jcmd.addOption(<span class="jxr_string">"-footer"</span>, footer);
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>             jcmd.addOption(<span class="jxr_string">"-header"</span>, header);
-<a class="jxr_linenumber" name="L319" href="#L319">319</a>             jcmd.addOption(<span class="jxr_string">"-linksource"</span>, linksource);
-<a class="jxr_linenumber" name="L320" href="#L320">320</a>             jcmd.addOption(<span class="jxr_string">"-nocomment"</span>, nocomment);
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>             jcmd.addOption(<span class="jxr_string">"-stylesheetfile"</span>, stylesheetfile);
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>             jcmd.addOption(<span class="jxr_string">"-top"</span>, top);
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>             jcmd.addOption(<span class="jxr_string">"-windowtitle"</span>, windowtitle);
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>         }
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">return</strong> jcmd;
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>     }
-<a class="jxr_linenumber" name="L327" href="#L327">327</a> 
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>     @Override
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> generate(Sink sink, Locale locale) <strong class="jxr_keyword">throws</strong> MavenReportException {
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>             <strong class="jxr_keyword">if</strong> (!canGenerateReport()) {
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>                 getLog().info(<span class="jxr_string">"No source files found"</span>);
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>                 <strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>             }
-<a class="jxr_linenumber" name="L335" href="#L335">335</a> 
-<a class="jxr_linenumber" name="L336" href="#L336">336</a>             File reportOutputDir = getReportOutputDirectory();
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>             <strong class="jxr_keyword">if</strong> (!reportOutputDir.exists()) {
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>                 reportOutputDir.mkdirs();
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>             }
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>             <strong class="jxr_keyword">if</strong> (StringUtils.isNotEmpty(vscaladocVersion)) {
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>                 scaladocClassName = <span class="jxr_string">"org.scala_tools.vscaladoc.Main"</span>;
-<a class="jxr_linenumber" name="L342" href="#L342">342</a>                 <a name="BasicArtifact" href="../scala_maven/BasicArtifact.html#Ba<a name="BasicArtifact" href="../scala_maven/BasicArtifact.html#BasicArtifact">BasicArtifact</a>BasicArtifact</a> artifact = <strong class="jxr_keyword">new</strong> <a name="BasicArtifact" href="../scala_maven/BasicArtifact.html#BasicArtifact">BasicArtifact</a>();
-<a class="jxr_linenumber" name="L343" href="#L343">343</a>                 artifact.artifactId = <span class="jxr_string">"vscaladoc"</span>;
-<a class="jxr_linenumber" name="L344" href="#L344">344</a>                 artifact.groupId = <span class="jxr_string">"org.scala-tools"</span>;
-<a class="jxr_linenumber" name="L345" href="#L345">345</a>                 artifact.version = vscaladocVersion;
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>                 dependencies = <strong class="jxr_keyword">new</strong> <a name="BasicArtifact" href="../scala_maven/BasicArtifact.html#BasicArtifact">BasicArtifact</a>[]{artifact};
-<a class="jxr_linenumber" name="L347" href="#L347">347</a>             }
-<a class="jxr_linenumber" name="L348" href="#L348">348</a> 
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>             List&lt;File&gt; sources = findSourceFiles();
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>             <strong class="jxr_keyword">if</strong> (sources.size() &gt; 0) {
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>                 <a name="JavaMainCaller" href="../scala_maven_executions/JavaMainCaller.html#JavaMainCaller">JavaMainCaller</a> jcmd = getScalaCommand();
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>                 jcmd.addOption(<span class="jxr_string">"-d"</span>, reportOutputDir.getAbsolutePath());
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>                 <strong class="jxr_keyword">for</strong> (File x : sources) {
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>                     jcmd.addArgs(FileUtils.pathOf(x, useCanonicalPath));
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>                 }
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>                 jcmd.run(displayCmd);
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>             }
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>             <strong class="jxr_keyword">if</strong> (forceAggregate) {
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>                 aggregate(project);
-<a class="jxr_linenumber" name="L360" href="#L360">360</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>                 <em class="jxr_comment">// Mojo could not be run from parent after all its children</em>
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>                 <em class="jxr_comment">// So the aggregation will be run after the last child</em>
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>                 tryAggregateUpper(project);
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>             }
-<a class="jxr_linenumber" name="L365" href="#L365">365</a> 
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>         } <strong class="jxr_keyword">catch</strong> (MavenReportException exc) {
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>             <strong class="jxr_keyword">throw</strong> exc;
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>         } <strong class="jxr_keyword">catch</strong> (RuntimeException exc) {
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>             <strong class="jxr_keyword">throw</strong> exc;
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>         } <strong class="jxr_keyword">catch</strong> (Exception exc) {
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> MavenReportException(<span class="jxr_string">"wrap: "</span> + exc.getMessage(), exc);
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>         }
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>     }
-<a class="jxr_linenumber" name="L374" href="#L374">374</a> 
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> tryAggregateUpper(MavenProject prj) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>         <strong class="jxr_keyword">if</strong> (prj != <strong class="jxr_keyword">null</strong> &amp;&amp; prj.hasParent() &amp;&amp; canAggregate()) {
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>             MavenProject parent = prj.getParent();
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>             List&lt;MavenProject&gt; modules = parent.getCollectedProjects();
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>             <strong class="jxr_keyword">if</strong> ((modules.size() &gt; 1) &amp;&amp; prj.equals(modules.get(modules.size() - 1))) {
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>                 aggregate(parent);
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>             }
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>         }
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>     }
-<a class="jxr_linenumber" name="L384" href="#L384">384</a> 
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> aggregate(MavenProject parent) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>         List&lt;MavenProject&gt; modules = parent.getCollectedProjects();
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>         File dest = <strong class="jxr_keyword">new</strong> File(parent.getReporting().getOutputDirectory() +<span class="jxr_string">"/"</span> + outputDirectory);
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>         getLog().info(<span class="jxr_string">"start aggregation into "</span> + dest);
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>         StringBuilder mpath = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>         <strong class="jxr_keyword">for</strong> (MavenProject module : modules) {
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>             <strong class="jxr_keyword">if</strong> ( <span class="jxr_string">"pom"</span>.equals( module.getPackaging().toLowerCase() ) ) {
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>             }
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>             <strong class="jxr_keyword">if</strong> (aggregateDirectOnly &amp;&amp; module.getParent() != parent) {
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>             }
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>             File subScaladocPath = <strong class="jxr_keyword">new</strong> File(module.getReporting().getOutputDirectory() +<span class="jxr_string">"/"</span> + outputDirectory).getAbsoluteFile();
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>             <em class="jxr_comment">//System.out.println(" -&gt; " + project.getModulePathAdjustment(module)  +" // " + subScaladocPath + " // " + module.getBasedir() );</em>
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>             <strong class="jxr_keyword">if</strong> (subScaladocPath.exists()) {
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>                 mpath.append(subScaladocPath).append(File.pathSeparatorChar);
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>             }
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>         }
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>         <strong class="jxr_keyword">if</strong> (mpath.length() != 0) {
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>             getLog().info(<span class="jxr_string">"aggregate vscaladoc from : "</span> + mpath);
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>             <a name="JavaMainCaller" href="../scala_maven_executions/JavaMainCaller.html#JavaMainCaller">JavaMainCaller</a> jcmd = getScalaCommand();
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>             jcmd.addOption(<span class="jxr_string">"-d"</span>, dest.getAbsolutePath());
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>             jcmd.addOption(<span class="jxr_string">"-aggregate"</span>, mpath.toString());
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>             jcmd.run(displayCmd);
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>             getLog().warn(<span class="jxr_string">"no vscaladoc to aggregate"</span>);
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>         }
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>         tryAggregateUpper(parent);
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>     }
-<a class="jxr_linenumber" name="L414" href="#L414">414</a> 
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L416" href="#L416">416</a> <em class="jxr_javadoccomment">     * Method that sets the bottom text that will be displayed on the bottom of</em>
-<a class="jxr_linenumber" name="L417" href="#L417">417</a> <em class="jxr_javadoccomment">     * the javadocs.</em>
-<a class="jxr_linenumber" name="L418" href="#L418">418</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">     * @return a String that contains the text that will be displayed at the</em>
-<a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">     *         bottom of the javadoc</em>
-<a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L422" href="#L422">422</a>     <strong class="jxr_keyword">private</strong> String getBottomText() {
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>         String inceptionYear = project.getInceptionYear();
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>         <strong class="jxr_keyword">int</strong> actualYear = Calendar.getInstance().get(Calendar.YEAR);
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>         String year = String.valueOf(actualYear);
-<a class="jxr_linenumber" name="L426" href="#L426">426</a> 
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>         String theBottom = StringUtils.replace(bottom, <span class="jxr_string">"{currentYear}"</span>, year);
-<a class="jxr_linenumber" name="L428" href="#L428">428</a> 
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>         <strong class="jxr_keyword">if</strong> (inceptionYear != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>             <strong class="jxr_keyword">if</strong> (inceptionYear.equals(year)) {
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>                 theBottom = StringUtils.replace(theBottom, <span class="jxr_string">"{inceptionYear}-"</span>, <span class="jxr_string">""</span>);
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>                 theBottom = StringUtils.replace(theBottom, <span class="jxr_string">"{inceptionYear}"</span>, inceptionYear);
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>             }
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>             theBottom = StringUtils.replace(theBottom, <span class="jxr_string">"{inceptionYear}-"</span>, <span class="jxr_string">""</span>);
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>         }
-<a class="jxr_linenumber" name="L438" href="#L438">438</a> 
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>         <strong class="jxr_keyword">if</strong> (project.getOrganization() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>             theBottom = StringUtils.replace(theBottom, <span class="jxr_string">" {organizationName}"</span>, <span class="jxr_string">""</span>);
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>             <strong class="jxr_keyword">if</strong> ((project.getOrganization() != <strong class="jxr_keyword">null</strong>) &amp;&amp; (StringUtils.isNotEmpty(project.getOrganization().getName()))) {
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>                 <strong class="jxr_keyword">if</strong> (StringUtils.isNotEmpty(project.getOrganization().getUrl())) {
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>                     theBottom = StringUtils.replace(theBottom, <span class="jxr_string">"{organizationName}"</span>, <span class="jxr_string">"&lt;a href=\&quot;"</span> + project.getOrganization().getUrl() + <span class="jxr_string">"\&quot;&gt;"</span> + project.getOrganization().getName() + <span class="jxr_string">"&lt;/a&gt;"</span>);
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>                     theBottom = StringUtils.replace(theBottom, <span class="jxr_string">"{organizationName}"</span>, project.getOrganization().getName());
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>                 }
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L449" href="#L449">449</a>                 theBottom = StringUtils.replace(theBottom, <span class="jxr_string">" {organizationName}"</span>, <span class="jxr_string">""</span>);
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>             }
-<a class="jxr_linenumber" name="L451" href="#L451">451</a>         }
-<a class="jxr_linenumber" name="L452" href="#L452">452</a> 
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>         <strong class="jxr_keyword">return</strong> theBottom;
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>     }
-<a class="jxr_linenumber" name="L455" href="#L455">455</a> }
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>         addCompilerPluginOptions(jcmd);
+<a class="jxr_linenumber" name="L300" href="#L300">300</a> 
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>         <strong class="jxr_keyword">if</strong> (isPreviousScala271){
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>             jcmd.addArgs(<span class="jxr_string">"-Ydoc"</span>);
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>         }
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>         <em class="jxr_comment">// copy the classpathElements to not modify the global project definition see https://github.com/davidB/maven-scala-plugin/issues/60</em>
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>         List&lt;String&gt; paths = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;(project.getCompileClasspathElements());
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>         paths.remove(project.getBuild().getOutputDirectory()); <em class="jxr_comment">//remove output to avoid "error for" : error:  XXX is already defined as package XXX ... object XXX {</em>
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>         <strong class="jxr_keyword">if</strong> (!paths.isEmpty())jcmd.addOption(<span class="jxr_string">"-classpath"</span>, MainHelper.toMultiPath(paths));
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>         <em class="jxr_comment">//jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());</em>
+<a class="jxr_linenumber" name="L309" href="#L309">309</a> 
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>         <strong class="jxr_keyword">boolean</strong> isScaladoc2 = (<strong class="jxr_keyword">new</strong> <a name="VersionNumber" href="../scala_maven/VersionNumber.html#VersionNumber">VersionNumber</a>(<span class="jxr_string">"2.8.0"</span>).compareTo(sv) &lt;= 0 || sv.isZero()) &amp;&amp; (<span class="jxr_string">"scala.tools.nsc.ScalaDoc"</span>.equals(scaladocClassName));
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>         <strong class="jxr_keyword">if</strong> (isScaladoc2) {
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>             jcmd.addArgs(<span class="jxr_string">"-doc-format:html"</span>);
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>             jcmd.addOption(<span class="jxr_string">"-doc-title"</span>, doctitle);
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>             jcmd.addOption(<span class="jxr_string">"-bottom"</span>, getBottomText());
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>             jcmd.addOption(<span class="jxr_string">"-charset"</span>, charset);
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>             jcmd.addOption(<span class="jxr_string">"-doctitle"</span>, doctitle);
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>             jcmd.addOption(<span class="jxr_string">"-footer"</span>, footer);
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>             jcmd.addOption(<span class="jxr_string">"-header"</span>, header);
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>             jcmd.addOption(<span class="jxr_string">"-linksource"</span>, linksource);
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>             jcmd.addOption(<span class="jxr_string">"-nocomment"</span>, nocomment);
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>             jcmd.addOption(<span class="jxr_string">"-stylesheetfile"</span>, stylesheetfile);
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>             jcmd.addOption(<span class="jxr_string">"-top"</span>, top);
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>             jcmd.addOption(<span class="jxr_string">"-windowtitle"</span>, windowtitle);
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>         }
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>         <strong class="jxr_keyword">return</strong> jcmd;
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>     }
+<a class="jxr_linenumber" name="L328" href="#L328">328</a> 
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>     @Override
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> generate(Sink sink, Locale locale) <strong class="jxr_keyword">throws</strong> MavenReportException {
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>             <strong class="jxr_keyword">if</strong> (!canGenerateReport()) {
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>                 getLog().info(<span class="jxr_string">"No source files found"</span>);
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>                 <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>             }
+<a class="jxr_linenumber" name="L336" href="#L336">336</a> 
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>             File reportOutputDir = getReportOutputDirectory();
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>             <strong class="jxr_keyword">if</strong> (!reportOutputDir.exists()) {
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>                 reportOutputDir.mkdirs();
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>             }
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>             <strong class="jxr_keyword">if</strong> (StringUtils.isNotEmpty(vscaladocVersion)) {
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>                 scaladocClassName = <span class="jxr_string">"org.scala_tools.vscaladoc.Main"</span>;
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>                 <a name="BasicArtifact" href="../scala_maven/BasicArtifact.html#Ba<a name="BasicArtifact" href="../scala_maven/BasicArtifact.html#BasicArtifact">BasicArtifact</a>BasicArtifact</a> artifact = <strong class="jxr_keyword">new</strong> <a name="BasicArtifact" href="../scala_maven/BasicArtifact.html#BasicArtifact">BasicArtifact</a>();
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>                 artifact.artifactId = <span class="jxr_string">"vscaladoc"</span>;
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>                 artifact.groupId = <span class="jxr_string">"org.scala-tools"</span>;
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>                 artifact.version = vscaladocVersion;
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>                 dependencies = <strong class="jxr_keyword">new</strong> <a name="BasicArtifact" href="../scala_maven/BasicArtifact.html#BasicArtifact">BasicArtifact</a>[]{artifact};
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>             }
+<a class="jxr_linenumber" name="L349" href="#L349">349</a> 
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>             List&lt;File&gt; sources = findSourceFiles();
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>             <strong class="jxr_keyword">if</strong> (sources.size() &gt; 0) {
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>                 <a name="JavaMainCaller" href="../scala_maven_executions/JavaMainCaller.html#JavaMainCaller">JavaMainCaller</a> jcmd = getScalaCommand();
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>                 jcmd.addOption(<span class="jxr_string">"-d"</span>, reportOutputDir.getAbsolutePath());
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>                 <strong class="jxr_keyword">for</strong> (File x : sources) {
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>                     jcmd.addArgs(FileUtils.pathOf(x, useCanonicalPath));
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>                 }
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>                 jcmd.run(displayCmd);
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>             }
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>             <strong class="jxr_keyword">if</strong> (forceAggregate) {
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>                 aggregate(project);
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>                 <em class="jxr_comment">// Mojo could not be run from parent after all its children</em>
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>                 <em class="jxr_comment">// So the aggregation will be run after the last child</em>
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>                 tryAggregateUpper(project);
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>             }
+<a class="jxr_linenumber" name="L366" href="#L366">366</a> 
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>         } <strong class="jxr_keyword">catch</strong> (MavenReportException exc) {
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>             <strong class="jxr_keyword">throw</strong> exc;
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>         } <strong class="jxr_keyword">catch</strong> (RuntimeException exc) {
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>             <strong class="jxr_keyword">throw</strong> exc;
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>         } <strong class="jxr_keyword">catch</strong> (Exception exc) {
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> MavenReportException(<span class="jxr_string">"wrap: "</span> + exc.getMessage(), exc);
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>         }
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>     }
+<a class="jxr_linenumber" name="L375" href="#L375">375</a> 
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> tryAggregateUpper(MavenProject prj) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>         <strong class="jxr_keyword">if</strong> (prj != <strong class="jxr_keyword">null</strong> &amp;&amp; prj.hasParent() &amp;&amp; canAggregate()) {
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>             MavenProject parent = prj.getParent();
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>             List&lt;MavenProject&gt; modules = parent.getCollectedProjects();
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>             <strong class="jxr_keyword">if</strong> ((modules.size() &gt; 1) &amp;&amp; prj.equals(modules.get(modules.size() - 1))) {
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>                 aggregate(parent);
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>             }
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>         }
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>     }
+<a class="jxr_linenumber" name="L385" href="#L385">385</a> 
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> aggregate(MavenProject parent) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>         List&lt;MavenProject&gt; modules = parent.getCollectedProjects();
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>         File dest = <strong class="jxr_keyword">new</strong> File(parent.getReporting().getOutputDirectory() +<span class="jxr_string">"/"</span> + outputDirectory);
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>         getLog().info(<span class="jxr_string">"start aggregation into "</span> + dest);
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>         StringBuilder mpath = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>         <strong class="jxr_keyword">for</strong> (MavenProject module : modules) {
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>             <strong class="jxr_keyword">if</strong> ( <span class="jxr_string">"pom"</span>.equals( module.getPackaging().toLowerCase() ) ) {
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>             }
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>             <strong class="jxr_keyword">if</strong> (aggregateDirectOnly &amp;&amp; module.getParent() != parent) {
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>             }
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>             File subScaladocPath = <strong class="jxr_keyword">new</strong> File(module.getReporting().getOutputDirectory() +<span class="jxr_string">"/"</span> + outputDirectory).getAbsoluteFile();
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>             <em class="jxr_comment">//System.out.println(" -&gt; " + project.getModulePathAdjustment(module)  +" // " + subScaladocPath + " // " + module.getBasedir() );</em>
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>             <strong class="jxr_keyword">if</strong> (subScaladocPath.exists()) {
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>                 mpath.append(subScaladocPath).append(File.pathSeparatorChar);
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>             }
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>         }
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>         <strong class="jxr_keyword">if</strong> (mpath.length() != 0) {
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>             getLog().info(<span class="jxr_string">"aggregate vscaladoc from : "</span> + mpath);
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>             <a name="JavaMainCaller" href="../scala_maven_executions/JavaMainCaller.html#JavaMainCaller">JavaMainCaller</a> jcmd = getScalaCommand();
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>             jcmd.addOption(<span class="jxr_string">"-d"</span>, dest.getAbsolutePath());
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>             jcmd.addOption(<span class="jxr_string">"-aggregate"</span>, mpath.toString());
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>             jcmd.run(displayCmd);
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>             getLog().warn(<span class="jxr_string">"no vscaladoc to aggregate"</span>);
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>         }
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>         tryAggregateUpper(parent);
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>     }
+<a class="jxr_linenumber" name="L415" href="#L415">415</a> 
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L417" href="#L417">417</a> <em class="jxr_javadoccomment">     * Method that sets the bottom text that will be displayed on the bottom of</em>
+<a class="jxr_linenumber" name="L418" href="#L418">418</a> <em class="jxr_javadoccomment">     * the javadocs.</em>
+<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">     * @return a String that contains the text that will be displayed at the</em>
+<a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">     *         bottom of the javadoc</em>
+<a class="jxr_linenumber" name="L422" href="#L422">422</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>     <strong class="jxr_keyword">private</strong> String getBottomText() {
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>         String inceptionYear = project.getInceptionYear();
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>         <strong class="jxr_keyword">int</strong> actualYear = Calendar.getInstance().get(Calendar.YEAR);
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>         String year = String.valueOf(actualYear);
+<a class="jxr_linenumber" name="L427" href="#L427">427</a> 
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>         String theBottom = StringUtils.replace(bottom, <span class="jxr_string">"{currentYear}"</span>, year);
+<a class="jxr_linenumber" name="L429" href="#L429">429</a> 
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>         <strong class="jxr_keyword">if</strong> (inceptionYear != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>             <strong class="jxr_keyword">if</strong> (inceptionYear.equals(year)) {
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>                 theBottom = StringUtils.replace(theBottom, <span class="jxr_string">"{inceptionYear}-"</span>, <span class="jxr_string">""</span>);
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>                 theBottom = StringUtils.replace(theBottom, <span class="jxr_string">"{inceptionYear}"</span>, inceptionYear);
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>             }
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>             theBottom = StringUtils.replace(theBottom, <span class="jxr_string">"{inceptionYear}-"</span>, <span class="jxr_string">""</span>);
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>         }
+<a class="jxr_linenumber" name="L439" href="#L439">439</a> 
+<a class="jxr_linenumber" name="L440" href="#L440">440</a>         <strong class="jxr_keyword">if</strong> (project.getOrganization() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>             theBottom = StringUtils.replace(theBottom, <span class="jxr_string">" {organizationName}"</span>, <span class="jxr_string">""</span>);
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>             <strong class="jxr_keyword">if</strong> ((project.getOrganization() != <strong class="jxr_keyword">null</strong>) &amp;&amp; (StringUtils.isNotEmpty(project.getOrganization().getName()))) {
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>                 <strong class="jxr_keyword">if</strong> (StringUtils.isNotEmpty(project.getOrganization().getUrl())) {
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>                     theBottom = StringUtils.replace(theBottom, <span class="jxr_string">"{organizationName}"</span>, <span class="jxr_string">"&lt;a href=\&quot;"</span> + project.getOrganization().getUrl() + <span class="jxr_string">"\&quot;&gt;"</span> + project.getOrganization().getName() + <span class="jxr_string">"&lt;/a&gt;"</span>);
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L447" href="#L447">447</a>                     theBottom = StringUtils.replace(theBottom, <span class="jxr_string">"{organizationName}"</span>, project.getOrganization().getName());
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>                 }
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>                 theBottom = StringUtils.replace(theBottom, <span class="jxr_string">" {organizationName}"</span>, <span class="jxr_string">""</span>);
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>             }
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>         }
+<a class="jxr_linenumber" name="L453" href="#L453">453</a> 
+<a class="jxr_linenumber" name="L454" href="#L454">454</a>         <strong class="jxr_keyword">return</strong> theBottom;
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>     }
+<a class="jxr_linenumber" name="L456" href="#L456">456</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2018. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2019. All rights reserved.</div>
 </body>
 </html>
