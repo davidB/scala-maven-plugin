@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<properties>
+		<title>maven for scala</title>
+		<author>David Bernard</author>
+	</properties>
+	<body>
+		<h1>maven for scala</h1>
+		<p>Friday, January 4, 2008</p>        
+
+		<address>Posted by David Bernard</address>
+		<p>I'll try to provide a mini-guide about <a href="http://maven.apache.org/">maven</a> for scala's project. For more info, go to <a href="http://maven.apache.org/">maven home</a> or plugin's home.</p>
+		<section name="Introduction to maven">
+			<p><a href="http://maven.apache.org/">Maven</a> is a builder like make or ant, written in java.  It's a commande line tool, IDE (Eclipse, Netbeans, IDEA) have plugins to handle and integrate project powered by maven. It could be used to create lib (jar), webapps (ear) and any other type of "artifact". It prefers convention over configuration, and configuration over instruction. What that mean exactly ?</p>
+			
+			<ul>
+			<li>every action have a default configuration (= the convention).</li>
+			<li>every action is a goal defined into a plugin  (aka mojo), and for common case, you will try to use existing plugin instead of calling (more) low level instruction (like copy file,...)</li>
+			</ul>
+			<p>Before creating your first scala project, You need to know some info:</p>
+			<ul>
+			<li><a href="http://maven.apache.org/run-maven/index.html">a command line tool</a>
+			<ul>
+			<li>"mvn" is the name of the command line tool to call maven 2.x. To display help, run <code>mvn help</code></li>
+			</ul></li>
+			<li><a href="http://maven.apache.org/pom.html">the project descriptor</a> : the file [prj]/pom.xml
+			<ul>
+			<li>It's the file when every project information are stored (name, version, dependencies, license, mailing-list,...)</li>
+			</ul></li>
+			<li><a href="http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html">the build lifecycle</a> :
+			The build lifecycle is defined by a sequence of phases, the main are:
+			<ul>
+			<li>compile - compile the source code of the project</li>
+			<li>test - test the compiled source code using a suitable unit testing framework. These tests should not require the code be packaged or deployed</li>
+			<li>package - take the compiled code and package it in its distributable format, such as a JAR.</li>
+			<li>integration-test - process and deploy the package if necessary into an environment where integration tests can be run</li>
+			<li>install - install the package into the local repository, for use as a dependency in other projects locally</li>
+			<li>deploy - done in an integration or release environment, copies the final package to the remote repository for sharing with other developers and projects.</li>
+			</ul>
+			A phase is depend of the previous  one, so when you request the phase test, then the phase compile is done before,...</li>
+			<li><a href="http://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html">Directory layout</a>
+			<ul>
+			<li>see below for a scala project</li>
+			</ul></li>
+			<li><a href="http://maven.apache.org/guides/introduction/introduction-to-repositories.html">repository</a>
+			<ul>
+			<li>Maven use repositories (local and remote) to store and to retrieve artifacts and their descriptor (pom). Artifacts are jar, war,... and they could be used as dependencies, maven plugin,...</li>
+			<li>By default, maven search artifact in the central repository. A "dedicated" repository for Scala stuff is available at <a href="http://scala-tools.org/repo-releases/">http://scala-tools.org/repo-releases/</a>.</li>
+			</ul></li>
+			</ul>
+		</section>
+		<section name="Your first scala project with maven">
+			<p>In the following, we will run maven for the first time. Maven download what it need to work from remote repositories, and cache the downloaded artifact into its local repository (default is <code>$HOME/.m2/repository</code>). It only download what it need for the requested phases/goals (lazy downloading). So the <b>first</b> runs could be very long.</p>
+
+			<subsection name="Step 0: installation">
+				<ul>
+				<li>install jdk 1.5+ (eg : on my box <code>$HOME/bin/soft-linux/jdk-1.5.0_03</code>)</li>
+				<li>install maven 2.0.8+ (eg : on my box <code>$HOME/bin/soft-java/apache-maven-2.0.8</code>)
+				<ul>
+				<li>download it</li>
+				<li>unarchive it</li>
+				<li>add the apache-maven-2.0.8/bin directory to your PATH</li>
+				<li>check that maven is in the path: 
+				<ul>
+				<li>go into any directory outside the maven installation</li>
+				<li>run <code>mvn help</code>, you should see
+				
+				<source><![CDATA[usage: mvn [options] [<goal(s)>] [<phase(s)>]
+
+Options:
+-q,--quiet                    Quiet output - only show errors
+...
+]]></source></li>
+				</ul></li>
+				</ul></li>
+				</ul>
+			</subsection>
+			<subsection name="Step 1: create a project">
+				<p>You could create a project skeleton with your favorite file system tools (following directory layout as below) or you could use archetypes. Maven Archetypes are project'skeleton that could be used to create new project.</p>
+				
+				<source>mvn org.apache.maven.plugins:maven-archetype-plugin:1.0-alpha-7:create \
+-DarchetypeGroupId=org.scala-tools.archetypes \
+-DarchetypeArtifactId=scala-archetype-simple \
+-DarchetypeVersion=1.1 \
+-DremoteRepositories=http://scala-tools.org/repo-releases \
+-DgroupId=your.proj.gid -DartifactId=your-proj-id</source>
+				<p>At the end of the process you should see something like</p>
+				<source>...
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1 second
+[INFO] Finished at: Sat Jan 05 17:39:47 CET 2008
+[INFO] Final Memory: 6M/63M
+[INFO] ------------------------------------------------------------------------</source>
+				<p>!! Success you now have a empty project under your-proj-id directory with the following directory layout :</p>
+				<source>your-proj-id/
+|-- pom.xml
+`-- src
+|-- main
+|   `-- scala
+|       `-- your
+|           `-- proj
+|               `-- gid
+|                   `-- App.scala
+`-- test
+    `-- scala
+        `-- your
+            `-- proj
+                `-- gid
+                    `-- AppTest.scala</source>
+				<p>In fact, the project is not empty it contains an helloworld application (App.scala) and a JUnit test (AppTest.scala).</p>
+				<p>In the next step, you will request phase (or goals). The results will be put under your-proj-id/target directory. The target directory is the working directory where every plugin put the result of computation. If you want to clean up, request the goal "clean"</p>
+				<source>mvn clean</source>
+			</subsection>
+			<subsection name="Step 2: compile the project">
+				<source># only compile
+mvn compile</source>
+				<p>If it's the first time you use maven with scala, the build should failed with a message like</p>
+				<source>...
+[ERROR] FATAL ERROR
+[INFO]
+------------------------------------------------------------------------
+[INFO] The PluginDescriptor for the plugin Plugin [org.scala-tools:maven-scala-plugin] was not found.
+[INFO]
+...</source>
+				<dl>
+				<dt>Cause :</dt><dd>The pom.xml (autogenerated) doesn't specify wish version to use for maven-scala-plugin, so maven try to use the latest available localy, and none was previously downloaded.</dd>
+				<dt>Solutions :</dt><dd>Edit the pom.xml and define a version for the plugin.</dd>
+				<dd>Request to download the latest available on remote repositories.</dd>
+				</dl>
+				<p>I prefer the second solution (in this case):</p>
+				<source># only compile
+mvn -U compile</source>
+				<p>now you should see</p>
+				<source>...
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+...</source>
+			</subsection>
+			<subsection name="Step 3: compile and running test">
+				<p>The skeleton create a JUnit test AppTest.scala as sample, try to compile and run it</p>
+				<source># compile + compile test + run test
+mvn test</source>
+				<p>you should get :</p>
+				<source><![CDATA[...
+-------------------------------------------------------
+T E S T S
+-------------------------------------------------------
+Running your.proj.gid.AppTest
+Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.054 sec <<< FAILURE!
+
+Results :
+
+Failed tests:
+testKO(your.proj.gid.AppTest)
+
+Tests run: 2, Failures: 1, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] There are test failures.
+
+Please refer to /home/dwayne/tmp/your-proj-id/target/surefire-reports for the individual test results.]]></source>
+				<p>BUILD FAILURE, it's not good! So read the log on console :</p>
+				<ul>
+				<li>there is 2 tests and one of them failed</li>
+				<li>the failed test is the method testKO from the class your.proj.gid.AppTest</li>
+				<li>see the content of the directory .../your-proj-id/target/surefire-reports for details</li>
+				</ul>
+				<p>So you could read the problem in .../your-proj-id/target/surefire-reports/your.proj.gid.AppTest.txt</p>
+				<source><![CDATA[...
+testKO(your.proj.gid.AppTest)  Time elapsed: 0.01 sec  <<< FAILURE!
+junit.framework.AssertionFailedError
+    at junit.framework.Assert.fail(Assert.java:47)
+    at junit.framework.Assert.assertTrue(Assert.java:20)
+    at junit.framework.Assert.assertTrue(Assert.java:27)
+    at your.proj.gid.AppTest.testKO(AppTest.scala:26)
+    at your.proj.gid.AppTest.testKO(AppTest.scala:26)
+...]]></source>
+				<p>So edit the test and fix it (it's easy), and rerun test until it pass.
+Why the empty project is created with a failed test? to check that test are running and are used.</p>
+			</subsection>
+			<subsection name="Step 4: generate the jar">
+				<source># compile + run test + generate the jar
+mvn package</source>
+				<p>If you fixed the test in Step 3, then a jar should be generated under the target directory. The jar doesn't contains the test classes, only the classes from src/main/scala/...</p>
+			</subsection>
+			<subsection name="Step 5: start coding">
+				<ul>
+				<li>add scala file under src/main/scala/... or src/test/scala/...</li>
+				<li>run the phases or goal you wish,...</li>
+				<li>if you need more lib (dependencies), edit the pom.xml and add &lt;dependecy&gt; node. By default you could declare dependency available on central repo (I suggest to use <a href="http://mvnrepository.com/">mvnrepository</a> as a search engine in central repo), or in <a href="http://scala-tools.org/repo-releases/">http://scala-tools.org/repo-releases/</a> (browse the directory, no search engine available :()</li>
+				</ul>
+			</subsection>
+		</section>
+		<section name="Conclusion">
+			<p>I expect this overlook and quick tutorial could help you to start playing with maven and scala. I  plan to write other articles about "maven for scala" (about, the pom.xml and repositories). If you want to know more about maven and don't want to wai futur article, I suggest you browse the <a href="http://maven.apache.org/guides/index.html">documentation of maven</a>. I also suggest you to take a look at the <a href="http://scala-tools.org/mvnsites/maven-scala-plugin/">maven-scala-plugin 2.x documentation</a>, you'll see how to generate scaladoc, choose the scala version, or run a scala console with the project dependencies.</p>
+			<p>If you have question ask, If you want I detail some point here or in a futur article, ask.</p>
+		</section>
+	</body>
+</document>
