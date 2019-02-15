@@ -1,6 +1,7 @@
 package scala_maven;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Compiles a directory of Scala source. Corresponds roughly to the compile goal
@@ -37,6 +39,14 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     @Parameter(property = "analysisCacheFile", defaultValue = "${project.build.directory}/analysis/compile")
     protected File analysisCacheFile;
 
+    /**
+     * Comma seperated list of directories or jars to add to the classpath
+     *
+     */
+    @Parameter(property="addToClasspath")
+    protected String addToClasspath;
+
+
     @Override
     protected List<File> getSourceDirectories() throws Exception {
         List<String> sources = project.getCompileSourceRoots();
@@ -53,7 +63,10 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
         List<String> back = project.getCompileClasspathElements();
         back.remove(project.getBuild().getOutputDirectory());
         //back.add(getOutputDir().getAbsolutePath());
-        back = TychoUtilities.addOsgiClasspathElements(project, back);
+        if (addToClasspath != null) {
+            back.addAll(Arrays.asList(StringUtils.split(addToClasspath,",")));
+        }
+        back.addAll(TychoUtilities.addOsgiClasspathElements(project, back));
         return back;
     }
 

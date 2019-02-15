@@ -592,7 +592,7 @@
               <pomExcludes>
                 <pomExclude>**/off-*/pom.xml</pomExclude>
                 <pomExclude>**/off-*/**/pom.xml</pomExclude>
-                <pomExclude>**/m*/pom.xml</pomExclude>
+                <pomExclude>**/mi*/pom.xml</pomExclude>
                 <pomExclude>**/test_macroparadise/macro/pom.xml</pomExclude>
                 <pomExclude>**/test_macroparadise/core/pom.xml</pomExclude>
                 <pomExclude>scalac-plugin/src/it/**/pom.xml</pomExclude>
