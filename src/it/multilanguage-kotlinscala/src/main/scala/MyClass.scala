@@ -1,0 +1,3 @@
+
+object MyClass extends KTestClass {
+}
