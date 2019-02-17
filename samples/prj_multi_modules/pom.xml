@@ -31,11 +31,6 @@
                 <goal>compile</goal>
                 <goal>testCompile</goal>
               </goals>
-              <configuration>
-                <javacArgs>
-                  <javacArg></javacArg>
-                </javacArgs>
-              </configuration>>
             </execution>
           </executions>
         </plugin>
