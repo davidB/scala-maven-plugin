@@ -1,16 +1,14 @@
 package scala_maven;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.codehaus.plexus.util.StringUtils;
+
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Compiles a directory of Scala source. Corresponds roughly to the compile goal
@@ -40,11 +38,11 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     protected File analysisCacheFile;
 
     /**
-     * Comma seperated list of directories or jars to add to the classpath
+     * List of directories or jars to add to the classpath
      *
      */
-    @Parameter(property="addToClasspath")
-    protected String addToClasspath;
+    @Parameter(property="classpath")
+    protected Classpath classpath;
 
 
     @Override
@@ -60,11 +58,13 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
 
     @Override
     protected List<String> getClasspathElements() throws Exception {
-        List<String> back = project.getCompileClasspathElements();
+        final List<String> back = project.getCompileClasspathElements();
         back.remove(project.getBuild().getOutputDirectory());
         //back.add(getOutputDir().getAbsolutePath());
-        if (addToClasspath != null) {
-            back.addAll(Arrays.asList(StringUtils.split(addToClasspath,",")));
+        if (classpath != null && classpath.getAdd() != null && !classpath.getAdd().isEmpty()) {
+            for (File f: classpath.getAdd()) {
+                back.add(f.getAbsolutePath());
+            }
         }
         back.addAll(TychoUtilities.addOsgiClasspathElements(project, back));
         return back;
