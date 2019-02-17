@@ -51,7 +51,9 @@
               <goal>testCompile</goal>
             </goals>
             <configuration>
-              <addToClasspath>${project.build.directory}/classes</addToClasspath>
+              <classpath>
+                <add>${project.build.directory}/classes</add>
+              </classpath>
             </configuration>
           </execution>
         </executions>
