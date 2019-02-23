@@ -580,8 +580,8 @@
               <properties>
                 <scala.version.27>2.7.7</scala.version.27>
                 <scala.version.28>2.8.2</scala.version.28>
-                <scala.version.lastrelease>2.12.6</scala.version.lastrelease>
-                <scala.version.next>2.12.6</scala.version.next>
+                <scala.version.lastrelease>2.12.8</scala.version.lastrelease>
+                <scala.version.next>2.12.8</scala.version.next>
                 <scala.compat.version>2.12</scala.compat.version>
                 <scala.macroparadise.version>2.10.2-SNAPSHOT</scala.macroparadise.version>
                 <scala.macroparadise.organisation>org.scala-lang.macro-paradise</scala.macroparadise.organisation>
