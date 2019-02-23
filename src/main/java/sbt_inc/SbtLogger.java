@@ -1,49 +1,43 @@
 package sbt_inc;
 
 import org.apache.maven.plugin.logging.Log;
-import xsbti.F0;
-import xsbti.Logger;
+import sbt.util.Level;
+import sbt.util.Logger;
+import scala.Enumeration;
+import scala.Function0;
 
-public class SbtLogger implements Logger {
+public class SbtLogger extends Logger {
 
-    Log log;
+    private final Log log;
 
     public SbtLogger(Log l) {
         this.log = l;
     }
 
     @Override
-    public void error(F0<String> msg) {
-        if (log.isErrorEnabled()) {
-            log.error(msg.apply());
+    public void trace(Function0<Throwable> t) {
+        if (log.isDebugEnabled()) {
+            log.debug(t.apply());
         }
     }
 
     @Override
-    public void warn(F0<String> msg) {
-        if (log.isWarnEnabled()) {
-            log.warn(msg.apply());
-        }
-    }
-
-    @Override
-    public void info(F0<String> msg) {
+    public void success(Function0<String> message) {
         if (log.isInfoEnabled()) {
-            log.info(msg.apply());
+            log.info("Success: " + message.apply());
         }
     }
 
     @Override
-    public void debug(F0<String> msg) {
-        if (log.isDebugEnabled()) {
-            log.debug(msg.apply());
-        }
-    }
-
-    @Override
-    public void trace(F0<Throwable> exception) {
-        if (log.isDebugEnabled()) {
-            log.debug(exception.apply());
+    public void log(Enumeration.Value level, Function0<String> message) {
+        if (level.equals(Level.Error())) {
+            log.error(message.apply());
+        } else if (level.equals(Level.Warn())) {
+            log.warn(message.apply());
+        } else if (level.equals(Level.Info())) {
+            log.info(message.apply());
+        } else if (level.equals(Level.Debug())) {
+            log.debug(message.apply());
         }
     }
 }
