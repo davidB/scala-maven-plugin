@@ -16,7 +16,6 @@ import scala_maven_executions.MainHelper;
 public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     public static final String ALL = "all";
-    public static final String MODIFIED_ONLY = "modified-only";
     public static final String INCREMENTAL = "incremental";
 
     /**
@@ -27,7 +26,6 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     /**
      * Recompile mode to use when sources were previously compiled and there is at
      * least one change:
-     * "modified-only" =&gt; only modified sources are recompiled (pre 2.13 behavior),
      * "all" =&gt; all sources are recompiled,
      * "incremental" =&gt; incrementally recompile modified sources and other affected
      * sources.
@@ -191,14 +189,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
                 }
             }
             if ((modifiedScalaFiles.size() != 0) || (modifiedJavaFiles.size() != 0)) {
-                if ((modifiedScalaFiles.size() != 0) && MODIFIED_ONLY.equals(recompileMode)) {
-                    files.addAll(allJavaFiles);
-                    files.addAll(modifiedScalaFiles);
-                    notifyCompilation(files);
-                } else {
-                    files.addAll(sourceFiles);
-                    notifyCompilation(sourceRootDirs);
-                }
+                files.addAll(sourceFiles);
+                notifyCompilation(sourceRootDirs);
             }
         } else {
             files.addAll(sourceFiles);
