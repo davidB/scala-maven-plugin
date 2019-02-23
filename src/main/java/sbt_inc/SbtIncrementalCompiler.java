@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class SbtIncrementalCompiler {
 
@@ -58,7 +59,7 @@ public class SbtIncrementalCompiler {
 
         compiler = new IncrementalCompilerImpl();
 
-        AnalyzingCompiler scalaCompiler = new AnalyzingCompiler(
+        ScalaCompiler scalaCompiler = new AnalyzingCompiler(
             scalaInstance, // scalaInstance
             ZincCompilerUtil.constantBridgeProvider(scalaInstance, compilerBridgeJar), //provider
             ClasspathOptionsUtil.auto(), // classpathOptions
@@ -99,9 +100,11 @@ public class SbtIncrementalCompiler {
     }
 
     public void compile(List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions) {
+        List<File> fullClasspath = classpathElements.stream().map(File::new).collect(Collectors.toList());
+        fullClasspath.add(classesDirectory);
 
         Inputs inputs = compiler.inputs(
-            classpathElements.stream().map(File::new).toArray(size -> new File[size]), //classpath
+            fullClasspath.toArray(new File[]{}), //classpath
             sources.toArray(new File[]{}), // sources
             classesDirectory, // classesDirectory
             scalacOptions.toArray(new String[]{}), // scalacOptions
