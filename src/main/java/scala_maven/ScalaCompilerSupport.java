@@ -90,12 +90,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
         if (!compileInLoop && INCREMENTAL.equals(recompileMode)) {
-            // TODO - Do we really need this duplicated here?
-            if (!outputDir.exists()) {
-              outputDir.mkdirs();
-            }
             // if not compileInLoop, invoke incrementalCompile immediately
-            return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
+            return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, false);
         }
 
         long t0 = System.currentTimeMillis();
@@ -249,6 +245,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         List<File> sources = findSourceWithFilters(sourceRootDirs);
         if (sources.isEmpty()) {
             return -1;
+        }
+
+        // TODO - Do we really need this duplicated here?
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
         }
 
         if (incremental == null) {

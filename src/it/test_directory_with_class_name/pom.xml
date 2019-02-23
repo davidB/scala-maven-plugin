@@ -30,15 +30,15 @@
 					<artifactId>@project.artifactId@</artifactId>
 					<version>@project.version@</version>
 					<configuration>
-						<!--recompileMode>incremental</recompileMode-->
+						<recompileMode>all</recompileMode>
 						<args>
-							<arg>-target:jvm-1.7</arg>
+							<arg>-target:jvm-1.8</arg>
 						</args>
 						<javacArgs>
 							<javacArg>-source</javacArg>
-							<javacArg>1.7</javacArg>
+							<javacArg>1.8</javacArg>
 							<javacArg>-target</javacArg>
-							<javacArg>1.7</javacArg>
+							<javacArg>1.8</javacArg>
 						</javacArgs>
           			</configuration>
 				</plugin>
