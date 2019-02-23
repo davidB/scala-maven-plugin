@@ -27,7 +27,7 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
         }
         this.mainClassName = mainClassName1;
         if (StringUtils.isNotEmpty(classpath)) {
-          addJvmArgs("-classpath", classpath);
+            addJvmArgs("-classpath", classpath);
         }
         addJvmArgs(jvmArgs1);
         addArgs(args1);
@@ -62,7 +62,7 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
             isClasspath = "-classpath".equals(item);
         }
         if (!found) {
-          addJvmArgs("-classpath", entry.getCanonicalPath());
+            addJvmArgs("-classpath", entry.getCanonicalPath());
         }
     }
 

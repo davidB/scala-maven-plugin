@@ -131,14 +131,14 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     private static AtomicInteger _lastScriptIndex = new AtomicInteger(0);
 
     private static String scriptBaseNameOf(File scriptFile, int idx) {
-      if (scriptFile == null) {
-          return "embeddedScript_" + idx;
-      }
-      int dot = scriptFile.getName().lastIndexOf('.');
-      if (dot == -1) {
-          return scriptFile.getName() + "_" + idx;
-      }
-      return scriptFile.getName().substring(0, dot) + "_" + idx;
+        if (scriptFile == null) {
+            return "embeddedScript_" + idx;
+        }
+        int dot = scriptFile.getName().lastIndexOf('.');
+        if (dot == -1) {
+            return scriptFile.getName() + "_" + idx;
+        }
+        return scriptFile.getName().substring(0, dot) + "_" + idx;
     }
 
     @Override
@@ -159,7 +159,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             }
         }
         if (excludeScopes == null) {
-          excludeScopes = "";
+            excludeScopes = "";
         }
         // prepare
         File scriptDir = new File(outputDir, ".scalaScriptGen");
@@ -271,9 +271,9 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         Set<String> excludes = new TreeSet<String>(Arrays.asList(StringUtils.split(excludeScopes.toLowerCase(),",")));
 
         for(Artifact a : project.getArtifacts()) {
-          if (includes.contains(a.getScope().toLowerCase()) && !excludes.contains(a.getScope())) {
-            addToClasspath(a, classpath, true);
-          }
+            if (includes.contains(a.getScope().toLowerCase()) && !excludes.contains(a.getScope())) {
+                addToClasspath(a, classpath, true);
+            }
         }
 
         if (includes.contains("plugin") && !excludes.contains("plugin")) {

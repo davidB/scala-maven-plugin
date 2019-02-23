@@ -54,29 +54,29 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
 
         //err and out are redirected to out
         if (!_redirectToLog) {
-          exec.setStreamHandler(new PumpStreamHandler(System.out, System.err, System.in));
+            exec.setStreamHandler(new PumpStreamHandler(System.out, System.err, System.in));
         } else {
             exec.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
                 private LevelState _previous = new LevelState();
                 
                 @Override
                 protected void processLine(String line, int level) {
-                  try {
-                    _previous = LogProcessorUtils.levelStateOf(line, _previous);
-                    switch (_previous.level) {
-                    case ERROR:
-                      requester.getLog().error(line);
-                      break;
-                    case WARNING:
-                      requester.getLog().warn(line);
-                      break;
-                    default:
-                      requester.getLog().info(line);
-                      break;
+                    try {
+                        _previous = LogProcessorUtils.levelStateOf(line, _previous);
+                        switch (_previous.level) {
+                        case ERROR:
+                            requester.getLog().error(line);
+                            break;
+                        case WARNING:
+                            requester.getLog().warn(line);
+                            break;
+                        default:
+                            requester.getLog().info(line);
+                            break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                  } catch (Exception e) {
-                    e.printStackTrace();
-                  }
                 }
             }));
         }
