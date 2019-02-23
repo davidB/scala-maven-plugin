@@ -280,13 +280,6 @@
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.7.1</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.bcel</groupId>
-              <artifactId>bcel</artifactId>
-              <version>6.3</version>
-            </dependency>
-          </dependencies>
         </plugin>
         <plugin>
           <artifactId>maven-jxr-plugin</artifactId>
