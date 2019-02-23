@@ -100,8 +100,11 @@ public class SbtIncrementalCompiler {
     }
 
     public void compile(List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions) {
-        List<File> fullClasspath = classpathElements.stream().map(File::new).collect(Collectors.toList());
+        List<File> fullClasspath = new ArrayList<>();
         fullClasspath.add(classesDirectory);
+        for (String classpathElement : classpathElements) {
+            fullClasspath.add(new File(classpathElement));
+        }
 
         Inputs inputs = compiler.inputs(
             fullClasspath.toArray(new File[]{}), //classpath
