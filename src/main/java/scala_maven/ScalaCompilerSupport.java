@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import sbt_inc.SbtIncrementalCompiler;
+import xsbti.compile.CompileOrder;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
 
@@ -64,7 +65,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      *
      */
     @Parameter(property = "compileOrder", defaultValue = "Mixed")
-    private String compileOrder;
+    private CompileOrder compileOrder;
 
     @Override
     protected void doExecute() throws Exception {
