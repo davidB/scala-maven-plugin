@@ -20,12 +20,17 @@
     <developer>
       <name>David Bernard</name>
       <timezone>+1</timezone>
+      <id>davidB</id>
     </developer>
     <developer>
       <name>Josh Suereth</name>
     </developer>
     <developer>
       <name>Peter Vlugter</name>
+    </developer>
+    <developer>
+      <name>Stephane Landelle</name>
+      <id>slandelle</id>
     </developer>
   </developers>
   <contributors>
