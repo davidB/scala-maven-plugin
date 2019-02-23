@@ -35,9 +35,8 @@ public class SbtIncrementalCompiler {
     private final Setup setup;
     private final AnalysisStore analysisStore;
 
-    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion, List<File> extraJars, File compilerBridgeJar, Log l, List<String> args, File cacheFile) throws Exception {
+    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion, List<File> extraJars, File compilerBridgeJar, Log l, File cacheFile) throws Exception {
         l.info("Using incremental compilation");
-        if (args.size() > 0) l.warn("extra args for zinc are ignored in non-server mode");
         this.logger = new SbtLogger(l);
 
         List<File> allJars = new ArrayList<>(extraJars);

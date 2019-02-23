@@ -2,12 +2,9 @@ package scala_maven;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.plexus.util.StringUtils;
 
 import sbt_inc.SbtIncrementalCompiler;
 import scala_maven_executions.JavaMainCaller;
@@ -70,15 +67,6 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      */
     @Parameter(property = "compileOrder", defaultValue = "mixed")
     private String compileOrder;
-
-    /**
-     * Additional parameter to use to call zinc server
-     * It is a pipe '|' separated list of arguments, so it can be used from command
-     * line ("-DaddZincArgs=arg1|arg2|arg3|...").
-     *
-     */
-    @Parameter(property = "addZincArgs")
-    private String addZincArgs = "";
 
     @Override
     protected void doExecute() throws Exception {
@@ -278,8 +266,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             List<File> extraJars = getCompilerDependencies();
             extraJars.remove(libraryJar);
             File compilerBridgeJar = getCompilerBridgeJar();
-            List<String> zincArgs = StringUtils.isEmpty(addZincArgs) ? new LinkedList<>() : Arrays.asList(StringUtils.split(addZincArgs, "|"));
-           	incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars, compilerBridgeJar, getLog(), zincArgs, cacheFile);
+           	incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars, compilerBridgeJar, getLog(), cacheFile);
         }
 
         classpathElements.remove(outputDir.getAbsolutePath());
