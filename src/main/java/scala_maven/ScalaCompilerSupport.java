@@ -63,7 +63,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * Can be Mixed, JavaThenScala, or ScalaThenJava.
      *
      */
-    @Parameter(property = "compileOrder", defaultValue = "mixed")
+    @Parameter(property = "compileOrder", defaultValue = "Mixed")
     private String compileOrder;
 
     @Override
@@ -258,7 +258,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             List<File> extraJars = getCompilerDependencies();
             extraJars.remove(libraryJar);
             File compilerBridgeJar = getCompilerBridgeJar();
-           	incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars, compilerBridgeJar, getLog(), cacheFile);
+           	incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars, compilerBridgeJar, getLog(), cacheFile, compileOrder);
         }
 
         classpathElements.remove(outputDir.getAbsolutePath());
@@ -266,7 +266,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         List<String> javacOptions = getJavacOptions();
 
         try {
-            incremental.compile(classpathElements, sources, outputDir, scalacOptions, javacOptions, compileOrder);
+            incremental.compile(classpathElements, sources, outputDir, scalacOptions, javacOptions);
         } catch (xsbti.CompileFailed e) {
             if (compileInLoop) {
                 compileErrors = true;

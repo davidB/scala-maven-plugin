@@ -29,15 +29,17 @@ public class SbtIncrementalCompiler {
     public static final String ZINC_ARTIFACT_ID = "zinc";
     public static final String COMPILER_BRIDGE_ARTIFACT_ID = "compiler-bridge";
 
+    private final CompileOrder compileOrder;
     private final Logger logger;
     private final IncrementalCompilerImpl compiler;
     private final Compilers compilers;
     private final Setup setup;
     private final AnalysisStore analysisStore;
 
-    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion, List<File> extraJars, File compilerBridgeJar, Log l, File cacheFile) throws Exception {
-        l.info("Using incremental compilation");
+    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion, List<File> extraJars, File compilerBridgeJar, Log l, File cacheFile, String compileOrder) throws Exception {
+        this.compileOrder = CompileOrder.valueOf(compileOrder);
         this.logger = new SbtLogger(l);
+        l.info("Using incremental compilation using " + compileOrder + " compile order");
 
         List<File> allJars = new ArrayList<>(extraJars);
         allJars.add(libraryJar);
@@ -96,7 +98,7 @@ public class SbtIncrementalCompiler {
             );
     }
 
-    public void compile(List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions, String compileOrder) {
+    public void compile(List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions) {
 
         Inputs inputs = compiler.inputs(
             classpathElements.stream().map(File::new).toArray(size -> new File[size]), //classpath
@@ -106,7 +108,7 @@ public class SbtIncrementalCompiler {
             javacOptions.toArray(new String[]{}), // javacOptions
             100, // maxErrors
             new Function[]{}, // sourcePositionMappers
-            toCompileOrder(compileOrder), // order
+            compileOrder, // order
             compilers,
             setup,
             compiler.emptyPreviousResult()
@@ -123,17 +125,5 @@ public class SbtIncrementalCompiler {
 
         CompileResult newResult = compiler.compile(inputs, logger);
         analysisStore.set(AnalysisContents.create(newResult.analysis(), newResult.setup()));
-    }
-
-    private CompileOrder toCompileOrder(String name) {
-        if (name.equalsIgnoreCase(CompileOrder.Mixed.name())) {
-            return CompileOrder.Mixed;
-        } else if (name.equalsIgnoreCase(CompileOrder.JavaThenScala.name())) {
-            return CompileOrder.JavaThenScala;
-        } else if (name.equalsIgnoreCase(CompileOrder.ScalaThenJava.name())) {
-            return CompileOrder.ScalaThenJava;
-        } else {
-            throw new IllegalArgumentException("Unknown compileOrder: " + name);
-        }
     }
 }
