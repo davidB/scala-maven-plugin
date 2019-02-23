@@ -53,7 +53,7 @@ public class VersionNumber implements Comparable<VersionNumber> {
   @Override
   public int compareTo(VersionNumber o) {
     int back = 0;
-    if ((back == 0) && (major > o.major)) {
+    if ((back == 0) && (major > o.major)) { // lgtm [java/constant-comparison]
       back = 1;
     }
     if ((back == 0) && (major < o.major)) {
@@ -112,7 +112,7 @@ class VersionNumberMask extends VersionNumber {
   @Override
   public int compareTo(VersionNumber o) {
     int back = 0;
-    if ((back == 0) && (major > o.major)) {
+    if ((back == 0) && (major > o.major)) { // lgtm [java/constant-comparison]
       back = 1;
     }
     if ((back == 0) && (major < o.major)) {
