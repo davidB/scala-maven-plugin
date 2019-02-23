@@ -31,8 +31,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * sources.
      *
      */
-    @Parameter(property = "recompileMode", defaultValue = "all")
-    protected String recompileMode = ALL;
+    @Parameter(property = "recompileMode", defaultValue = "incremental")
+    protected String recompileMode;
 
     /**
      * notifyCompilation if true then print a message "path: compiling"
@@ -42,7 +42,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      *
      */
     @Parameter(property = "notifyCompilation", defaultValue = "true")
-    private boolean notifyCompilation = true;
+    private boolean notifyCompilation;
 
     abstract protected File getOutputDir() throws Exception;
 
