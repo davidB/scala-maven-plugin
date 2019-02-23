@@ -41,6 +41,7 @@ import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNod
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.StringUtils;
 
+import sbt_inc.SbtIncrementalCompiler;
 import scala_maven_dependency.CheckScalaVersionVisitor;
 import scala_maven_dependency.ScalaDistroArtifactFilter;
 import scala_maven_executions.JavaMainCaller;
@@ -51,6 +52,7 @@ import scala_maven_executions.MainHelper;
 public abstract class ScalaMojoSupport extends AbstractMojo {
 
     public static final String SCALA_LIBRARY_ARTIFACTID = "scala-library";
+    public static final String SCALA_REFLECT_ARTIFACTID = "scala-reflect";
     public static final String SCALA_COMPILER_ARTIFACTID = "scala-compiler";
 
     /**
@@ -314,7 +316,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * =&gt; getAbsolutePath)
      *
      * @see <a href=
-     *      "https://github.com/davidB/maven-scala-plugin/issues/50">https://github.com/davidB/maven-scala-plugin/issues/50</a>
+     *      "https://github.com/davidB/scala-maven-plugin/issues/50">https://github.com/davidB/scala-maven-plugin/issues/50</a>
      */
     @Parameter(property = "maven.scala.useCanonicalPath", defaultValue = "true")
     protected boolean useCanonicalPath = true;
@@ -447,7 +449,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @param collectionFilter an {@link ArtifactFilter} used to determine which
      *        members dependency graph should be downloaded.
      * @param remoteRepositories a {@link List} of remote {@link
-     *        ArtifactRespository} values to used for dependency resolution of
+     *        ArtifactRepository} values to used for dependency resolution of
      *        the provided {@link Artifact}.
      * @param localRepository the local {@link ArtifactRepository} to use for
      *        dependency resolution of the given {@link Artifact}.
@@ -481,7 +483,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      * @param collectionFilter an {@link ArtifactFilter} used to determine which
      *        members dependency graph should be downloaded.
      * @param remoteRepositories a {@link List} of remote {@link
-     *        ArtifactRespository} values to used for dependency resolution of
+     *        ArtifactRepository} values to used for dependency resolution of
      *        the provided {@link Artifact}.
      * @param localRepository the local {@link ArtifactRepository} to use for
      *        dependency resolution of the given {@link Artifact}.
@@ -863,17 +865,31 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected File getLibraryJar() throws Exception {
       if (StringUtils.isNotEmpty(scalaHome)) {
         File lib = new File(scalaHome, "lib");
-        return new File(lib, "scala-library.jar");
+        return new File(lib, SCALA_LIBRARY_ARTIFACTID + ".jar");
       }
       return getArtifactJar(getScalaOrganization(), SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString());
+    }
+
+    protected File getReflectJar() throws Exception {
+        if (StringUtils.isNotEmpty(scalaHome)) {
+            File lib = new File(scalaHome, "lib");
+            return new File(lib, SCALA_REFLECT_ARTIFACTID + ".jar");
+        }
+        return getArtifactJar(getScalaOrganization(), SCALA_REFLECT_ARTIFACTID, findScalaVersion().toString());
     }
 
     protected File getCompilerJar() throws Exception {
       if(StringUtils.isNotEmpty(scalaHome)) {
         File lib = new File(scalaHome, "lib");
-        return new File(lib, "scala-compiler.jar");
+        return new File(lib, SCALA_COMPILER_ARTIFACTID + ".jar");
       }
       return getArtifactJar(getScalaOrganization(), SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
+    }
+
+    protected File getCompilerBridgeJar() throws Exception {
+        VersionNumber scalaVersion = findScalaVersion();
+        String zincVersion = findVersionFromPluginArtifacts(SbtIncrementalCompiler.SBT_GROUP_ID, scalaVersion.applyScalaArtifactVersioningScheme(SbtIncrementalCompiler.ZINC_ARTIFACT_ID));
+        return getArtifactJar(SbtIncrementalCompiler.SBT_GROUP_ID, scalaVersion.applyScalaArtifactVersioningScheme(SbtIncrementalCompiler.COMPILER_BRIDGE_ARTIFACT_ID), zincVersion);
     }
 
     protected List<File> getCompilerDependencies() throws Exception {

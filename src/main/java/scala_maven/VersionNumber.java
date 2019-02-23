@@ -78,6 +78,9 @@ public class VersionNumber implements Comparable<VersionNumber> {
     return (major == 0) && (minor == 0) && (bugfix == 0);
   }
 
+  public String applyScalaArtifactVersioningScheme(String name) {
+    return name + '_' + major + '.' + minor;
+  }
 }
 
 class VersionNumberMask extends VersionNumber {
