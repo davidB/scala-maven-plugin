@@ -16,8 +16,17 @@ import scala_maven_executions.MainHelper;
 */
 public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
-    public static final String ALL = "all";
-    public static final String INCREMENTAL = "incremental";
+    public enum RecompileMode {
+        /**
+         * all sources are recompiled
+         */
+        all,
+
+        /**
+         * incrementally recompile modified sources and other affected sources
+         */
+        incremental
+    }
 
     /**
     * Keeps track of if we get compile errors in incremental mode
@@ -26,14 +35,10 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     /**
     * Recompile mode to use when sources were previously compiled and there is at
-    * least one change:
-    * "all" =&gt; all sources are recompiled,
-    * "incremental" =&gt; incrementally recompile modified sources and other affected
-    * sources.
-    *
+    * least one change, see {@link RecompileMode}.
     */
-    @Parameter(property = "recompileMode", defaultValue = "all")
-    protected String recompileMode = ALL;
+    @Parameter(property = "recompileMode", defaultValue = "incremental")
+    protected RecompileMode recompileMode;
 
     /**
     * notifyCompilation if true then print a message "path: compiling"
@@ -43,7 +48,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     *
     */
     @Parameter(property = "notifyCompilation", defaultValue = "true")
-    private boolean notifyCompilation = true;
+    private boolean notifyCompilation;
 
     abstract protected File getOutputDir() throws Exception;
 
@@ -90,13 +95,9 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
-        if (!compileInLoop && INCREMENTAL.equals(recompileMode)) {
-            // TODO - Do we really need this duplicated here?
-            if (!outputDir.exists()) {
-                outputDir.mkdirs();
-            }
+        if (!compileInLoop && recompileMode == RecompileMode.incremental) {
             // if not compileInLoop, invoke incrementalCompile immediately
-            return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
+            return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, false);
         }
 
         long t0 = System.currentTimeMillis();
@@ -119,7 +120,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
         long t1 = System.currentTimeMillis();
 
-        if (compileInLoop && INCREMENTAL.equals(recompileMode)) {
+        if (compileInLoop && recompileMode == RecompileMode.incremental) {
             // if compileInLoop, do not invoke incrementalCompile when there's no change
             int retCode = incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
             _lastCompileAt = t1;
@@ -173,7 +174,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         //   (restore how it work in 2.11 and failed in 2.12)
         //TODO a better behavior : if there is at least one .scala to compile then add all .java, if there is at least one .java then add all .scala (because we don't manage class dependency)
         List<File> files = new ArrayList<>(sourceFiles.size());
-        if (_lastCompileAt > 0 || (!ALL.equals(recompileMode) && (lastSuccessfullCompileTime > 0))) {
+        if (_lastCompileAt > 0 || (recompileMode != RecompileMode.all && (lastSuccessfullCompileTime > 0))) {
             ArrayList<File> modifiedScalaFiles = new ArrayList<File>(sourceFiles.size());
             ArrayList<File> modifiedJavaFiles = new ArrayList<File>(sourceFiles.size());
             ArrayList<File> allJavaFiles = new ArrayList<File>(sourceFiles.size());
@@ -250,6 +251,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         List<File> sources = findSourceWithFilters(sourceRootDirs);
         if (sources.isEmpty()) {
             return -1;
+        }
+
+        // TODO - Do we really need this duplicated here?
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
         }
 
         if (incremental == null) {

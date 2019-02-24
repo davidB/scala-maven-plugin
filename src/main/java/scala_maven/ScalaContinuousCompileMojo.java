@@ -137,7 +137,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
         analysisCacheFile = FileUtils.fileOf(analysisCacheFile, useCanonicalPath);
         testAnalysisCacheFile = FileUtils.fileOf(testAnalysisCacheFile, useCanonicalPath);
 
-        if (useFsc && !INCREMENTAL.equals(recompileMode)) {
+        if (useFsc && recompileMode != RecompileMode.incremental) {
             getLog().info("use fsc for compilation");
             scalaClassName = "scala.tools.nsc.CompileClient";
             if (!once) {
