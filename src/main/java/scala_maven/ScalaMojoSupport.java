@@ -578,9 +578,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             }
             if (StringUtils.isEmpty(detectedScalaVersion)) {
                 if (!ScalaMojoSupport.POM.equals( project.getPackaging().toLowerCase() )) {
-                    getLog().warn("you don't define "+ getScalaOrganization() + ":" + SCALA_LIBRARY_ARTIFACTID + " as a dependency of the project");
+                    String error = getScalaOrganization() + ":" + SCALA_LIBRARY_ARTIFACTID + " is missing from project dependencies";
+                    getLog().error(error);
+                    throw new UnsupportedOperationException(error);
                 }
-                detectedScalaVersion = "0.0.0";
             } else {
                 // grappy hack to retrieve the SNAPSHOT version without timestamp,...
                 // because if version is -SNAPSHOT and artifact is deploy with uniqueValue then the version
