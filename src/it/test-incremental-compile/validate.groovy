@@ -12,10 +12,10 @@ try {
   def y = new File(basedir, 'target/test-classes/Y.class')
   assert y.exists()
 
-  def analysis = new File(basedir, 'analysis')
+  def analysis = new File(basedir, 'target/analysis/compile')
   assert analysis.exists()
 
-  def testAnalysis = new File(basedir, 'test-analysis')
+  def testAnalysis = new File(basedir, 'target/analysis/test-compile')
   assert testAnalysis.exists()
 
   return true

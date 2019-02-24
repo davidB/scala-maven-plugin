@@ -51,8 +51,6 @@
         </executions>
         <configuration>
           <recompileMode>incremental</recompileMode>
-          <analysisCacheFile>${basedir}/analysis</analysisCacheFile>
-          <testAnalysisCacheFile>${basedir}/test-analysis</testAnalysisCacheFile>
           <args>
             <arg>-deprecation</arg>
             <arg>-unchecked</arg>
