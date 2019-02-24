@@ -23,14 +23,14 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Helper methods
- * @author David Bernard
- */
+* Helper methods
+* @author David Bernard
+*/
 public class MainHelper {
 
 	public static final String argFilePrefix = "scala-maven-";
 	public static final String argFileSuffix = ".args";
-	
+
     public static String toMultiPath(List<String> paths) {
         return StringUtils.join(paths.iterator(), File.pathSeparator);
     }
@@ -83,10 +83,10 @@ public class MainHelper {
     }
 
     /**
-     * Escapes arguments as necessary so the StringTokenizer for scala arguments pulls in filenames with spaces correctly.
-     * @param arg
-     * @return
-     */
+    * Escapes arguments as necessary so the StringTokenizer for scala arguments pulls in filenames with spaces correctly.
+    * @param arg
+    * @return
+    */
     private static String escapeArgumentForScalacArgumentFile(String arg) {
         if(arg.matches(".*\\s.*")) {
             return '"' + arg + '"';
@@ -95,10 +95,10 @@ public class MainHelper {
     }
 
     /**
-     * UnEscapes arguments as necessary so the StringTokenizer for scala arguments pulls in filenames with spaces correctly.
-     * @param arg
-     * @return
-     */
+    * UnEscapes arguments as necessary so the StringTokenizer for scala arguments pulls in filenames with spaces correctly.
+    * @param arg
+    * @return
+    */
     private static String unescapeArgumentForScalacArgumentFile(String arg) {
         if(arg.charAt(0) == '"' && arg.charAt(arg.length() -1) == '"') {
             return arg.substring(1, arg.length() -1);
@@ -107,43 +107,43 @@ public class MainHelper {
     }
 
     /**
-     * Creates a file containing all the arguments. This file has a very simple format of argument (white-space argument).
-     *
-     * @return
-     * @throws IOException
-     */
+    * Creates a file containing all the arguments. This file has a very simple format of argument (white-space argument).
+    *
+    * @return
+    * @throws IOException
+    */
     public static File createArgFile(List<String> args) throws IOException {
-       final File argFile = File.createTempFile(argFilePrefix, argFileSuffix);
-       //argFile.deleteOnExit();
-       final PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(argFile)));
-       try {
-          for(String arg : args) {
-             out.println(escapeArgumentForScalacArgumentFile(arg));
-          }
-       } finally {
-          out.close();
-       }
-       return argFile;
+        final File argFile = File.createTempFile(argFilePrefix, argFileSuffix);
+        //argFile.deleteOnExit();
+        final PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(argFile)));
+        try {
+            for(String arg : args) {
+                out.println(escapeArgumentForScalacArgumentFile(arg));
+            }
+        } finally {
+            out.close();
+        }
+        return argFile;
     }
 
     /**
-     * Creates a file containing all the arguments. This file has a very simple format of argument (white-space argument).
-     *
-     * @return
-     * @throws IOException
-     */
+    * Creates a file containing all the arguments. This file has a very simple format of argument (white-space argument).
+    *
+    * @return
+    * @throws IOException
+    */
     public static List<String> readArgFile(File argFile) throws IOException {
-       ArrayList<String> back = new ArrayList<String>();
-       final BufferedReader in = new BufferedReader(new FileReader(argFile));
-       try {
-          String line = null;
-          while ((line = in.readLine()) != null) {
-             back.add(unescapeArgumentForScalacArgumentFile(line));
-          }
-       } finally {
-          in.close();
-       }
-       return back;
+        ArrayList<String> back = new ArrayList<String>();
+        final BufferedReader in = new BufferedReader(new FileReader(argFile));
+        try {
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                back.add(unescapeArgumentForScalacArgumentFile(line));
+            }
+        } finally {
+            in.close();
+        }
+        return back;
     }
 
     /** Runs the main method of a java class */

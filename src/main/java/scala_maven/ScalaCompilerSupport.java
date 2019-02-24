@@ -7,20 +7,21 @@ import java.util.List;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import sbt_inc.SbtIncrementalCompiler;
+import xsbti.compile.CompileOrder;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
 
 /**
- * Abstract parent of all Scala Mojo who run compilation
- */
+* Abstract parent of all Scala Mojo who run compilation
+*/
 public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     public static final String ALL = "all";
     public static final String INCREMENTAL = "incremental";
 
     /**
-     * Keeps track of if we get compile errors in incremental mode
-     */
+    * Keeps track of if we get compile errors in incremental mode
+    */
     private boolean compileErrors;
 
     /**
@@ -35,12 +36,12 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     protected String recompileMode;
 
     /**
-     * notifyCompilation if true then print a message "path: compiling"
-     * for each root directory or files that will be compiled.
-     * Useful for debug, and for integration with Editor/IDE to reset markers only
-     * for compiled files.
-     *
-     */
+    * notifyCompilation if true then print a message "path: compiling"
+    * for each root directory or files that will be compiled.
+    * Useful for debug, and for integration with Editor/IDE to reset markers only
+    * for compiled files.
+    *
+    */
     @Parameter(property = "notifyCompilation", defaultValue = "true")
     private boolean notifyCompilation;
 
@@ -53,18 +54,18 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     private SbtIncrementalCompiler incremental;
 
     /**
-     * Analysis cache file for incremental recompilation.
-     */
+    * Analysis cache file for incremental recompilation.
+    */
     abstract protected File getAnalysisCacheFile() throws Exception;
 
     /**
-     * Compile order for Scala and Java sources for sbt incremental compile.
-     *
-     * Can be Mixed, JavaThenScala, or ScalaThenJava.
-     *
-     */
+    * Compile order for Scala and Java sources for sbt incremental compile.
+    *
+    * Can be Mixed, JavaThenScala, or ScalaThenJava.
+    *
+    */
     @Parameter(property = "compileOrder", defaultValue = "Mixed")
-    private String compileOrder;
+    private CompileOrder compileOrder;
 
     @Override
     protected void doExecute() throws Exception {
@@ -78,13 +79,13 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         int nbFiles = compile(getSourceDirectories(), outputDir, analysisCacheFile, getClasspathElements(), false);
         switch (nbFiles) {
             case -1:
-                getLog().info("No sources to compile");
-                break;
+            getLog().info("No sources to compile");
+            break;
             case 0:
-                getLog().info("Nothing to compile - all classes are up to date");;
-                break;
+            getLog().info("Nothing to compile - all classes are up to date");;
+            break;
             default:
-                break;
+            break;
         }
     }
 
@@ -134,7 +135,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             jcmd.addArgs(f.getAbsolutePath());
         }
         if (jcmd.run(displayCmd, !compileInLoop)) {
-          lastCompilationInfo.setLastSuccessfullTS(t1);
+            lastCompilationInfo.setLastSuccessfullTS(t1);
         }
         else {
             compileErrors = true;
@@ -146,8 +147,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     /**
-     * Returns true if the previous compile failed
-     */
+    * Returns true if the previous compile failed
+    */
     protected boolean hasCompileErrors() {
         return compileErrors;
     }
@@ -204,36 +205,36 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     private static class LastCompilationInfo {
-      static LastCompilationInfo find(List<File> sourceRootDirs, File outputDir) throws Exception {
-        StringBuilder hash = new StringBuilder();
-        for (File f : sourceRootDirs) {
-          hash.append(f.toString());
+        static LastCompilationInfo find(List<File> sourceRootDirs, File outputDir) throws Exception {
+            StringBuilder hash = new StringBuilder();
+            for (File f : sourceRootDirs) {
+                hash.append(f.toString());
+            }
+            return new LastCompilationInfo(new File(outputDir.getAbsolutePath() + "." + hash.toString().hashCode() + ".timestamp"), outputDir);
         }
-        return new LastCompilationInfo(new File(outputDir.getAbsolutePath() + "." + hash.toString().hashCode() + ".timestamp"), outputDir);
-      }
 
-      private final File _lastCompileAtFile;
-      private final File _outputDir;
+        private final File _lastCompileAtFile;
+        private final File _outputDir;
 
-      private LastCompilationInfo(File f, File outputDir) {
-        _lastCompileAtFile = f;
-        _outputDir = outputDir;
-      }
-
-      long getLastSuccessfullTS() throws Exception {
-        long back =  -1;
-        if (_lastCompileAtFile.exists() && _outputDir.exists() && (_outputDir.list().length > 0)) {
-            back = _lastCompileAtFile.lastModified();
+        private LastCompilationInfo(File f, File outputDir) {
+            _lastCompileAtFile = f;
+            _outputDir = outputDir;
         }
-        return back;
-      }
 
-      void setLastSuccessfullTS(long v) throws Exception {
-        if (!_lastCompileAtFile.exists()) {
-            FileUtils.fileWrite(_lastCompileAtFile.getAbsolutePath(), ".");
+        long getLastSuccessfullTS() throws Exception {
+            long back =  -1;
+            if (_lastCompileAtFile.exists() && _outputDir.exists() && (_outputDir.list().length > 0)) {
+                back = _lastCompileAtFile.lastModified();
+            }
+            return back;
         }
-        _lastCompileAtFile.setLastModified(v);
-      }
+
+        void setLastSuccessfullTS(long v) throws Exception {
+            if (!_lastCompileAtFile.exists()) {
+                FileUtils.fileWrite(_lastCompileAtFile.getAbsolutePath(), ".");
+            }
+            _lastCompileAtFile.setLastModified(v);
+        }
     }
 
     //
@@ -259,7 +260,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             List<File> extraJars = getCompilerDependencies();
             extraJars.remove(libraryJar);
             File compilerBridgeJar = getCompilerBridgeJar();
-           	incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars, compilerBridgeJar, getLog(), cacheFile, compileOrder);
+            incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars, compilerBridgeJar, getLog(), cacheFile, compileOrder);
         }
 
         classpathElements.remove(outputDir.getAbsolutePath());

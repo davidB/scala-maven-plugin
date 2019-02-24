@@ -59,10 +59,10 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
 
     @Override
     protected List<String> getClasspathElements() throws Exception {
-      List<String> back = project.getTestClasspathElements();
-      back.remove(project.getBuild().getTestOutputDirectory());
-      //back.add(getOutputDir().getAbsolutePath());
-      return back;
+        List<String> back = project.getTestClasspathElements();
+        back.remove(project.getBuild().getTestOutputDirectory());
+        //back.add(getOutputDir().getAbsolutePath());
+        return back;
     }
 
     @Override

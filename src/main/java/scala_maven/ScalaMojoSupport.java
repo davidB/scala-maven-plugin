@@ -546,14 +546,14 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected void addCompilerToClasspath(Set<String> classpath) throws Exception {
-      classpath.add(FileUtils.pathOf(getCompilerJar(), useCanonicalPath));
-      for (File dep : getCompilerDependencies()) {
-        classpath.add(FileUtils.pathOf(dep, useCanonicalPath));
-      }
+        classpath.add(FileUtils.pathOf(getCompilerJar(), useCanonicalPath));
+        for (File dep : getCompilerDependencies()) {
+            classpath.add(FileUtils.pathOf(dep, useCanonicalPath));
+        }
     }
 
     protected void addLibraryToClasspath(Set<String> classpath) throws Exception {
-      classpath.add(FileUtils.pathOf(getLibraryJar(), useCanonicalPath));
+        classpath.add(FileUtils.pathOf(getLibraryJar(), useCanonicalPath));
     }
 
     @Override
@@ -670,12 +670,12 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         VersionNumber sv = new VersionNumber(scalaDefVersion);
         VersionNumber requiredScalaVersion = StringUtils.isNotEmpty(scalaCompatVersion) ? new VersionNumberMask(scalaCompatVersion) : sv;
         if (requiredScalaVersion.compareTo(sv) != 0) {
-          String msg = String.format("Scala library detected %s doesn't match scala.compat.version : %s", sv, requiredScalaVersion);
-          if(failOnMultipleScalaVersions) {
-            getLog().error(msg);
-            throw new MojoFailureException(msg);
-          }
-          getLog().warn(msg);
+            String msg = String.format("Scala library detected %s doesn't match scala.compat.version : %s", sv, requiredScalaVersion);
+            if(failOnMultipleScalaVersions) {
+                getLog().error(msg);
+                throw new MojoFailureException(msg);
+            }
+            getLog().warn(msg);
         }
         ProjectBuildingRequest request = project.getProjectBuildingRequest();
         request.setProject(project);
@@ -746,7 +746,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         JavaMainCaller cmd = getEmptyScalaCommand(mainClass, forkOverride);
         cmd.addArgs(args);
         if (StringUtils.isNotEmpty(addScalacArgs)) {
-          cmd.addArgs(StringUtils.split(addScalacArgs, "|"));
+            cmd.addArgs(StringUtils.split(addScalacArgs, "|"));
         }
         addCompilerPluginOptions(cmd);
         cmd.addJvmArgs(jvmArgs);
@@ -852,22 +852,22 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             options.add(target);
         }
         if (source != null) {
-          options.add("-source");
-          options.add(source);
+            options.add("-source");
+            options.add(source);
         }
         if (encoding != null) {
-          options.add("-encoding");
-          options.add(encoding);
+            options.add("-encoding");
+            options.add(encoding);
         }
         return options;
     }
 
     protected File getLibraryJar() throws Exception {
-      if (StringUtils.isNotEmpty(scalaHome)) {
-        File lib = new File(scalaHome, "lib");
-        return new File(lib, SCALA_LIBRARY_ARTIFACTID + ".jar");
-      }
-      return getArtifactJar(getScalaOrganization(), SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString());
+        if (StringUtils.isNotEmpty(scalaHome)) {
+            File lib = new File(scalaHome, "lib");
+            return new File(lib, SCALA_LIBRARY_ARTIFACTID + ".jar");
+        }
+        return getArtifactJar(getScalaOrganization(), SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString());
     }
 
     protected File getReflectJar() throws Exception {
@@ -879,11 +879,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected File getCompilerJar() throws Exception {
-      if(StringUtils.isNotEmpty(scalaHome)) {
-        File lib = new File(scalaHome, "lib");
-        return new File(lib, SCALA_COMPILER_ARTIFACTID + ".jar");
-      }
-      return getArtifactJar(getScalaOrganization(), SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
+        if(StringUtils.isNotEmpty(scalaHome)) {
+            File lib = new File(scalaHome, "lib");
+            return new File(lib, SCALA_COMPILER_ARTIFACTID + ".jar");
+        }
+        return getArtifactJar(getScalaOrganization(), SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
     }
 
     protected File getCompilerBridgeJar() throws Exception {
@@ -893,20 +893,20 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     protected List<File> getCompilerDependencies() throws Exception {
-      List<File> d = new ArrayList<File>();
-      if(StringUtils.isEmpty(scalaHome)) {
-        for (Artifact artifact : getAllDependencies(getScalaOrganization(), SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString())) {
-          d.add(artifact.getFile());
+        List<File> d = new ArrayList<File>();
+        if(StringUtils.isEmpty(scalaHome)) {
+            for (Artifact artifact : getAllDependencies(getScalaOrganization(), SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString())) {
+                d.add(artifact.getFile());
+            }
+        } else {
+            for(File f : new File(scalaHome, "lib").listFiles()) {
+                String name = f.getName();
+                if (name.endsWith(".jar") && !name.contains("scala-library") && !name.contains("scala-compiler")) {
+                    d.add(f);
+                }
+            }
         }
-      } else {
-        for(File f : new File(scalaHome, "lib").listFiles()) {
-          String name = f.getName();
-          if (name.endsWith(".jar") && !name.contains("scala-library") && !name.contains("scala-compiler")) {
-            d.add(f);
-          }
-        }
-      }
-      return d;
+        return d;
     }
 
     protected File getArtifactJar(String groupId, String artifactId, String version) throws Exception {
@@ -1004,15 +1004,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         Artifact artifact = null;
         for (Artifact art : pluginArtifacts) {
             if (groupId.equals(art.getGroupId()) && artifactId.equals(art.getArtifactId()) && version.equals(art.getVersion())){
-            	if ((classifier == null && art.getClassifier() == null) || (classifier != null && classifier.equals(art.getClassifier()))) {
-            		artifact = art;
-            	}
+                if ((classifier == null && art.getClassifier() == null) || (classifier != null && classifier.equals(art.getClassifier()))) {
+                    artifact = art;
+                }
             }
         }
         if (artifact == null) {
-	    	String msg = String.format("can't find artifact %s::%s::%s-%s", groupId, artifactId, version, classifier);
-	    	getLog().error(msg);
-	    	throw new Exception(msg);
+            String msg = String.format("can't find artifact %s::%s::%s-%s", groupId, artifactId, version, classifier);
+            getLog().error(msg);
+            throw new Exception(msg);
         }
         return artifact.getFile();
     }

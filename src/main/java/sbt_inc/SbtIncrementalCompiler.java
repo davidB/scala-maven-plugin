@@ -37,8 +37,8 @@ public class SbtIncrementalCompiler {
     private final Setup setup;
     private final AnalysisStore analysisStore;
 
-    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion, List<File> extraJars, File compilerBridgeJar, Log l, File cacheFile, String compileOrder) throws Exception {
-        this.compileOrder = CompileOrder.valueOf(compileOrder);
+    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion, List<File> extraJars, File compilerBridgeJar, Log l, File cacheFile, CompileOrder compileOrder) throws Exception {
+        this.compileOrder = compileOrder;
         this.logger = new SbtLogger(l);
         l.info("Using incremental compilation using " + compileOrder + " compile order");
 

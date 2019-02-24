@@ -64,28 +64,28 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
     }
 
     protected void initFilters() throws Exception {
-      if (includes.isEmpty()) {
-        includes.add("**/*.scala");
-        if (sendJavaToScalac && isJavaSupportedByCompiler()) {
-            includes.add("**/*.java");
+        if (includes.isEmpty()) {
+            includes.add("**/*.scala");
+            if (sendJavaToScalac && isJavaSupportedByCompiler()) {
+                includes.add("**/*.java");
+            }
         }
-      }
-      if (!_filterPrinted && getLog().isDebugEnabled()) {
-        StringBuilder builder = new StringBuilder("includes = [");
-        for (String include : includes) {
-            builder.append(include).append(",");
-        }
-        builder.append("]");
-        getLog().debug(builder.toString());
+        if (!_filterPrinted && getLog().isDebugEnabled()) {
+            StringBuilder builder = new StringBuilder("includes = [");
+            for (String include : includes) {
+                builder.append(include).append(",");
+            }
+            builder.append("]");
+            getLog().debug(builder.toString());
 
-        builder = new StringBuilder("excludes = [");
-        for (String exclude : excludes) {
-            builder.append(exclude).append(",");
+            builder = new StringBuilder("excludes = [");
+            for (String exclude : excludes) {
+                builder.append(exclude).append(",");
+            }
+            builder.append("]");
+            getLog().debug(builder.toString());
+            _filterPrinted = true;
         }
-        builder.append("]");
-        getLog().debug(builder.toString());
-        _filterPrinted = true;
-      }
     }
 
     /**
