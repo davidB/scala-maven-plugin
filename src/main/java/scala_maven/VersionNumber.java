@@ -6,10 +6,10 @@ import java.util.regex.Pattern;
 public class VersionNumber implements Comparable<VersionNumber> {
     private static final Pattern _regexp = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+)?([-\\.].+)?");
 
-    public int                   major;
-    public int                   minor;
-    public int                   bugfix;
-    public String                modifier;
+    int                   major;
+    int                   minor;
+    int                   bugfix;
+    String                modifier;
 
     public VersionNumber() {
         major = 0;
@@ -78,7 +78,7 @@ public class VersionNumber implements Comparable<VersionNumber> {
         return (major == 0) && (minor == 0) && (bugfix == 0);
     }
 
-    public String applyScalaArtifactVersioningScheme(String name) {
+    String applyScalaArtifactVersioningScheme(String name) {
         return name + '_' + major + '.' + minor;
     }
 }

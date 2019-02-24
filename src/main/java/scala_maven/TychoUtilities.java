@@ -20,7 +20,7 @@ import org.apache.maven.project.MavenProject;
  *
  * @author miles.sabin
  */
-public class TychoUtilities {
+class TychoUtilities {
     private static final String TychoConstants_CTX_ECLIPSE_PLUGIN_CLASSPATH = "org.codehaus.tycho.TychoConstants/eclipsePluginClasspath";
     private static final Method getContextValueMethod;
     private static final Method getLocationsMethod;
@@ -30,33 +30,26 @@ public class TychoUtilities {
         Method getLocationsMethod0 = null;
         try {
             final Class<?> mpClazz = MavenProject.class;
-            getContextValueMethod0 = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>() {
-                @Override
-                public Method run() throws Exception {
-                    Method m = mpClazz.getDeclaredMethod("getContextValue", String.class);
-                    m.setAccessible(true);
-                    return m;
-                }
+            getContextValueMethod0 = AccessController.doPrivileged((PrivilegedExceptionAction<Method>) () -> {
+                Method m = mpClazz.getDeclaredMethod("getContextValue", String.class);
+                m.setAccessible(true);
+                return m;
             });
 
             final Class<?> cpeClazz = Class.forName("org.codehaus.tycho.ClasspathEntry");
-            getLocationsMethod0 = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>() {
-                @Override
-                public Method run() throws Exception {
-                    Method m = cpeClazz.getDeclaredMethod("getLocations");
-                    m.setAccessible(true);
-                    return m;
-                }
+            getLocationsMethod0 = AccessController.doPrivileged((PrivilegedExceptionAction<Method>) () -> {
+                Method m = cpeClazz.getDeclaredMethod("getLocations");
+                m.setAccessible(true);
+                return m;
             });
-        } catch (ClassNotFoundException ex) {
-        } catch (PrivilegedActionException ex) {
+        } catch (ClassNotFoundException | PrivilegedActionException ex) {
         }
         getContextValueMethod = getContextValueMethod0;
         getLocationsMethod = getLocationsMethod0;
     }
 
     @SuppressWarnings("unchecked")
-    public static List<String> addOsgiClasspathElements(MavenProject project, List<String> defaultClasspathElements) {
+    static List<String> addOsgiClasspathElements(MavenProject project, List<String> defaultClasspathElements) {
         if (getLocationsMethod == null) {
             return defaultClasspathElements;
         }
@@ -65,7 +58,7 @@ public class TychoUtilities {
         if (classpath == null || classpath.isEmpty())
             return defaultClasspathElements;
 
-        List<String> osgiClasspath = new ArrayList<String>();
+        List<String> osgiClasspath = new ArrayList<>();
         for (Object classpathEntry : classpath) {
             for (File file : getLocations(classpathEntry))
                 osgiClasspath.add(file.getAbsolutePath());
@@ -77,11 +70,7 @@ public class TychoUtilities {
     private static Object getContextValue(MavenProject project, String key) {
         try {
             return getContextValueMethod.invoke(project, key);
-        } catch (IllegalArgumentException e) {
-            return Collections.emptyList();
-        } catch (IllegalAccessException e) {
-            return Collections.emptyList();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
             return Collections.emptyList();
         }
     }
@@ -90,11 +79,7 @@ public class TychoUtilities {
     private static List<File> getLocations(Object classpathEntry) {
         try {
             return (List<File>) getLocationsMethod.invoke(classpathEntry);
-        } catch (IllegalArgumentException e) {
-            return Collections.emptyList();
-        } catch (IllegalAccessException e) {
-            return Collections.emptyList();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
             return Collections.emptyList();
         }
     }

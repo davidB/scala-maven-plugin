@@ -25,7 +25,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
      *
      */
     @Parameter(property = "launcher")
-    protected String launcher;
+    private String launcher;
 
     /**
      * Additional parameter to use to call the main class
@@ -33,7 +33,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
      * not from pom.xml.
      */
     @Parameter(property = "addArgs")
-    protected String addArgs;
+    private String addArgs;
 
     /**
      * A list of launcher definition (to avoid rewriting long command line or share
@@ -62,7 +62,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
      *
      */
     @Parameter
-    protected Launcher[] launchers;
+    private Launcher[] launchers;
 
     /**
      * Main class to call, the call use the jvmArgs and args define in the pom.xml,
@@ -74,7 +74,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
      *
      */
     @Parameter(property="mainClass")
-    protected String mainClass;
+    private String mainClass;
 
     @Override
     protected void doExecute() throws Exception {

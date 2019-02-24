@@ -21,7 +21,7 @@ public class ScalaHelpMojo extends ScalaMojoSupport {
 
     @Override
     public void doExecute() throws Exception {
-        JavaMainCaller jcmd = null;
+        JavaMainCaller jcmd;
         if (!versionOnly) {
             jcmd = getScalaCommand();
             jcmd.addArgs("-help");

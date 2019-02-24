@@ -101,11 +101,6 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
     }
 
     @Override
-    public void addEnvVar(String key, String value) {
-        this.env.add(key + "=" + value);
-
-    }
-    @Override
     public void run(boolean displayCmd) throws Exception {
         run(displayCmd, true);
     }

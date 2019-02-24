@@ -2,7 +2,7 @@ package scala_maven_executions;
 
 public class LogProcessorUtils {
 
-    public static enum Level {
+    public enum Level {
         ERROR, WARNING, INFO
     }
 
@@ -11,15 +11,15 @@ public class LogProcessorUtils {
         public String untilContains = null;
     }
 
-    public static LevelState levelStateOf(String line, LevelState previous) throws Exception {
+    public static LevelState levelStateOf(String line, LevelState previous) {
         LevelState back = new LevelState();
         String lineLowerCase = line.toLowerCase();
-        if (lineLowerCase.indexOf("error") > -1) {
+        if (lineLowerCase.contains("error")) {
             back.level = Level.ERROR;
             if (lineLowerCase.contains(".scala")) {
                 back.untilContains = "^";
             }
-        } else if (lineLowerCase.indexOf("warn") > -1) {
+        } else if (lineLowerCase.contains("warn")) {
             back.level = Level.WARNING;
             if (lineLowerCase.contains(".scala")) {
                 back.untilContains = "^";

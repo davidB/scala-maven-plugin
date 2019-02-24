@@ -26,21 +26,21 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
      *
      */
     @Parameter(property = "maven.test.skip")
-    protected boolean skip;
+    private boolean skip;
 
     /**
      * The directory in which to place test compilation output
      *
      */
     @Parameter(defaultValue="${project.build.testOutputDirectory}")
-    protected File testOutputDir;
+    private File testOutputDir;
 
     /**
      * The directory in which to find test scala source code
      *
      */
     @Parameter(defaultValue="${project.build.testSourceDirectory}/../scala")
-    protected File testSourceDir;
+    private File testSourceDir;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -55,7 +55,7 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
      *
      */
     @Parameter(property="testAnalysisCacheFile", defaultValue="${project.build.directory}/analysis/test-compile")
-    protected File testAnalysisCacheFile;
+    private File testAnalysisCacheFile;
 
     @Override
     protected List<String> getClasspathElements() throws Exception {
@@ -71,7 +71,7 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     }
 
     @Override
-    protected File getOutputDir() throws Exception {
+    protected File getOutputDir() {
         return testOutputDir.getAbsoluteFile();
     }
 
@@ -86,7 +86,7 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     }
 
     @Override
-    protected File getAnalysisCacheFile() throws Exception {
+    protected File getAnalysisCacheFile() {
         return testAnalysisCacheFile.getAbsoluteFile();
     }
 }

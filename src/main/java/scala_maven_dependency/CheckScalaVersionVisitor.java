@@ -22,7 +22,7 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
     private Log _log;
     private String _scalaOrganization;
 
-    private List<String> scalaDependentArtifactStrings = new ArrayList<String>();
+    private List<String> scalaDependentArtifactStrings = new ArrayList<>();
 
     @Override
     public boolean endVisit(DependencyNode node) {
@@ -35,10 +35,11 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
         this._scalaOrganization=scalaOrganization;
     }
 
-    public boolean isScalaDistroArtifact(Artifact artifact) {
+    private boolean isScalaDistroArtifact(Artifact artifact) {
         return _scalaOrganization.equalsIgnoreCase(artifact.getGroupId()) &&
         SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId());
     }
+
     @Override
     public boolean visit(DependencyNode node) {
         //TODO - Do we care about provided scope?

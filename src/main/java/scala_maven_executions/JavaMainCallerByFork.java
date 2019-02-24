@@ -27,7 +27,7 @@ import util.JavaLocator;
  */
 public class JavaMainCallerByFork extends JavaMainCallerSupport {
 
-    private boolean _forceUseArgFile = false;
+    private boolean _forceUseArgFile;
 
     /**
      * Location of java executable.
@@ -112,7 +112,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         File err = new File(System.getProperty("java.io.tmpdir"), mainClassName +".err");
         err.delete();
         cmd.add("2>"+ err.getCanonicalPath());
-        List<String> cmd2 = new ArrayList<String>();
+        List<String> cmd2 = new ArrayList<>();
         if (OS.isFamilyDOS()) {
             cmd2.add("cmd.exe");
             cmd2.add("/C");
@@ -126,15 +126,12 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         ProcessBuilder pb = new ProcessBuilder(cmd2);
         //pb.redirectErrorStream(true);
         final Process p = pb.start();
-        return new SpawnMonitor(){
-            @Override
-            public boolean isRunning() throws Exception {
-                try {
-                    p.exitValue();
-                    return false;
-                } catch(IllegalThreadStateException e) {
-                    return true;
-                }
+        return () -> {
+            try {
+                p.exitValue();
+                return false;
+            } catch(IllegalThreadStateException e) {
+                return true;
             }
         };
     }
@@ -147,8 +144,8 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         }
     }
 
-    protected List<String> buildCommand() throws Exception {
-        ArrayList<String> back = new ArrayList<String>(2 + jvmArgs.size() + args.size());
+    private List<String> buildCommand() throws Exception {
+        ArrayList<String> back = new ArrayList<>(2 + jvmArgs.size() + args.size());
         back.add(_javaExec);
         if (!_forceUseArgFile && (lengthOf(args, 1) + lengthOf(jvmArgs, 1) < 400)) {
             back.addAll(jvmArgs);
@@ -166,7 +163,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         return back;
     }
 
-    private void tryDeleteArgFile(List<String> cmd) throws Exception {
+    private void tryDeleteArgFile(List<String> cmd) {
     	String last = cmd.get(cmd.size() - 1);
     	if (last.endsWith(MainHelper.argFileSuffix)) {
     		File f = new File(last);
@@ -175,7 +172,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
     		}
     	}
     }
-    private long lengthOf(List<String> l, long sepLength) throws Exception {
+    private long lengthOf(List<String> l, long sepLength) {
         long back = 0;
         for (String str : l) {
             back += str.length() + sepLength;

@@ -266,9 +266,9 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         jcmd.run(displayCmd);
     }
 
-    private void configureClasspath(Set<String> classpath) throws Exception, DependencyResolutionRequiredException {
-        Set<String> includes = new TreeSet<String>(Arrays.asList(StringUtils.split(includeScopes.toLowerCase(),",")));
-        Set<String> excludes = new TreeSet<String>(Arrays.asList(StringUtils.split(excludeScopes.toLowerCase(),",")));
+    private void configureClasspath(Set<String> classpath) throws Exception {
+        Set<String> includes = new TreeSet<>(Arrays.asList(StringUtils.split(includeScopes.toLowerCase(),",")));
+        Set<String> excludes = new TreeSet<>(Arrays.asList(StringUtils.split(excludeScopes.toLowerCase(),",")));
 
         for(Artifact a : project.getArtifacts()) {
             if (includes.contains(a.getScope().toLowerCase()) && !excludes.contains(a.getScope())) {

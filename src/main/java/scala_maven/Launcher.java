@@ -3,9 +3,9 @@ package scala_maven;
 import org.apache.maven.plugins.annotations.Parameter;
 
 public class Launcher {
-    protected String id;
+    String id;
 
-    protected String mainClass;
+    String mainClass;
 
     /**
      * Jvm Arguments

@@ -15,10 +15,10 @@ import scala_maven_executions.MainHelper;
 
 /**
 * Run the Scala console with all the classes of the projects (dependencies and
-* builded)
+* built)
 *
 */
-@Mojo(name = "console", requiresDependencyResolution = ResolutionScope.TEST, inheritByDefault = false, requiresDirectInvocation = true, executionStrategy = "once-per-session")
+@Mojo(name = "console", requiresDependencyResolution = ResolutionScope.TEST, inheritByDefault = false, requiresDirectInvocation = true)
 public class ScalaConsoleMojo extends ScalaMojoSupport {
 
     // Private Static Values //
@@ -42,7 +42,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     *
     */
     @Parameter(property = "mainConsole", defaultValue = "scala.tools.nsc.MainGenericRunner", required = true)
-    protected String mainConsole;
+    private String mainConsole;
 
     /**
     * Add the test classpath (include classes from test directory), to the
@@ -50,14 +50,14 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     *
     */
     @Parameter(property = "maven.scala.console.useTestClasspath", defaultValue = "true", required = true)
-    protected boolean useTestClasspath;
+    private boolean useTestClasspath;
 
     /**
     * Add the runtime classpath, to the console's classpath ?
     *
     */
     @Parameter(property = "maven.scala.console.useRuntimeClasspath", defaultValue = "true", required = true)
-    protected boolean useRuntimeClasspath;
+    private boolean useRuntimeClasspath;
 
     /**
     * Path of the javaRebel jar. If this option is set then the console run
@@ -66,7 +66,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     *
     */
     @Parameter(property = "javarebel.jar.path")
-    protected File javaRebelPath;
+    private File javaRebelPath;
 
     @Override
     protected void doExecute() throws Exception {
@@ -84,7 +84,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         // Setup the classpath
 
         // Build the classpath string.
-        final String classpathStr = MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
+        final String classpathStr = MainHelper.toMultiPath(classpath.toArray(new String[]{}));
 
         // Setup the JavaMainCaller
         jcmd.addArgs(super.args);
@@ -133,7 +133,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     *         dependency resolution.
     */
     private Set<String> setupClassPathForConsole(final VersionNumber scalaVersion) throws Exception {
-        final Set<String> classpath = new HashSet<String>();
+        final Set<String> classpath = new HashSet<>();
 
         classpath.addAll(this.setupProjectClasspaths());
         classpath.addAll(this.setupConsoleClasspaths(scalaVersion));
@@ -159,7 +159,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     *         dependency resolution.
     */
     private Set<String> setupProjectClasspaths() throws Exception {
-        final Set<String> classpath = new HashSet<String>();
+        final Set<String> classpath = new HashSet<>();
 
         super.addCompilerToClasspath(classpath);
         super.addLibraryToClasspath(classpath);
@@ -193,9 +193,9 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     *         dependency resolution.
     */
     private Set<String> setupConsoleClasspaths(final VersionNumber scalaVersion) throws Exception {
-        final Set<String> classpath = new HashSet<String>();
+        final Set<String> classpath = new HashSet<>();
 
-        super.addToClasspath(this.resolveJLine(scalaVersion, this.fallbackJLine(scalaVersion)), classpath, true);
+        addToClasspath(this.resolveJLine(scalaVersion, this.fallbackJLine(scalaVersion)), classpath, true);
 
         return classpath;
     }
@@ -220,11 +220,8 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     *
     * @return an {@link Artifact} to provide to the runtime of the Scala
     *         console conforming the JLine.
-    *
-    * @throws {@link Exception} for many reasons, mostly relating to ad-hoc
-    *         dependency resolution.
     */
-    private Artifact resolveJLine(final VersionNumber scalaVersion, final Artifact defaultFallback) throws Exception {
+    private Artifact resolveJLine(final VersionNumber scalaVersion, final Artifact defaultFallback) {
         final Artifact compilerArtifact = super.scalaCompilerArtifact(scalaVersion.toString());
         final Set<Artifact> compilerDeps = super.resolveArtifactDependencies(compilerArtifact);
         for (final Artifact a : compilerDeps) {
@@ -257,13 +254,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         final String artifactId = artifact.getArtifactId();
         final String groupId = artifact.getGroupId();
 
-        if (artifactId.equals(ScalaConsoleMojo.JLINE) &&
-        (groupId.equals(ScalaConsoleMojo.JLINE) ||
-        groupId.equals(ScalaConsoleMojo.JLINE))) {
-            return true;
-        } else {
-            return false;
-        }
+        return artifactId.equals(ScalaConsoleMojo.JLINE) && groupId.equals(ScalaConsoleMojo.JLINE);
     }
 
     /**

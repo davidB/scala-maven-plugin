@@ -30,7 +30,7 @@ import org.codehaus.plexus.util.StringUtils;
 public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
 
     @Component
-    protected Invoker invoker;
+    private Invoker invoker;
 
     /**
      * The local repository for caching artifacts. It is strongly recommended to
@@ -41,7 +41,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      *
      */
     @Parameter(property = "invoker.localRepositoryPath", defaultValue = "${settings.localRepository}")
-    protected File localRepositoryPath;
+    private File localRepositoryPath;
 
     /**
      * Specify this parameter to run individual tests by file name, overriding the
@@ -55,7 +55,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      *
      */
     @Parameter(property = "test")
-    protected String test;
+    private String test;
 
     /**
      * A space-separated list of the goals to execute as part of running the tests.
@@ -92,7 +92,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      *
      */
     @Parameter(property = "cctest.goals", defaultValue = "surefire:test")
-    protected String ccTestGoals;
+    private String ccTestGoals;
 
     @Override
     protected void postCompileActions() throws Exception {
@@ -139,7 +139,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
         }
     }
 
-    protected List<String> getMavenGoals() {
+    private List<String> getMavenGoals() {
         getLog().debug("Running tests with goal(s): " + ccTestGoals);
         return Arrays.asList(StringUtils.split(ccTestGoals, " "));
     }

@@ -34,7 +34,7 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
      *
      */
     @Parameter
-    protected Set<String> includes = new HashSet<String>();
+    protected Set<String> includes = new HashSet<>();
 
     /**
      * A list of exclusion filters for the compiler.
@@ -47,7 +47,7 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
      *
      */
     @Parameter
-    protected Set<String> excludes = new HashSet<String>();
+    private Set<String> excludes = new HashSet<>();
 
     /**
      * Retrieves the list of *all* root source directories.  We need to pass all .java and .scala files into the scala compiler
@@ -59,11 +59,11 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
     /**
      * Finds all source files in a set of directories with a given extension.
      */
-    protected List<File> findSourceWithFilters() throws Exception {
-        return  findSourceWithFilters(getSourceDirectories());
+    List<File> findSourceWithFilters() throws Exception {
+        return findSourceWithFilters(getSourceDirectories());
     }
 
-    protected void initFilters() throws Exception {
+    private void initFilters() throws Exception {
         if (includes.isEmpty()) {
             includes.add("**/*.scala");
             if (sendJavaToScalac && isJavaSupportedByCompiler()) {
@@ -91,15 +91,15 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
     /**
      * Finds all source files in a set of directories with a given extension.
      */
-    protected List<File> findSourceWithFilters(List<File> sourceRootDirs) throws Exception {
-        List<File> sourceFiles = new ArrayList<File>();
+    List<File> findSourceWithFilters(List<File> sourceRootDirs) throws Exception {
+        List<File> sourceFiles = new ArrayList<>();
 
         initFilters();
 
         // TODO - Since we're making files anyway, perhaps we should just test
         // for existence here...
         for (File dir : sourceRootDirs) {
-            String[] tmpFiles = MainHelper.findFiles(dir, includes.toArray(new String[includes.size()]), excludes.toArray(new String[excludes.size()]));
+            String[] tmpFiles = MainHelper.findFiles(dir, includes.toArray(new String[]{}), excludes.toArray(new String[]{}));
             for (String tmpLocalFile : tmpFiles) {
                 File tmpAbsFile = FileUtils.fileOf(new File(dir, tmpLocalFile), useCanonicalPath);
                 sourceFiles.add(tmpAbsFile);
@@ -114,8 +114,8 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
     /**
      * This limits the source directories to only those that exist for real.
      */
-    protected List<File> normalize(List<String> compileSourceRootsList) throws Exception {
-        List<File> newCompileSourceRootsList = new ArrayList<File>();
+    List<File> normalize(List<String> compileSourceRootsList) throws Exception {
+        List<File> newCompileSourceRootsList = new ArrayList<>();
         if (compileSourceRootsList != null) {
             // copy as I may be modifying it
             for (String srcDir : compileSourceRootsList) {

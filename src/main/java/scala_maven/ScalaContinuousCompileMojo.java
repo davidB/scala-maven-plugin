@@ -24,42 +24,42 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     *
     */
     @Parameter(property="project.build.outputDirectory")
-    protected File mainOutputDir;
+    private File mainOutputDir;
 
     /**
     * The main directory containing scala source for compilation
     *
     */
     @Parameter (defaultValue="${project.build.sourceDirectory}/../scala")
-    protected File mainSourceDir;
+    private File mainSourceDir;
 
     /**
     * The directory to place test compilation output in
     *
     */
     @Parameter(defaultValue="${project.build.testOutputDirectory}")
-    protected File testOutputDir;
+    private File testOutputDir;
 
     /**
     * The directory containing test source for compilation
     *
     */
     @Parameter (defaultValue="${project.build.testSourceDirectory}/../scala")
-    protected File testSourceDir;
+    private File testSourceDir;
 
     /**
     * Analysis cache file for incremental recompilation.
     *
     */
     @Parameter (property="analysisCacheFile", defaultValue="${project.build.directory}/analysis/compile")
-    protected File analysisCacheFile;
+    private File analysisCacheFile;
 
     /**
     * Analysis cache file for incremental recompilation.
     *
     */
     @Parameter (property="testAnalysisCacheFile", defaultValue="${project.build.directory}/analysis/test-compile")
-    protected File testAnalysisCacheFile;
+    private File testAnalysisCacheFile;
 
     /**
     * Define if fsc should be used, else scalac is used.
@@ -67,7 +67,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     *
     */
     @Parameter(property="fsc", defaultValue="true")
-    protected boolean useFsc = true;
+    private boolean useFsc;
 
     /**
     * Define if cc should run once or in infinite loop. (useful for test or working
@@ -75,32 +75,32 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     *
     */
     @Parameter(property="once", defaultValue="false")
-    protected boolean once = false;
+    private boolean once;
 
     /**
     * Turns verbose output on.
     *
     */
     @Parameter(property="verbose", defaultValue="false")
-    protected boolean verbose = false;
+    private boolean verbose;
 
     @Override
-    protected List<String> getClasspathElements() throws Exception {
+    protected List<String> getClasspathElements() {
         throw new UnsupportedOperationException("USELESS");
     }
 
     @Override
-    protected File getOutputDir() throws Exception {
+    protected File getOutputDir() {
         throw new UnsupportedOperationException("USELESS");
     }
 
     @Override
-    protected List<File> getSourceDirectories() throws Exception {
+    protected List<File> getSourceDirectories() {
         throw new UnsupportedOperationException("USELESS");
     }
 
     @Override
-    protected File getAnalysisCacheFile() throws Exception {
+    protected File getAnalysisCacheFile() {
         throw new UnsupportedOperationException("USELESS");
     }
 
@@ -108,7 +108,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     protected JavaMainCaller getScalaCommand() throws Exception {
         JavaMainCaller jcmd = super.getScalaCommand();
         if (useFsc && verbose) {
-            jcmd.addOption("-verbose", verbose);
+            jcmd.addOption("-verbose", true);
         }
         return jcmd;
     }
@@ -121,7 +121,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
             mainOutputDir.mkdirs();
         }
 
-        List<String> mainSources = new ArrayList<String>(project.getCompileSourceRoots());
+        List<String> mainSources = new ArrayList<>(project.getCompileSourceRoots());
         mainSources.add(FileUtils.pathOf(mainSourceDir, useCanonicalPath));
         List<File> mainSourceDirs = normalize(mainSources);
 
@@ -130,7 +130,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
             testOutputDir.mkdirs();
         }
 
-        List<String> testSources = new ArrayList<String>(project.getTestCompileSourceRoots());
+        List<String> testSources = new ArrayList<>(project.getTestCompileSourceRoots());
         testSources.add(FileUtils.pathOf(testSourceDir, useCanonicalPath));
         List<File> testSourceDirs = normalize(testSources);
 

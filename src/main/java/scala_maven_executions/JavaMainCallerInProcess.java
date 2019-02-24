@@ -18,13 +18,13 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class JavaMainCallerInProcess extends JavaMainCallerSupport {
 
-    private ClassLoader _cl = null;
+    private ClassLoader _cl;
 
     public JavaMainCallerInProcess(AbstractMojo requester,  String mainClassName, String classpath, String[] jvmArgs, String[] args) throws Exception {
         super(requester, mainClassName, "", jvmArgs, args);
 
         //Pull out classpath and create class loader
-        ArrayList<URL> urls = new ArrayList<URL>();
+        ArrayList<URL> urls = new ArrayList<>();
         for(String path : classpath.split(File.pathSeparator)) {
             try {
                 urls.add(new File(path).toURI().toURL());
@@ -33,7 +33,7 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
                 requester.getLog().error(e);
             }
         }
-        _cl = new URLClassLoader(urls.toArray(new URL[urls.size()]), (ClassLoader)null);
+        _cl = new URLClassLoader(urls.toArray(new URL[]{}), null);
     }
 
     @Override
@@ -63,29 +63,21 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
      *  spawns a thread to run the method
      */
     @Override
-    public SpawnMonitor spawn(final boolean displayCmd) throws Exception {
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    runInternal(displayCmd);
-                } catch (Exception e) {
-                    // Ignore
-                }
+    public SpawnMonitor spawn(final boolean displayCmd) {
+        final Thread t = new Thread(() -> {
+            try {
+                runInternal(displayCmd);
+            } catch (Exception e) {
+                // Ignore
             }
-        };
+        });
         t.start();
-        return new SpawnMonitor() {
-            @Override
-            public boolean isRunning() throws Exception {
-                return t.isAlive();
-            }
-        };
+        return t::isAlive;
     }
 
     /** Runs the main method of a java class */
     private void runInternal(boolean displayCmd) throws Exception {
-        String[] argArray = args.toArray(new String[args.size()]);
+        String[] argArray = args.toArray(new String[]{});
         if(displayCmd) {
             requester.getLog().info("cmd : " + mainClassName + "(" + StringUtils.join(argArray, ",")+")");
         }

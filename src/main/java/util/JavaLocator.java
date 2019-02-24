@@ -31,7 +31,7 @@ public class JavaLocator {
         return _javaExec;
     }
     
-    public static String findHomeFromToolchain(Toolchain toolchain) {
+    static String findHomeFromToolchain(Toolchain toolchain) {
         String executable = findExecutableFromToolchain(toolchain);
         File executableParent = new File(executable).getParentFile();
         if(executableParent == null) {

@@ -22,27 +22,27 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
      * The directory in which to place compilation output
      */
     @Parameter(property = "project.build.outputDirectory")
-    protected File outputDir;
+    private File outputDir;
 
     /**
      * The directory which contains scala/java source files
      */
     @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
-    protected File sourceDir;
+    private File sourceDir;
 
     /**
      * Analysis cache file for incremental recompilation.
      *
      */
     @Parameter(property = "analysisCacheFile", defaultValue = "${project.build.directory}/analysis/compile")
-    protected File analysisCacheFile;
+    private File analysisCacheFile;
 
     /**
      * List of directories or jars to add to the classpath
      *
      */
     @Parameter(property="classpath")
-    protected Classpath classpath;
+    private Classpath classpath;
 
 
     @Override
@@ -50,7 +50,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
         List<String> sources = project.getCompileSourceRoots();
         String scalaSourceDir = FileUtils.pathOf(sourceDir, useCanonicalPath);
         if(!sources.contains(scalaSourceDir)) {
-            sources = new LinkedList<String>(sources); //clone the list to keep the original unmodified
+            sources = new LinkedList<>(sources); //clone the list to keep the original unmodified
             sources.add(scalaSourceDir);
         }
         return normalize(sources);
@@ -77,12 +77,12 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     }
 
     @Override
-    protected File getOutputDir() throws Exception {
+    protected File getOutputDir() {
         return outputDir.getAbsoluteFile();
     }
 
     @Override
-    protected File getAnalysisCacheFile() throws Exception {
+    protected File getAnalysisCacheFile() {
         return analysisCacheFile.getAbsoluteFile();
     }
 }

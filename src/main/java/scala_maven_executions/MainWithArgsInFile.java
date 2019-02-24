@@ -19,7 +19,7 @@ public class MainWithArgsInFile {
     public static void main(String[] args) {
         try {
             String mainClassName = args[0];
-            List<String> argsFromFile = new ArrayList<String>();
+            List<String> argsFromFile = new ArrayList<>();
             if (args.length > 0) {
                 argsFromFile = MainHelper.readArgFile(new File(args[1]));
             }

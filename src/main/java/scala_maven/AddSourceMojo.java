@@ -3,7 +3,6 @@ package scala_maven;
 import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -12,7 +11,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * Add more source directories to the POM.
  */
-@Mojo(name = "add-source", executionStrategy = "always", defaultPhase = LifecyclePhase.INITIALIZE, requiresDirectInvocation = false, threadSafe = true)
+@Mojo(name = "add-source", executionStrategy = "always", defaultPhase = LifecyclePhase.INITIALIZE, threadSafe = true)
 public class AddSourceMojo extends AbstractMojo {
 
     /**
@@ -25,13 +24,13 @@ public class AddSourceMojo extends AbstractMojo {
      * The directory in which scala source is found
      */
     @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
-    protected File sourceDir;
+    private File sourceDir;
 
     /**
      * The directory in which testing scala source is found
      */
     @Parameter(defaultValue = "${project.build.testSourceDirectory}/../scala")
-    protected File testSourceDir;
+    private File testSourceDir;
 
     /**
      * Should use CanonicalPath to normalize path (true =&gt; getCanonicalPath, false
@@ -40,10 +39,10 @@ public class AddSourceMojo extends AbstractMojo {
      * @see <a href="https://github.com/davidB/maven-scala-plugin/issues/50">#50</a>
      */
     @Parameter(property = "maven.scala.useCanonicalPath", defaultValue = "true")
-    protected boolean useCanonicalPath = true;
+    private boolean useCanonicalPath;
 
     @Override
-    public void execute() throws MojoExecutionException {
+    public void execute() {
         try {
             if (sourceDir != null) {
                 final String path = FileUtils.pathOf(sourceDir, useCanonicalPath);

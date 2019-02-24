@@ -28,8 +28,8 @@ import org.codehaus.plexus.util.StringUtils;
 */
 public class MainHelper {
 
-	public static final String argFilePrefix = "scala-maven-";
-	public static final String argFileSuffix = ".args";
+	static final String argFilePrefix = "scala-maven-";
+	static final String argFileSuffix = ".args";
 
     public static String toMultiPath(List<String> paths) {
         return StringUtils.join(paths.iterator(), File.pathSeparator);
@@ -37,10 +37,6 @@ public class MainHelper {
 
     public static String toMultiPath(String[] paths) {
         return StringUtils.join(paths, File.pathSeparator);
-    }
-
-    public static String[] findFiles(File dir, String pattern) {
-        return findFiles(dir, new String[] { pattern }, new String[0]);
     }
 
     public static String[] findFiles(File dir, String[] includes, String[] excludes) {
@@ -53,10 +49,10 @@ public class MainHelper {
         return scanner.getIncludedFiles();
     }
 
-    public static String toClasspathString(ClassLoader cl) throws Exception {
+    public static String toClasspathString(ClassLoader cl) {
         StringBuilder back = new StringBuilder();
-        List<String> cps = new LinkedList<String>();
-        appendUrltoClasspathCollection(cl, cps);
+        List<String> cps = new LinkedList<>();
+        appendUrlToClasspathCollection(cl, cps);
         for(String cp : cps) {
             if (back.length() != 0) {
                 back.append(File.pathSeparatorChar);
@@ -66,7 +62,7 @@ public class MainHelper {
         return back.toString();
     }
 
-    public static void appendUrltoClasspathCollection(ClassLoader cl, Collection<String> classpath) throws Exception {
+    private static void appendUrlToClasspathCollection(ClassLoader cl, Collection<String> classpath) {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
         }
@@ -112,16 +108,13 @@ public class MainHelper {
     * @return
     * @throws IOException
     */
-    public static File createArgFile(List<String> args) throws IOException {
+    static File createArgFile(List<String> args) throws IOException {
         final File argFile = File.createTempFile(argFilePrefix, argFileSuffix);
         //argFile.deleteOnExit();
-        final PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(argFile)));
-        try {
-            for(String arg : args) {
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(argFile)))) {
+            for (String arg : args) {
                 out.println(escapeArgumentForScalacArgumentFile(arg));
             }
-        } finally {
-            out.close();
         }
         return argFile;
     }
@@ -132,22 +125,19 @@ public class MainHelper {
     * @return
     * @throws IOException
     */
-    public static List<String> readArgFile(File argFile) throws IOException {
-        ArrayList<String> back = new ArrayList<String>();
-        final BufferedReader in = new BufferedReader(new FileReader(argFile));
-        try {
-            String line = null;
+    static List<String> readArgFile(File argFile) throws IOException {
+        ArrayList<String> back = new ArrayList<>();
+        try (BufferedReader in = new BufferedReader(new FileReader(argFile))) {
+            String line;
             while ((line = in.readLine()) != null) {
                 back.add(unescapeArgumentForScalacArgumentFile(line));
             }
-        } finally {
-            in.close();
         }
         return back;
     }
 
     /** Runs the main method of a java class */
-    public static void runMain(String mainClassName, List<String> args, ClassLoader cl) throws Exception {
+    static void runMain(String mainClassName, List<String> args, ClassLoader cl) throws Exception {
         if(cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
         }
@@ -157,14 +147,14 @@ public class MainHelper {
         if(mainMethod.getReturnType() != void.class || !Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
             throw new NoSuchMethodException("main");
         }
-        String[] argArray = args.toArray(new String[args.size()]);
+        String[] argArray = args.toArray(new String[] {});
 
         //TODO - Redirect System.in System.err and System.out
 
         mainMethod.invoke(null, new Object[] {argArray});
     }
 
-    public static String locateJar(Class<?> c) throws Exception {
+    static String locateJar(Class<?> c) throws Exception {
         final URL location;
         final String classLocation = c.getName().replace('.', '/') + ".class";
         final ClassLoader loader = c.getClassLoader();

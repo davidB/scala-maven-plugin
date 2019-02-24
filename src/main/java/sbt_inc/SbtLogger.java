@@ -10,7 +10,7 @@ public class SbtLogger extends Logger {
 
     private final Log log;
 
-    public SbtLogger(Log l) {
+    SbtLogger(Log l) {
         this.log = l;
     }
 

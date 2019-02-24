@@ -34,7 +34,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "windowtitle", defaultValue = "${project.name} ${project.version} API")
-    protected String windowtitle;
+    private String windowtitle;
 
     /**
      * Specifies the text to be placed at the bottom of each output file. If you
@@ -45,7 +45,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "bottom", defaultValue = "Copyright (c) {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved.")
-    protected String bottom;
+    private String bottom;
 
     /**
      * Charset for cross-platform viewing of generated documentation.
@@ -53,7 +53,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "charset", defaultValue = "ISO-8859-1")
-    protected String charset;
+    private String charset;
 
     /**
      * Include title for the overview page.
@@ -61,7 +61,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "doctitle", defaultValue = "${project.name} ${project.version} API")
-    protected String doctitle;
+    private String doctitle;
 
     /**
      * Include footer text for each page.
@@ -69,7 +69,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "footer")
-    protected String footer;
+    private String footer;
 
     /**
      * Include header text for each page
@@ -77,7 +77,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "header")
-    protected String header;
+    private String header;
 
     /**
      * Generate source in HTML
@@ -85,7 +85,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "linksource", defaultValue = "true")
-    protected boolean linksource;
+    private boolean linksource;
 
     /**
      * Suppress description and tags, generate only declarations
@@ -93,7 +93,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "nocomment", defaultValue = "false")
-    protected boolean nocomment;
+    private boolean nocomment;
 
     /**
      * File to change style of the generated documentation
@@ -101,7 +101,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "stylesheetfile")
-    protected File stylesheetfile;
+    private File stylesheetfile;
 
     /**
      * Include top text for each page
@@ -109,7 +109,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "top")
-    protected String top;
+    private String top;
 
     /**
      * Specifies the destination directory where scalaDoc saves the generated
@@ -117,7 +117,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(defaultValue = "scaladocs", required = true)
-    protected String outputDirectory;
+    private String outputDirectory;
 
     /**
      * Specifies the destination directory where javadoc saves the generated HTML
@@ -125,7 +125,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(defaultValue = "${project.reporting.outputDirectory}/scaladocs", required = true)
-    protected File reportOutputDirectory;
+    File reportOutputDirectory;
 
     /**
      * The name of the Scaladoc report.
@@ -149,7 +149,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "maven.scaladoc.className")
-    protected String scaladocClassName;
+    private String scaladocClassName;
 
     /**
      * If you want to use vscaladoc to generate api instead of regular scaladoc, set
@@ -157,7 +157,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "maven.scaladoc.vscaladocVersion")
-    protected String vscaladocVersion;
+    private String vscaladocVersion;
 
     /**
      * To allow running aggregation only from command line use
@@ -166,21 +166,21 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
      *
      */
     @Parameter(property = "forceAggregate", defaultValue = "false")
-    protected boolean forceAggregate = false;
+    private boolean forceAggregate;
 
     /**
      * If you want to aggregate only direct sub modules.
      *
      */
     @Parameter(property = "maven.scaladoc.aggregateDirectOnly", defaultValue = "true")
-    protected boolean aggregateDirectOnly = true;
+    private boolean aggregateDirectOnly;
 
     /**
      * The directory which contains scala/java source files
      *
      */
     @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
-    protected File sourceDir;
+    private File sourceDir;
 
     private List<File> _sourceFiles;
 
@@ -203,10 +203,6 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         return back;
     }
 
-    /**
-     * @return
-     * @throws Exception
-     */
     private List<File> findSourceFiles() {
         if (_sourceFiles == null) {
             try {
@@ -256,7 +252,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     @Override
     public File getReportOutputDirectory() {
         if (reportOutputDirectory == null) {
-            reportOutputDirectory = new File(project.getBasedir(), project.getReporting().getOutputDirectory() + "/" + outputDirectory).getAbsoluteFile();
+            reportOutputDirectory = new File(project.getBasedir(), project.getModel().getReporting().getOutputDirectory() + "/" + outputDirectory).getAbsoluteFile();
         }
         return reportOutputDirectory;
     }
@@ -302,7 +298,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
             jcmd.addArgs("-Ydoc");
         }
         // copy the classpathElements to not modify the global project definition see https://github.com/davidB/maven-scala-plugin/issues/60
-        List<String> paths = new ArrayList<String>(project.getCompileClasspathElements());
+        List<String> paths = new ArrayList<>(project.getCompileClasspathElements());
         paths.remove(project.getBuild().getOutputDirectory()); //remove output to avoid "error for" : error:  XXX is already defined as package XXX ... object XXX {
         if (!paths.isEmpty())jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
         //jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
@@ -364,16 +360,14 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
                 tryAggregateUpper(project);
             }
 
-        } catch (MavenReportException exc) {
-            throw exc;
-        } catch (RuntimeException exc) {
+        } catch (MavenReportException | RuntimeException exc) {
             throw exc;
         } catch (Exception exc) {
             throw new MavenReportException("wrap: " + exc.getMessage(), exc);
         }
     }
 
-    protected void tryAggregateUpper(MavenProject prj) throws Exception {
+    private void tryAggregateUpper(MavenProject prj) throws Exception {
         if (prj != null && prj.hasParent() && canAggregate()) {
             MavenProject parent = prj.getParent();
             List<MavenProject> modules = parent.getCollectedProjects();
@@ -383,9 +377,9 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         }
     }
 
-    protected void aggregate(MavenProject parent) throws Exception {
+    private void aggregate(MavenProject parent) throws Exception {
         List<MavenProject> modules = parent.getCollectedProjects();
-        File dest = new File(parent.getReporting().getOutputDirectory() +"/" + outputDirectory);
+        File dest = new File(parent.getModel().getReporting().getOutputDirectory() +"/" + outputDirectory);
         getLog().info("start aggregation into " + dest);
         StringBuilder mpath = new StringBuilder();
         for (MavenProject module : modules) {
@@ -395,7 +389,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
             if (aggregateDirectOnly && module.getParent() != parent) {
                 continue;
             }
-            File subScaladocPath = new File(module.getReporting().getOutputDirectory() +"/" + outputDirectory).getAbsoluteFile();
+            File subScaladocPath = new File(module.getModel().getReporting().getOutputDirectory() +"/" + outputDirectory).getAbsoluteFile();
             //System.out.println(" -> " + project.getModulePathAdjustment(module)  +" // " + subScaladocPath + " // " + module.getBasedir() );
             if (subScaladocPath.exists()) {
                 mpath.append(subScaladocPath).append(File.pathSeparatorChar);

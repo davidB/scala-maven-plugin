@@ -117,7 +117,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
      * @since 2.5
      */
     @Parameter(property="maven.javadoc.failOnError", defaultValue="true")
-    protected boolean failOnError;
+    private boolean failOnError;
 
     @Override
     public void doExecute() throws Exception {
@@ -168,11 +168,10 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
         final MavenArchiver archiver = new MavenArchiver();
         archiver.setArchiver(jarArchiver);
         archiver.setOutputFile(javadocJar);
-        final File contentDirectory = javadocFiles;
-        if (!contentDirectory.exists()) {
+        if (!javadocFiles.exists()) {
             getLog().warn("JAR will be empty - no content was marked for inclusion!");
         } else {
-            archiver.getArchiver().addDirectory(contentDirectory, DEFAULT_INCLUDES, DEFAULT_EXCLUDES);
+            archiver.getArchiver().addDirectory(javadocFiles, DEFAULT_INCLUDES, DEFAULT_EXCLUDES);
         }
         final List<Resource> resources = project.getBuild().getResources();
         for (final Resource r : resources) {
@@ -196,11 +195,11 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
         return javadocJar;
     }
 
-    protected String getClassifier() {
+    private String getClassifier() {
         return classifier;
     }
 
-    protected void failOnError(String prefix, Exception e)
+    private void failOnError(String prefix, Exception e)
             throws MojoExecutionException {
         if (failOnError) {
             if (e instanceof RuntimeException) {
