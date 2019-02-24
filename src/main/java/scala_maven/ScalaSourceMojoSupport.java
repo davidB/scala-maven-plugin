@@ -77,7 +77,7 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
             }
             builder.append("]");
             getLog().debug(builder.toString());
-            
+
             builder = new StringBuilder("excludes = [");
             for (String exclude : excludes) {
                 builder.append(exclude).append(",");

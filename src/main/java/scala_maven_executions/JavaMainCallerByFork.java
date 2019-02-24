@@ -58,7 +58,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         } else {
             exec.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
                 private LevelState _previous = new LevelState();
-                
+
                 @Override
                 protected void processLine(String line, int level) {
                     try {
@@ -187,5 +187,5 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
     public void redirectToLog() {
         _redirectToLog = true;
     }
-    
+
 }

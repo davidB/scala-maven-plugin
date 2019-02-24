@@ -5,18 +5,18 @@ import java.util.regex.Pattern;
 
 public class VersionNumber implements Comparable<VersionNumber> {
     private static final Pattern _regexp = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+)?([-\\.].+)?");
-    
+
     public int                   major;
     public int                   minor;
     public int                   bugfix;
     public String                modifier;
-    
+
     public VersionNumber() {
         major = 0;
         minor = 0;
         bugfix = 0;
     }
-    
+
     public VersionNumber(String s) {
         Matcher match = _regexp.matcher(s);
         if (!match.find()) {
@@ -31,7 +31,7 @@ public class VersionNumber implements Comparable<VersionNumber> {
             modifier = match.group(4);
         }
     }
-    
+
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
@@ -45,7 +45,7 @@ public class VersionNumber implements Comparable<VersionNumber> {
         }
         return str.toString();
     }
-    
+
     /**
     * Not a commutative compareTo !! Can return 0 for any VersionNumber o that match this version (same defined major,
     * minor, bugfix) undefined part are ignored.
@@ -73,11 +73,11 @@ public class VersionNumber implements Comparable<VersionNumber> {
         }
         return back;
     }
-    
+
     public boolean isZero() {
         return (major == 0) && (minor == 0) && (bugfix == 0);
     }
-    
+
     public String applyScalaArtifactVersioningScheme(String name) {
         return name + '_' + major + '.' + minor;
     }
@@ -85,7 +85,7 @@ public class VersionNumber implements Comparable<VersionNumber> {
 
 class VersionNumberMask extends VersionNumber {
     private static final Pattern _regexp = Pattern.compile("(\\d+)(\\.\\d+)?(\\.\\d+)?([-\\.].+)?");
-    
+
     public VersionNumberMask(String s) {
         Matcher match = _regexp.matcher(s);
         if (!match.find()) {
@@ -105,7 +105,7 @@ class VersionNumberMask extends VersionNumber {
             modifier = match.group(4);
         }
     }
-    
+
     /**
     * Doesn't compare modifier
     */
@@ -132,5 +132,5 @@ class VersionNumberMask extends VersionNumber {
         }
         return back;
     }
-    
+
 }

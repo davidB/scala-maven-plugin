@@ -20,30 +20,30 @@ import scala_maven_executions.MainHelper;
 */
 @Mojo(name = "console", requiresDependencyResolution = ResolutionScope.TEST, inheritByDefault = false, requiresDirectInvocation = true, executionStrategy = "once-per-session")
 public class ScalaConsoleMojo extends ScalaMojoSupport {
-    
+
     // Private Static Values //
-    
+
     /**
     * Constant {@link String} for "jline". Used for the artifact id, and
     * usually the group id, for the JLine library needed by the Scala Console.
     */
     private static final String JLINE = "jline";
-    
+
     /**
     * Constant {@link String} for "org.scala-lang". In this class it is used
     * for the forked JLine group id.
     */
     private static final String SCALA_ORG_GROUP = "org.scala-lang";
-    
+
     // Instance Members //
-    
+
     /**
     * The console to run.
     *
     */
     @Parameter(property = "mainConsole", defaultValue = "scala.tools.nsc.MainGenericRunner", required = true)
     protected String mainConsole;
-    
+
     /**
     * Add the test classpath (include classes from test directory), to the
     * console's classpath ?
@@ -51,14 +51,14 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     */
     @Parameter(property = "maven.scala.console.useTestClasspath", defaultValue = "true", required = true)
     protected boolean useTestClasspath;
-    
+
     /**
     * Add the runtime classpath, to the console's classpath ?
     *
     */
     @Parameter(property = "maven.scala.console.useRuntimeClasspath", defaultValue = "true", required = true)
     protected boolean useRuntimeClasspath;
-    
+
     /**
     * Path of the javaRebel jar. If this option is set then the console run
     * with <a href="http://www.zeroturnaround.com/javarebel/">javarebel</a>
@@ -67,7 +67,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     */
     @Parameter(property = "javarebel.jar.path")
     protected File javaRebelPath;
-    
+
     @Override
     protected void doExecute() throws Exception {
         // Force no forking
@@ -75,31 +75,31 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         // Determine Scala Version
         final VersionNumber scalaVersion = super.findScalaVersion();
         final Set<String> classpath = this.setupClassPathForConsole(scalaVersion);
-        
+
         // Log if we are violating the user settings.
         if (super.fork) {
             super.getLog().info("Ignoring fork for console execution.");
         }
-        
+
         // Setup the classpath
-        
+
         // Build the classpath string.
         final String classpathStr = MainHelper.toMultiPath(classpath.toArray(new String[classpath.size()]));
-        
+
         // Setup the JavaMainCaller
         jcmd.addArgs(super.args);
         jcmd.addOption("-cp", classpathStr);
         super.addCompilerPluginOptions(jcmd);
-        
+
         // Check for Java Rebel
         this.handleJavaRebel(jcmd);
-        
+
         // Run
         jcmd.run(super.displayCmd);
     }
-    
+
     // Private Methods //
-    
+
     /**
     * If {@link #javaRebelPath} is defined, then attempt to resolve it on the
     * filesystem and setup the Scala console to use it.
@@ -119,7 +119,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
             }
         }
     }
-    
+
     /**
     * Construct the appropriate Classpath for the Scala console.
     *
@@ -134,13 +134,13 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     */
     private Set<String> setupClassPathForConsole(final VersionNumber scalaVersion) throws Exception {
         final Set<String> classpath = new HashSet<String>();
-        
+
         classpath.addAll(this.setupProjectClasspaths());
         classpath.addAll(this.setupConsoleClasspaths(scalaVersion));
-        
+
         return classpath;
     }
-    
+
     /**
     * Construct the Classpath defined by the project and plugin settings.
     * <p>
@@ -160,21 +160,21 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     */
     private Set<String> setupProjectClasspaths() throws Exception {
         final Set<String> classpath = new HashSet<String>();
-        
+
         super.addCompilerToClasspath(classpath);
         super.addLibraryToClasspath(classpath);
-        
+
         if (this.useTestClasspath) {
             classpath.addAll(super.project.getTestClasspathElements());
         }
-        
+
         if (this.useRuntimeClasspath) {
             classpath.addAll(super.project.getRuntimeClasspathElements());
         }
-        
+
         return classpath;
     }
-    
+
     /**
     * Construct the Classpath for any additional dependencies that are needed
     * to run the Scala console.
@@ -194,12 +194,12 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     */
     private Set<String> setupConsoleClasspaths(final VersionNumber scalaVersion) throws Exception {
         final Set<String> classpath = new HashSet<String>();
-        
+
         super.addToClasspath(this.resolveJLine(scalaVersion, this.fallbackJLine(scalaVersion)), classpath, true);
-        
+
         return classpath;
     }
-    
+
     /**
     * Attempt to resolve JLine against the Scala Compiler's dependency tree.
     * <p>
@@ -232,14 +232,14 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
                 return a;
             }
         }
-        
+
         super.getLog().warn("Unable to determine the required Jline dependency from the POM. Falling back to hard-coded defaults.");
         super.getLog().warn("If you get an InvocationTargetException, then this probably means we guessed the wrong version for JLine");
         super.getLog().warn(String.format("Guessed JLine: %s", defaultFallback.toString()));
-        
+
         return defaultFallback;
     }
-    
+
     /**
     * Helper function to filter a collection of {@link Artifact} for JLine.
     * <p>
@@ -256,7 +256,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     private boolean filterForJline(final Artifact artifact) {
         final String artifactId = artifact.getArtifactId();
         final String groupId = artifact.getGroupId();
-        
+
         if (artifactId.equals(ScalaConsoleMojo.JLINE) &&
         (groupId.equals(ScalaConsoleMojo.JLINE) ||
         groupId.equals(ScalaConsoleMojo.JLINE))) {
@@ -265,7 +265,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
             return false;
         }
     }
-    
+
     /**
     * Hard coded fallback values for JLine. This used to be the only way we
     * resolve JLine, but required manually upkeep to avoid binary
@@ -293,7 +293,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
         final VersionNumber scala2_12_0M4 = new VersionNumber("2.12.0-M4");
         final VersionNumber scala2_11_0 = new VersionNumber("2.11.0");
         final VersionNumber scala2_9_0 = new VersionNumber("2.9.0");
-        
+
         if (scala2_12_0M4.compareTo(scalaVersion) <= 0) {
             return super.factory.createArtifact(ScalaConsoleMojo.JLINE, ScalaConsoleMojo.JLINE, "2.14.1", "", ScalaMojoSupport.JAR);
         } else if (scala2_11_0.compareTo(scalaVersion) <= 0) {

@@ -27,22 +27,22 @@ import org.codehaus.plexus.util.StringUtils;
 * @author David Bernard
 */
 public class MainHelper {
-    
+
 	public static final String argFilePrefix = "scala-maven-";
 	public static final String argFileSuffix = ".args";
-	
+
     public static String toMultiPath(List<String> paths) {
         return StringUtils.join(paths.iterator(), File.pathSeparator);
     }
-    
+
     public static String toMultiPath(String[] paths) {
         return StringUtils.join(paths, File.pathSeparator);
     }
-    
+
     public static String[] findFiles(File dir, String pattern) {
         return findFiles(dir, new String[] { pattern }, new String[0]);
     }
-    
+
     public static String[] findFiles(File dir, String[] includes, String[] excludes) {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(dir);
@@ -52,7 +52,7 @@ public class MainHelper {
         scanner.scan();
         return scanner.getIncludedFiles();
     }
-    
+
     public static String toClasspathString(ClassLoader cl) throws Exception {
         StringBuilder back = new StringBuilder();
         List<String> cps = new LinkedList<String>();
@@ -65,7 +65,7 @@ public class MainHelper {
         }
         return back.toString();
     }
-    
+
     public static void appendUrltoClasspathCollection(ClassLoader cl, Collection<String> classpath) throws Exception {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
@@ -81,7 +81,7 @@ public class MainHelper {
             cl = cl.getParent();
         }
     }
-    
+
     /**
     * Escapes arguments as necessary so the StringTokenizer for scala arguments pulls in filenames with spaces correctly.
     * @param arg
@@ -93,7 +93,7 @@ public class MainHelper {
         }
         return arg;
     }
-    
+
     /**
     * UnEscapes arguments as necessary so the StringTokenizer for scala arguments pulls in filenames with spaces correctly.
     * @param arg
@@ -105,7 +105,7 @@ public class MainHelper {
         }
         return arg;
     }
-    
+
     /**
     * Creates a file containing all the arguments. This file has a very simple format of argument (white-space argument).
     *
@@ -125,7 +125,7 @@ public class MainHelper {
         }
         return argFile;
     }
-    
+
     /**
     * Creates a file containing all the arguments. This file has a very simple format of argument (white-space argument).
     *
@@ -145,7 +145,7 @@ public class MainHelper {
         }
         return back;
     }
-    
+
     /** Runs the main method of a java class */
     public static void runMain(String mainClassName, List<String> args, ClassLoader cl) throws Exception {
         if(cl == null) {
@@ -158,12 +158,12 @@ public class MainHelper {
             throw new NoSuchMethodException("main");
         }
         String[] argArray = args.toArray(new String[args.size()]);
-        
+
         //TODO - Redirect System.in System.err and System.out
-        
+
         mainMethod.invoke(null, new Object[] {argArray});
     }
-    
+
     public static String locateJar(Class<?> c) throws Exception {
         final URL location;
         final String classLocation = c.getName().replace('.', '/') + ".class";

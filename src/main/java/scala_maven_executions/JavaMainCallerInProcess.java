@@ -36,8 +36,6 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
         _cl = new URLClassLoader(urls.toArray(new URL[urls.size()]), (ClassLoader)null);
     }
 
-
-
     @Override
     public void addJvmArgs(String... args0) {
         //TODO - Ignore classpath
@@ -94,12 +92,9 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
         MainHelper.runMain(mainClassName, args, _cl);
     }
 
-
-
     @Override
     public void redirectToLog() {
         requester.getLog().warn("redirection to log is not supported for 'inProcess' mode");
     }
-
 
 }

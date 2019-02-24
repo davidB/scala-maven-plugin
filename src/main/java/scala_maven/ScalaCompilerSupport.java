@@ -15,15 +15,15 @@ import scala_maven_executions.MainHelper;
 * Abstract parent of all Scala Mojo who run compilation
 */
 public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
-    
+
     public static final String ALL = "all";
     public static final String INCREMENTAL = "incremental";
-    
+
     /**
     * Keeps track of if we get compile errors in incremental mode
     */
     private boolean compileErrors;
-    
+
     /**
     * Recompile mode to use when sources were previously compiled and there is at
     * least one change:
@@ -34,7 +34,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     */
     @Parameter(property = "recompileMode", defaultValue = "all")
     protected String recompileMode = ALL;
-    
+
     /**
     * notifyCompilation if true then print a message "path: compiling"
     * for each root directory or files that will be compiled.
@@ -44,20 +44,20 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     */
     @Parameter(property = "notifyCompilation", defaultValue = "true")
     private boolean notifyCompilation = true;
-    
+
     abstract protected File getOutputDir() throws Exception;
-    
+
     abstract protected List<String> getClasspathElements() throws Exception;
-    
+
     private long _lastCompileAt = -1;
-    
+
     private SbtIncrementalCompiler incremental;
-    
+
     /**
     * Analysis cache file for incremental recompilation.
     */
     abstract protected File getAnalysisCacheFile() throws Exception;
-    
+
     /**
     * Compile order for Scala and Java sources for sbt incremental compile.
     *
@@ -66,7 +66,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     */
     @Parameter(property = "compileOrder", defaultValue = "Mixed")
     private CompileOrder compileOrder;
-    
+
     @Override
     protected void doExecute() throws Exception {
         if (getLog().isDebugEnabled()) {
@@ -88,7 +88,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             break;
         }
     }
-    
+
     protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception, InterruptedException {
         if (!compileInLoop && INCREMENTAL.equals(recompileMode)) {
             // TODO - Do we really need this duplicated here?
@@ -98,19 +98,19 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             // if not compileInLoop, invoke incrementalCompile immediately
             return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
         }
-        
+
         long t0 = System.currentTimeMillis();
         LastCompilationInfo lastCompilationInfo = LastCompilationInfo.find(sourceRootDirs, outputDir);
         if (_lastCompileAt < 0) {
             _lastCompileAt = lastCompilationInfo.getLastSuccessfullTS();
         }
-        
+
         List<File> files = getFilesToCompile(sourceRootDirs, _lastCompileAt);
-        
+
         if (files == null) {
             return -1;
         }
-        
+
         if (files.size() < 1) {
             return 0;
         }
@@ -118,7 +118,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             outputDir.mkdirs();
         }
         long t1 = System.currentTimeMillis();
-        
+
         if (compileInLoop && INCREMENTAL.equals(recompileMode)) {
             // if compileInLoop, do not invoke incrementalCompile when there's no change
             int retCode = incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, compileInLoop);
@@ -128,7 +128,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             }
             return retCode;
         }
-        
+
         getLog().info(String.format("Compiling %d source files to %s at %d", files.size(), outputDir.getAbsolutePath(), t1));
         JavaMainCaller jcmd = getScalaCommand();
         jcmd.redirectToLog();
@@ -149,24 +149,24 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         _lastCompileAt = t1;
         return files.size();
     }
-    
+
     /**
     * Returns true if the previous compile failed
     */
     protected boolean hasCompileErrors() {
         return compileErrors;
     }
-    
+
     protected void clearCompileErrors() {
         compileErrors = false;
     }
-    
+
     protected List<File> getFilesToCompile(List<File> sourceRootDirs, long lastSuccessfullCompileTime) throws Exception {
         List<File> sourceFiles = findSourceWithFilters(sourceRootDirs);
         if (sourceFiles.size() == 0) {
             return null;
         }
-        
+
         // filter uptodate
         // filter is not applied to .java, because scalac failed to used existing .class for unmodified .java
         //   failed with "error while loading Xxx, class file '.../target/classes/.../Xxxx.class' is broken"
@@ -199,7 +199,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
         return files;
     }
-    
+
     private void notifyCompilation(List<File> files) throws Exception {
         if (notifyCompilation) {
             for (File f : files) {
@@ -207,7 +207,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             }
         }
     }
-    
+
     private static class LastCompilationInfo {
         static LastCompilationInfo find(List<File> sourceRootDirs, File outputDir) throws Exception {
             StringBuilder hash = new StringBuilder();
@@ -216,15 +216,15 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             }
             return new LastCompilationInfo(new File(outputDir.getAbsolutePath() + "." + hash.toString().hashCode() + ".timestamp"), outputDir);
         }
-        
+
         private final File _lastCompileAtFile;
         private final File _outputDir;
-        
+
         private LastCompilationInfo(File f, File outputDir) {
             _lastCompileAtFile = f;
             _outputDir = outputDir;
         }
-        
+
         long getLastSuccessfullTS() throws Exception {
             long back =  -1;
             if (_lastCompileAtFile.exists() && _outputDir.exists() && (_outputDir.list().length > 0)) {
@@ -232,7 +232,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             }
             return back;
         }
-        
+
         void setLastSuccessfullTS(long v) throws Exception {
             if (!_lastCompileAtFile.exists()) {
                 FileUtils.fileWrite(_lastCompileAtFile.getAbsolutePath(), ".");
@@ -240,18 +240,18 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             _lastCompileAtFile.setLastModified(v);
         }
     }
-    
+
     //
     // Incremental compilation
     //
-    
+
     @SuppressWarnings("unchecked")
     protected int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile, boolean compileInLoop) throws Exception {
         List<File> sources = findSourceWithFilters(sourceRootDirs);
         if (sources.isEmpty()) {
             return -1;
         }
-        
+
         if (incremental == null) {
             File libraryJar = getLibraryJar();
             File reflectJar = getReflectJar();
@@ -261,11 +261,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             File compilerBridgeJar = getCompilerBridgeJar();
             incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars, compilerBridgeJar, getLog(), cacheFile, compileOrder);
         }
-        
+
         classpathElements.remove(outputDir.getAbsolutePath());
         List<String> scalacOptions = getScalaOptions();
         List<String> javacOptions = getJavacOptions();
-        
+
         try {
             incremental.compile(classpathElements, sources, outputDir, scalacOptions, javacOptions);
         } catch (xsbti.CompileFailed e) {
@@ -275,7 +275,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
                 throw e;
             }
         }
-        
+
         return 1;
     }
 }

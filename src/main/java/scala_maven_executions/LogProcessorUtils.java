@@ -1,16 +1,16 @@
 package scala_maven_executions;
 
 public class LogProcessorUtils {
-    
+
     public static enum Level {
         ERROR, WARNING, INFO
     }
-    
+
     public static class LevelState {
         public Level level = Level.INFO;
         public String untilContains = null;
     }
-    
+
     public static LevelState levelStateOf(String line, LevelState previous) throws Exception {
         LevelState back = new LevelState();
         String lineLowerCase = line.toLowerCase();
@@ -34,5 +34,5 @@ public class LogProcessorUtils {
         }
         return back;
     }
-    
+
 }

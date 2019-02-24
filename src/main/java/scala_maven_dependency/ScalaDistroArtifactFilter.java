@@ -8,7 +8,7 @@ import org.apache.maven.shared.dependency.graph.filter.DependencyNodeFilter;
 import static scala_maven_dependency.ScalaConstants.*;
 /**
 * A filter to only look at scala distribution maven artifacts.
-* 
+*
 * @author JSuereth
 */
 public class ScalaDistroArtifactFilter implements DependencyNodeFilter, ArtifactFilter {
