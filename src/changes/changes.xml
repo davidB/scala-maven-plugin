@@ -5,7 +5,42 @@
     <author>David Bernard</author>
   </properties>
   <body>
-    <release version="3.3.3" date="2018-03-19">
+    <release version="4.0.0" date="2019-03-02">
+      <action dev="Stephane Landelle" type="update">code clean up</action>
+      <action dev="Stephane Landelle" type="update">recompileMode is incremental by default</action>
+      <action dev="Stephane Landelle" type="remove">remove support of zinc server</action>
+      <action dev="Stephane Landelle" type="update">update version of zinc, incremental compiler</action>
+      <action dev="Carlos Rodrigues" type="add" issue="318">add configuratio to add entry into classpath (help for multi jvm language support)</action>
+      <action dev="David Bernard" type="remove">remove support jdk before 1.8</action>
+      <action dev="dependabot" type="update">update dependencies</action>
+    </release>
+    <release version="3.4.6" date="2019-01-21">
+      <action dev="David Bernard" type="fix">re-deployement (issue during release of 3.4.5)</action>
+    </release>
+    <release version="3.4.5" date="2019-01-20">
+      <action dev="Bill Carlson" type="fix">add compiler's plugins when run scaladoc</action>
+      <action dev="dependabot" type="update">update dependencies</action>
+    </release>
+    <release version="3.4.4" date="2018-11-01">
+      <action dev="dependabot" type="update">update dependencies</action>
+    </release>
+    <release version="3.4.3" date="2018-10-28">
+      <action dev="dependabot" type="update">update dependencies</action>
+      <action dev="David Bernard" type="fix">rollback to require maven 3.3.9 as minimal</action>
+    </release>
+    <release version="3.4.2" date="2018-07-22">
+      <action dev="Štefan Miklošovič" type="fix">make zinc host configurable</action>
+      <action dev="dependabot" type="update">update dependencies</action>
+    </release>
+    <release version="3.4.1" date="2018-06-17">
+      <action dev="argv-minus-one" type="fix">Un-break the doc-jar goal.</action>
+      <action dev="dependabot" type="update">update dependencies</action>
+    </release>
+    <release version="3.4.0" date="2018-06-09">
+    </release>
+    <release version="3.3.3" date="2018-06-09">
+      <action dev="dependabot" type="update">update dependencies</action>
+      <action dev="Tobias Roeser" type="update">Migrated javadoc-style annotation to Maven Plugin Annotations.</action>
     </release>
     <release version="3.3.2" date="2018-03-19">
       <action dev="Anton Klaren" type="update">update to zinc 0.3.15</action>
