@@ -14,30 +14,32 @@
 <a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> org.apache.maven.shared.dependency.graph.filter.DependencyNodeFilter;
 <a class="jxr_linenumber" name="L7" href="#L7">7</a>   
 <a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> scala_maven_dependency.ScalaConstants.*;
-<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_javadoccomment"> * A filter to only look at scala distribution maven artifacts.</em>
-<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_javadoccomment"> * </em>
-<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_javadoccomment"> * @author JSuereth</em>
-<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="ScalaDistroArtifactFilter" href="../scala_maven_dependency/ScalaDistroArtifactFilter.html#ScalaDistroArtifactFilter">ScalaDistroArtifactFilter</a> <strong class="jxr_keyword">implements</strong> DependencyNodeFilter, ArtifactFilter {
-<a class="jxr_linenumber" name="L15" href="#L15">15</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String scalaOrganization;
-<a class="jxr_linenumber" name="L16" href="#L16">16</a>  
-<a class="jxr_linenumber" name="L17" href="#L17">17</a>      <strong class="jxr_keyword">public</strong> <a name="ScalaDistroArtifactFilter" href="../scala_maven_dependency/ScalaDistroArtifactFilter.html#ScalaDistroArtifactFilter">ScalaDistroArtifactFilter</a>(String scalaOrganization) {
-<a class="jxr_linenumber" name="L18" href="#L18">18</a>          <strong class="jxr_keyword">this</strong>.scalaOrganization=scalaOrganization;
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>      }
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>      @Override
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> include(Artifact artifact) {
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  		<em class="jxr_comment">//TODO - Are we checking the right artifacts?</em>
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  		<strong class="jxr_keyword">return</strong> scalaOrganization.equalsIgnoreCase(artifact.getGroupId()) &amp;&amp;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  		SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId());
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  	}
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  	@Override
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> accept(DependencyNode node) {
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  		<strong class="jxr_keyword">return</strong> include(node.getArtifact());
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  	}
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  }
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_javadoccomment"> * A filter to only look at scala distribution maven artifacts.</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_javadoccomment"> * @author JSuereth</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="ScalaDistroArtifactFilter" href="../scala_maven_dependency/ScalaDistroArtifactFilter.html#ScalaDistroArtifactFilter">ScalaDistroArtifactFilter</a> <strong class="jxr_keyword">implements</strong> DependencyNodeFilter, ArtifactFilter {
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String scalaOrganization;
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>      <strong class="jxr_keyword">public</strong> <a name="ScalaDistroArtifactFilter" href="../scala_maven_dependency/ScalaDistroArtifactFilter.html#ScalaDistroArtifactFilter">ScalaDistroArtifactFilter</a>(String scalaOrganization) {
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>          <strong class="jxr_keyword">this</strong>.scalaOrganization = scalaOrganization;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>      }
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>      @Override
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> include(Artifact artifact) {
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>          <em class="jxr_comment">// TODO - Are we checking the right artifacts?</em>
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>          <strong class="jxr_keyword">return</strong> scalaOrganization.equalsIgnoreCase(artifact.getGroupId())
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>              &amp;&amp; SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId());
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>      }
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>      @Override
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> accept(DependencyNode node) {
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>          <strong class="jxr_keyword">return</strong> include(node.getArtifact());
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      }
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2019. All rights reserved.</div>

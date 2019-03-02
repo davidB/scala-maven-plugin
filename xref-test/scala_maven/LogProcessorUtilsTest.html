@@ -17,36 +17,45 @@
 <a class="jxr_linenumber" name="L9" href="#L9">9</a>   
 <a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="LogProcessorUtilsTest" href="../scala_maven/LogProcessorUtilsTest.html#LogProcessorUtilsTest">LogProcessorUtilsTest</a> {
 <a class="jxr_linenumber" name="L11" href="#L11">11</a>  
-<a class="jxr_linenumber" name="L12" href="#L12">12</a>    @Test
-<a class="jxr_linenumber" name="L13" href="#L13">13</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> jdkSplit() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L14" href="#L14">14</a>      LevelState previous = <strong class="jxr_keyword">new</strong> LevelState();
-<a class="jxr_linenumber" name="L15" href="#L15">15</a>      previous = assertLevelState(<span class="jxr_string">"/home/hub/p/eee/src/main/scala:-1: info: compiling"</span>, previous, Level.INFO, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L16" href="#L16">16</a>      previous = assertLevelState(<span class="jxr_string">"Compiling 128 source files to /home/hub/p/eee/target/classes at 1312794546514"</span>, previous, Level.INFO, <strong class="jxr_keyword">null</strong>); 
-<a class="jxr_linenumber" name="L17" href="#L17">17</a>      previous = assertLevelState(<span class="jxr_string">"Recompiling 1 files"</span>, previous, Level.INFO, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L18" href="#L18">18</a>      previous = assertLevelState(<span class="jxr_string">"/home/hub/p/eee/src/main/scala/Service.scala:72: error: type mismatch;"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>      previous = assertLevelState(<span class="jxr_string">"found : Unit"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>      previous = assertLevelState(<span class="jxr_string">"required: () =&gt; Any"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>      previous = assertLevelState(<span class="jxr_string">"f()"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>      previous = assertLevelState(<span class="jxr_string">" ^"</span>, previous, Level.ERROR, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>      previous = assertLevelState(<span class="jxr_string">"/home/hub/p/eee/src/main/scala/src/main/scala/Service.scala:79: error: type mismatch;"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>      previous = assertLevelState(<span class="jxr_string">"found : Unit"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>      previous = assertLevelState(<span class="jxr_string">"required: () =&gt; Any"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>      previous = assertLevelState(<span class="jxr_string">"f()"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>      previous = assertLevelState(<span class="jxr_string">"^"</span>, previous, Level.ERROR, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>      previous = assertLevelState(<span class="jxr_string">"two errors found"</span>, previous, Level.ERROR, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>      previous = assertLevelState(<span class="jxr_string">"------------------------------------------------------------------------"</span>, previous, Level.INFO, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>      previous = assertLevelState(<span class="jxr_string">"BUILD ERROR"</span>, previous, Level.ERROR, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>      previous = assertLevelState(<span class="jxr_string">"------------------------------------------------------------------------"</span>, previous, Level.INFO, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>      previous = assertLevelState(<span class="jxr_string">"wrap: org.apache.commons.exec.ExecuteException: Process exited with an error: 1(Exit value: 1)"</span>, previous, Level.ERROR, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>    }
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>    <strong class="jxr_keyword">private</strong> LevelState assertLevelState(String input, LevelState previous, Level expectedLevel, String expectedUntilContains) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>      LevelState back = LogProcessorUtils.levelStateOf(input, previous);
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>      assertEquals(expectedLevel, back.level);
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>      assertEquals(expectedUntilContains, back.untilContains);
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">return</strong> back;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>    }
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  }
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>      @Test
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> jdkSplit() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>          LevelState previous = <strong class="jxr_keyword">new</strong> LevelState();
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>          previous = assertLevelState(<span class="jxr_string">"/home/hub/p/eee/src/main/scala:-1: info: compiling"</span>, previous, Level.INFO, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>          previous = assertLevelState(<span class="jxr_string">"Compiling 128 source files to /home/hub/p/eee/target/classes at 1312794546514"</span>,
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>              previous, Level.INFO, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>          previous = assertLevelState(<span class="jxr_string">"Recompiling 1 files"</span>, previous, Level.INFO, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>          previous = assertLevelState(<span class="jxr_string">"/home/hub/p/eee/src/main/scala/Service.scala:72: error: type mismatch;"</span>, previous,
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>              Level.ERROR, <span class="jxr_string">"^"</span>);
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>          previous = assertLevelState(<span class="jxr_string">"found : Unit"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>          previous = assertLevelState(<span class="jxr_string">"required: () =&gt; Any"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>          previous = assertLevelState(<span class="jxr_string">"f()"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>          previous = assertLevelState(<span class="jxr_string">" ^"</span>, previous, Level.ERROR, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>          previous = assertLevelState(
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>              <span class="jxr_string">"/home/hub/p/eee/src/main/scala/src/main/scala/Service.scala:79: error: type mismatch;"</span>, previous,
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>              Level.ERROR, <span class="jxr_string">"^"</span>);
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>          previous = assertLevelState(<span class="jxr_string">"found : Unit"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>          previous = assertLevelState(<span class="jxr_string">"required: () =&gt; Any"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>          previous = assertLevelState(<span class="jxr_string">"f()"</span>, previous, Level.ERROR, <span class="jxr_string">"^"</span>);
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>          previous = assertLevelState(<span class="jxr_string">"^"</span>, previous, Level.ERROR, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>          previous = assertLevelState(<span class="jxr_string">"two errors found"</span>, previous, Level.ERROR, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>          previous = assertLevelState(<span class="jxr_string">"------------------------------------------------------------------------"</span>,
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>              previous, Level.INFO, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>          previous = assertLevelState(<span class="jxr_string">"BUILD ERROR"</span>, previous, Level.ERROR, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>          previous = assertLevelState(<span class="jxr_string">"------------------------------------------------------------------------"</span>,
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>              previous, Level.INFO, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>          previous = assertLevelState(
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>              <span class="jxr_string">"wrap: org.apache.commons.exec.ExecuteException: Process exited with an error: 1(Exit value: 1)"</span>, previous,
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>              Level.ERROR, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      }
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">private</strong> LevelState assertLevelState(String input, LevelState previous, Level expectedLevel,
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>          String expectedUntilContains) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>          LevelState back = LogProcessorUtils.levelStateOf(input, previous);
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>          assertEquals(expectedLevel, back.level);
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>          assertEquals(expectedUntilContains, back.untilContains);
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">return</strong> back;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      }
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2019. All rights reserved.</div>
