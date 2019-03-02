@@ -8,37 +8,39 @@ import java.util.ArrayList;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.codehaus.plexus.util.StringUtils;
+
 /**
  * This class will call a java main method via reflection.
  *
  * @author J. Suereth
  *
- * Note: a -classpath argument *must* be passed into the jvmargs.
+ *         Note: a -classpath argument *must* be passed into the jvmargs.
  *
  */
 public class JavaMainCallerInProcess extends JavaMainCallerSupport {
 
     private ClassLoader _cl;
 
-    public JavaMainCallerInProcess(AbstractMojo requester,  String mainClassName, String classpath, String[] jvmArgs, String[] args) throws Exception {
+    public JavaMainCallerInProcess(AbstractMojo requester, String mainClassName, String classpath, String[] jvmArgs,
+        String[] args) throws Exception {
         super(requester, mainClassName, "", jvmArgs, args);
 
-        //Pull out classpath and create class loader
+        // Pull out classpath and create class loader
         ArrayList<URL> urls = new ArrayList<>();
-        for(String path : classpath.split(File.pathSeparator)) {
+        for (String path : classpath.split(File.pathSeparator)) {
             try {
                 urls.add(new File(path).toURI().toURL());
             } catch (MalformedURLException e) {
-                //TODO - Do something usefull here...
+                // TODO - Do something usefull here...
                 requester.getLog().error(e);
             }
         }
-        _cl = new URLClassLoader(urls.toArray(new URL[]{}), null);
+        _cl = new URLClassLoader(urls.toArray(new URL[] {}), null);
     }
 
     @Override
     public void addJvmArgs(String... args0) {
-        //TODO - Ignore classpath
+        // TODO - Ignore classpath
         if (args0 != null) {
             for (String arg : args0) {
                 requester.getLog().warn("jvmArgs are ignored when run in process :" + arg);
@@ -52,7 +54,7 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
             runInternal(displayCmd);
             return true;
         } catch (Exception e) {
-            if(throwFailure) {
+            if (throwFailure) {
                 throw e;
             }
             return false;
@@ -60,7 +62,7 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
     }
 
     /**
-     *  spawns a thread to run the method
+     * spawns a thread to run the method
      */
     @Override
     public SpawnMonitor spawn(final boolean displayCmd) {
@@ -77,9 +79,9 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
 
     /** Runs the main method of a java class */
     private void runInternal(boolean displayCmd) throws Exception {
-        String[] argArray = args.toArray(new String[]{});
-        if(displayCmd) {
-            requester.getLog().info("cmd : " + mainClassName + "(" + StringUtils.join(argArray, ",")+")");
+        String[] argArray = args.toArray(new String[] {});
+        if (displayCmd) {
+            requester.getLog().info("cmd : " + mainClassName + "(" + StringUtils.join(argArray, ",") + ")");
         }
         MainHelper.runMain(mainClassName, args, _cl);
     }

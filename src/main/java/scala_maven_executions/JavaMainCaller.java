@@ -1,6 +1,7 @@
 package scala_maven_executions;
 
 import java.io.File;
+
 /**
  * This interface is used to create a call on a main method of a java class.
  *
@@ -10,14 +11,20 @@ import java.io.File;
  *
  */
 public interface JavaMainCaller {
-    /** Adds a JVM arg.  Note: This is not available for in-process "forks" */
+    /** Adds a JVM arg. Note: This is not available for in-process "forks" */
     void addJvmArgs(String... args);
+
     /** Adds arguments for the process */
     void addArgs(String... args);
+
     /** Adds option (basically two arguments) */
     void addOption(String key, String value);
-    /** Adds an option (key-file pair). This will pull the absolute path of the file */
+
+    /**
+     * Adds an option (key-file pair). This will pull the absolute path of the file
+     */
     void addOption(String key, File value);
+
     /** Adds the key if the value is true */
     void addOption(String key, boolean value);
 
@@ -27,6 +34,7 @@ public interface JavaMainCaller {
     // TODO: avoid to have several Thread to pipe stream
     // TODO: add support to inject startup command and shutdown command (on :quit)
     void run(boolean displayCmd) throws Exception;
+
     /** Runs the JavaMain with all the built up arguments/options */
     boolean run(boolean displayCmd, boolean throwFailure) throws Exception;
 

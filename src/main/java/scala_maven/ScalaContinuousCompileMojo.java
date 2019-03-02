@@ -11,77 +11,77 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import scala_maven_executions.JavaMainCaller;
 
 /**
-* Compile the main and test scala source directory in continuous (infinite
-* loop). !! This is an util goal for commandline usage only (Do not use or call
-* it in a pom) !!!
-*
-*/
+ * Compile the main and test scala source directory in continuous (infinite
+ * loop). !! This is an util goal for commandline usage only (Do not use or call
+ * it in a pom) !!!
+ *
+ */
 @Mojo(name = "cc", requiresDependencyResolution = ResolutionScope.TEST)
 public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
 
     /**
-    * The output directory for compilation.
-    *
-    */
-    @Parameter(property="project.build.outputDirectory")
+     * The output directory for compilation.
+     *
+     */
+    @Parameter(property = "project.build.outputDirectory")
     private File mainOutputDir;
 
     /**
-    * The main directory containing scala source for compilation
-    *
-    */
-    @Parameter (defaultValue="${project.build.sourceDirectory}/../scala")
+     * The main directory containing scala source for compilation
+     *
+     */
+    @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
     private File mainSourceDir;
 
     /**
-    * The directory to place test compilation output in
-    *
-    */
-    @Parameter(defaultValue="${project.build.testOutputDirectory}")
+     * The directory to place test compilation output in
+     *
+     */
+    @Parameter(defaultValue = "${project.build.testOutputDirectory}")
     private File testOutputDir;
 
     /**
-    * The directory containing test source for compilation
-    *
-    */
-    @Parameter (defaultValue="${project.build.testSourceDirectory}/../scala")
+     * The directory containing test source for compilation
+     *
+     */
+    @Parameter(defaultValue = "${project.build.testSourceDirectory}/../scala")
     private File testSourceDir;
 
     /**
-    * Analysis cache file for incremental recompilation.
-    *
-    */
-    @Parameter (property="analysisCacheFile", defaultValue="${project.build.directory}/analysis/compile")
+     * Analysis cache file for incremental recompilation.
+     *
+     */
+    @Parameter(property = "analysisCacheFile", defaultValue = "${project.build.directory}/analysis/compile")
     private File analysisCacheFile;
 
     /**
-    * Analysis cache file for incremental recompilation.
-    *
-    */
-    @Parameter (property="testAnalysisCacheFile", defaultValue="${project.build.directory}/analysis/test-compile")
+     * Analysis cache file for incremental recompilation.
+     *
+     */
+    @Parameter(property = "testAnalysisCacheFile", defaultValue = "${project.build.directory}/analysis/test-compile")
     private File testAnalysisCacheFile;
 
     /**
-    * Define if fsc should be used, else scalac is used.
-    * fsc => scala.tools.nsc.CompileClient, scalac =&gt; scala.tools.nsc.Main.
-    *
-    */
-    @Parameter(property="fsc", defaultValue="true")
+     * Define if fsc should be used, else scalac is used. fsc =>
+     * scala.tools.nsc.CompileClient, scalac =&gt; scala.tools.nsc.Main.
+     *
+     */
+    @Parameter(property = "fsc", defaultValue = "true")
     private boolean useFsc;
 
     /**
-    * Define if cc should run once or in infinite loop. (useful for test or working
-    * with editor)
-    *
-    */
-    @Parameter(property="once", defaultValue="false")
+     * Define if cc should run once or in infinite loop. (useful for test or working
+     * with editor)
+     *
+     */
+    @Parameter(property = "once", defaultValue = "false")
     private boolean once;
 
     /**
-    * Turns verbose output on.
-    *
-    */
-    @Parameter(property="verbose", defaultValue="false")
+     * Turns verbose output on.
+     *
+     */
+    @Parameter(property = "verbose", defaultValue = "false")
     private boolean verbose;
 
     @Override
@@ -156,14 +156,17 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
 
             int nbFile = 0;
             if (!mainSourceDirs.isEmpty()) {
-                nbFile = compile(mainSourceDirs, mainOutputDir, analysisCacheFile, project.getCompileClasspathElements(), true);
-                // If there are no source files, the compile method returns -1. Thus, to make sure we
+                nbFile = compile(mainSourceDirs, mainOutputDir, analysisCacheFile,
+                    project.getCompileClasspathElements(), true);
+                // If there are no source files, the compile method returns -1. Thus, to make
+                // sure we
                 // still run the tests if there are test sources, reset nbFile to zero.
                 if (nbFile == -1)
-                nbFile = 0;
+                    nbFile = 0;
             }
             if (!testSourceDirs.isEmpty()) {
-                nbFile += compile(testSourceDirs, testOutputDir, testAnalysisCacheFile, project.getTestClasspathElements(), true);
+                nbFile += compile(testSourceDirs, testOutputDir, testAnalysisCacheFile,
+                    project.getTestClasspathElements(), true);
             }
             if (nbFile > 0) {
                 if (!hasCompileErrors()) {
@@ -183,11 +186,10 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
         } while (!once);
     }
 
-
-
     /**
-    * Allows derived Mojos to do things after a compile has succesfully completed such as run test cases
-    */
+     * Allows derived Mojos to do things after a compile has succesfully completed
+     * such as run test cases
+     */
     protected void postCompileActions() throws Exception {
     }
 
@@ -203,7 +205,8 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
         jcmd.addArgs(args);
         jcmd.spawn(displayCmd);
         FileUtils.fileWrite(serverTagFile.getAbsolutePath(), ".");
-        Thread.sleep(1000); //HACK To wait startup time of server (avoid first fsc command to failed to contact server)
+        Thread.sleep(1000); // HACK To wait startup time of server (avoid first fsc command to failed to
+                            // contact server)
     }
 
     private class StopServer extends Thread {
@@ -219,7 +222,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
                     serverTagFile.delete();
                 }
             } catch (Exception exc) {
-                //getLog().warn(exc);
+                // getLog().warn(exc);
             }
         }
     }

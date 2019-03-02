@@ -21,9 +21,8 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Compile the main and test scala source directory then run unit test cases in
- * continuous (infinite loop).
- * This is an util goal for commandline usage only (Do not use or call it in a
- * pom) !!!
+ * continuous (infinite loop). This is an util goal for commandline usage only
+ * (Do not use or call it in a pom) !!!
  *
  */
 @Mojo(name = "cctest", requiresDependencyResolution = ResolutionScope.TEST)
@@ -34,10 +33,9 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
 
     /**
      * The local repository for caching artifacts. It is strongly recommended to
-     * specify a path to an isolated
-     * repository like <code>${project.build.directory}/it-repo</code>. Otherwise,
-     * your ordinary local repository will
-     * be used, potentially soiling it with broken artifacts.
+     * specify a path to an isolated repository like
+     * <code>${project.build.directory}/it-repo</code>. Otherwise, your ordinary
+     * local repository will be used, potentially soiling it with broken artifacts.
      *
      */
     @Parameter(property = "invoker.localRepositoryPath", defaultValue = "${settings.localRepository}")
@@ -45,13 +43,11 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
 
     /**
      * Specify this parameter to run individual tests by file name, overriding the
-     * <code>includes/excludes</code>
-     * parameters. Each pattern you specify here will be used to create an
-     * include pattern formatted like <code>**&#47;${test}.java</code>, so you can
-     * just type "-Dtest=MyTest"
-     * to run a single test called "foo/MyTest.java". This parameter will override
-     * the TestNG suiteXmlFiles
-     * parameter.
+     * <code>includes/excludes</code> parameters. Each pattern you specify here will
+     * be used to create an include pattern formatted like
+     * <code>**&#47;${test}.java</code>, so you can just type "-Dtest=MyTest" to run
+     * a single test called "foo/MyTest.java". This parameter will override the
+     * TestNG suiteXmlFiles parameter.
      *
      */
     @Parameter(property = "test")
@@ -59,10 +55,8 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
 
     /**
      * A space-separated list of the goals to execute as part of running the tests.
-     * You can use this
-     * setting to run different testing tools other than just JUnit. For example, to
-     * run the
-     * ScalaTest (with the maven-scalatest-plugin):
+     * You can use this setting to run different testing tools other than just
+     * JUnit. For example, to run the ScalaTest (with the maven-scalatest-plugin):
      *
      * <pre>
      *   mvn -Dcctest.goals=scalatest:test scala:cctest
@@ -75,8 +69,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
      * </pre>
      *
      * If you need to specify the goal every time you run <code>scala:cctest</code>,
-     * you can
-     * configure the setting in the pom.xml:
+     * you can configure the setting in the pom.xml:
      *
      * <pre>
      *    &lt;plugin&gt;
@@ -98,8 +91,7 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
     protected void postCompileActions() throws Exception {
         if (test == null) {
             getLog().info("Now running all the unit tests. Use -Dtest=FooTest to run a single test by name");
-        }
-        else {
+        } else {
             getLog().info("Now running tests matching: " + test);
         }
 
@@ -120,20 +112,17 @@ public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {
             request.setProperties(properties);
         }
 
-
         if (getLog().isDebugEnabled()) {
             try {
                 getLog().debug("Executing: " + new MavenCommandLineBuilder().build(request));
-            }
-            catch (CommandLineConfigurationException e) {
+            } catch (CommandLineConfigurationException e) {
                 getLog().debug("Failed to display command line: " + e.getMessage());
             }
         }
 
         try {
             invoker.execute(request);
-        }
-        catch (final MavenInvocationException e) {
+        } catch (final MavenInvocationException e) {
             getLog().debug("Error invoking Maven: " + e.getMessage(), e);
             throw new BuildFailureException("Maven invocation failed. " + e.getMessage(), e);
         }

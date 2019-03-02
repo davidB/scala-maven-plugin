@@ -13,16 +13,15 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Compile Scala test source into test-classes. Corresponds roughly to
- * testCompile
- * in maven-compiler-plugin
+ * testCompile in maven-compiler-plugin
  *
  */
 @Mojo(name = "testCompile", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class ScalaTestCompileMojo extends ScalaCompilerSupport {
 
     /**
-     * Set this to 'true' to bypass unit tests entirely.
-     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     * Set this to 'true' to bypass unit tests entirely. Its use is NOT RECOMMENDED,
+     * but quite convenient on occasion.
      *
      */
     @Parameter(property = "maven.test.skip")
@@ -32,14 +31,14 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
      * The directory in which to place test compilation output
      *
      */
-    @Parameter(defaultValue="${project.build.testOutputDirectory}")
+    @Parameter(defaultValue = "${project.build.testOutputDirectory}")
     private File testOutputDir;
 
     /**
      * The directory in which to find test scala source code
      *
      */
-    @Parameter(defaultValue="${project.build.testSourceDirectory}/../scala")
+    @Parameter(defaultValue = "${project.build.testSourceDirectory}/../scala")
     private File testSourceDir;
 
     @Override
@@ -54,14 +53,14 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
      * Analysis cache file for incremental recompilation.
      *
      */
-    @Parameter(property="testAnalysisCacheFile", defaultValue="${project.build.directory}/analysis/test-compile")
+    @Parameter(property = "testAnalysisCacheFile", defaultValue = "${project.build.directory}/analysis/test-compile")
     private File testAnalysisCacheFile;
 
     @Override
     protected List<String> getClasspathElements() throws Exception {
         List<String> back = project.getTestClasspathElements();
         back.remove(project.getBuild().getTestOutputDirectory());
-        //back.add(getOutputDir().getAbsolutePath());
+        // back.add(getOutputDir().getAbsolutePath());
         return back;
     }
 
@@ -79,7 +78,7 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     protected List<File> getSourceDirectories() throws Exception {
         List<String> sources = project.getTestCompileSourceRoots();
         String scalaSourceDir = testSourceDir.getAbsolutePath();
-        if(!sources.contains(scalaSourceDir)) {
+        if (!sources.contains(scalaSourceDir)) {
             sources.add(scalaSourceDir);
         }
         return normalize(sources);

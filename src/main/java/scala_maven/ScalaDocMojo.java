@@ -29,8 +29,7 @@ import scala_maven_executions.MainHelper;
 public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport {
 
     /**
-     * Specify window title of generated HTML documentation.
-     * [scaladoc, vscaladoc]
+     * Specify window title of generated HTML documentation. [scaladoc, vscaladoc]
      *
      */
     @Parameter(property = "windowtitle", defaultValue = "${project.name} ${project.version} API")
@@ -39,81 +38,74 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     /**
      * Specifies the text to be placed at the bottom of each output file. If you
      * want to use html you have to put it in a CDATA section, eg.
-     * &lt;![CDATA[Copyright 2005, &lt;a
-     * href="http://www.mycompany.com">MyCompany, Inc.&lt;a>]]&gt;
-     * [scaladoc, vscaladoc]
+     * &lt;![CDATA[Copyright 2005, &lt;a href="http://www.mycompany.com">MyCompany,
+     * Inc.&lt;a>]]&gt; [scaladoc, vscaladoc]
      *
      */
     @Parameter(property = "bottom", defaultValue = "Copyright (c) {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved.")
     private String bottom;
 
     /**
-     * Charset for cross-platform viewing of generated documentation.
-     * [scaladoc, vscaladoc]
+     * Charset for cross-platform viewing of generated documentation. [scaladoc,
+     * vscaladoc]
      *
      */
     @Parameter(property = "charset", defaultValue = "ISO-8859-1")
     private String charset;
 
     /**
-     * Include title for the overview page.
-     * [scaladoc, scaladoc2, vscaladoc]
+     * Include title for the overview page. [scaladoc, scaladoc2, vscaladoc]
      *
      */
     @Parameter(property = "doctitle", defaultValue = "${project.name} ${project.version} API")
     private String doctitle;
 
     /**
-     * Include footer text for each page.
-     * [scaladoc, vscaladoc]
+     * Include footer text for each page. [scaladoc, vscaladoc]
      *
      */
     @Parameter(property = "footer")
     private String footer;
 
     /**
-     * Include header text for each page
-     * [scaladoc, vscaladoc]
+     * Include header text for each page [scaladoc, vscaladoc]
      *
      */
     @Parameter(property = "header")
     private String header;
 
     /**
-     * Generate source in HTML
-     * [scaladoc, vscaladoc]
+     * Generate source in HTML [scaladoc, vscaladoc]
      *
      */
     @Parameter(property = "linksource", defaultValue = "true")
     private boolean linksource;
 
     /**
-     * Suppress description and tags, generate only declarations
-     * [scaladoc, vscaladoc]
+     * Suppress description and tags, generate only declarations [scaladoc,
+     * vscaladoc]
      *
      */
     @Parameter(property = "nocomment", defaultValue = "false")
     private boolean nocomment;
 
     /**
-     * File to change style of the generated documentation
-     * [scaladoc, vscaladoc]
+     * File to change style of the generated documentation [scaladoc, vscaladoc]
      *
      */
     @Parameter(property = "stylesheetfile")
     private File stylesheetfile;
 
     /**
-     * Include top text for each page
-     * [scaladoc, vscaladoc]
+     * Include top text for each page [scaladoc, vscaladoc]
      *
      */
     @Parameter(property = "top")
     private String top;
 
     /**
-     * Specifies the destination directory where scalaDoc saves the generated
-     * HTML files.
+     * Specifies the destination directory where scalaDoc saves the generated HTML
+     * files.
      *
      */
     @Parameter(defaultValue = "scaladocs", required = true)
@@ -161,8 +153,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     /**
      * To allow running aggregation only from command line use
-     * "-DforceAggregate=true" (avoid using in pom.xml).
-     * [scaladoc, vscaladoc]
+     * "-DforceAggregate=true" (avoid using in pom.xml). [scaladoc, vscaladoc]
      *
      */
     @Parameter(property = "forceAggregate", defaultValue = "false")
@@ -187,9 +178,9 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     @Override
     protected List<File> getSourceDirectories() throws Exception {
         List<String> sources = project.getCompileSourceRoots();
-        //Quick fix in case the user has not added the "add-source" goal.
+        // Quick fix in case the user has not added the "add-source" goal.
         String scalaSourceDir = FileUtils.pathOf(sourceDir, useCanonicalPath);
-        if(!sources.contains(scalaSourceDir)) {
+        if (!sources.contains(scalaSourceDir)) {
             sources.add(scalaSourceDir);
         }
         return normalize(sources);
@@ -198,7 +189,8 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     @Override
     public boolean canGenerateReport() {
         // there is modules to aggregate
-        boolean back = ((project.isExecutionRoot() || forceAggregate) && canAggregate() && project.getCollectedProjects().size() > 0);
+        boolean back = ((project.isExecutionRoot() || forceAggregate) && canAggregate()
+            && project.getCollectedProjects().size() > 0);
         back = back || (findSourceFiles().size() != 0);
         return back;
     }
@@ -215,7 +207,8 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     }
 
     private boolean canAggregate() {
-        return StringUtils.isNotEmpty(vscaladocVersion) && (new VersionNumber(vscaladocVersion).compareTo(new VersionNumber("1.1")) >= 0);
+        return StringUtils.isNotEmpty(vscaladocVersion)
+            && (new VersionNumber(vscaladocVersion).compareTo(new VersionNumber("1.1")) >= 0);
     }
 
     @Override
@@ -252,7 +245,8 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     @Override
     public File getReportOutputDirectory() {
         if (reportOutputDirectory == null) {
-            reportOutputDirectory = new File(project.getBasedir(), project.getModel().getReporting().getOutputDirectory() + "/" + outputDirectory).getAbsoluteFile();
+            reportOutputDirectory = new File(project.getBasedir(),
+                project.getModel().getReporting().getOutputDirectory() + "/" + outputDirectory).getAbsoluteFile();
         }
         return reportOutputDirectory;
     }
@@ -274,10 +268,9 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         generate(null, Locale.getDefault());
     }
 
-
     @Override
     protected JavaMainCaller getScalaCommand() throws Exception {
-        //This ensures we have a valid scala version...
+        // This ensures we have a valid scala version...
         checkScalaVersion();
         VersionNumber sv = findScalaVersion();
         boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(sv) > 0 && !sv.isZero());
@@ -294,16 +287,20 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         jcmd.addJvmArgs(jvmArgs);
         addCompilerPluginOptions(jcmd);
 
-        if (isPreviousScala271){
+        if (isPreviousScala271) {
             jcmd.addArgs("-Ydoc");
         }
-        // copy the classpathElements to not modify the global project definition see https://github.com/davidB/maven-scala-plugin/issues/60
+        // copy the classpathElements to not modify the global project definition see
+        // https://github.com/davidB/maven-scala-plugin/issues/60
         List<String> paths = new ArrayList<>(project.getCompileClasspathElements());
-        paths.remove(project.getBuild().getOutputDirectory()); //remove output to avoid "error for" : error:  XXX is already defined as package XXX ... object XXX {
-        if (!paths.isEmpty())jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
-        //jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
+        paths.remove(project.getBuild().getOutputDirectory()); // remove output to avoid "error for" : error: XXX is
+                                                               // already defined as package XXX ... object XXX {
+        if (!paths.isEmpty())
+            jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
+        // jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
 
-        boolean isScaladoc2 = (new VersionNumber("2.8.0").compareTo(sv) <= 0 || sv.isZero()) && ("scala.tools.nsc.ScalaDoc".equals(scaladocClassName));
+        boolean isScaladoc2 = (new VersionNumber("2.8.0").compareTo(sv) <= 0 || sv.isZero())
+            && ("scala.tools.nsc.ScalaDoc".equals(scaladocClassName));
         if (isScaladoc2) {
             jcmd.addArgs("-doc-format:html");
             jcmd.addOption("-doc-title", doctitle);
@@ -340,7 +337,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
                 artifact.artifactId = "vscaladoc";
                 artifact.groupId = "org.scala-tools";
                 artifact.version = vscaladocVersion;
-                dependencies = new BasicArtifact[]{artifact};
+                dependencies = new BasicArtifact[] { artifact };
             }
 
             List<File> sources = findSourceFiles();
@@ -379,18 +376,20 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
     private void aggregate(MavenProject parent) throws Exception {
         List<MavenProject> modules = parent.getCollectedProjects();
-        File dest = new File(parent.getModel().getReporting().getOutputDirectory() +"/" + outputDirectory);
+        File dest = new File(parent.getModel().getReporting().getOutputDirectory() + "/" + outputDirectory);
         getLog().info("start aggregation into " + dest);
         StringBuilder mpath = new StringBuilder();
         for (MavenProject module : modules) {
-            if ( "pom".equals( module.getPackaging().toLowerCase() ) ) {
+            if ("pom".equals(module.getPackaging().toLowerCase())) {
                 continue;
             }
             if (aggregateDirectOnly && module.getParent() != parent) {
                 continue;
             }
-            File subScaladocPath = new File(module.getModel().getReporting().getOutputDirectory() +"/" + outputDirectory).getAbsoluteFile();
-            //System.out.println(" -> " + project.getModulePathAdjustment(module)  +" // " + subScaladocPath + " // " + module.getBasedir() );
+            File subScaladocPath = new File(
+                module.getModel().getReporting().getOutputDirectory() + "/" + outputDirectory).getAbsoluteFile();
+            // System.out.println(" -> " + project.getModulePathAdjustment(module) +" // " +
+            // subScaladocPath + " // " + module.getBasedir() );
             if (subScaladocPath.exists()) {
                 mpath.append(subScaladocPath).append(File.pathSeparatorChar);
             }
@@ -408,11 +407,11 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     }
 
     /**
-     * Method that sets the bottom text that will be displayed on the bottom of
-     * the javadocs.
+     * Method that sets the bottom text that will be displayed on the bottom of the
+     * javadocs.
      *
-     * @return a String that contains the text that will be displayed at the
-     *         bottom of the javadoc
+     * @return a String that contains the text that will be displayed at the bottom
+     *         of the javadoc
      */
     private String getBottomText() {
         String inceptionYear = project.getInceptionYear();
@@ -436,9 +435,11 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         } else {
             if ((project.getOrganization() != null) && (StringUtils.isNotEmpty(project.getOrganization().getName()))) {
                 if (StringUtils.isNotEmpty(project.getOrganization().getUrl())) {
-                    theBottom = StringUtils.replace(theBottom, "{organizationName}", "<a href=\"" + project.getOrganization().getUrl() + "\">" + project.getOrganization().getName() + "</a>");
+                    theBottom = StringUtils.replace(theBottom, "{organizationName}", "<a href=\""
+                        + project.getOrganization().getUrl() + "\">" + project.getOrganization().getName() + "</a>");
                 } else {
-                    theBottom = StringUtils.replace(theBottom, "{organizationName}", project.getOrganization().getName());
+                    theBottom = StringUtils.replace(theBottom, "{organizationName}",
+                        project.getOrganization().getName());
                 }
             } else {
                 theBottom = StringUtils.replace(theBottom, " {organizationName}", "");

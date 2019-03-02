@@ -36,7 +36,8 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
 
     private boolean _redirectToLog;
 
-    public JavaMainCallerByFork(AbstractMojo requester1, String mainClassName1, String classpath, String[] jvmArgs1, String[] args1, boolean forceUseArgFile, Toolchain toolchain) throws Exception {
+    public JavaMainCallerByFork(AbstractMojo requester1, String mainClassName1, String classpath, String[] jvmArgs1,
+        String[] args1, boolean forceUseArgFile, Toolchain toolchain) throws Exception {
         super(requester1, mainClassName1, classpath, jvmArgs1, args1);
         for (String key : System.getenv().keySet()) {
             env.add(key + "=" + System.getenv(key));
@@ -52,7 +53,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         displayCmd(displayCmd, cmd);
         Executor exec = new DefaultExecutor();
 
-        //err and out are redirected to out
+        // err and out are redirected to out
         if (!_redirectToLog) {
             exec.setStreamHandler(new PumpStreamHandler(System.out, System.err, System.in));
         } else {
@@ -93,7 +94,8 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
                 }
                 return false;
             }
-            if (!displayCmd) tryDeleteArgFile(cmd);
+            if (!displayCmd)
+                tryDeleteArgFile(cmd);
             return true;
         } catch (ExecuteException exc) {
             if (throwFailure) {
@@ -106,12 +108,12 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
     @Override
     public SpawnMonitor spawn(boolean displayCmd) throws Exception {
         List<String> cmd = buildCommand();
-        File out = new File(System.getProperty("java.io.tmpdir"), mainClassName +".out");
+        File out = new File(System.getProperty("java.io.tmpdir"), mainClassName + ".out");
         out.delete();
-        cmd.add(">"+ out.getCanonicalPath());
-        File err = new File(System.getProperty("java.io.tmpdir"), mainClassName +".err");
+        cmd.add(">" + out.getCanonicalPath());
+        File err = new File(System.getProperty("java.io.tmpdir"), mainClassName + ".err");
         err.delete();
-        cmd.add("2>"+ err.getCanonicalPath());
+        cmd.add("2>" + err.getCanonicalPath());
         List<String> cmd2 = new ArrayList<>();
         if (OS.isFamilyDOS()) {
             cmd2.add("cmd.exe");
@@ -124,13 +126,13 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
         }
         displayCmd(displayCmd, cmd2);
         ProcessBuilder pb = new ProcessBuilder(cmd2);
-        //pb.redirectErrorStream(true);
+        // pb.redirectErrorStream(true);
         final Process p = pb.start();
         return () -> {
             try {
                 p.exitValue();
                 return false;
-            } catch(IllegalThreadStateException e) {
+            } catch (IllegalThreadStateException e) {
                 return true;
             }
         };
@@ -164,14 +166,15 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
     }
 
     private void tryDeleteArgFile(List<String> cmd) {
-    	String last = cmd.get(cmd.size() - 1);
-    	if (last.endsWith(MainHelper.argFileSuffix)) {
-    		File f = new File(last);
-    		if (f.exists() && f.getName().startsWith(MainHelper.argFilePrefix)) {
-    			f.delete();
-    		}
-    	}
+        String last = cmd.get(cmd.size() - 1);
+        if (last.endsWith(MainHelper.argFileSuffix)) {
+            File f = new File(last);
+            if (f.exists() && f.getName().startsWith(MainHelper.argFilePrefix)) {
+                f.delete();
+            }
+        }
     }
+
     private long lengthOf(List<String> l, long sepLength) {
         long back = 0;
         for (String str : l) {

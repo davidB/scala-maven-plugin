@@ -41,16 +41,15 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
      * List of directories or jars to add to the classpath
      *
      */
-    @Parameter(property="classpath")
+    @Parameter(property = "classpath")
     private Classpath classpath;
-
 
     @Override
     protected List<File> getSourceDirectories() throws Exception {
         List<String> sources = project.getCompileSourceRoots();
         String scalaSourceDir = FileUtils.pathOf(sourceDir, useCanonicalPath);
-        if(!sources.contains(scalaSourceDir)) {
-            sources = new LinkedList<>(sources); //clone the list to keep the original unmodified
+        if (!sources.contains(scalaSourceDir)) {
+            sources = new LinkedList<>(sources); // clone the list to keep the original unmodified
             sources.add(scalaSourceDir);
         }
         return normalize(sources);
@@ -60,9 +59,9 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     protected List<String> getClasspathElements() throws Exception {
         final List<String> back = project.getCompileClasspathElements();
         back.remove(project.getBuild().getOutputDirectory());
-        //back.add(getOutputDir().getAbsolutePath());
+        // back.add(getOutputDir().getAbsolutePath());
         if (classpath != null && classpath.getAdd() != null && !classpath.getAdd().isEmpty()) {
-            for (File f: classpath.getAdd()) {
+            for (File f : classpath.getAdd()) {
                 back.add(f.getAbsolutePath());
             }
         }

@@ -36,7 +36,9 @@ public class SbtIncrementalCompiler {
     private final Setup setup;
     private final AnalysisStore analysisStore;
 
-    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion, List<File> extraJars, File compilerBridgeJar, Log l, File cacheFile, CompileOrder compileOrder) throws Exception {
+    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion,
+        List<File> extraJars, File compilerBridgeJar, Log l, File cacheFile, CompileOrder compileOrder)
+        throws Exception {
         this.compileOrder = compileOrder;
         this.logger = new SbtLogger(l);
         l.info("Using incremental compilation using " + compileOrder + " compile order");
@@ -46,24 +48,23 @@ public class SbtIncrementalCompiler {
         allJars.add(reflectJar);
         allJars.add(compilerJar);
 
-        ScalaInstance scalaInstance = new ScalaInstance(
-            scalaVersion.toString(), // version
-            new URLClassLoader(new URL[]{libraryJar.toURI().toURL(), reflectJar.toURI().toURL(), compilerJar.toURI().toURL()}), // loader
+        ScalaInstance scalaInstance = new ScalaInstance(scalaVersion.toString(), // version
+            new URLClassLoader(
+                new URL[] { libraryJar.toURI().toURL(), reflectJar.toURI().toURL(), compilerJar.toURI().toURL() }), // loader
             ClasspathUtilities.rootLoader(), // loaderLibraryOnly
             libraryJar, // libraryJar
             compilerJar, // compilerJar
-            allJars.toArray(new File[]{}), // allJars
+            allJars.toArray(new File[] {}), // allJars
             Option.apply(scalaVersion.toString()) // explicitActual
         );
 
         compiler = new IncrementalCompilerImpl();
 
-        ScalaCompiler scalaCompiler = new AnalyzingCompiler(
-            scalaInstance, // scalaInstance
-            ZincCompilerUtil.constantBridgeProvider(scalaInstance, compilerBridgeJar), //provider
+        ScalaCompiler scalaCompiler = new AnalyzingCompiler(scalaInstance, // scalaInstance
+            ZincCompilerUtil.constantBridgeProvider(scalaInstance, compilerBridgeJar), // provider
             ClasspathOptionsUtil.auto(), // classpathOptions
             new FromJavaConsumer<>(noop -> {
-            }), //FIXME foo -> {}, // onArgsHandler
+            }), // FIXME foo -> {}, // onArgsHandler
             Option.apply(null) // classLoaderCache
         );
 
@@ -85,46 +86,41 @@ public class SbtIncrementalCompiler {
 
         analysisStore = AnalysisStore.getCachedStore(FileAnalysisStore.binary(cacheFile));
 
-        setup =
-            compiler.setup(
-                lookup, // lookup
-                false, // skip
-                cacheFile, // cacheFile
-                CompilerCache.fresh(), // cache
-                IncOptions.of(), // incOptions
-                reporter, // reporter
-                Option.apply(null), // optionProgress
-                new T2[]{}
-            );
+        setup = compiler.setup(lookup, // lookup
+            false, // skip
+            cacheFile, // cacheFile
+            CompilerCache.fresh(), // cache
+            IncOptions.of(), // incOptions
+            reporter, // reporter
+            Option.apply(null), // optionProgress
+            new T2[] {});
     }
 
-    public void compile(List<String> classpathElements, List<File> sources, File classesDirectory, List<String> scalacOptions, List<String> javacOptions) {
+    public void compile(List<String> classpathElements, List<File> sources, File classesDirectory,
+        List<String> scalacOptions, List<String> javacOptions) {
         List<File> fullClasspath = new ArrayList<>();
         fullClasspath.add(classesDirectory);
         for (String classpathElement : classpathElements) {
             fullClasspath.add(new File(classpathElement));
         }
 
-        Inputs inputs = compiler.inputs(
-            fullClasspath.toArray(new File[]{}), //classpath
-            sources.toArray(new File[]{}), // sources
+        Inputs inputs = compiler.inputs(fullClasspath.toArray(new File[] {}), // classpath
+            sources.toArray(new File[] {}), // sources
             classesDirectory, // classesDirectory
-            scalacOptions.toArray(new String[]{}), // scalacOptions
-            javacOptions.toArray(new String[]{}), // javacOptions
+            scalacOptions.toArray(new String[] {}), // scalacOptions
+            javacOptions.toArray(new String[] {}), // javacOptions
             100, // maxErrors
-            new Function[]{}, // sourcePositionMappers
+            new Function[] {}, // sourcePositionMappers
             compileOrder, // order
-            compilers,
-            setup,
-            compiler.emptyPreviousResult()
-        );
+            compilers, setup, compiler.emptyPreviousResult());
 
         Optional<AnalysisContents> analysisContents = analysisStore.get();
         if (analysisContents.isPresent()) {
             AnalysisContents analysisContents0 = analysisContents.get();
             CompileAnalysis previousAnalysis = analysisContents0.getAnalysis();
             MiniSetup previousSetup = analysisContents0.getMiniSetup();
-            PreviousResult previousResult = PreviousResult.of(Optional.of(previousAnalysis), Optional.of(previousSetup));
+            PreviousResult previousResult = PreviousResult.of(Optional.of(previousAnalysis),
+                Optional.of(previousSetup));
             inputs = inputs.withPreviousResult(previousResult);
         }
 

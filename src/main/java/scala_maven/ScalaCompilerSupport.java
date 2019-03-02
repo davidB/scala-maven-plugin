@@ -12,8 +12,8 @@ import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
 
 /**
-* Abstract parent of all Scala Mojo who run compilation
-*/
+ * Abstract parent of all Scala Mojo who run compilation
+ */
 public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     public enum RecompileMode {
@@ -29,24 +29,23 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     /**
-    * Keeps track of if we get compile errors in incremental mode
-    */
+     * Keeps track of if we get compile errors in incremental mode
+     */
     private boolean compileErrors;
 
     /**
-    * Recompile mode to use when sources were previously compiled and there is at
-    * least one change, see {@link RecompileMode}.
-    */
+     * Recompile mode to use when sources were previously compiled and there is at
+     * least one change, see {@link RecompileMode}.
+     */
     @Parameter(property = "recompileMode", defaultValue = "incremental")
     RecompileMode recompileMode;
 
     /**
-    * notifyCompilation if true then print a message "path: compiling"
-    * for each root directory or files that will be compiled.
-    * Useful for debug, and for integration with Editor/IDE to reset markers only
-    * for compiled files.
-    *
-    */
+     * notifyCompilation if true then print a message "path: compiling" for each
+     * root directory or files that will be compiled. Useful for debug, and for
+     * integration with Editor/IDE to reset markers only for compiled files.
+     *
+     */
     @Parameter(property = "notifyCompilation", defaultValue = "true")
     private boolean notifyCompilation;
 
@@ -68,14 +67,14 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     private SbtIncrementalCompiler incremental;
 
     /**
-    * Analysis cache file for incremental recompilation.
-    */
+     * Analysis cache file for incremental recompilation.
+     */
     abstract protected File getAnalysisCacheFile() throws Exception;
 
     @Override
     protected void doExecute() throws Exception {
         if (getLog().isDebugEnabled()) {
-            for(File directory : getSourceDirectories()) {
+            for (File directory : getSourceDirectories()) {
                 getLog().debug(FileUtils.pathOf(directory, useCanonicalPath));
             }
         }
@@ -83,18 +82,19 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         File analysisCacheFile = FileUtils.fileOf(getAnalysisCacheFile(), useCanonicalPath);
         int nbFiles = compile(getSourceDirectories(), outputDir, analysisCacheFile, getClasspathElements(), false);
         switch (nbFiles) {
-            case -1:
+        case -1:
             getLog().info("No sources to compile");
             break;
-            case 0:
+        case 0:
             getLog().info("Nothing to compile - all classes are up to date");
             break;
-            default:
+        default:
             break;
         }
     }
 
-    protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile, List<String> classpathElements, boolean compileInLoop) throws Exception {
+    protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile,
+        List<String> classpathElements, boolean compileInLoop) throws Exception {
         if (!compileInLoop && recompileMode == RecompileMode.incremental) {
             // if not compileInLoop, invoke incrementalCompile immediately
             return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, false);
@@ -130,19 +130,20 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             return retCode;
         }
 
-        getLog().info(String.format("Compiling %d source files to %s at %d", files.size(), outputDir.getAbsolutePath(), t1));
+        getLog().info(
+            String.format("Compiling %d source files to %s at %d", files.size(), outputDir.getAbsolutePath(), t1));
         JavaMainCaller jcmd = getScalaCommand();
         jcmd.redirectToLog();
-        if (!classpathElements.isEmpty()) jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
+        if (!classpathElements.isEmpty())
+            jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
         jcmd.addArgs("-d", outputDir.getAbsolutePath());
-        //jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
+        // jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
         for (File f : files) {
             jcmd.addArgs(f.getAbsolutePath());
         }
         if (jcmd.run(displayCmd, !compileInLoop)) {
             lastCompilationInfo.setLastSuccessfullTS(t1);
-        }
-        else {
+        } else {
             compileErrors = true;
         }
         getLog().info(String.format("prepare-compile in %d s", (t1 - t0) / 1000));
@@ -152,8 +153,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     /**
-    * Returns true if the previous compile failed
-    */
+     * Returns true if the previous compile failed
+     */
     boolean hasCompileErrors() {
         return compileErrors;
     }
@@ -169,10 +170,14 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
 
         // filter uptodate
-        // filter is not applied to .java, because scalac failed to used existing .class for unmodified .java
-        //   failed with "error while loading Xxx, class file '.../target/classes/.../Xxxx.class' is broken"
-        //   (restore how it work in 2.11 and failed in 2.12)
-        //TODO a better behavior : if there is at least one .scala to compile then add all .java, if there is at least one .java then add all .scala (because we don't manage class dependency)
+        // filter is not applied to .java, because scalac failed to used existing .class
+        // for unmodified .java
+        // failed with "error while loading Xxx, class file
+        // '.../target/classes/.../Xxxx.class' is broken"
+        // (restore how it work in 2.11 and failed in 2.12)
+        // TODO a better behavior : if there is at least one .scala to compile then add
+        // all .java, if there is at least one .java then add all .scala (because we
+        // don't manage class dependency)
         List<File> files = new ArrayList<>(sourceFiles.size());
         if (_lastCompileAt > 0 || (recompileMode != RecompileMode.all && (lastSuccessfullCompileTime > 0))) {
             ArrayList<File> modifiedScalaFiles = new ArrayList<>(sourceFiles.size());
@@ -211,7 +216,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             for (File f : sourceRootDirs) {
                 hash.append(f.toString());
             }
-            return new LastCompilationInfo(new File(outputDir.getAbsolutePath() + "." + hash.toString().hashCode() + ".timestamp"), outputDir);
+            return new LastCompilationInfo(
+                new File(outputDir.getAbsolutePath() + "." + hash.toString().hashCode() + ".timestamp"), outputDir);
         }
 
         private final File _lastCompileAtFile;
@@ -223,7 +229,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         }
 
         long getLastSuccessfullTS() {
-            long back =  -1;
+            long back = -1;
             if (_lastCompileAtFile.exists() && _outputDir.exists() && _outputDir.list().length > 0) {
                 back = _lastCompileAtFile.lastModified();
             }
@@ -242,7 +248,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     // Incremental compilation
     //
 
-    private int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir, File cacheFile, boolean compileInLoop) throws Exception {
+    private int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir,
+        File cacheFile, boolean compileInLoop) throws Exception {
         List<File> sources = findSourceWithFilters(sourceRootDirs);
         if (sources.isEmpty()) {
             return -1;
@@ -260,7 +267,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             List<File> extraJars = getCompilerDependencies();
             extraJars.remove(libraryJar);
             File compilerBridgeJar = getCompilerBridgeJar();
-            incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars, compilerBridgeJar, getLog(), cacheFile, compileOrder);
+            incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars,
+                compilerBridgeJar, getLog(), cacheFile, compileOrder);
         }
 
         classpathElements.remove(outputDir.getAbsolutePath());

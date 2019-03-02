@@ -23,8 +23,8 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 
 /**
- * Creates a jar of the non-aggregated scaladoc and attaches it
- * to the project for distribution.
+ * Creates a jar of the non-aggregated scaladoc and attaches it to the project
+ * for distribution.
  *
  */
 @Mojo(name = "doc-jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE)
@@ -48,8 +48,8 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
 
     /**
      * Specifies the filename that will be used for the generated jar file. Please
-     * note that <code>-javadoc</code>
-     * or <code>-test-javadoc</code> will be appended to the file name.
+     * note that <code>-javadoc</code> or <code>-test-javadoc</code> will be
+     * appended to the file name.
      *
      */
     @Parameter(property = "project.build.finalName")
@@ -85,8 +85,8 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
     private String jarOutputDirectory;
 
     /**
-     * The archive configuration to use.
-     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
+     * The archive configuration to use. See
+     * <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
      * Archiver Reference</a>.
      *
      */
@@ -103,8 +103,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
 
     /**
      * Set this to <code>true</code> to enable the use of the
-     * <code>defaultManifestFile</code>.
-     * <br/>
+     * <code>defaultManifestFile</code>. <br/>
      *
      */
     @Parameter(defaultValue = "false")
@@ -116,7 +115,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
      *
      * @since 2.5
      */
-    @Parameter(property="maven.javadoc.failOnError", defaultValue="true")
+    @Parameter(property = "maven.javadoc.failOnError", defaultValue = "true")
     private boolean failOnError;
 
     @Override
@@ -128,7 +127,8 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
         try {
             generate(null, Locale.getDefault());
             if (reportOutputDirectory.exists()) {
-                final File outputFile = generateArchive(reportOutputDirectory, finalName + "-" + getClassifier() + ".jar");
+                final File outputFile = generateArchive(reportOutputDirectory,
+                    finalName + "-" + getClassifier() + ".jar");
                 if (!attach) {
                     getLog().info("NOT adding javadoc to attached artifacts list.");
                 } else {
@@ -199,8 +199,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
         return classifier;
     }
 
-    private void failOnError(String prefix, Exception e)
-            throws MojoExecutionException {
+    private void failOnError(String prefix, Exception e) throws MojoExecutionException {
         if (failOnError) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;

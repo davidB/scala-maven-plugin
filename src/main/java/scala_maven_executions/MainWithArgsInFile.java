@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Use a file and reflection to start a main class with arguments define in a file.
- * This class should run without other dependencies than jre.
- * This class is used as a workaround to the windows command line size limitation.
+ * Use a file and reflection to start a main class with arguments define in a
+ * file. This class should run without other dependencies than jre. This class
+ * is used as a workaround to the windows command line size limitation.
  *
  * @author David Bernard
  */
@@ -24,9 +24,9 @@ public class MainWithArgsInFile {
                 argsFromFile = MainHelper.readArgFile(new File(args[1]));
             }
             MainHelper.runMain(mainClassName, argsFromFile, null);
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             t.printStackTrace();
-            System.exit(-10000 /*Integer.MIN_VALUE*/);
+            System.exit(-10000 /* Integer.MIN_VALUE */);
         }
     }
 

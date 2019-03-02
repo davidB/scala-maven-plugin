@@ -61,8 +61,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     protected File outputDir;
 
     /**
-     * The file containing script to be executed. Either '<em>scriptFile</em>'
-     * or '<em>script</em>' must be defined.
+     * The file containing script to be executed. Either '<em>scriptFile</em>' or
+     * '<em>script</em>' must be defined.
      *
      */
     @Parameter(property = "scriptFile")
@@ -85,27 +85,26 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
     /**
      * If set to true the Scala classfile that is generated will not be deleted
-     * after the goal completes. This is to allows easier debugging of the
-     * script especially since line numbers will be wrong because lines are
-     * added to the compiled script (see script examples)
+     * after the goal completes. This is to allows easier debugging of the script
+     * especially since line numbers will be wrong because lines are added to the
+     * compiled script (see script examples)
      *
      */
     @Parameter(property = "maven.scala.keepGeneratedScript", defaultValue = "false")
     protected boolean keepGeneratedScript;
 
     /**
-     * Comma separated list of scopes to add to the classpath.
-     * The possible scopes are : test,compile, system, runtime, plugin.
-     * By default embedded script into pom.xml run with 'plugin' scope
-     * and script read from scriptFile run with 'compile, test, runtime'
+     * Comma separated list of scopes to add to the classpath. The possible scopes
+     * are : test,compile, system, runtime, plugin. By default embedded script into
+     * pom.xml run with 'plugin' scope and script read from scriptFile run with
+     * 'compile, test, runtime'
      *
      */
     @Parameter(property = "maven.scala.includeScopes")
     protected String includeScopes;
 
     /**
-     * Comma separated list of scopes to remove from the classpath. Eg:
-     * test,compile
+     * Comma separated list of scopes to remove from the classpath. Eg: test,compile
      *
      */
     @Parameter(property = "maven.scala.excludeScopes")
@@ -115,17 +114,17 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
      * Comma seperated list of directories or jars to add to the classpath
      *
      */
-    @Parameter(property="addToClasspath")
+    @Parameter(property = "addToClasspath")
     protected String addToClasspath;
 
     /**
      * Comma separated list of directories or jars to remove from the classpath.
      * This is useful for resolving conflicts in the classpath. For example, the
-     * script uses Ant 1.7 and the compiler dependencies pull in Ant 1.5
-     * optional which conflicts and causes a crash
+     * script uses Ant 1.7 and the compiler dependencies pull in Ant 1.5 optional
+     * which conflicts and causes a crash
      *
      */
-    @Parameter(property="removeFromClasspath")
+    @Parameter(property = "removeFromClasspath")
     protected String removeFromClasspath;
 
     private static AtomicInteger _lastScriptIndex = new AtomicInteger(0);
@@ -144,12 +143,10 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     @Override
     protected void doExecute() throws Exception {
         if (script == null && scriptFile == null) {
-            throw new MojoFailureException(
-                    "Either script or scriptFile must be defined");
+            throw new MojoFailureException("Either script or scriptFile must be defined");
         }
         if (script != null && scriptFile != null) {
-            throw new MojoFailureException(
-                    "Only one of script or scriptFile can be defined");
+            throw new MojoFailureException("Only one of script or scriptFile can be defined");
         }
         if (StringUtils.isEmpty(includeScopes)) {
             if (scriptFile != null) {
@@ -165,18 +162,17 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         File scriptDir = new File(outputDir, ".scalaScriptGen");
         scriptDir.mkdirs();
         String baseName = scriptBaseNameOf(scriptFile, _lastScriptIndex.incrementAndGet());
-        File destFile = new File(scriptDir, baseName  + ".scala");
+        File destFile = new File(scriptDir, baseName + ".scala");
 
         Set<String> classpath = new HashSet<String>();
         configureClasspath(classpath);
-
 
         boolean mavenProjectDependency = includeScopes.contains("plugin");
         wrapScript(destFile, mavenProjectDependency);
 
         try {
             URLClassLoader loader = createScriptClassloader(scriptDir, classpath);
-        	getLog().debug(("classpath : " + Arrays.asList(loader.getURLs())));
+            getLog().debug(("classpath : " + Arrays.asList(loader.getURLs())));
             compileScript(scriptDir, destFile, loader);
             runScript(mavenProjectDependency, loader, baseName);
         } finally {
@@ -196,7 +192,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             try {
                 Object instance;
                 if (mavenProjectDependency) {
-                    Constructor<?> constructor = compiledScript.getConstructor(MavenProject.class, MavenSession.class, Log.class);
+                    Constructor<?> constructor = compiledScript.getConstructor(MavenProject.class, MavenSession.class,
+                        Log.class);
                     instance = constructor.newInstance(project, session, getLog());
                 } else {
                     instance = compiledScript.newInstance();
@@ -243,15 +240,15 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         Strategy s = new SelfFirstStrategy(w.newRealm("scalaScript", null));
         ClassRealm rScript = s.getRealm();
         rScript.setParentClassLoader(getClass().getClassLoader());
-        //rScript.importFrom("mojo", MavenProject.class.getPackage().getName());
-        //rScript.importFrom("mojo", MavenSession.class.getPackage().getName());
-        //rScript.importFrom("mojo", Log.class.getPackage().getName());
+        // rScript.importFrom("mojo", MavenProject.class.getPackage().getName());
+        // rScript.importFrom("mojo", MavenSession.class.getPackage().getName());
+        // rScript.importFrom("mojo", Log.class.getPackage().getName());
         rScript.importFrom("mojo", "org.apache.maven");
         // add the script directory to the classpath
         rScript.addURL(scriptDir.toURI().toURL());
 
         for (String string : classpath) {
-        	rScript.addURL(new File(string).toURI().toURL());
+            rScript.addURL(new File(string).toURI().toURL());
         }
         return rScript;
     }
@@ -267,25 +264,25 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     }
 
     private void configureClasspath(Set<String> classpath) throws Exception {
-        Set<String> includes = new TreeSet<>(Arrays.asList(StringUtils.split(includeScopes.toLowerCase(),",")));
-        Set<String> excludes = new TreeSet<>(Arrays.asList(StringUtils.split(excludeScopes.toLowerCase(),",")));
+        Set<String> includes = new TreeSet<>(Arrays.asList(StringUtils.split(includeScopes.toLowerCase(), ",")));
+        Set<String> excludes = new TreeSet<>(Arrays.asList(StringUtils.split(excludeScopes.toLowerCase(), ",")));
 
-        for(Artifact a : project.getArtifacts()) {
+        for (Artifact a : project.getArtifacts()) {
             if (includes.contains(a.getScope().toLowerCase()) && !excludes.contains(a.getScope())) {
                 addToClasspath(a, classpath, true);
             }
         }
 
         if (includes.contains("plugin") && !excludes.contains("plugin")) {
-            //Plugin plugin = project.getPlugin("scala-maven-plugin");
-            for(Plugin p : project.getBuildPlugins()) {
+            // Plugin plugin = project.getPlugin("scala-maven-plugin");
+            for (Plugin p : project.getBuildPlugins()) {
                 if ("scala-maven-plugin".equals(p.getArtifactId())) {
-                    for(Dependency d : p.getDependencies()) {
+                    for (Dependency d : p.getDependencies()) {
                         addToClasspath(factory.createDependencyArtifact(d), classpath, true);
                     }
                 }
             }
-            for(Artifact a : project.getPluginArtifacts()) {
+            for (Artifact a : project.getPluginArtifacts()) {
                 if ("scala-maven-plugin".equals(a.getArtifactId())) {
                     addToClasspath(a, classpath, true);
                 }
@@ -293,12 +290,12 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         }
 
         if (addToClasspath != null) {
-            classpath.addAll(Arrays.asList(StringUtils.split(addToClasspath,",")));
+            classpath.addAll(Arrays.asList(StringUtils.split(addToClasspath, ",")));
         }
 
         if (removeFromClasspath != null) {
             ArrayList<String> toRemove = new ArrayList<String>();
-            String[] jars =  StringUtils.split(removeFromClasspath.trim(),",");
+            String[] jars = StringUtils.split(removeFromClasspath.trim(), ",");
             for (String string : classpath) {
                 for (String jar : jars) {
                     if (string.contains(jar.trim())) {
@@ -309,15 +306,15 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
             classpath.removeAll(toRemove);
         }
 
-//        String outputDirectory = project.getBuild().getOutputDirectory();
-//        if(!outputDirectory.endsWith("/")){
-//            // need it to end with / for URLClassloader
-//            outputDirectory+="/";
-//        }
-//        classpath.add( outputDirectory);
+        // String outputDirectory = project.getBuild().getOutputDirectory();
+        // if(!outputDirectory.endsWith("/")){
+        // // need it to end with / for URLClassloader
+        // outputDirectory+="/";
+        // }
+        // classpath.add( outputDirectory);
         addCompilerToClasspath(classpath);
         addLibraryToClasspath(classpath);
-        //TODO check that every entry from the classpath exists !
+        // TODO check that every entry from the classpath exists !
         boolean ok = true;
         for (String s : classpath) {
             File f = new File(s);
@@ -330,7 +327,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         if (!ok) {
             throw new MojoFailureException("some script dependencies not found (see log)");
         }
-        getLog().debug("Using the following classpath for running and compiling scripts: "+classpath);
+        getLog().debug("Using the following classpath for running and compiling scripts: " + classpath);
 
     }
 
@@ -342,20 +339,17 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         BufferedReader reader = null;
         try {
             if (scriptFile != null) {
-                reader = new BufferedReader(new InputStreamReader(new FileInputStream(scriptFile), Charset.forName(scriptEncoding)));
+                reader = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(scriptFile), Charset.forName(scriptEncoding)));
             } else {
                 reader = new BufferedReader(new StringReader(script));
             }
 
             String baseName = FileUtils.basename(destFile.getName(), ".scala");
             if (mavenProjectDependency) {
-//                out.println("import scala.collection.jcl.Conversions._");
-                out.println("class " + baseName
-                        + "(project :" + MavenProject.class.getCanonicalName()
-                        + ",session :" + MavenSession.class.getCanonicalName()
-                        + ",log :"+Log.class.getCanonicalName()
-                        +") {"
-                        );
+                // out.println("import scala.collection.jcl.Conversions._");
+                out.println("class " + baseName + "(project :" + MavenProject.class.getCanonicalName() + ",session :"
+                    + MavenSession.class.getCanonicalName() + ",log :" + Log.class.getCanonicalName() + ") {");
             } else {
                 out.println("class " + baseName + " {");
             }

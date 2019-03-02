@@ -6,10 +6,10 @@ import java.util.regex.Pattern;
 public class VersionNumber implements Comparable<VersionNumber> {
     private static final Pattern _regexp = Pattern.compile("(\\d+)\\.(\\d+)(\\.\\d+)?([-\\.].+)?");
 
-    int                   major;
-    int                   minor;
-    int                   bugfix;
-    String                modifier;
+    int major;
+    int minor;
+    int bugfix;
+    String modifier;
 
     public VersionNumber() {
         major = 0;
@@ -35,11 +35,7 @@ public class VersionNumber implements Comparable<VersionNumber> {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        str.append(major)
-        .append('.')
-        .append(minor)
-        .append('.')
-        .append(bugfix);
+        str.append(major).append('.').append(minor).append('.').append(bugfix);
         if ((modifier != null) && (modifier.length() > 0)) {
             str.append(modifier);
         }
@@ -47,9 +43,10 @@ public class VersionNumber implements Comparable<VersionNumber> {
     }
 
     /**
-    * Not a commutative compareTo !! Can return 0 for any VersionNumber o that match this version (same defined major,
-    * minor, bugfix) undefined part are ignored.
-    */
+     * Not a commutative compareTo !! Can return 0 for any VersionNumber o that
+     * match this version (same defined major, minor, bugfix) undefined part are
+     * ignored.
+     */
     @Override
     public int compareTo(VersionNumber o) {
         int back = 0;
@@ -107,8 +104,8 @@ class VersionNumberMask extends VersionNumber {
     }
 
     /**
-    * Doesn't compare modifier
-    */
+     * Doesn't compare modifier
+     */
     @Override
     public int compareTo(VersionNumber o) {
         int back = 0;

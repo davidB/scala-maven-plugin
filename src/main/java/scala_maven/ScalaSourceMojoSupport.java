@@ -20,12 +20,12 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
      * Enables/Disables sending java source to the scala compiler.
      *
      */
-    @Parameter(defaultValue="true")
+    @Parameter(defaultValue = "true")
     protected boolean sendJavaToScalac = true;
 
     /**
-     * A list of inclusion filters for the compiler.
-     * ex :
+     * A list of inclusion filters for the compiler. ex :
+     * 
      * <pre>
      *    &lt;includes&gt;
      *      &lt;include&gt;SomeFile.scala&lt;/include&gt;
@@ -37,8 +37,8 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
     protected Set<String> includes = new HashSet<>();
 
     /**
-     * A list of exclusion filters for the compiler.
-     * ex :
+     * A list of exclusion filters for the compiler. ex :
+     * 
      * <pre>
      *    &lt;excludes&gt;
      *      &lt;exclude&gt;SomeBadFile.scala&lt;/exclude&gt;
@@ -50,7 +50,8 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
     private Set<String> excludes = new HashSet<>();
 
     /**
-     * Retrieves the list of *all* root source directories.  We need to pass all .java and .scala files into the scala compiler
+     * Retrieves the list of *all* root source directories. We need to pass all
+     * .java and .scala files into the scala compiler
      */
     abstract protected List<File> getSourceDirectories() throws Exception;
 
@@ -99,13 +100,15 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
         // TODO - Since we're making files anyway, perhaps we should just test
         // for existence here...
         for (File dir : sourceRootDirs) {
-            String[] tmpFiles = MainHelper.findFiles(dir, includes.toArray(new String[]{}), excludes.toArray(new String[]{}));
+            String[] tmpFiles = MainHelper.findFiles(dir, includes.toArray(new String[] {}),
+                excludes.toArray(new String[] {}));
             for (String tmpLocalFile : tmpFiles) {
                 File tmpAbsFile = FileUtils.fileOf(new File(dir, tmpLocalFile), useCanonicalPath);
                 sourceFiles.add(tmpAbsFile);
             }
         }
-        // scalac is sensitive to scala file order, file system can't guarantee file order => unreproducible build error across platforms
+        // scalac is sensitive to scala file order, file system can't guarantee file
+        // order => unreproducible build error across platforms
         // sort files by path (OS dependent) to guarantee reproducible command line.
         Collections.sort(sourceFiles);
         return sourceFiles;
