@@ -916,7 +916,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         return artifact.getFile();
     }
 
-    private Set<Artifact> getAllDependencies(String groupId, String artifactId, String version) throws Exception {
+    private Set<Artifact> getAllDependencies(String groupId, String artifactId, String version) {
         Set<Artifact> result = new HashSet<>();
         Artifact pom = factory.createArtifact(groupId, artifactId, version, "", ScalaMojoSupport.POM);
         Set<Artifact> d = resolveArtifactDependencies(pom);
