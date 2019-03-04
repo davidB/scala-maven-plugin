@@ -76,7 +76,7 @@ public class VersionNumber implements Comparable<VersionNumber> {
     }
 
     String applyScalaArtifactVersioningScheme(String name) {
-        return name + '_' + major + '.' + minor;
+        return name + '_' + (modifier == null ? (major + "." + minor) : toString());
     }
 }
 
