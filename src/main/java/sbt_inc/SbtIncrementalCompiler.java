@@ -26,7 +26,7 @@ import java.util.function.Function;
 public class SbtIncrementalCompiler {
 
     public static final String SBT_GROUP_ID = "org.scala-sbt";
-    public static final String ZINC_ARTIFACT_ID = "zinc";
+    public static final String ZINC_ARTIFACT_ID = "zinc_2.12";
     public static final String COMPILER_BRIDGE_ARTIFACT_ID = "compiler-bridge";
 
     private final CompileOrder compileOrder;

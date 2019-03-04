@@ -885,7 +885,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     protected File getCompilerBridgeJar() throws Exception {
         VersionNumber scalaVersion = findScalaVersion();
         String zincVersion = findVersionFromPluginArtifacts(SbtIncrementalCompiler.SBT_GROUP_ID,
-            scalaVersion.applyScalaArtifactVersioningScheme(SbtIncrementalCompiler.ZINC_ARTIFACT_ID));
+            SbtIncrementalCompiler.ZINC_ARTIFACT_ID);
         return getArtifactJar(SbtIncrementalCompiler.SBT_GROUP_ID,
             scalaVersion.applyScalaArtifactVersioningScheme(SbtIncrementalCompiler.COMPILER_BRIDGE_ARTIFACT_ID),
             zincVersion);
@@ -984,12 +984,12 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
 
     private String findVersionFromPluginArtifacts(String groupId, String artifactId) {
-        String version = null;
         for (Artifact art : pluginArtifacts) {
             if (groupId.equals(art.getGroupId()) && artifactId.equals(art.getArtifactId())) {
-                version = art.getVersion();
+                return art.getVersion();
             }
         }
-        return version;
+        throw new IllegalArgumentException(
+            "Could not locate artifact " + groupId + ":" + artifactId + " in plugin's dependencies");
     }
 }
