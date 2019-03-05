@@ -84,7 +84,7 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      }
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      String applyScalaArtifactVersioningScheme(String name) {
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">return</strong> name + '_' + major + '.' + minor;
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">return</strong> name + '_' + (modifier == <strong class="jxr_keyword">null</strong> ? (major + <span class="jxr_string">"."</span> + minor) : toString());
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      }
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  }
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  

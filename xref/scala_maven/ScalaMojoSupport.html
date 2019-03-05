@@ -893,7 +893,7 @@
 <a class="jxr_linenumber" name="L885" href="#L885">885</a>     <strong class="jxr_keyword">protected</strong> File getCompilerBridgeJar() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L886" href="#L886">886</a>         <a name="VersionNumber" href="../scala_maven/VersionNumber.html#VersionNumber">VersionNumber</a> scalaVersion = findScalaVersion();
 <a class="jxr_linenumber" name="L887" href="#L887">887</a>         String zincVersion = findVersionFromPluginArtifacts(SbtIncrementalCompiler.SBT_GROUP_ID,
-<a class="jxr_linenumber" name="L888" href="#L888">888</a>             scalaVersion.applyScalaArtifactVersioningScheme(SbtIncrementalCompiler.ZINC_ARTIFACT_ID));
+<a class="jxr_linenumber" name="L888" href="#L888">888</a>             SbtIncrementalCompiler.ZINC_ARTIFACT_ID);
 <a class="jxr_linenumber" name="L889" href="#L889">889</a>         <strong class="jxr_keyword">return</strong> getArtifactJar(SbtIncrementalCompiler.SBT_GROUP_ID,
 <a class="jxr_linenumber" name="L890" href="#L890">890</a>             scalaVersion.applyScalaArtifactVersioningScheme(SbtIncrementalCompiler.COMPILER_BRIDGE_ARTIFACT_ID),
 <a class="jxr_linenumber" name="L891" href="#L891">891</a>             zincVersion);
@@ -924,7 +924,7 @@
 <a class="jxr_linenumber" name="L916" href="#L916">916</a>         <strong class="jxr_keyword">return</strong> artifact.getFile();
 <a class="jxr_linenumber" name="L917" href="#L917">917</a>     }
 <a class="jxr_linenumber" name="L918" href="#L918">918</a> 
-<a class="jxr_linenumber" name="L919" href="#L919">919</a>     <strong class="jxr_keyword">private</strong> Set&lt;Artifact&gt; getAllDependencies(String groupId, String artifactId, String version) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L919" href="#L919">919</a>     <strong class="jxr_keyword">private</strong> Set&lt;Artifact&gt; getAllDependencies(String groupId, String artifactId, String version) {
 <a class="jxr_linenumber" name="L920" href="#L920">920</a>         Set&lt;Artifact&gt; result = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
 <a class="jxr_linenumber" name="L921" href="#L921">921</a>         Artifact pom = factory.createArtifact(groupId, artifactId, version, <span class="jxr_string">""</span>, ScalaMojoSupport.POM);
 <a class="jxr_linenumber" name="L922" href="#L922">922</a>         Set&lt;Artifact&gt; d = resolveArtifactDependencies(pom);
@@ -992,13 +992,13 @@
 <a class="jxr_linenumber" name="L984" href="#L984">984</a>     }
 <a class="jxr_linenumber" name="L985" href="#L985">985</a> 
 <a class="jxr_linenumber" name="L986" href="#L986">986</a>     <strong class="jxr_keyword">private</strong> String findVersionFromPluginArtifacts(String groupId, String artifactId) {
-<a class="jxr_linenumber" name="L987" href="#L987">987</a>         String version = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L988" href="#L988">988</a>         <strong class="jxr_keyword">for</strong> (Artifact art : pluginArtifacts) {
-<a class="jxr_linenumber" name="L989" href="#L989">989</a>             <strong class="jxr_keyword">if</strong> (groupId.equals(art.getGroupId()) &amp;&amp; artifactId.equals(art.getArtifactId())) {
-<a class="jxr_linenumber" name="L990" href="#L990">990</a>                 version = art.getVersion();
-<a class="jxr_linenumber" name="L991" href="#L991">991</a>             }
-<a class="jxr_linenumber" name="L992" href="#L992">992</a>         }
-<a class="jxr_linenumber" name="L993" href="#L993">993</a>         <strong class="jxr_keyword">return</strong> version;
+<a class="jxr_linenumber" name="L987" href="#L987">987</a>         <strong class="jxr_keyword">for</strong> (Artifact art : pluginArtifacts) {
+<a class="jxr_linenumber" name="L988" href="#L988">988</a>             <strong class="jxr_keyword">if</strong> (groupId.equals(art.getGroupId()) &amp;&amp; artifactId.equals(art.getArtifactId())) {
+<a class="jxr_linenumber" name="L989" href="#L989">989</a>                 <strong class="jxr_keyword">return</strong> art.getVersion();
+<a class="jxr_linenumber" name="L990" href="#L990">990</a>             }
+<a class="jxr_linenumber" name="L991" href="#L991">991</a>         }
+<a class="jxr_linenumber" name="L992" href="#L992">992</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(
+<a class="jxr_linenumber" name="L993" href="#L993">993</a>             <span class="jxr_string">"Could not locate artifact "</span> + groupId + <span class="jxr_string">":"</span> + artifactId + <span class="jxr_string">" in plugin's dependencies"</span>);
 <a class="jxr_linenumber" name="L994" href="#L994">994</a>     }
 <a class="jxr_linenumber" name="L995" href="#L995">995</a> }
 </pre>
