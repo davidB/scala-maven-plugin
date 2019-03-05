@@ -5,6 +5,9 @@
     <author>David Bernard</author>
   </properties>
   <body>
+    <release version="4.0.1" date="2019-03-05">
+      <action dev="Stephane Landelle" type="fix">incremental recompileMode for scala 2.11</action>
+    </release>
     <release version="4.0.0" date="2019-03-02">
       <action dev="Stephane Landelle" type="update">code clean up</action>
       <action dev="Stephane Landelle" type="update">recompileMode is incremental by default</action>
