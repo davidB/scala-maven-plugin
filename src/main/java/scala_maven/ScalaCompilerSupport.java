@@ -97,10 +97,14 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         List<String> classpathElements, boolean compileInLoop) throws Exception {
         if (!compileInLoop && recompileMode == RecompileMode.incremental) {
             // if not compileInLoop, invoke incrementalCompile immediately
-            return incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, false);
+            long n0 = System.nanoTime();
+            int res = incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, false);
+            getLog().info(String.format("compile in %.1f s", (System.nanoTime() - n0) / 1_000_000_000.0));
+            return res;
         }
 
         long t0 = System.currentTimeMillis();
+        long n0 = System.nanoTime();
         LastCompilationInfo lastCompilationInfo = LastCompilationInfo.find(sourceRootDirs, outputDir);
         if (_lastCompileAt < 0) {
             _lastCompileAt = lastCompilationInfo.getLastSuccessfullTS();
@@ -118,7 +122,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
-        long t1 = System.currentTimeMillis();
+        long n1 = System.nanoTime();
+        long t1 = t0 + ((n1 - n0) / 1_000_000);
 
         if (compileInLoop && recompileMode == RecompileMode.incremental) {
             // if compileInLoop, do not invoke incrementalCompile when there's no change
@@ -146,8 +151,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         } else {
             compileErrors = true;
         }
-        getLog().info(String.format("prepare-compile in %d s", (t1 - t0) / 1000));
-        getLog().info(String.format("compile in %d s", (System.currentTimeMillis() - t1) / 1000));
+        getLog().info(String.format("prepare-compile in %.1f s", (n1 - n0) / 1_000_000_000.0));
+        getLog().info(String.format("compile in %.1f s", (System.nanoTime() - n1) / 1_000_000_000.0));
         _lastCompileAt = t1;
         return files.size();
     }
@@ -163,7 +168,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         compileErrors = false;
     }
 
-    private List<File> getFilesToCompile(List<File> sourceRootDirs, long lastSuccessfullCompileTime) throws Exception {
+    private List<File> getFilesToCompile(List<File> sourceRootDirs, long lastSuccessfulCompileTime) throws Exception {
         List<File> sourceFiles = findSourceWithFilters(sourceRootDirs);
         if (sourceFiles.size() == 0) {
             return null;
@@ -179,11 +184,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         // all .java, if there is at least one .java then add all .scala (because we
         // don't manage class dependency)
         List<File> files = new ArrayList<>(sourceFiles.size());
-        if (_lastCompileAt > 0 || (recompileMode != RecompileMode.all && (lastSuccessfullCompileTime > 0))) {
+        if (_lastCompileAt > 0 || (recompileMode != RecompileMode.all && (lastSuccessfulCompileTime > 0))) {
             ArrayList<File> modifiedScalaFiles = new ArrayList<>(sourceFiles.size());
             ArrayList<File> modifiedJavaFiles = new ArrayList<>(sourceFiles.size());
             for (File f : sourceFiles) {
-                if (f.lastModified() >= lastSuccessfullCompileTime) {
+                if (f.lastModified() >= lastSuccessfulCompileTime) {
                     if (f.getName().endsWith(".java")) {
                         modifiedJavaFiles.add(f);
                     } else {
