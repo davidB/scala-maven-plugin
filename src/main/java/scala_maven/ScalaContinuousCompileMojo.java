@@ -24,65 +24,73 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
      *
      */
     @Parameter(property = "project.build.outputDirectory")
-    private File mainOutputDir;
+    protected File mainOutputDir;
 
     /**
      * The main directory containing scala source for compilation
      *
+     * Note: Allows extending for 3rd-party usages
      */
     @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
-    private File mainSourceDir;
+    protected File mainSourceDir;
 
     /**
      * The directory to place test compilation output in
      *
+     * Note: Allows extending for 3rd-party usages
      */
     @Parameter(defaultValue = "${project.build.testOutputDirectory}")
-    private File testOutputDir;
+    protected File testOutputDir;
 
     /**
      * The directory containing test source for compilation
      *
+     * Note: Allows extending for 3rd-party usages
      */
     @Parameter(defaultValue = "${project.build.testSourceDirectory}/../scala")
-    private File testSourceDir;
+    protected File testSourceDir;
 
     /**
      * Analysis cache file for incremental recompilation.
      *
+     * Note: Allows extending for 3rd-party usages
      */
     @Parameter(property = "analysisCacheFile", defaultValue = "${project.build.directory}/analysis/compile")
-    private File analysisCacheFile;
+    protected File analysisCacheFile;
 
     /**
      * Analysis cache file for incremental recompilation.
      *
+     * Note: Allows extending for 3rd-party usages
      */
     @Parameter(property = "testAnalysisCacheFile", defaultValue = "${project.build.directory}/analysis/test-compile")
-    private File testAnalysisCacheFile;
+    protected File testAnalysisCacheFile;
 
     /**
      * Define if fsc should be used, else scalac is used. fsc =>
      * scala.tools.nsc.CompileClient, scalac =&gt; scala.tools.nsc.Main.
      *
+     * Note: Allows extending for 3rd-party usages
      */
     @Parameter(property = "fsc", defaultValue = "true")
-    private boolean useFsc;
+    protected boolean useFsc;
 
     /**
      * Define if cc should run once or in infinite loop. (useful for test or working
      * with editor)
      *
+     * Note: Allows extending for 3rd-party usages
      */
     @Parameter(property = "once", defaultValue = "false")
-    private boolean once;
+    protected boolean once;
 
     /**
      * Turns verbose output on.
      *
+     * Note: Allows extending for 3rd-party usages
      */
     @Parameter(property = "verbose", defaultValue = "false")
-    private boolean verbose;
+    protected boolean verbose;
 
     @Override
     protected List<String> getClasspathElements() {

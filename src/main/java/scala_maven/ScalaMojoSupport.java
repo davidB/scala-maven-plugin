@@ -77,9 +77,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     /**
      * The Maven Session Object
      *
+     * Note: Allows extending for 3rd-party usages
      */
     @Parameter(property = "session", required = true, readonly = true)
-    MavenSession session;
+    protected MavenSession session;
 
     /**
      * Used to look up Artifacts in the remote repository.
