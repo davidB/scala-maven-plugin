@@ -96,6 +96,18 @@ public class SbtIncrementalCompiler {
             new T2[] {});
     }
 
+    private PreviousResult previousResult() {
+        Optional<AnalysisContents> analysisContents = analysisStore.get();
+        if (analysisContents.isPresent()) {
+            AnalysisContents analysisContents0 = analysisContents.get();
+            CompileAnalysis previousAnalysis = analysisContents0.getAnalysis();
+            MiniSetup previousSetup = analysisContents0.getMiniSetup();
+            return PreviousResult.of(Optional.of(previousAnalysis), Optional.of(previousSetup));
+        } else {
+            return compiler.emptyPreviousResult();
+        }
+    }
+
     public void compile(List<String> classpathElements, List<File> sources, File classesDirectory,
         List<String> scalacOptions, List<String> javacOptions) {
         List<File> fullClasspath = new ArrayList<>();
@@ -104,7 +116,8 @@ public class SbtIncrementalCompiler {
             fullClasspath.add(new File(classpathElement));
         }
 
-        Inputs inputs = compiler.inputs(fullClasspath.toArray(new File[] {}), // classpath
+        Inputs inputs = compiler.inputs(//
+            fullClasspath.toArray(new File[] {}), // classpath
             sources.toArray(new File[] {}), // sources
             classesDirectory, // classesDirectory
             scalacOptions.toArray(new String[] {}), // scalacOptions
@@ -112,17 +125,11 @@ public class SbtIncrementalCompiler {
             100, // maxErrors
             new Function[] {}, // sourcePositionMappers
             compileOrder, // order
-            compilers, setup, compiler.emptyPreviousResult());
-
-        Optional<AnalysisContents> analysisContents = analysisStore.get();
-        if (analysisContents.isPresent()) {
-            AnalysisContents analysisContents0 = analysisContents.get();
-            CompileAnalysis previousAnalysis = analysisContents0.getAnalysis();
-            MiniSetup previousSetup = analysisContents0.getMiniSetup();
-            PreviousResult previousResult = PreviousResult.of(Optional.of(previousAnalysis),
-                Optional.of(previousSetup));
-            inputs = inputs.withPreviousResult(previousResult);
-        }
+            compilers, // compilers
+            setup, // setup
+            previousResult(), // pr
+            Optional.empty() // temporaryClassesDirectory
+        );
 
         CompileResult newResult = compiler.compile(inputs, logger);
         analysisStore.set(AnalysisContents.create(newResult.analysis(), newResult.setup()));
