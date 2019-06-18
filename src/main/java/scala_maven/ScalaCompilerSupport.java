@@ -252,6 +252,16 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     //
     // Incremental compilation
     //
+    private static final String SBT_GROUP_ID = "org.scala-sbt";
+    private static final String ZINC_ARTIFACT_ID = "zinc_2.12";
+    private static final String COMPILER_BRIDGE_ARTIFACT_ID = "compiler-bridge";
+
+    protected File getCompilerBridgeJar() throws Exception {
+        VersionNumber scalaVersion = findScalaVersion();
+        String zincVersion = findVersionFromPluginArtifacts(SBT_GROUP_ID, ZINC_ARTIFACT_ID);
+        return getArtifactJar(SBT_GROUP_ID,
+            scalaVersion.applyScalaArtifactVersioningScheme(COMPILER_BRIDGE_ARTIFACT_ID), zincVersion);
+    }
 
     private int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir,
         File cacheFile, boolean compileInLoop) throws Exception {
@@ -267,13 +277,18 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
         if (incremental == null) {
             File libraryJar = getLibraryJar();
-            File reflectJar = getReflectJar();
-            File compilerJar = getCompilerJar();
             List<File> extraJars = getCompilerDependencies();
             extraJars.remove(libraryJar);
-            File compilerBridgeJar = getCompilerBridgeJar();
-            incremental = new SbtIncrementalCompiler(libraryJar, reflectJar, compilerJar, findScalaVersion(), extraJars,
-                compilerBridgeJar, getLog(), cacheFile, compileOrder);
+            incremental = new SbtIncrementalCompiler(//
+                libraryJar, //
+                getReflectJar(), //
+                getCompilerJar(), //
+                findScalaVersion(), //
+                extraJars, //
+                getCompilerBridgeJar(), //
+                getLog(), //
+                cacheFile, //
+                compileOrder);
         }
 
         classpathElements.remove(outputDir.getAbsolutePath());

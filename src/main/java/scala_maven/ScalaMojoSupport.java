@@ -883,15 +883,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         return getArtifactJar(getScalaOrganization(), SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
     }
 
-    protected File getCompilerBridgeJar() throws Exception {
-        VersionNumber scalaVersion = findScalaVersion();
-        String zincVersion = findVersionFromPluginArtifacts(SbtIncrementalCompiler.SBT_GROUP_ID,
-            SbtIncrementalCompiler.ZINC_ARTIFACT_ID);
-        return getArtifactJar(SbtIncrementalCompiler.SBT_GROUP_ID,
-            scalaVersion.applyScalaArtifactVersioningScheme(SbtIncrementalCompiler.COMPILER_BRIDGE_ARTIFACT_ID),
-            zincVersion);
-    }
-
     protected List<File> getCompilerDependencies() throws Exception {
         List<File> d = new ArrayList<>();
         if (StringUtils.isEmpty(scalaHome)) {
@@ -910,7 +901,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         return d;
     }
 
-    private File getArtifactJar(String groupId, String artifactId, String version) throws Exception {
+    protected File getArtifactJar(String groupId, String artifactId, String version) throws Exception {
         Artifact artifact = factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME,
             ScalaMojoSupport.JAR);
         resolver.resolve(artifact, remoteRepos, localRepo);
@@ -940,7 +931,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * Adds appropriate compiler plugins to the scalac command.
-     * 
+     *
      * @param scalac
      * @throws Exception
      */
@@ -984,7 +975,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         return plugins;
     }
 
-    private String findVersionFromPluginArtifacts(String groupId, String artifactId) {
+    protected String findVersionFromPluginArtifacts(String groupId, String artifactId) {
         for (Artifact art : pluginArtifacts) {
             if (groupId.equals(art.getGroupId()) && artifactId.equals(art.getArtifactId())) {
                 return art.getVersion();

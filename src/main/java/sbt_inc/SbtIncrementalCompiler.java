@@ -21,17 +21,12 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 public class SbtIncrementalCompiler {
 
-    public static final String SBT_GROUP_ID = "org.scala-sbt";
-    public static final String ZINC_ARTIFACT_ID = "zinc_2.12";
-    public static final String COMPILER_BRIDGE_ARTIFACT_ID = "compiler-bridge";
-
+    private final IncrementalCompiler compiler = ZincUtil.defaultIncrementalCompiler();
     private final CompileOrder compileOrder;
     private final Logger logger;
-    private final IncrementalCompilerImpl compiler;
     private final Compilers compilers;
     private final Setup setup;
     private final AnalysisStore analysisStore;
@@ -48,7 +43,8 @@ public class SbtIncrementalCompiler {
         allJars.add(reflectJar);
         allJars.add(compilerJar);
 
-        ScalaInstance scalaInstance = new ScalaInstance(scalaVersion.toString(), // version
+        ScalaInstance scalaInstance = new ScalaInstance( //
+            scalaVersion.toString(), // version
             new URLClassLoader(
                 new URL[] { libraryJar.toURI().toURL(), reflectJar.toURI().toURL(), compilerJar.toURI().toURL() }), // loader
             ClasspathUtilities.rootLoader(), // loaderLibraryOnly
@@ -58,17 +54,20 @@ public class SbtIncrementalCompiler {
             Option.apply(scalaVersion.toString()) // explicitActual
         );
 
-        compiler = new IncrementalCompilerImpl();
-
-        ScalaCompiler scalaCompiler = new AnalyzingCompiler(scalaInstance, // scalaInstance
+        ScalaCompiler scalaCompiler = new AnalyzingCompiler( //
+            scalaInstance, // scalaInstance
             ZincCompilerUtil.constantBridgeProvider(scalaInstance, compilerBridgeJar), // provider
             ClasspathOptionsUtil.auto(), // classpathOptions
             new FromJavaConsumer<>(noop -> {
-            }), // FIXME foo -> {}, // onArgsHandler
+            }), // onArgsHandler
             Option.apply(null) // classLoaderCache
         );
 
-        compilers = compiler.compilers(scalaInstance, ClasspathOptionsUtil.boot(), Option.apply(null), scalaCompiler);
+        compilers = ZincUtil.compilers( //
+            scalaInstance, //
+            ClasspathOptionsUtil.boot(), //
+            Option.apply(null), // javaHome
+            scalaCompiler);
 
         PerClasspathEntryLookup lookup = new PerClasspathEntryLookup() {
             @Override
@@ -82,17 +81,16 @@ public class SbtIncrementalCompiler {
             }
         };
 
-        LoggedReporter reporter = new LoggedReporter(100, logger, pos -> pos);
-
         analysisStore = AnalysisStore.getCachedStore(FileAnalysisStore.binary(cacheFile));
 
-        setup = compiler.setup(lookup, // lookup
+        setup = Setup.of( //
+            lookup, // lookup
             false, // skip
             cacheFile, // cacheFile
             CompilerCache.fresh(), // cache
             IncOptions.of(), // incOptions
-            reporter, // reporter
-            Option.apply(null), // optionProgress
+            new LoggedReporter(100, logger, pos -> pos), // reporter
+            Optional.empty(), // optionProgress
             new T2[] {});
     }
 
@@ -104,7 +102,7 @@ public class SbtIncrementalCompiler {
             MiniSetup previousSetup = analysisContents0.getMiniSetup();
             return PreviousResult.of(Optional.of(previousAnalysis), Optional.of(previousSetup));
         } else {
-            return compiler.emptyPreviousResult();
+            return PreviousResult.of(Optional.empty(), Optional.empty());
         }
     }
 
@@ -116,20 +114,18 @@ public class SbtIncrementalCompiler {
             fullClasspath.add(new File(classpathElement));
         }
 
-        Inputs inputs = compiler.inputs(//
+        CompileOptions options = CompileOptions.of( //
             fullClasspath.toArray(new File[] {}), // classpath
             sources.toArray(new File[] {}), // sources
-            classesDirectory, // classesDirectory
-            scalacOptions.toArray(new String[] {}), // scalacOptions
+            classesDirectory, scalacOptions.toArray(new String[] {}), // scalacOptions
             javacOptions.toArray(new String[] {}), // javacOptions
             100, // maxErrors
-            new Function[] {}, // sourcePositionMappers
+            pos -> pos, // sourcePositionMappers
             compileOrder, // order
-            compilers, // compilers
-            setup, // setup
-            previousResult(), // pr
             Optional.empty() // temporaryClassesDirectory
         );
+
+        Inputs inputs = Inputs.of(compilers, options, setup, previousResult());
 
         CompileResult newResult = compiler.compile(inputs, logger);
         analysisStore.set(AnalysisContents.create(newResult.analysis(), newResult.setup()));
