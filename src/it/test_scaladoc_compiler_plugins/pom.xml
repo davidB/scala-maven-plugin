@@ -26,7 +26,7 @@
         <artifactId>@project.artifactId@</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <args>
+          <!-- <args>
             <arg>-explaintypes</arg>
             <arg>-deprecation</arg>
             <arg>-feature</arg>
@@ -44,12 +44,12 @@
             <arg>-Ywarn-unused</arg>
             <arg>-Ywarn-unused-import</arg>
             <arg>-Ywarn-value-discard</arg>
-          </args>
+          </args> -->
           <compilerPlugins>
             <compilerPlugin>
-              <groupId>org.spire-math</groupId>
+              <groupId>org.typelevel</groupId>
               <artifactId>kind-projector_${scala.compat.version}</artifactId>
-              <version>0.9.4</version>
+              <version>0.10.3</version>
             </compilerPlugin>
           </compilerPlugins>
         </configuration>

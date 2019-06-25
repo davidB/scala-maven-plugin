@@ -611,25 +611,68 @@
             <version>3.2.0</version>
             <executions>
               <execution>
-                <id>integration-test</id>
+                <phase>integration-test</phase>
+                <id>it-2.12-all</id>
                 <goals>
                   <goal>install</goal>
                   <goal>run</goal>
                 </goals>
+                <configuration>
+                  <properties>
+                    <scala.version.lastrelease>2.12.8</scala.version.lastrelease>
+                    <scala.compat.version>2.12</scala.compat.version>
+                    <recompileMode>all</recompileMode>
+                  </properties>
+                </configuration>
+              </execution>
+              <execution>
+                <phase>integration-test</phase>
+                <id>it-2.12-incremental</id>
+                <goals>
+                  <goal>install</goal>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <properties>
+                    <scala.version.lastrelease>2.12.8</scala.version.lastrelease>
+                    <scala.compat.version>2.12</scala.compat.version>
+                    <recompileMode>incremental</recompileMode>
+                  </properties>
+                </configuration>
+              </execution>
+              <execution>
+                <phase>integration-test</phase>
+                <id>it-2.13-all</id>
+                <goals>
+                  <goal>install</goal>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <properties>
+                    <scala.version.lastrelease>2.13.0</scala.version.lastrelease>
+                    <scala.compat.version>2.13</scala.compat.version>
+                    <recompileMode>all</recompileMode>
+                  </properties>
+                </configuration>
+              </execution>
+              <execution>
+                <id>it-2.13-incremental</id>
+                <goals>
+                  <goal>install</goal>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <properties>
+                    <scala.version.lastrelease>2.13.0</scala.version.lastrelease>
+                    <scala.compat.version>2.13</scala.compat.version>
+                    <recompileMode>incremental</recompileMode>
+                  </properties>
+                </configuration>
               </execution>
             </executions>
             <configuration>
-              <settingsFile>src/it/settings.xml</settingsFile>
+              <!-- <settingsFile>src/it/settings.xml</settingsFile> -->
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-              <properties>
-                <scala.version.27>2.7.7</scala.version.27>
-                <scala.version.28>2.8.2</scala.version.28>
-                <scala.version.lastrelease>2.12.8</scala.version.lastrelease>
-                <scala.version.next>2.12.8</scala.version.next>
-                <scala.compat.version>2.12</scala.compat.version>
-                <scala.macroparadise.version>2.10.2-SNAPSHOT</scala.macroparadise.version>
-                <scala.macroparadise.organisation>org.scala-lang.macro-paradise</scala.macroparadise.organisation>
-              </properties>
               <debug>false</debug>
               <streamLogs>true</streamLogs>
               <projectsDirectory>src/it</projectsDirectory>

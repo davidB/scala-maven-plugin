@@ -25,7 +25,7 @@ Currently, you need Maven 3.x & JDK 8 to build the plugin, create the site, and 
 * `./mvnw site` : generate the plugin website
 * `./mvnw integration-test` : `./mvnw package` + run all integration test
   * note: to run `test_scalaHome`: you have to set `scala.home` property in `src/it/test_scalaHome/pom.xml` to correspond to your environment.  See Build section above for a simple setup.
-* `./mvnw invoker:run -Dinvoker.test=test1` : run integration test 'test1' useful for tuning/debug
+* `./mvnw integration-test -Dinvoker.test=test1` : run integration test 'test1' (against all configuration) useful for tuning/debug
 * `./mvnw install` :  ./mvnw integration-test` + publish on local maven repository
 * `./mvnw install -Dmaven.test.skip=true` : ./mvnw install` without run of unit test and run of integration test
 * release :
