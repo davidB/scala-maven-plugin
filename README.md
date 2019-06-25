@@ -30,7 +30,8 @@ Currently, you need Maven 3.x & JDK 8 to build the plugin, create the site, and 
 * `./mvnw install -Dmaven.test.skip=true` : ./mvnw install` without run of unit test and run of integration test
 * release :
   * `gpg --use-agent --armor --detach-sign --output $(mktemp) pom.xml` to avoid issue on macosx with gpg signature see [[MGPG-59] GPG Plugin: "gpg: signing failed: Inappropriate ioctl for device" - ASF JIRA](https://issues.apache.org/jira/browse/MGPG-59)
-  * `./mvnw release:prepare && ./mvnw release:perform` : to publish on staging repository via plugin
+  * `./mvnw release:clean && ./mvnw release:prepare && ./mvnw release:perform` : to publish on staging repository via plugin
+  * `./mvnw release:clean && ./mvnw release:prepare -Darguments="-DskipTests -Dmaven.test.skip=true" && ./mvnw release:perform -Darguments="-DskipTests -Dmaven.test.skip=true"` to publish without tests (integration test require 30min on CI)
   * `./mvnw site package source:jar javadoc:jar install:install gpg:sign deploy:deploy changes:announcement-generate -Dmaven.test.skip=true -DperformRelease=true` : manual
   * connect to http://oss.sonatype.org/ close and release the request(about scala-maven-plugin) in staging repositories
   * browse the updated [mvnsite](https://davidb.github.io/scala-maven-plugin/) (check version into samples, ...)
