@@ -243,7 +243,7 @@
     <dependency>
       <groupId>org.scala-sbt</groupId>
       <artifactId>zinc_2.12</artifactId>
-      <version>1.3.0-M7</version>
+      <version>1.3.0-M8</version>
     </dependency>
     <dependency>
       <groupId>org.scala-lang.modules</groupId>
