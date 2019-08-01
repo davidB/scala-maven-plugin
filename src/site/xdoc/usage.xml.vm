@@ -41,10 +41,11 @@
     </section>
 
     <section name="Displaying the command line used">
-      <p>Set the property displayCmd to true</p>
+      <p>To display command used when process is spawned set the property displayCmd to true.
+        (In the incremental mode no process is spawned, so example below overrides default of recompileMode to all).</p>
       <source>
         <![CDATA[
-$> mvn scala:compile -DdisplayCmd=true
+$> mvn scala:compile -DdisplayCmd=true -DrecompileMode=all
 
 [INFO] Scanning for projects...
 [INFO] Searching repository for plugin with prefix: 'scala'.
