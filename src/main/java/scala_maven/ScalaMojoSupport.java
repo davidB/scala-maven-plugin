@@ -844,11 +844,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         if (javacGenerateDebugSymbols) {
             options.add("-g");
         }
-        if (target != null) {
+        if (target != null && !target.isEmpty()) {
             options.add("-target");
             options.add(target);
         }
-        if (source != null) {
+        if (source != null && !source.isEmpty()) {
             options.add("-source");
             options.add(source);
         }
