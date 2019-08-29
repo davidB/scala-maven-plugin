@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.alchim31.maven</groupId>
   <artifactId>scala-maven-plugin</artifactId>
-  <version>4.1.2-SNAPSHOT</version>
+  <version>4.2.0</version>
   <packaging>maven-plugin</packaging>
 
   <name>scala-maven-plugin</name>
@@ -99,7 +99,7 @@
     <connection>scm:git:git://github.com/davidB/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:davidB/${project.artifactId}.git</developerConnection>
     <url>http://github.com/davidB/${project.artifactId}/</url>
-    <tag>HEAD</tag>
+    <tag>4.2.0</tag>
   </scm>
 
   <issueManagement>
