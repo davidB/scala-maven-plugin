@@ -852,11 +852,11 @@
 <a class="jxr_linenumber" name="L844" href="#L844">844</a>         <strong class="jxr_keyword">if</strong> (javacGenerateDebugSymbols) {
 <a class="jxr_linenumber" name="L845" href="#L845">845</a>             options.add(<span class="jxr_string">"-g"</span>);
 <a class="jxr_linenumber" name="L846" href="#L846">846</a>         }
-<a class="jxr_linenumber" name="L847" href="#L847">847</a>         <strong class="jxr_keyword">if</strong> (target != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L847" href="#L847">847</a>         <strong class="jxr_keyword">if</strong> (target != <strong class="jxr_keyword">null</strong> &amp;&amp; !target.isEmpty()) {
 <a class="jxr_linenumber" name="L848" href="#L848">848</a>             options.add(<span class="jxr_string">"-target"</span>);
 <a class="jxr_linenumber" name="L849" href="#L849">849</a>             options.add(target);
 <a class="jxr_linenumber" name="L850" href="#L850">850</a>         }
-<a class="jxr_linenumber" name="L851" href="#L851">851</a>         <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L851" href="#L851">851</a>         <strong class="jxr_keyword">if</strong> (source != <strong class="jxr_keyword">null</strong> &amp;&amp; !source.isEmpty()) {
 <a class="jxr_linenumber" name="L852" href="#L852">852</a>             options.add(<span class="jxr_string">"-source"</span>);
 <a class="jxr_linenumber" name="L853" href="#L853">853</a>             options.add(source);
 <a class="jxr_linenumber" name="L854" href="#L854">854</a>         }
