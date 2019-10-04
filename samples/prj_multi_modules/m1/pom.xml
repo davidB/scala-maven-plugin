@@ -9,7 +9,6 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>m1</artifactId>
-	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>

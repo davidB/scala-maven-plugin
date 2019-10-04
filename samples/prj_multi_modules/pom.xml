@@ -9,13 +9,13 @@
   <packaging>pom</packaging>
 
   <dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>2.11.5</version>
-    </dependency>
-  </dependencies>
+    <dependencies>
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>2.12.10</version>
+      </dependency>
+    </dependencies>
   </dependencyManagement>
 
   <build>
@@ -24,12 +24,11 @@
         <plugin>
           <groupId>net.alchim31.maven</groupId>
           <artifactId>scala-maven-plugin</artifactId>
-          <version>3.2.2</version>
+          <version>4.2.0</version>
           <executions>
             <execution>
               <goals>
                 <goal>compile</goal>
-                <goal>testCompile</goal>
               </goals>
             </execution>
           </executions>

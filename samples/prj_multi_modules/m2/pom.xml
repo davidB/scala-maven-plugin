@@ -9,11 +9,15 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>m2</artifactId>
-	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>samples.scala-maven-plugin</groupId>
+			<artifactId>m1</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>
