@@ -41,7 +41,6 @@ import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNod
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.StringUtils;
 
-import sbt_inc.SbtIncrementalCompiler;
 import scala_maven_dependency.CheckScalaVersionVisitor;
 import scala_maven_dependency.ScalaDistroArtifactFilter;
 import scala_maven_executions.JavaMainCaller;
@@ -375,9 +374,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      *
      * @return a {@link Artifact} for the Scala Compiler.
      */
-    final Artifact scalaCompilerArtifact(final String scalaVersion) {
-        return this.factory.createArtifact(this.getScalaOrganization(), ScalaMojoSupport.SCALA_COMPILER_ARTIFACTID,
-            scalaVersion, "", ScalaMojoSupport.POM);
+    final Artifact scalaCompilerArtifact(String scalaVersion) {
+        return factory.createArtifact(getScalaOrganization(), ScalaMojoSupport.SCALA_COMPILER_ARTIFACTID, scalaVersion,
+            "", ScalaMojoSupport.POM);
     }
 
     /**
@@ -444,7 +443,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             resolutionFilter, remoteRepositories, localRepository);
 
         // TODO follow the dependenciesManagement and override rules
-        return this.resolver.resolve(arr).getArtifacts();
+        return factory.resolve(arr).getArtifacts();
     }
 
     /**
@@ -498,7 +497,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * added for classifier support.
-     * 
+     *
      * @author Christoph Radig
      * @todo might want to merge with existing "addToClasspath" methods.
      */
@@ -650,7 +649,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
     /**
      * this method checks to see if there are multiple versions of the scala library
-     * 
+     *
      * @throws Exception
      */
     private void checkCorrectVersionsOfScalaLibrary(String scalaDefVersion) throws Exception {
@@ -973,15 +972,5 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             }
         }
         return plugins;
-    }
-
-    protected String findVersionFromPluginArtifacts(String groupId, String artifactId) {
-        for (Artifact art : pluginArtifacts) {
-            if (groupId.equals(art.getGroupId()) && artifactId.equals(art.getArtifactId())) {
-                return art.getVersion();
-            }
-        }
-        throw new IllegalArgumentException(
-            "Could not locate artifact " + groupId + ":" + artifactId + " in plugin's dependencies");
     }
 }

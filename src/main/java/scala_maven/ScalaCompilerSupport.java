@@ -58,6 +58,14 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     @Parameter(property = "compileOrder", defaultValue = "Mixed")
     private CompileOrder compileOrder;
 
+    /**
+     * Location of the incremental compile will install compiled compiler bridge
+     * jars. Default is sbt's "~/.sbt/1.0/zinc/org.scala-sbt".
+     *
+     */
+    @Parameter(property = "secondaryCacheDir")
+    private File secondaryCacheDir;
+
     abstract protected File getOutputDir() throws Exception;
 
     abstract protected List<String> getClasspathElements() throws Exception;
@@ -252,17 +260,6 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     //
     // Incremental compilation
     //
-    private static final String SBT_GROUP_ID = "org.scala-sbt";
-    private static final String ZINC_ARTIFACT_ID = "zinc_2.12";
-    private static final String COMPILER_BRIDGE_ARTIFACT_ID = "compiler-bridge";
-
-    protected File getCompilerBridgeJar() throws Exception {
-        VersionNumber scalaVersion = findScalaVersion();
-        String zincVersion = findVersionFromPluginArtifacts(SBT_GROUP_ID, ZINC_ARTIFACT_ID);
-        return getArtifactJar(SBT_GROUP_ID,
-            scalaVersion.applyScalaArtifactVersioningScheme(COMPILER_BRIDGE_ARTIFACT_ID), zincVersion);
-    }
-
     private int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir,
         File cacheFile, boolean compileInLoop) throws Exception {
         List<File> sources = findSourceWithFilters(sourceRootDirs);
@@ -285,7 +282,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
                 getCompilerJar(), //
                 findScalaVersion(), //
                 extraJars, //
-                getCompilerBridgeJar(), //
+                new MavenArtifactResolver(factory, session), //
+                secondaryCacheDir, //
                 getLog(), //
                 cacheFile, //
                 compileOrder);
