@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Grossly hacky utility class which provides the fully unpacked OSGi classpath
+ * Grossly hacky utility class which provides the fully unpacked OSGI classpath
  * (ie. including nested .jars) when used in the context of Tycho and Maven 3.
  * The use of reflection is required to avoid wiring in a dependency on either
  * Tycho or Maven 3.
@@ -21,7 +21,7 @@ import org.apache.maven.project.MavenProject;
  * @author miles.sabin
  */
 class TychoUtilities {
-    private static final String TychoConstants_CTX_ECLIPSE_PLUGIN_CLASSPATH = "org.codehaus.tycho.TychoConstants/eclipsePluginClasspath";
+    private static final String TychoConstants_CTX_ECLIPSE_PLUGIN_CLASSPATH = "org.eclipse.tycho.core.TychoConstants/eclipsePluginClasspath";
     private static final Method getContextValueMethod;
     private static final Method getLocationsMethod;
 
