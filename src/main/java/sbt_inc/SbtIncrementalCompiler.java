@@ -96,6 +96,24 @@ public class SbtIncrementalCompiler {
         PerClasspathEntryLookup lookup = new PerClasspathEntryLookup() {
             @Override
             public Optional<CompileAnalysis> analysis(File classpathEntry) {
+                String analysisStoreFileName = null;
+                if (classpathEntry.isDirectory()) {
+                    if (classpathEntry.getName().equals("classes")) {
+                        analysisStoreFileName = "compile";
+
+                    } else if (classpathEntry.getName().equals("test-classes")) {
+                        analysisStoreFileName = "test-compile";
+                    }
+                }
+
+                if (analysisStoreFileName != null) {
+                    File analysisStoreFile = Paths.get(classpathEntry.getParent(), "analysis", analysisStoreFileName)
+                        .toFile();
+                    if (analysisStoreFile.exists()) {
+                        return AnalysisStore.getCachedStore(FileAnalysisStore.binary(analysisStoreFile)).get()
+                            .map(AnalysisContents::getAnalysis);
+                    }
+                }
                 return Optional.empty();
             }
 
@@ -207,9 +225,7 @@ public class SbtIncrementalCompiler {
                 .map(Artifact::getFile) //
                 .collect(Collectors.toSet());
 
-            for (File scalaJars : scalaInstance.allJars()) {
-                bridgeSourcesDependencies.add(scalaJars);
-            }
+            bridgeSourcesDependencies.addAll(Arrays.asList(scalaInstance.allJars()));
 
             File sourcesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-sources").toFile();
             File classesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-classes").toFile();
