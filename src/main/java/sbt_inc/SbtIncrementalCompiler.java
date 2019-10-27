@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -36,10 +37,9 @@ import java.util.stream.Stream;
 public class SbtIncrementalCompiler {
 
     private static final String SBT_GROUP_ID = "org.scala-sbt";
-    private static final String USER_HOME = System.getProperty("user.home");
     private static final String JAVA_CLASS_VERSION = System.getProperty("java.class.version");
-    private static final File DEFAULT_SECONDARY_CACHE_DIR = new File(
-        USER_HOME + "/.sbt/1.0/zinc/org.scala-sbt".replaceAll("/", File.separator));
+    private static final File DEFAULT_SECONDARY_CACHE_DIR =
+        Paths.get(System.getProperty("user.home"), ".sbt", "1.0", "zinc", "org.scala-sbt").toFile();
 
     private final IncrementalCompiler compiler = ZincUtil.defaultIncrementalCompiler();
     private final CompileOrder compileOrder;
