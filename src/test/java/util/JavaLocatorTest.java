@@ -5,6 +5,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 
+import java.nio.file.Paths;
+
 import static org.junit.Assert.*;
 
 public class JavaLocatorTest {
@@ -16,7 +18,7 @@ public class JavaLocatorTest {
     public void shouldReturnNullWhenJavaIsNotAvailableOnCommandLineAndJavaHomeIsPresent() {
         Toolchain toolchain = new NullReturningToolChain();
         environmentVariables.set("JAVA_HOME", "test");
-        assertEquals("test/bin/java", JavaLocator.findExecutableFromToolchain(toolchain));
+        assertEquals(Paths.get("test", "bin", "java").toString(), JavaLocator.findExecutableFromToolchain(toolchain));
     }
 
     @Test
