@@ -21,7 +21,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     /**
      * The directory in which to place compilation output
      */
-    @Parameter(property = "project.build.outputDirectory")
+    @Parameter(property = "outputDir", defaultValue = "${project.build.outputDirectory}")
     private File outputDir;
 
     /**
