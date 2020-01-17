@@ -60,7 +60,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
         final List<String> back = project.getCompileClasspathElements();
         back.remove(project.getBuild().getOutputDirectory());
         // back.add(getOutputDir().getAbsolutePath());
-        if (classpath != null && classpath.getAdd() != null && !classpath.getAdd().isEmpty()) {
+        if (classpath != null && classpath.getAdd() != null) {
             for (File f : classpath.getAdd()) {
                 back.add(f.getAbsolutePath());
             }
