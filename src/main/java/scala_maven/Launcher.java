@@ -14,7 +14,7 @@ public class Launcher {
     protected String[] jvmArgs;
 
     /**
-     * compiler additionnals arguments
+     * compiler additional arguments
      */
     @Parameter
     protected String[] args;
