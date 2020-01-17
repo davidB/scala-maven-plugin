@@ -65,7 +65,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
                 back.add(f.getAbsolutePath());
             }
         }
-        back.addAll(TychoUtilities.addOsgiClasspathElements(project, back));
+        back.addAll(TychoUtilities.addOsgiClasspathElements(project));
         return back;
     }
 

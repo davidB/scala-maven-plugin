@@ -49,21 +49,20 @@ class TychoUtilities {
     }
 
     @SuppressWarnings("unchecked")
-    static List<String> addOsgiClasspathElements(MavenProject project, List<String> defaultClasspathElements) {
+    static List<String> addOsgiClasspathElements(MavenProject project) {
         if (getLocationsMethod == null) {
-            return defaultClasspathElements;
+            return Collections.emptyList();
         }
 
         List<Object> classpath = (List<Object>) getContextValue(project, TychoConstants_CTX_ECLIPSE_PLUGIN_CLASSPATH);
         if (classpath == null || classpath.isEmpty())
-            return defaultClasspathElements;
+            return Collections.emptyList();
 
         List<String> osgiClasspath = new ArrayList<>();
         for (Object classpathEntry : classpath) {
             for (File file : getLocations(classpathEntry))
                 osgiClasspath.add(file.getAbsolutePath());
         }
-        osgiClasspath.addAll(defaultClasspathElements);
         return osgiClasspath;
     }
 
