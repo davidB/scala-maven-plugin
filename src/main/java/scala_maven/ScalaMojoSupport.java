@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -348,7 +349,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
      *
      */
     @Component
-    private DependencyGraphBuilder dependencyTreeBuilder;
+    private DependencyGraphBuilder dependencyGraphBuilder;
 
     /**
      * The toolchain manager to use.
@@ -669,9 +670,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             }
             getLog().warn(msg);
         }
-        ProjectBuildingRequest request = project.getProjectBuildingRequest();
+        ProjectBuildingRequest request = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
         request.setProject(project);
-        checkArtifactForScalaVersion(requiredScalaVersion, dependencyTreeBuilder.buildDependencyGraph(request, null));
+        checkArtifactForScalaVersion(requiredScalaVersion, dependencyGraphBuilder.buildDependencyGraph(request, null));
     }
 
     /**
