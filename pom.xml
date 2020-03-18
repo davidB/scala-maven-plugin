@@ -600,7 +600,7 @@
                 </goals>
                 <configuration>
                   <properties>
-                    <scala.version.lastrelease>2.12.8</scala.version.lastrelease>
+                    <scala.version.lastrelease>2.12.11</scala.version.lastrelease>
                     <scala.compat.version>2.12</scala.compat.version>
                     <recompileMode>all</recompileMode>
                   </properties>
@@ -615,7 +615,7 @@
                 </goals>
                 <configuration>
                   <properties>
-                    <scala.version.lastrelease>2.12.8</scala.version.lastrelease>
+                    <scala.version.lastrelease>2.12.11</scala.version.lastrelease>
                     <scala.compat.version>2.12</scala.compat.version>
                     <recompileMode>incremental</recompileMode>
                   </properties>
