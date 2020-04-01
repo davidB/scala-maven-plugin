@@ -30,14 +30,19 @@ public class SbtLogger extends Logger {
 
     @Override
     public void log(Enumeration.Value level, Function0<String> message) {
+        String s = message.apply();
+        String prefix = "[" + level.toString() + "] ";
+        if (s.regionMatches(true, 0, prefix, 0, prefix.length())) {
+            s = s.substring(prefix.length());
+        }
         if (level.equals(Level.Error())) {
-            log.error(message.apply());
+            log.error(s);
         } else if (level.equals(Level.Warn())) {
-            log.warn(message.apply());
+            log.warn(s);
         } else if (level.equals(Level.Info())) {
-            log.info(message.apply());
+            log.info(s);
         } else if (level.equals(Level.Debug())) {
-            log.debug(message.apply());
+            log.debug(s);
         }
     }
 }
