@@ -25,7 +25,7 @@ import scala_maven_executions.MainHelper;
  *
  */
 @Mojo(name = "doc", requiresDependencyResolution = ResolutionScope.COMPILE)
-@Execute(phase = LifecyclePhase.GENERATE_RESOURCES)
+@Execute(phase = LifecyclePhase.GENERATE_SOURCES)
 public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport {
 
     /**
