@@ -5,6 +5,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.repository.RepositorySystem;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class MavenArtifactResolver {
@@ -19,7 +20,11 @@ public class MavenArtifactResolver {
 
     public Artifact getJar(String groupId, String artifactId, String version, String classifier) {
         Artifact artifact = createJarArtifact(groupId, artifactId, version, classifier);
-        return resolve(artifact, false).iterator().next();
+        Set<Artifact> resolvedArtifacts = resolve(artifact, false);
+        if (resolvedArtifacts.isEmpty()) {
+            throw new NoSuchElementException(String.format("Could not resolve artifact %s:%s:%s:%s", groupId, artifactId, version, classifier));
+        }
+        return resolvedArtifacts.iterator().next();
     }
 
     public Set<Artifact> getJarAndDependencies(String groupId, String artifactId, String version, String classifier) {
