@@ -173,6 +173,9 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
     private File sourceDir;
 
+    @Parameter(property = "classpath")
+    private Classpath classpath;
+
     private List<File> _sourceFiles;
 
     @Override
@@ -295,6 +298,13 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         List<String> paths = new ArrayList<>(project.getCompileClasspathElements());
         paths.remove(project.getBuild().getOutputDirectory()); // remove output to avoid "error for" : error: XXX is
                                                                // already defined as package XXX ... object XXX {
+
+        if (classpath != null && classpath.getAdd() != null) {
+            for (File f : classpath.getAdd()) {
+                paths.add(f.getAbsolutePath());
+            }
+        }
+
         if (!paths.isEmpty())
             jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
         // jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
