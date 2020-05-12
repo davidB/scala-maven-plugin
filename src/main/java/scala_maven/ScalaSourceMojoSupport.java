@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import scala_maven_executions.MainHelper;
@@ -25,7 +26,7 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
 
     /**
      * A list of inclusion filters for the compiler. ex :
-     * 
+     *
      * <pre>
      *    &lt;includes&gt;
      *      &lt;include&gt;SomeFile.scala&lt;/include&gt;
@@ -38,7 +39,7 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
 
     /**
      * A list of exclusion filters for the compiler. ex :
-     * 
+     *
      * <pre>
      *    &lt;excludes&gt;
      *      &lt;exclude&gt;SomeBadFile.scala&lt;/exclude&gt;
@@ -48,6 +49,14 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
      */
     @Parameter
     private Set<String> excludes = new HashSet<>();
+
+    /**
+     * Additional dependencies to be added to the classpath. This can be useful in
+     * situations where a dependency is needed at compile time, but should not be
+     * treated as a dependency in the published POM.
+     */
+    @Parameter(property = "additionalDependencies")
+    private Dependency[] additionalDependencies;
 
     /**
      * Retrieves the list of *all* root source directories. We need to pass all
@@ -129,5 +138,13 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
             }
         }
         return newCompileSourceRootsList;
+    }
+
+    protected void addAdditionalDependencies(Set<String> back) throws Exception {
+        if (additionalDependencies != null) {
+            for (Dependency dependency : additionalDependencies) {
+                addToClasspath(factory.createDependencyArtifact(dependency), back, false);
+            }
+        }
     }
 }

@@ -148,7 +148,7 @@ public class SbtIncrementalCompiler {
         }
     }
 
-    public void compile(List<String> classpathElements, List<File> sources, File classesDirectory,
+    public void compile(Set<String> classpathElements, List<File> sources, File classesDirectory,
         List<String> scalacOptions, List<String> javacOptions) {
         List<File> fullClasspath = new ArrayList<>();
         fullClasspath.add(classesDirectory);

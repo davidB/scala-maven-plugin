@@ -32,7 +32,7 @@ public class MainHelper {
     static final String argFilePrefix = "scala-maven-";
     static final String argFileSuffix = ".args";
 
-    public static String toMultiPath(List<String> paths) {
+    public static String toMultiPath(Collection<String> paths) {
         return StringUtils.join(paths.iterator(), File.pathSeparator);
     }
 

@@ -1,7 +1,9 @@
 package scala_maven;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -57,10 +59,10 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     private File testAnalysisCacheFile;
 
     @Override
-    protected List<String> getClasspathElements() throws Exception {
-        List<String> back = project.getTestClasspathElements();
+    protected Set<String> getClasspathElements() throws Exception {
+        Set<String> back = new HashSet<>(project.getTestClasspathElements());
         back.remove(project.getBuild().getTestOutputDirectory());
-        // back.add(getOutputDir().getAbsolutePath());
+        addAdditionalDependencies(back);
         return back;
     }
 
