@@ -39,10 +39,20 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
 
     /**
      * List of directories or jars to add to the classpath
-     *
+     * 
+     * @Deprecated Use {@code additionalDependencies} instead.
      */
     @Parameter(property = "classpath")
+    @Deprecated
     private Classpath classpath;
+
+    /**
+     * Additional dependencies to be added to the classpath. This can be useful in
+     * situations where a dependency is needed at compile time, but should not be
+     * treated as a dependency in the published POM.
+     */
+    @Parameter(property = "additionalDependencies")
+    private Dependency[] additionalDependencies;
 
     @Override
     protected List<File> getSourceDirectories() throws Exception {
@@ -59,8 +69,13 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     protected List<String> getClasspathElements() throws Exception {
         final List<String> back = project.getCompileClasspathElements();
         back.remove(project.getBuild().getOutputDirectory());
-        // back.add(getOutputDir().getAbsolutePath());
+        if (additionalDependencies != null) {
+            for (Dependency dependency : additionalDependencies) {
+                addToClasspath(factory.createDependencyArtifact(dependency), back, false);
+            }
+        }
         if (classpath != null && classpath.getAdd() != null) {
+            getLog().warn("using 'classpath' is deprecated, use 'additionalDependencies' instead");
             for (File f : classpath.getAdd()) {
                 back.add(f.getAbsolutePath());
             }

@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -173,8 +174,13 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
     private File sourceDir;
 
+    /**
+     * Additional dependencies to be added to the classpath. This can be useful in
+     * situations where a dependency is needed at compile time, but should not be
+     * treated as a dependency in the published POM.
+     */
     @Parameter(property = "additionalDependencies")
-    private AdditionalDependency[] additionalDependencies;
+    private Dependency[] additionalDependencies;
 
     private List<File> _sourceFiles;
 
@@ -300,7 +306,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
                                                                // already defined as package XXX ... object XXX {
 
         if (additionalDependencies != null) {
-            for (AdditionalDependency dependency : additionalDependencies) {
+            for (Dependency dependency : additionalDependencies) {
                 addToClasspath(factory.createDependencyArtifact(dependency), paths, false);
             }
         }
