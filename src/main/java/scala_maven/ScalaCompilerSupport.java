@@ -3,6 +3,7 @@ package scala_maven;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -68,7 +69,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     abstract protected File getOutputDir() throws Exception;
 
-    abstract protected List<String> getClasspathElements() throws Exception;
+    abstract protected Set<String> getClasspathElements() throws Exception;
 
     private long _lastCompileAt = -1;
 
@@ -102,7 +103,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile,
-        List<String> classpathElements, boolean compileInLoop) throws Exception {
+        Set<String> classpathElements, boolean compileInLoop) throws Exception {
         if (!compileInLoop && recompileMode == RecompileMode.incremental) {
             // if not compileInLoop, invoke incrementalCompile immediately
             long n0 = System.nanoTime();
@@ -260,7 +261,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     //
     // Incremental compilation
     //
-    private int incrementalCompile(List<String> classpathElements, List<File> sourceRootDirs, File outputDir,
+    private int incrementalCompile(Set<String> classpathElements, List<File> sourceRootDirs, File outputDir,
         File cacheFile, boolean compileInLoop) throws Exception {
         List<File> sources = findSourceWithFilters(sourceRootDirs);
         if (sources.isEmpty()) {

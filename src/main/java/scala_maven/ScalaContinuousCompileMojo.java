@@ -3,6 +3,7 @@ package scala_maven;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -93,7 +94,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     protected boolean verbose;
 
     @Override
-    protected List<String> getClasspathElements() {
+    protected Set<String> getClasspathElements() {
         throw new UnsupportedOperationException("USELESS");
     }
 

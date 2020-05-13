@@ -61,7 +61,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     }
 
     @Override
-    protected List<String> getClasspathElements() throws Exception {
+    protected Set<String> getClasspathElements() throws Exception {
         final Set<String> back = new HashSet<>(project.getCompileClasspathElements());
         back.remove(project.getBuild().getOutputDirectory());
         addAdditionalDependencies(back);
@@ -72,7 +72,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
             }
         }
         back.addAll(TychoUtilities.addOsgiClasspathElements(project));
-        return new ArrayList<>(back);
+        return back;
     }
 
     @Override

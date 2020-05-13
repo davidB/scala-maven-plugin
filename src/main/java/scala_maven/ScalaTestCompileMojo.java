@@ -60,11 +60,11 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
     private File testAnalysisCacheFile;
 
     @Override
-    protected List<String> getClasspathElements() throws Exception {
+    protected Set<String> getClasspathElements() throws Exception {
         Set<String> back = new HashSet<>(project.getTestClasspathElements());
         back.remove(project.getBuild().getTestOutputDirectory());
         addAdditionalDependencies(back);
-        return new ArrayList(back);
+        return back;
     }
 
     @Override

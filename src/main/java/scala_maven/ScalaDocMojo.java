@@ -300,7 +300,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
                                                                // already defined as package XXX ... object XXX {
         addAdditionalDependencies(paths);
         if (!paths.isEmpty())
-            jcmd.addOption("-classpath", MainHelper.toMultiPath(new ArrayList<>(paths)));
+            jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
         // jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
 
         boolean isScaladoc2 = (new VersionNumber("2.8.0").compareTo(sv) <= 0 || sv.isZero())
