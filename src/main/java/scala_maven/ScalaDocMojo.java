@@ -173,8 +173,8 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
     private File sourceDir;
 
-    @Parameter(property = "classpath")
-    private Classpath classpath;
+    @Parameter(property = "additionalDependencies")
+    private AdditionalDependency[] additionalDependencies;
 
     private List<File> _sourceFiles;
 
@@ -299,9 +299,9 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         paths.remove(project.getBuild().getOutputDirectory()); // remove output to avoid "error for" : error: XXX is
                                                                // already defined as package XXX ... object XXX {
 
-        if (classpath != null && classpath.getAdd() != null) {
-            for (File f : classpath.getAdd()) {
-                paths.add(f.getAbsolutePath());
+        if (additionalDependencies != null) {
+            for (AdditionalDependency dependency : additionalDependencies) {
+                addToClasspath(factory.createDependencyArtifact(dependency), paths, false);
             }
         }
 

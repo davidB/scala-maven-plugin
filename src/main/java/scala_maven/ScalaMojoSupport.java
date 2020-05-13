@@ -2,6 +2,7 @@ package scala_maven;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -514,7 +515,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         addToClasspath(factory.createDependencyArtifact(d), classpath, addDependencies);
     }
 
-    void addToClasspath(Artifact artifact, Set<String> classpath, boolean addDependencies) throws Exception {
+    void addToClasspath(Artifact artifact, Collection<String> classpath, boolean addDependencies) throws Exception {
         resolver.resolve(artifact, remoteRepos, localRepo);
         classpath.add(FileUtils.pathOf(artifact.getFile(), useCanonicalPath));
         if (addDependencies) {
