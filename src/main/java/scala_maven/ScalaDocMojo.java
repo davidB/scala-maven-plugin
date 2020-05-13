@@ -1,8 +1,6 @@
 package scala_maven;
 
-import javax.print.attribute.HashAttributeSet;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;

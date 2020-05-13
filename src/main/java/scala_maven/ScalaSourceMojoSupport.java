@@ -2,7 +2,6 @@ package scala_maven;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -141,7 +140,7 @@ abstract public class ScalaSourceMojoSupport extends ScalaMojoSupport {
         return newCompileSourceRootsList;
     }
 
-    void addAdditionalDependencies(Set<String> back) throws Exception {
+    protected void addAdditionalDependencies(Set<String> back) throws Exception {
         if (additionalDependencies != null) {
             for (Dependency dependency : additionalDependencies) {
                 addToClasspath(factory.createDependencyArtifact(dependency), back, false);
