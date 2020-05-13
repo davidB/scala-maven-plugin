@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 
+import java.io.File;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
@@ -41,14 +42,14 @@ public class JavaLocatorTest {
     }
 
     @Test
-    public void shouldReturnParentOfChildOfJavaHomeFolder() throws Exception {
-        String home = JavaLocator.findHomeFromToolchain(new TestStringReturningToolChain());
-        assertEquals("parent", home);
+    public void shouldReturnParentOfChildOfJavaHomeFolder() {
+        File home = JavaLocator.findHomeFromToolchain(new TestStringReturningToolChain());
+        assertEquals("parent", home.getPath());
     }
 
     @Test
-    public void shouldReturnNullWhenFileIsNotPresent() throws Exception {
-        String home = JavaLocator.findHomeFromToolchain(new ReturningToolChain());
+    public void shouldReturnNullWhenFileIsNotPresent() {
+        File home = JavaLocator.findHomeFromToolchain(new ReturningToolChain());
         assertNull(home);
     }
 

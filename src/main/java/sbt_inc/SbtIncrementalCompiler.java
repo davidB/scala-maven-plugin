@@ -1,26 +1,25 @@
 package sbt_inc;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.logging.Log;
+import sbt.internal.inc.FileAnalysisStore;
+import sbt.internal.inc.ScalaInstance;
+import sbt.internal.inc.*;
+import sbt.internal.inc.classpath.ClasspathUtilities;
 import sbt.io.AllPassFilter$;
 import sbt.io.IO;
 import sbt.util.Logger;
+import scala.Option;
 import scala.Tuple2;
 import scala.collection.JavaConverters;
-import scala.compat.java8.functionConverterImpls.*;
-
-import org.apache.maven.plugin.logging.Log;
-import sbt.internal.inc.*;
-import sbt.internal.inc.FileAnalysisStore;
-import sbt.internal.inc.ScalaInstance;
-import sbt.internal.inc.classpath.ClasspathUtilities;
-import scala.Option;
+import scala.compat.java8.functionConverterImpls.FromJavaConsumer;
 import scala_maven.MavenArtifactResolver;
 import scala_maven.VersionNumber;
 import util.FileUtils;
 import xsbti.T2;
-import xsbti.compile.*;
 import xsbti.compile.AnalysisStore;
 import xsbti.compile.CompilerCache;
+import xsbti.compile.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -50,9 +49,17 @@ public class SbtIncrementalCompiler {
     private final MavenArtifactResolver resolver;
     private final File secondaryCacheDir;
 
-    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion,
-        List<File> extraJars, MavenArtifactResolver resolver, File secondaryCacheDir, Log mavenLogger, File cacheFile,
-        CompileOrder compileOrder) throws Exception {
+    public SbtIncrementalCompiler(File libraryJar,
+                                  File reflectJar,
+                                  File compilerJar,
+                                  VersionNumber scalaVersion,
+                                  List<File> extraJars,
+                                  File javaHome,
+                                  MavenArtifactResolver resolver,
+                                  File secondaryCacheDir,
+                                  Log mavenLogger,
+                                  File cacheFile,
+                                  CompileOrder compileOrder) throws Exception {
         this.compileOrder = compileOrder;
         this.logger = new SbtLogger(mavenLogger);
         mavenLogger.info("Using incremental compilation using " + compileOrder + " compile order");
@@ -90,7 +97,7 @@ public class SbtIncrementalCompiler {
         compilers = ZincUtil.compilers( //
             scalaInstance, //
             ClasspathOptionsUtil.boot(), //
-            Option.apply(null), // javaHome
+            Option.apply(javaHome), // javaHome
             scalaCompiler);
 
         PerClasspathEntryLookup lookup = new PerClasspathEntryLookup() {

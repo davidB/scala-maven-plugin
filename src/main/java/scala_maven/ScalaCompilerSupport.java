@@ -1,16 +1,16 @@
 package scala_maven;
 
+import org.apache.maven.plugins.annotations.Parameter;
+import sbt_inc.SbtIncrementalCompiler;
+import scala_maven_executions.JavaMainCaller;
+import scala_maven_executions.MainHelper;
+import util.JavaLocator;
+import xsbti.compile.CompileOrder;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.maven.plugins.annotations.Parameter;
-
-import sbt_inc.SbtIncrementalCompiler;
-import xsbti.compile.CompileOrder;
-import scala_maven_executions.JavaMainCaller;
-import scala_maven_executions.MainHelper;
 
 /**
  * Abstract parent of all Scala Mojo who run compilation
@@ -277,16 +277,18 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             File libraryJar = getLibraryJar();
             List<File> extraJars = getCompilerDependencies();
             extraJars.remove(libraryJar);
-            incremental = new SbtIncrementalCompiler(//
-                libraryJar, //
-                getReflectJar(), //
-                getCompilerJar(), //
-                findScalaVersion(), //
-                extraJars, //
-                new MavenArtifactResolver(factory, session), //
-                secondaryCacheDir, //
-                getLog(), //
-                cacheFile, //
+            File javaHome = JavaLocator.findHomeFromToolchain(getToolchain());
+            incremental = new SbtIncrementalCompiler(
+                libraryJar,
+                getReflectJar(),
+                getCompilerJar(),
+                findScalaVersion(),
+                extraJars,
+                javaHome,
+                new MavenArtifactResolver(factory, session),
+                secondaryCacheDir,
+                getLog(),
+                cacheFile,
                 compileOrder);
         }
 

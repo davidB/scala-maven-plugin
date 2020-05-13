@@ -32,12 +32,12 @@ public class JavaLocator {
         return javaExec;
     }
 
-    static String findHomeFromToolchain(Toolchain toolchain) {
+    public static File findHomeFromToolchain(Toolchain toolchain) {
         String executable = findExecutableFromToolchain(toolchain);
         File executableParent = new File(executable).getParentFile();
         if (executableParent == null) {
             return null;
         }
-        return executableParent.getParent();
+        return executableParent.getParentFile();
     }
 }

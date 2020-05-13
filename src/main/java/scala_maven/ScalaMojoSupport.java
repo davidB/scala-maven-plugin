@@ -40,6 +40,7 @@ import org.apache.maven.shared.dependency.graph.filter.DependencyNodeFilter;
 import org.apache.maven.shared.dependency.graph.traversal.CollectingDependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNodeVisitor;
+import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -799,8 +800,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             // * works only since 2.8.0
             // * is buggy (don't manage space in path on windows)
             getLog().debug("use java command with args in file forced : " + forceUseArgFile);
-            cmd = new JavaMainCallerByFork(this, mainClass, cp, null, null, forceUseArgFile,
-                toolchainManager.getToolchainFromBuildContext("jdk", session));
+            cmd = new JavaMainCallerByFork(this, mainClass, cp, null, null, forceUseArgFile, getToolchain());
             if (bootcp) {
                 cmd.addJvmArgs("-Xbootclasspath/a:" + toolcp);
             }
@@ -808,6 +808,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
             cmd = new JavaMainCallerInProcess(this, mainClass, toolcp, null, null);
         }
         return cmd;
+    }
+
+    protected Toolchain getToolchain() {
+        return toolchainManager.getToolchainFromBuildContext("jdk", session);
     }
 
     private String getToolClasspath() throws Exception {
