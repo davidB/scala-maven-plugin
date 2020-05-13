@@ -2,6 +2,7 @@ package scala_maven;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -166,7 +167,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
             int nbFile = 0;
             if (!mainSourceDirs.isEmpty()) {
                 nbFile = compile(mainSourceDirs, mainOutputDir, analysisCacheFile,
-                    project.getCompileClasspathElements(), true);
+                    new HashSet<>(project.getCompileClasspathElements()), true);
                 // If there are no source files, the compile method returns -1. Thus, to make
                 // sure we
                 // still run the tests if there are test sources, reset nbFile to zero.
@@ -175,7 +176,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
             }
             if (!testSourceDirs.isEmpty()) {
                 nbFile += compile(testSourceDirs, testOutputDir, testAnalysisCacheFile,
-                    project.getTestClasspathElements(), true);
+                    new HashSet<>(project.getTestClasspathElements()), true);
             }
             if (nbFile > 0) {
                 if (!hasCompileErrors()) {
