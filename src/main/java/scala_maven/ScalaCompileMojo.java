@@ -7,8 +7,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Compiles a directory of Scala source. Corresponds roughly to the compile goal
@@ -38,21 +41,13 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
     private File analysisCacheFile;
 
     /**
-     * List of directories or jars to add to the classpath
-     * 
+     * List of directories or jars to add to the classpath.
+     *
      * @Deprecated Use {@code additionalDependencies} instead.
      */
     @Parameter(property = "classpath")
     @Deprecated
     private Classpath classpath;
-
-    /**
-     * Additional dependencies to be added to the classpath. This can be useful in
-     * situations where a dependency is needed at compile time, but should not be
-     * treated as a dependency in the published POM.
-     */
-    @Parameter(property = "additionalDependencies")
-    private Dependency[] additionalDependencies;
 
     @Override
     protected List<File> getSourceDirectories() throws Exception {
@@ -67,13 +62,9 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
 
     @Override
     protected List<String> getClasspathElements() throws Exception {
-        final List<String> back = project.getCompileClasspathElements();
+        final Set<String> back = new HashSet<>(project.getCompileClasspathElements());
         back.remove(project.getBuild().getOutputDirectory());
-        if (additionalDependencies != null) {
-            for (Dependency dependency : additionalDependencies) {
-                addToClasspath(factory.createDependencyArtifact(dependency), back, false);
-            }
-        }
+        addAdditionalDependencies(back);
         if (classpath != null && classpath.getAdd() != null) {
             getLog().warn("using 'classpath' is deprecated, use 'additionalDependencies' instead");
             for (File f : classpath.getAdd()) {
@@ -81,7 +72,7 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
             }
         }
         back.addAll(TychoUtilities.addOsgiClasspathElements(project));
-        return back;
+        return new ArrayList<>(back);
     }
 
     @Override

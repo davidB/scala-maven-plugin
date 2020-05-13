@@ -1,12 +1,14 @@
 package scala_maven;
 
+import javax.print.attribute.HashAttributeSet;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -174,14 +176,6 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
     private File sourceDir;
 
-    /**
-     * Additional dependencies to be added to the classpath. This can be useful in
-     * situations where a dependency is needed at compile time, but should not be
-     * treated as a dependency in the published POM.
-     */
-    @Parameter(property = "additionalDependencies")
-    private Dependency[] additionalDependencies;
-
     private List<File> _sourceFiles;
 
     @Override
@@ -301,18 +295,12 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         }
         // copy the classpathElements to not modify the global project definition see
         // https://github.com/davidB/maven-scala-plugin/issues/60
-        List<String> paths = new ArrayList<>(project.getCompileClasspathElements());
+        Set<String> paths = new HashSet<>(project.getCompileClasspathElements());
         paths.remove(project.getBuild().getOutputDirectory()); // remove output to avoid "error for" : error: XXX is
                                                                // already defined as package XXX ... object XXX {
-
-        if (additionalDependencies != null) {
-            for (Dependency dependency : additionalDependencies) {
-                addToClasspath(factory.createDependencyArtifact(dependency), paths, false);
-            }
-        }
-
+        addAdditionalDependencies(paths);
         if (!paths.isEmpty())
-            jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
+            jcmd.addOption("-classpath", MainHelper.toMultiPath(new ArrayList<>(paths)));
         // jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
 
         boolean isScaladoc2 = (new VersionNumber("2.8.0").compareTo(sv) <= 0 || sv.isZero())

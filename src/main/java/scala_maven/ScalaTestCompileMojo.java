@@ -1,7 +1,10 @@
 package scala_maven;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -58,10 +61,10 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
 
     @Override
     protected List<String> getClasspathElements() throws Exception {
-        List<String> back = project.getTestClasspathElements();
+        Set<String> back = new HashSet<>(project.getTestClasspathElements());
         back.remove(project.getBuild().getTestOutputDirectory());
-        // back.add(getOutputDir().getAbsolutePath());
-        return back;
+        addAdditionalDependencies(back);
+        return new ArrayList(back);
     }
 
     @Override
