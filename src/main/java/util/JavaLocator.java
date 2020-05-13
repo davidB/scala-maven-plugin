@@ -12,24 +12,24 @@ import java.io.File;
 public class JavaLocator {
 
     public static String findExecutableFromToolchain(Toolchain toolchain) {
-        String _javaExec = null;
+        String javaExec = null;
 
         if (toolchain != null) {
-            _javaExec = toolchain.findTool("java");
+            javaExec = toolchain.findTool("java");
         }
 
-        if (toolchain == null || _javaExec == null) {
-            _javaExec = System.getenv("JAVA_HOME");
-            if (_javaExec == null) {
-                _javaExec = System.getProperty("java.home"); // Points to JRE home
-                if (_javaExec == null) {
-                    throw new IllegalStateException(
-                        "Couldn't locate java, try setting JAVA_HOME environment variable.");
-                }
+        if (javaExec == null) {
+            String javaHome = System.getenv("JAVA_HOME");
+            if (javaHome == null) {
+                javaHome = System.getProperty("java.home"); // fallback to JRE
             }
-            _javaExec += File.separator + "bin" + File.separator + "java";
+            if (javaHome == null) {
+                throw new IllegalStateException("Couldn't locate java, try setting JAVA_HOME environment variable.");
+            }
+            javaExec = javaHome + File.separator + "bin" + File.separator + "java";
         }
-        return _javaExec;
+
+        return javaExec;
     }
 
     static String findHomeFromToolchain(Toolchain toolchain) {
