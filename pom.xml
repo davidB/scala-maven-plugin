@@ -360,7 +360,6 @@
           <version>2.11.0</version>
           <configuration>
             <configFile>${project.basedir}/eclipse-formatter.xml</configFile>
-            <overrideConfigCompilerVersion>true</overrideConfigCompilerVersion>
             <lineEnding>LF</lineEnding>
           </configuration>
         </plugin>
