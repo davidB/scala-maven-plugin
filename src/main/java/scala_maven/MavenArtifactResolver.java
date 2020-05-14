@@ -22,7 +22,8 @@ public class MavenArtifactResolver {
         Artifact artifact = createJarArtifact(groupId, artifactId, version, classifier);
         Set<Artifact> resolvedArtifacts = resolve(artifact, false);
         if (resolvedArtifacts.isEmpty()) {
-            throw new NoSuchElementException(String.format("Could not resolve artifact %s:%s:%s:%s", groupId, artifactId, version, classifier));
+            throw new NoSuchElementException(
+                String.format("Could not resolve artifact %s:%s:%s:%s", groupId, artifactId, version, classifier));
         }
         return resolvedArtifacts.iterator().next();
     }

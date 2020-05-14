@@ -37,8 +37,8 @@ public class SbtIncrementalCompiler {
 
     private static final String SBT_GROUP_ID = "org.scala-sbt";
     private static final String JAVA_CLASS_VERSION = System.getProperty("java.class.version");
-    private static final File DEFAULT_SECONDARY_CACHE_DIR =
-        Paths.get(System.getProperty("user.home"), ".sbt", "1.0", "zinc", "org.scala-sbt").toFile();
+    private static final File DEFAULT_SECONDARY_CACHE_DIR = Paths
+        .get(System.getProperty("user.home"), ".sbt", "1.0", "zinc", "org.scala-sbt").toFile();
 
     private final IncrementalCompiler compiler = ZincUtil.defaultIncrementalCompiler();
     private final CompileOrder compileOrder;
@@ -49,17 +49,9 @@ public class SbtIncrementalCompiler {
     private final MavenArtifactResolver resolver;
     private final File secondaryCacheDir;
 
-    public SbtIncrementalCompiler(File libraryJar,
-                                  File reflectJar,
-                                  File compilerJar,
-                                  VersionNumber scalaVersion,
-                                  List<File> extraJars,
-                                  File javaHome,
-                                  MavenArtifactResolver resolver,
-                                  File secondaryCacheDir,
-                                  Log mavenLogger,
-                                  File cacheFile,
-                                  CompileOrder compileOrder) throws Exception {
+    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion,
+        List<File> extraJars, File javaHome, MavenArtifactResolver resolver, File secondaryCacheDir, Log mavenLogger,
+        File cacheFile, CompileOrder compileOrder) throws Exception {
         this.compileOrder = compileOrder;
         this.logger = new SbtLogger(mavenLogger);
         mavenLogger.info("Using incremental compilation using " + compileOrder + " compile order");

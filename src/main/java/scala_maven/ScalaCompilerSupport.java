@@ -278,18 +278,9 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             List<File> extraJars = getCompilerDependencies();
             extraJars.remove(libraryJar);
             File javaHome = JavaLocator.findHomeFromToolchain(getToolchain());
-            incremental = new SbtIncrementalCompiler(
-                libraryJar,
-                getReflectJar(),
-                getCompilerJar(),
-                findScalaVersion(),
-                extraJars,
-                javaHome,
-                new MavenArtifactResolver(factory, session),
-                secondaryCacheDir,
-                getLog(),
-                cacheFile,
-                compileOrder);
+            incremental = new SbtIncrementalCompiler(libraryJar, getReflectJar(), getCompilerJar(), findScalaVersion(),
+                extraJars, javaHome, new MavenArtifactResolver(factory, session), secondaryCacheDir, getLog(),
+                cacheFile, compileOrder);
         }
 
         classpathElements.remove(outputDir.getAbsolutePath());
