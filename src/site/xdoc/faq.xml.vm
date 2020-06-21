@@ -12,7 +12,7 @@
     <section name="Incremental Compilation (w/ Zinc)">
       <dl>
 				<dt>Why does the maven plugin compile both Java and Scala sources</dt>
-        <dd>The <a href="https://github.com/typesafehub/zinc">Zinc incremental compilation</a> library needs access to both Java and Scala sources to accurately determine recompilation.            
+        <dd>The <a href="https://github.com/sbt/zinc">Zinc incremental compilation</a> library needs access to both Java and Scala sources to accurately determine recompilation.
 				</dd>
 			</dl>
 			<dl>

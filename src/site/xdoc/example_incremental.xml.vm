@@ -8,7 +8,7 @@
 
     <p>
       Incremental compilation is supported using
-      <a href="https://github.com/typesafehub/zinc">Zinc</a>,
+      <a href="https://github.com/sbt/zinc">Zinc</a>,
       a stand-alone version of sbt's incremental compiler.
     </p>
 
