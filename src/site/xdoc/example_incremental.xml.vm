@@ -44,49 +44,6 @@
       via the "MAVEN_OPTS" environment variable.
     </section>
 
-    <section name="Zinc Server">
-      <p>
-        Zinc supports much faster compilation by running as a server, keeping the
-        JVM and classloaders warm, and the Scala Maven Plugin can be used as a
-        Zinc client, connecting to a currently running Zinc server. This can
-        improve compilation speeds by a factor of two, or even more, giving the
-        same benefits as using sbt's interactive shell.
-      </p>
-      <p>
-        To use Zinc as a server, first install a local version of Zinc via the
-        <a href="https://github.com/typesafehub/zinc">Zinc homepage</a>.
-        You can start the Zinc server with:
-      </p>
-      <source>zinc -start</source>
-      <p>
-        Configure your project to use the Zinc server with the "useZincServer"
-        configuration option:
-      </p>
-      <source>
-        <![CDATA[
-<project>
-  ...
-  <plugin>
-    <groupId>${project.groupId}</groupId>
-    <artifactId>${project.artifactId}</artifactId>
-    <version>${project.version}</version>
-    <configuration>
-      <recompileMode>incremental</recompileMode>
-      <useZincServer>true</useZincServer>
-    </configuration>
-  </plugin>
-  ...
-</project>
-        ]]>
-      </source>
-      <p>
-        If there is no Zinc server currently running then the plugin falls back
-        to regular incremental compilation. To configure which port to connect
-        to, if Zinc is running on a non-default port, use the "zincPort"
-        configuration option.
-      </p>
-    </section>
-
     <section name="Mixed Scala and Java Sources">
       <p>
         The incremental compiler will compile both Scala and Java sources, rather
