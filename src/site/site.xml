@@ -19,8 +19,8 @@
 
   <body>
     <links>
-      <item name="Wiki" href="http://wiki.github.com/davidB/scala-maven-plugin/"/>
-      <item name="FAQ" href="http://wiki.github.com/davidB/scala-maven-plugin/frequently-asked-questions"/>
+      <item name="Wiki" href="http://github.com/davidB/scala-maven-plugin/wiki"/>
+      <item name="FAQ" href="http://github.com/davidB/scala-maven-plugin/wiki/frequently-asked-questions"/>
       <item name="Mailing-list" href="http://groups.google.com/group/maven-and-scala"/>
     </links>
     <menu name="Overview">
