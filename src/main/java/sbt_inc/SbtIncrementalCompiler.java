@@ -160,7 +160,7 @@ public class SbtIncrementalCompiler {
     analysisStore = AnalysisStore.getCachedStore(FileAnalysisStore.binary(cacheFile));
 
     setup =
-        Setup.of( //
+        Setup.of(
             lookup, // lookup
             false, // skip
             cacheFile, // cacheFile
@@ -196,7 +196,7 @@ public class SbtIncrementalCompiler {
     }
 
     CompileOptions options =
-        CompileOptions.of( //
+        CompileOptions.of(
             fullClasspath.stream()
                 .map(PlainVirtualFile::new)
                 .toArray(VirtualFile[]::new), // classpath
@@ -294,11 +294,11 @@ public class SbtIncrementalCompiler {
           resolver.getJar(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources").getFile();
 
       Set<Path> bridgeSourcesDependencies =
-          resolver.getJarAndDependencies(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources") //
-              .stream() //
+          resolver.getJarAndDependencies(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources")
+              .stream()
               .filter(
                   artifact ->
-                      artifact.getScope() != null && !artifact.getScope().equals("provided")) //
+                      artifact.getScope() != null && !artifact.getScope().equals("provided"))
               .map(Artifact::getFile)
               .map(File::toPath)
               .collect(Collectors.toSet());

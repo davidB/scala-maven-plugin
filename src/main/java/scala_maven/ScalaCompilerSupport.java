@@ -276,9 +276,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
   }
 
-  //
   // Incremental compilation
-  //
   private int incrementalCompile(
       Set<String> classpathElements,
       List<File> sourceRootDirs,

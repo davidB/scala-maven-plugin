@@ -60,14 +60,14 @@ public class MavenArtifactResolver {
 
   private Set<Artifact> resolve(Artifact artifact, boolean transitively) {
     ArtifactResolutionRequest request =
-        new ArtifactResolutionRequest() //
-            .setArtifact(artifact) //
-            .setResolveRoot(true) //
-            .setResolveTransitively(transitively) //
-            .setServers(session.getRequest().getServers()) //
-            .setMirrors(session.getRequest().getMirrors()) //
-            .setProxies(session.getRequest().getProxies()) //
-            .setLocalRepository(session.getLocalRepository()) //
+        new ArtifactResolutionRequest()
+            .setArtifact(artifact)
+            .setResolveRoot(true)
+            .setResolveTransitively(transitively)
+            .setServers(session.getRequest().getServers())
+            .setMirrors(session.getRequest().getMirrors())
+            .setProxies(session.getRequest().getProxies())
+            .setLocalRepository(session.getLocalRepository())
             .setRemoteRepositories(session.getCurrentProject().getRemoteArtifactRepositories());
     return repositorySystem.resolve(request).getArtifacts();
   }
