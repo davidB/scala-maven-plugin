@@ -1,6 +1,5 @@
 package util;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -16,28 +15,26 @@ public final class FileUtils {
     private FileUtils() {
     }
 
-    public static List<File> listDirectoryContent(Path directory, Function<File, Boolean> filter) throws IOException {
-        List<File> files = new ArrayList<>();
+    public static List<Path> listDirectoryContent(Path directory, Function<Path, Boolean> filter) throws IOException {
+        List<Path> paths = new ArrayList<>();
         Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                File f = file.toFile();
-                if (filter.apply(f)) {
-                    files.add(f);
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
+                if (filter.apply(path)) {
+                    paths.add(path);
                 }
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                File f = dir.toFile();
-                if (!dir.equals(directory) && filter.apply(f)) {
-                    files.add(f);
+                if (!dir.equals(directory) && filter.apply(dir)) {
+                    paths.add(dir);
                 }
                 return FileVisitResult.CONTINUE;
             }
         });
-        return files;
+        return paths;
     }
 
     public static void deleteDirectory(Path directory) {

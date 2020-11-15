@@ -5,40 +5,42 @@ import org.apache.maven.plugin.logging.Log;
 import sbt.internal.inc.FileAnalysisStore;
 import sbt.internal.inc.ScalaInstance;
 import sbt.internal.inc.*;
-import sbt.internal.inc.classpath.ClasspathUtilities;
+import sbt.internal.inc.classpath.ClasspathUtil;
 import sbt.io.AllPassFilter$;
 import sbt.io.IO;
 import sbt.util.Logger;
 import scala.Option;
 import scala.Tuple2;
-import scala.collection.JavaConverters;
-import scala.compat.java8.functionConverterImpls.FromJavaConsumer;
 import scala_maven.MavenArtifactResolver;
 import scala_maven.VersionNumber;
 import util.FileUtils;
+import xsbti.PathBasedFile;
 import xsbti.T2;
-import xsbti.compile.AnalysisStore;
-import xsbti.compile.CompilerCache;
+import xsbti.VirtualFile;
 import xsbti.compile.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static scala.jdk.CollectionConverters.IterableHasAsScala;
+import static scala.jdk.FunctionWrappers.FromJavaConsumer;
 
 public class SbtIncrementalCompiler {
 
     private static final String SBT_GROUP_ID = "org.scala-sbt";
     private static final String JAVA_CLASS_VERSION = System.getProperty("java.class.version");
-    private static final File DEFAULT_SECONDARY_CACHE_DIR = Paths
-        .get(System.getProperty("user.home"), ".sbt", "1.0", "zinc", "org.scala-sbt").toFile();
+    private static final File DEFAULT_SECONDARY_CACHE_DIR =
+        Paths.get(System.getProperty("user.home"), ".sbt", "1.0", "zinc", "org.scala-sbt").toFile();
 
     private final IncrementalCompiler compiler = ZincUtil.defaultIncrementalCompiler();
     private final CompileOrder compileOrder;
@@ -49,14 +51,25 @@ public class SbtIncrementalCompiler {
     private final MavenArtifactResolver resolver;
     private final File secondaryCacheDir;
 
-    public SbtIncrementalCompiler(File libraryJar, File reflectJar, File compilerJar, VersionNumber scalaVersion,
-        List<File> extraJars, File javaHome, MavenArtifactResolver resolver, File secondaryCacheDir, Log mavenLogger,
-        File cacheFile, CompileOrder compileOrder) throws Exception {
+    public SbtIncrementalCompiler(
+        File libraryJar,
+        File reflectJar,
+        File compilerJar,
+        VersionNumber scalaVersion,
+        List<File> extraJars,
+        Path javaHome,
+        MavenArtifactResolver resolver,
+        File secondaryCacheDir,
+        Log mavenLogger,
+        File cacheFile,
+        CompileOrder compileOrder)
+        throws Exception {
         this.compileOrder = compileOrder;
         this.logger = new SbtLogger(mavenLogger);
         mavenLogger.info("Using incremental compilation using " + compileOrder + " compile order");
         this.resolver = resolver;
-        this.secondaryCacheDir = secondaryCacheDir != null ? secondaryCacheDir : DEFAULT_SECONDARY_CACHE_DIR;
+        this.secondaryCacheDir =
+            secondaryCacheDir != null ? secondaryCacheDir : DEFAULT_SECONDARY_CACHE_DIR;
         this.secondaryCacheDir.mkdirs();
 
         List<File> allJars = new ArrayList<>(extraJars);
@@ -64,75 +77,84 @@ public class SbtIncrementalCompiler {
         allJars.add(reflectJar);
         allJars.add(compilerJar);
 
-        ScalaInstance scalaInstance = new ScalaInstance( //
-            scalaVersion.toString(), // version
-            new URLClassLoader(
-                new URL[] { libraryJar.toURI().toURL(), reflectJar.toURI().toURL(), compilerJar.toURI().toURL() }), // loader
-            ClasspathUtilities.rootLoader(), // loaderLibraryOnly
-            libraryJar, // libraryJar
-            compilerJar, // compilerJar
-            allJars.toArray(new File[] {}), // allJars
-            Option.apply(scalaVersion.toString()) // explicitActual
-        );
+        ScalaInstance scalaInstance =
+            new ScalaInstance(
+                scalaVersion.toString(), // version
+                new URLClassLoader(
+                    new URL[]{
+                        libraryJar.toURI().toURL(),
+                        reflectJar.toURI().toURL(),
+                        compilerJar.toURI().toURL()
+                    }), // loader
+                ClasspathUtil.rootLoader(), // loaderLibraryOnly
+                libraryJar, // libraryJar
+                compilerJar, // compilerJar
+                allJars.toArray(new File[]{}), // allJars
+                Option.apply(scalaVersion.toString()) // explicitActual
+            );
 
         File compilerBridgeJar = getCompiledBridgeJar(scalaInstance, mavenLogger);
 
-        ScalaCompiler scalaCompiler = new AnalyzingCompiler( //
-            scalaInstance, // scalaInstance
-            ZincCompilerUtil.constantBridgeProvider(scalaInstance, compilerBridgeJar), // provider
-            ClasspathOptionsUtil.auto(), // classpathOptions
-            new FromJavaConsumer<>(noop -> {
-            }), // onArgsHandler
-            Option.apply(null) // classLoaderCache
-        );
+        ScalaCompiler scalaCompiler =
+            new AnalyzingCompiler(
+                scalaInstance, // scalaInstance
+                ZincCompilerUtil.constantBridgeProvider(scalaInstance, compilerBridgeJar), // provider
+                ClasspathOptionsUtil.auto(), // classpathOptions
+                new FromJavaConsumer(noop -> {
+                }), // onArgsHandler
+                Option.apply(null) // classLoaderCache
+            );
 
-        compilers = ZincUtil.compilers( //
-            scalaInstance, //
-            ClasspathOptionsUtil.boot(), //
-            Option.apply(javaHome), // javaHome
-            scalaCompiler);
+        compilers =
+            ZincUtil.compilers(
+                scalaInstance, ClasspathOptionsUtil.boot(), Option.apply(javaHome), scalaCompiler);
 
-        PerClasspathEntryLookup lookup = new PerClasspathEntryLookup() {
-            @Override
-            public Optional<CompileAnalysis> analysis(File classpathEntry) {
-                String analysisStoreFileName = null;
-                if (classpathEntry.isDirectory()) {
-                    if (classpathEntry.getName().equals("classes")) {
-                        analysisStoreFileName = "compile";
+        PerClasspathEntryLookup lookup =
+            new PerClasspathEntryLookup() {
+                @Override
+                public Optional<CompileAnalysis> analysis(VirtualFile classpathEntry) {
+                    Path path = ((PathBasedFile) classpathEntry).toPath();
 
-                    } else if (classpathEntry.getName().equals("test-classes")) {
-                        analysisStoreFileName = "test-compile";
+                    String analysisStoreFileName = null;
+                    if (Files.isDirectory(path)) {
+                        if (path.getFileName().equals("classes")) {
+                            analysisStoreFileName = "compile";
+
+                        } else if (path.getFileName().equals("test-classes")) {
+                            analysisStoreFileName = "test-compile";
+                        }
                     }
+
+                    if (analysisStoreFileName != null) {
+                        File analysisStoreFile =
+                            path.getParent().resolve("analysis").resolve(analysisStoreFileName).toFile();
+                        if (analysisStoreFile.exists()) {
+                            return AnalysisStore.getCachedStore(FileAnalysisStore.binary(analysisStoreFile))
+                                .get()
+                                .map(AnalysisContents::getAnalysis);
+                        }
+                    }
+                    return Optional.empty();
                 }
 
-                if (analysisStoreFileName != null) {
-                    File analysisStoreFile = Paths.get(classpathEntry.getParent(), "analysis", analysisStoreFileName)
-                        .toFile();
-                    if (analysisStoreFile.exists()) {
-                        return AnalysisStore.getCachedStore(FileAnalysisStore.binary(analysisStoreFile)).get()
-                            .map(AnalysisContents::getAnalysis);
-                    }
+                @Override
+                public DefinesClass definesClass(VirtualFile classpathEntry) {
+                    return Locate.definesClass(classpathEntry);
                 }
-                return Optional.empty();
-            }
-
-            @Override
-            public DefinesClass definesClass(File classpathEntry) {
-                return Locate.definesClass(classpathEntry);
-            }
-        };
+            };
 
         analysisStore = AnalysisStore.getCachedStore(FileAnalysisStore.binary(cacheFile));
 
-        setup = Setup.of( //
-            lookup, // lookup
-            false, // skip
-            cacheFile, // cacheFile
-            CompilerCache.fresh(), // cache
-            IncOptions.of(), // incOptions
-            new LoggedReporter(100, logger, pos -> pos), // reporter
-            Optional.empty(), // optionProgress
-            new T2[] {});
+        setup =
+            Setup.of( //
+                lookup, // lookup
+                false, // skip
+                cacheFile, // cacheFile
+                CompilerCache.fresh(), // cache
+                IncOptions.of(), // incOptions
+                new LoggedReporter(100, logger, pos -> pos), // reporter
+                Optional.empty(), // optionProgress
+                new T2[]{});
     }
 
     private PreviousResult previousResult() {
@@ -147,25 +169,35 @@ public class SbtIncrementalCompiler {
         }
     }
 
-    public void compile(Set<String> classpathElements, List<File> sources, File classesDirectory,
-        List<String> scalacOptions, List<String> javacOptions) {
-        List<File> fullClasspath = new ArrayList<>();
+    public void compile(
+        Set<String> classpathElements,
+        List<Path> sources,
+        Path classesDirectory,
+        List<String> scalacOptions,
+        List<String> javacOptions) {
+        List<Path> fullClasspath = new ArrayList<>();
         fullClasspath.add(classesDirectory);
         for (String classpathElement : classpathElements) {
-            fullClasspath.add(new File(classpathElement));
+            fullClasspath.add(Paths.get(classpathElement));
         }
 
-        CompileOptions options = CompileOptions.of( //
-            fullClasspath.toArray(new File[] {}), // classpath
-            sources.toArray(new File[] {}), // sources
-            classesDirectory, //
-            scalacOptions.toArray(new String[] {}), // scalacOptions
-            javacOptions.toArray(new String[] {}), // javacOptions
-            100, // maxErrors
-            pos -> pos, // sourcePositionMappers
-            compileOrder, // order
-            Optional.empty() // temporaryClassesDirectory
-        );
+        CompileOptions options =
+            CompileOptions.of( //
+                fullClasspath.stream()
+                    .map(PlainVirtualFile::new)
+                    .toArray(VirtualFile[]::new), // classpath
+                sources.stream().map(PlainVirtualFile::new).toArray(VirtualFile[]::new), // sources
+                classesDirectory, //
+                scalacOptions.toArray(new String[]{}), // scalacOptions
+                javacOptions.toArray(new String[]{}), // javacOptions
+                100, // maxErrors
+                pos -> pos, // sourcePositionMappers
+                compileOrder, // order
+                Optional.empty(), // temporaryClassesDirectory
+                Optional.of(PlainVirtualFileConverter.converter()), // _converter
+                Optional.empty(), // _stamper
+                Optional.empty() // _earlyOutput
+            );
 
         Inputs inputs = Inputs.of(compilers, options, setup, previousResult());
 
@@ -185,6 +217,22 @@ public class SbtIncrementalCompiler {
         }
     }
 
+    private static List<Tuple2<File, String>> computeZipEntries(List<Path> paths, Path rootDir) {
+        int rootDirLength = rootDir.toString().length();
+        Stream<Tuple2<File, String>> stream =
+            paths.stream()
+                .map(
+                    path -> {
+                        String zipPath =
+                            path.toString().substring(rootDirLength + 1).replace(File.separator, "/");
+                        if (Files.isDirectory(path)) {
+                            zipPath = zipPath + "/";
+                        }
+                        return new Tuple2(path.toFile(), zipPath);
+                    });
+        return stream.collect(Collectors.toList());
+    }
+
     private File getCompiledBridgeJar(ScalaInstance scalaInstance, Log mavenLogger) throws Exception {
 
         // eg
@@ -193,16 +241,29 @@ public class SbtIncrementalCompiler {
 
         // this file is localed in compiler-interface
         Properties properties = new Properties();
-        try (InputStream is = getClass().getClassLoader()
-            .getResourceAsStream("incrementalcompiler.version.properties")) {
+        try (InputStream is =
+                 getClass().getClassLoader().getResourceAsStream("incrementalcompiler.version.properties")) {
             properties.load(is);
         }
 
         String zincVersion = properties.getProperty("version");
         String timestamp = properties.getProperty("timestamp");
 
-        String cacheFileName = SBT_GROUP_ID + '-' + bridgeArtifactId + '-' + zincVersion + "-bin_"
-            + scalaInstance.actualVersion() + "__" + JAVA_CLASS_VERSION + '-' + zincVersion + '_' + timestamp + ".jar";
+        String cacheFileName =
+            SBT_GROUP_ID
+                + '-'
+                + bridgeArtifactId
+                + '-'
+                + zincVersion
+                + "-bin_"
+                + scalaInstance.actualVersion()
+                + "__"
+                + JAVA_CLASS_VERSION
+                + '-'
+                + zincVersion
+                + '_'
+                + timestamp
+                + ".jar";
 
         File cachedCompiledBridgeJar = new File(secondaryCacheDir, cacheFileName);
 
@@ -215,57 +276,74 @@ public class SbtIncrementalCompiler {
             // compile and install
             RawCompiler rawCompiler = new RawCompiler(scalaInstance, ClasspathOptionsUtil.auto(), logger);
 
-            File bridgeSources = resolver.getJar(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources").getFile();
+            File bridgeSources =
+                resolver.getJar(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources").getFile();
 
-            Set<File> bridgeSourcesDependencies = resolver
-                .getJarAndDependencies(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources") //
-                .stream() //
-                .filter(artifact -> artifact.getScope() != null && !artifact.getScope().equals("provided")) //
-                .map(Artifact::getFile) //
-                .collect(Collectors.toSet());
+            Set<Path> bridgeSourcesDependencies =
+                resolver.getJarAndDependencies(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources") //
+                    .stream() //
+                    .filter(
+                        artifact ->
+                            artifact.getScope() != null && !artifact.getScope().equals("provided")) //
+                    .map(Artifact::getFile)
+                    .map(File::toPath)
+                    .collect(Collectors.toSet());
 
-            bridgeSourcesDependencies.addAll(Arrays.asList(scalaInstance.allJars()));
+            bridgeSourcesDependencies.addAll(
+                Arrays.stream(scalaInstance.allJars())
+                    .sequential()
+                    .map(File::toPath)
+                    .collect(Collectors.toList()));
 
-            File sourcesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-sources").toFile();
-            File classesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-classes").toFile();
+            Path sourcesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-sources");
+            Path classesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-classes");
 
-            IO.unzip(bridgeSources, sourcesDir, AllPassFilter$.MODULE$, true);
+            IO.unzip(bridgeSources, sourcesDir.toFile(), AllPassFilter$.MODULE$, true);
+
+            List<Path> bridgeSourcesScalaFiles =
+                FileUtils.listDirectoryContent(
+                    sourcesDir,
+                    file ->
+                        Files.isRegularFile(file) && file.getFileName().toString().endsWith(".scala"));
+            List<Path> bridgeSourcesNonScalaFiles =
+                FileUtils.listDirectoryContent(
+                    sourcesDir,
+                    file ->
+                        Files.isRegularFile(file)
+                            && !file.getFileName().toString().endsWith(".scala")
+                            && !file.getFileName().toString().equals("MANIFEST.MF"));
 
             try {
                 rawCompiler.apply(
-                    JavaConverters.iterableAsScalaIterable(FileUtils.listDirectoryContent(sourcesDir.toPath(),
-                        file -> file.isFile() && file.getName().endsWith(".scala"))).seq().toSeq(), // sources:Seq[File]
-                    JavaConverters.iterableAsScalaIterable(bridgeSourcesDependencies).seq().toSeq(), // classpath:Seq[File],
-                    classesDir, // outputDirectory:File,
-                    JavaConverters.collectionAsScalaIterable(Collections.<String>emptyList()).seq().toSeq() // options:Seq[String]
+                    IterableHasAsScala(bridgeSourcesScalaFiles).asScala().toSeq(), // sources:Seq[File]
+                    IterableHasAsScala(bridgeSourcesDependencies).asScala().toSeq(), // classpath:Seq[File],
+                    classesDir, // outputDirectory:Path,
+                    IterableHasAsScala(Collections.<String>emptyList())
+                        .asScala()
+                        .toSeq() // options:Seq[String]
                 );
 
                 Manifest manifest = new Manifest();
-                Attributes mainAttributes = manifest.getMainAttributes();
-                mainAttributes.putValue(Attributes.Name.MANIFEST_VERSION.toString(), "1.0");
-                mainAttributes.putValue(Attributes.Name.SPECIFICATION_VENDOR.toString(), SBT_GROUP_ID);
-                mainAttributes.putValue(Attributes.Name.SPECIFICATION_TITLE.toString(), "Compiler Bridge");
-                mainAttributes.putValue(Attributes.Name.SPECIFICATION_VERSION.toString(), zincVersion);
+                Path sourcesManifestFile = sourcesDir.resolve("META-INF").resolve("MANIFEST.MF");
+                try (InputStream is = new FileInputStream(sourcesManifestFile.toFile())) {
+                    manifest.read(is);
+                }
 
-                int classesDirPathLength = classesDir.toString().length();
-                Stream<Tuple2<File, String>> stream = FileUtils.listDirectoryContent(classesDir.toPath(), file -> true) //
-                    .stream() //
-                    .map(file -> {
-                        String path = file.toString().substring(classesDirPathLength + 1).replace(File.separator, "/");
-                        if (file.isDirectory()) {
-                            path = path + "/";
-                        }
-                        return new Tuple2(file, path);
-                    });
-                List<Tuple2<File, String>> classes = stream.collect(Collectors.toList());
+                List<Tuple2<File, String>> scalaCompiledClasses =
+                    computeZipEntries(FileUtils.listDirectoryContent(classesDir, file -> true), classesDir);
+                List<Tuple2<File, String>> resources =
+                    computeZipEntries(bridgeSourcesNonScalaFiles, sourcesDir);
+                List<Tuple2<File, String>> allZipEntries = new ArrayList<>();
+                allZipEntries.addAll(scalaCompiledClasses);
+                allZipEntries.addAll(resources);
 
-                IO.jar(JavaConverters.collectionAsScalaIterable(classes), cachedCompiledBridgeJar, new Manifest());
+                IO.jar(IterableHasAsScala(allZipEntries).asScala(), cachedCompiledBridgeJar, manifest);
 
                 mavenLogger.info("Compiler bridge installed");
 
             } finally {
-                FileUtils.deleteDirectory(sourcesDir.toPath());
-                FileUtils.deleteDirectory(classesDir.toPath());
+                FileUtils.deleteDirectory(sourcesDir);
+                FileUtils.deleteDirectory(classesDir);
             }
         }
 

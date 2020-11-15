@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Abstract parent of all Scala Mojo who run compilation
@@ -45,16 +46,14 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
      * notifyCompilation if true then print a message "path: compiling" for each
      * root directory or files that will be compiled. Useful for debug, and for
      * integration with Editor/IDE to reset markers only for compiled files.
-     *
      */
     @Parameter(property = "notifyCompilation", defaultValue = "true")
     private boolean notifyCompilation;
 
     /**
      * Compile order for Scala and Java sources for sbt incremental compile.
-     *
+     * <p>
      * Can be Mixed, JavaThenScala, or ScalaThenJava.
-     *
      */
     @Parameter(property = "compileOrder", defaultValue = "Mixed")
     private CompileOrder compileOrder;
@@ -62,7 +61,6 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     /**
      * Location of the incremental compile will install compiled compiler bridge
      * jars. Default is sbt's "~/.sbt/1.0/zinc/org.scala-sbt".
-     *
      */
     @Parameter(property = "secondaryCacheDir")
     private File secondaryCacheDir;
@@ -91,19 +89,19 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         File analysisCacheFile = FileUtils.fileOf(getAnalysisCacheFile(), useCanonicalPath);
         int nbFiles = compile(getSourceDirectories(), outputDir, analysisCacheFile, getClasspathElements(), false);
         switch (nbFiles) {
-        case -1:
-            getLog().info("No sources to compile");
-            break;
-        case 0:
-            getLog().info("Nothing to compile - all classes are up to date");
-            break;
-        default:
-            break;
+            case -1:
+                getLog().info("No sources to compile");
+                break;
+            case 0:
+                getLog().info("Nothing to compile - all classes are up to date");
+                break;
+            default:
+                break;
         }
     }
 
     protected int compile(List<File> sourceRootDirs, File outputDir, File analysisCacheFile,
-        Set<String> classpathElements, boolean compileInLoop) throws Exception {
+                          Set<String> classpathElements, boolean compileInLoop) throws Exception {
         if (!compileInLoop && recompileMode == RecompileMode.incremental) {
             // if not compileInLoop, invoke incrementalCompile immediately
             long n0 = System.nanoTime();
@@ -262,7 +260,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     // Incremental compilation
     //
     private int incrementalCompile(Set<String> classpathElements, List<File> sourceRootDirs, File outputDir,
-        File cacheFile, boolean compileInLoop) throws Exception {
+                                   File cacheFile, boolean compileInLoop) throws Exception {
         List<File> sources = findSourceWithFilters(sourceRootDirs);
         if (sources.isEmpty()) {
             return -1;
@@ -279,7 +277,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             extraJars.remove(libraryJar);
             File javaHome = JavaLocator.findHomeFromToolchain(getToolchain());
             incremental = new SbtIncrementalCompiler(libraryJar, getReflectJar(), getCompilerJar(), findScalaVersion(),
-                extraJars, javaHome, new MavenArtifactResolver(factory, session), secondaryCacheDir, getLog(),
+                extraJars, javaHome.toPath(), new MavenArtifactResolver(factory, session), secondaryCacheDir, getLog(),
                 cacheFile, compileOrder);
         }
 
@@ -288,7 +286,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         List<String> javacOptions = getJavacOptions();
 
         try {
-            incremental.compile(classpathElements, sources, outputDir, scalacOptions, javacOptions);
+            incremental.compile(classpathElements, sources.stream().map(File::toPath).collect(Collectors.toList()), outputDir.toPath(), scalacOptions, javacOptions);
         } catch (xsbti.CompileFailed e) {
             if (compileInLoop) {
                 compileErrors = true;
