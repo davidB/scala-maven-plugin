@@ -475,6 +475,7 @@
           <goals>install animal-sniffer:check site deploy nexus-staging:release</goals>
           <useReleaseProfile>false</useReleaseProfile>
           <autoVersionSubmodules>true</autoVersionSubmodules>
+          <tagNameFormat>@{project.version}</tagNameFormat>
         </configuration>
       </plugin>
       <plugin>
