@@ -36,7 +36,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Compile the main and test scala source directory then run unit test cases in continuous (infinite
- * loop). This is an util goal for commandline usage only (Do not use or call it in a pom) !!!
+ * loop). This is an utility goal for command line usage only (Do not use or call it in a pom) !!!
  */
 @Mojo(name = "cctest", requiresDependencyResolution = ResolutionScope.TEST)
 public class ScalaContinuousTestMojo extends ScalaContinuousCompileMojo {

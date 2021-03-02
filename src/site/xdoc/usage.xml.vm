@@ -9,7 +9,7 @@
   <body>
     <h1>Using the plugin (common)</h1>
     <section name="Configuration">
-      <p>to use the plugin you need to add into your pom.xml (the first time you use the plugin, if you don't precise the version like in the following example, call maven with the "-U" option)</p>
+      <p>to use the plugin you need to add into your pom.xml (the first time you use the plugin, if you don't specify the version like in the following example, call maven with the "-U" option)</p>
       <source>
         <![CDATA[
 <project>

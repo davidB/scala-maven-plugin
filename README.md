@@ -41,5 +41,5 @@ Currently, you need Maven 3.x & JDK 8 to build the plugin, create the site, and 
 * close issues from https://github.com/davidB/scala-maven-plugin/issues/
 * refactor :
   * reduce copy-paste
-  * file path management can be improve (a lot)
+  * file path management can be improved (a lot)
   * clean the code

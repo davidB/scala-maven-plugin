@@ -91,7 +91,7 @@ mvn scala:cc -Donce=true -Dfsc=false
       </source>
     </section>
     <section name="Emacs user">
-      <p>If you are an emacs user, you could try the to run the compilation with "-DemacsMode=true" then compilation error will be displayed without [WARNING] at the begin of the line like :
+      <p>If you are an emacs user, you can run the compilation with "-DemacsMode=true", then compilation error will be displayed without [WARNING] at the beginning of the line like :
       <source><![CDATA[
 [INFO] Compiling 1 source files to /home/dwayne/work/oss/scala-tools/vscaladoc/target/classes
 [WARNING] Compilation failure
