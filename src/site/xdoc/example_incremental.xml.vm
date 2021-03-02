@@ -9,14 +9,16 @@
     <p>
       Incremental compilation is supported using
       <a href="https://github.com/sbt/zinc">Zinc</a>,
-      a stand-alone version of sbt's incremental compiler.
+      sbt's embedded incremental compiler.
     </p>
 
     <section name="Setup">
       <p>
-        To enable incremental compilation set the "recompileMode" configuration
-        option to "incremental".
-        For example:
+        The incremental compilation is enabled by default after
+        scala-maven-plugin v4.0.0, and the "recompileMode" configuration
+        option is set to "incremental" by default. You can also configure
+        the `recompileMode` configuration to `all` to disable the
+        incremental comiler. For example:
       </p>
       <source>
         <![CDATA[
