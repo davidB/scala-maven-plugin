@@ -304,6 +304,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
               libraryJar,
               getReflectJar(),
               getCompilerJar(),
+              getInterfacesJar(),
               findScalaVersion(),
               extraJars,
               javaHome.toPath(),

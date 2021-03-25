@@ -23,4 +23,7 @@ public interface ScalaConstants {
   List<String> SCALA_DISTRO_ARTIFACTS =
       Arrays.asList(
           "scala-library", "scala-swing", "scala-dbc", "scala-compiler", "scalap", "partest");
+
+  List<String> SCALA3_DISTRO_ARTIFACTS =
+      Arrays.asList("scala3-library", "scala3-swing", "scala3-dbc", "scala3-compiler");
 }

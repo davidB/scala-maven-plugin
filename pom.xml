@@ -135,6 +135,13 @@
   </prerequisites>
 
   <dependencies>
+    <!-- sbt incremental compiler -->
+    <dependency>
+      <groupId>org.scala-sbt</groupId>
+      <artifactId>zinc_2.13</artifactId>
+      <version>1.4.4</version>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-compat</artifactId>
@@ -201,12 +208,7 @@
       <artifactId>maven-invoker</artifactId>
       <version>3.1.0</version>
     </dependency>
-    <!-- sbt incremental compiler -->
-    <dependency>
-      <groupId>org.scala-sbt</groupId>
-      <artifactId>zinc_2.13</artifactId>
-      <version>1.4.4</version>
-    </dependency>
+
 
     <!-- provided -->
     <dependency>
@@ -339,6 +341,10 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.1</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>com.diffplug.spotless</groupId>
@@ -385,6 +391,8 @@
         <version>3.8.1</version>
         <configuration>
           <compilerArgument>-Xlint:deprecation</compilerArgument>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>

@@ -17,12 +17,7 @@
 package scala_maven;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -69,6 +64,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   private static final String SCALA_LIBRARY_ARTIFACTID = "scala-library";
   private static final String SCALA_REFLECT_ARTIFACTID = "scala-reflect";
   private static final String SCALA_COMPILER_ARTIFACTID = "scala-compiler";
+
+  private static final String SCALA3_LIBRARY_ARTIFACTID = "scala3-library";
+  private static final String SCALA3_INTERFACES_ARTIFACTID = "scala3-interfaces";
+  private static final String SCALA3_REFLECT_ARTIFACTID = "scala3-reflect";
+  private static final String SCALA3_COMPILER_ARTIFACTID = "scala3-compiler";
 
   /** Constant {@link String} for "pom". Used to specify the Maven POM artifact type. */
   protected static final String POM = "pom";
@@ -283,9 +283,12 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
    * @return a {@link Artifact} for the Scala Compiler.
    */
   final Artifact scalaCompilerArtifact(String scalaVersion) {
+    System.out.println("scalaCompilerArtifact scalaVersion=" + scalaVersion);
     return factory.createArtifact(
         getScalaOrganization(),
-        ScalaMojoSupport.SCALA_COMPILER_ARTIFACTID,
+        scalaVersion.startsWith("3")
+            ? SCALA3_COMPILER_ARTIFACTID
+            : ScalaMojoSupport.SCALA_COMPILER_ARTIFACTID,
         scalaVersion,
         "",
         ScalaMojoSupport.POM);
@@ -493,7 +496,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
           String error =
               getScalaOrganization()
                   + ":"
-                  + SCALA_LIBRARY_ARTIFACTID
+                  + (_scalaVersionN.major == 3
+                      ? getScala3ArtifactId(SCALA3_LIBRARY_ARTIFACTID)
+                      : SCALA_LIBRARY_ARTIFACTID)
                   + " is missing from project dependencies";
           getLog().error(error);
           throw new UnsupportedOperationException(error);
@@ -534,14 +539,16 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   }
 
   private String findScalaVersionFromDependencies() {
-    return findVersionFromDependencies(getScalaOrganization(), SCALA_LIBRARY_ARTIFACTID);
+    return findVersionFromDependencies(
+        getScalaOrganization(),
+        new HashSet<String>(Arrays.asList(SCALA3_LIBRARY_ARTIFACTID, SCALA_LIBRARY_ARTIFACTID)));
   }
 
   // TODO refactor to do only one scan of dependencies to find version
-  private String findVersionFromDependencies(String groupId, String artifactId) {
+  private String findVersionFromDependencies(String groupId, Set<String> artifactId) {
     String version = null;
     for (Dependency dep : getDependencies()) {
-      if (groupId.equals(dep.getGroupId()) && artifactId.equals(dep.getArtifactId())) {
+      if (groupId.equals(dep.getGroupId()) && artifactId.contains(dep.getArtifactId())) {
         version = dep.getVersion();
       }
     }
@@ -552,7 +559,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         deps.addAll(project.getModel().getDependencyManagement().getDependencies());
       }
       for (Dependency dep : deps) {
-        if (groupId.equals(dep.getGroupId()) && artifactId.equals(dep.getArtifactId())) {
+        if (groupId.equals(dep.getGroupId()) && artifactId.contains(dep.getArtifactId())) {
           version = dep.getVersion();
         }
       }
@@ -783,31 +790,61 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     return options;
   }
 
+  private String getScala3ArtifactId(String a) {
+    String _scalaVersionNStr = _scalaVersionN.toString();
+    // int indexOf_ = _scalaVersionNStr.indexOf("-");
+    return _scalaVersionN.major == 3 ? a + "_" + _scalaVersionNStr : a;
+  }
+
   protected File getLibraryJar() throws Exception {
+    String scalaLibrary =
+        _scalaVersionN.major == 3
+            ? getScala3ArtifactId(SCALA3_LIBRARY_ARTIFACTID)
+            : SCALA_LIBRARY_ARTIFACTID;
     if (StringUtils.isNotEmpty(scalaHome)) {
       File lib = new File(scalaHome, "lib");
-      return new File(lib, SCALA_LIBRARY_ARTIFACTID + ".jar");
+      return new File(lib, scalaLibrary + ".jar");
     }
-    return getArtifactJar(
-        getScalaOrganization(), SCALA_LIBRARY_ARTIFACTID, findScalaVersion().toString());
+    return getArtifactJar(getScalaOrganization(), scalaLibrary, findScalaVersion().toString());
+  }
+
+  protected File getInterfacesJar() throws Exception {
+    if (_scalaVersionN.major == 3) {
+      String scalaInterfaces = SCALA3_INTERFACES_ARTIFACTID;
+      if (StringUtils.isNotEmpty(scalaHome)) {
+        File lib = new File(scalaHome, "lib");
+        return new File(lib, scalaInterfaces + ".jar");
+      }
+      return getArtifactJar(getScalaOrganization(), scalaInterfaces, findScalaVersion().toString());
+    }
+    return null;
   }
 
   protected File getReflectJar() throws Exception {
-    if (StringUtils.isNotEmpty(scalaHome)) {
-      File lib = new File(scalaHome, "lib");
-      return new File(lib, SCALA_REFLECT_ARTIFACTID + ".jar");
+    if (_scalaVersionN.major != 3) {
+      String scalaReflect =
+          _scalaVersionN.major == 3
+              ? getScala3ArtifactId(SCALA3_REFLECT_ARTIFACTID)
+              : SCALA_REFLECT_ARTIFACTID;
+      if (StringUtils.isNotEmpty(scalaHome)) {
+        File lib = new File(scalaHome, "lib");
+        return new File(lib, scalaReflect + ".jar");
+      }
+      return getArtifactJar(getScalaOrganization(), scalaReflect, findScalaVersion().toString());
     }
-    return getArtifactJar(
-        getScalaOrganization(), SCALA_REFLECT_ARTIFACTID, findScalaVersion().toString());
+    return null;
   }
 
   protected File getCompilerJar() throws Exception {
+    String scalaCompile =
+        _scalaVersionN.major == 3
+            ? getScala3ArtifactId(SCALA3_COMPILER_ARTIFACTID)
+            : SCALA_COMPILER_ARTIFACTID;
     if (StringUtils.isNotEmpty(scalaHome)) {
       File lib = new File(scalaHome, "lib");
-      return new File(lib, SCALA_COMPILER_ARTIFACTID + ".jar");
+      return new File(lib, scalaCompile + ".jar");
     }
-    return getArtifactJar(
-        getScalaOrganization(), SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString());
+    return getArtifactJar(getScalaOrganization(), scalaCompile, findScalaVersion().toString());
   }
 
   protected List<File> getCompilerDependencies() throws Exception {
@@ -815,15 +852,19 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     if (StringUtils.isEmpty(scalaHome)) {
       for (Artifact artifact :
           getAllDependencies(
-              getScalaOrganization(), SCALA_COMPILER_ARTIFACTID, findScalaVersion().toString())) {
+              getScalaOrganization(),
+              _scalaVersionN.major == 3
+                  ? getScala3ArtifactId(SCALA3_COMPILER_ARTIFACTID)
+                  : SCALA_COMPILER_ARTIFACTID,
+              findScalaVersion().toString())) {
         d.add(artifact.getFile());
       }
     } else {
       for (File f : new File(scalaHome, "lib").listFiles()) {
         String name = f.getName();
         if (name.endsWith(".jar")
-            && !name.contains("scala-library")
-            && !name.contains("scala-compiler")) {
+            && (!name.contains("scala-library") || !name.contains("scala3-library"))
+            && (!name.contains("scala-compiler") || !name.contains("scala3-compiler"))) {
           d.add(f);
         }
       }

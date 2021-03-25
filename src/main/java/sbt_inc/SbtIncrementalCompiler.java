@@ -70,6 +70,7 @@ public class SbtIncrementalCompiler {
       File libraryJar,
       File reflectJar,
       File compilerJar,
+      File interfacesJar,
       VersionNumber scalaVersion,
       List<File> extraJars,
       Path javaHome,
@@ -89,18 +90,31 @@ public class SbtIncrementalCompiler {
 
     List<File> allJars = new ArrayList<>(extraJars);
     allJars.add(libraryJar);
-    allJars.add(reflectJar);
+    if (reflectJar != null) {
+      allJars.add(reflectJar);
+    }
+    if (interfacesJar != null) {
+      allJars.add(interfacesJar);
+    }
     allJars.add(compilerJar);
+
+    URL[] urls =
+        reflectJar != null
+            ? new URL[] {
+              libraryJar.toURI().toURL(), reflectJar.toURI().toURL(), compilerJar.toURI().toURL()
+            }
+            : interfacesJar != null
+                ? new URL[] {
+                  libraryJar.toURI().toURL(),
+                  interfacesJar.toURI().toURL(),
+                  compilerJar.toURI().toURL()
+                }
+                : new URL[] {libraryJar.toURI().toURL(), compilerJar.toURI().toURL()};
 
     ScalaInstance scalaInstance =
         new ScalaInstance(
             scalaVersion.toString(), // version
-            new URLClassLoader(
-                new URL[] {
-                  libraryJar.toURI().toURL(),
-                  reflectJar.toURI().toURL(),
-                  compilerJar.toURI().toURL()
-                }), // loader
+            new URLClassLoader(urls), // loader
             ClasspathUtil.rootLoader(), // loaderLibraryOnly
             libraryJar, // libraryJar
             compilerJar, // compilerJar

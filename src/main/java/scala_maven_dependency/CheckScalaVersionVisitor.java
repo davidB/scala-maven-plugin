@@ -51,8 +51,13 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
   }
 
   private boolean isScalaDistroArtifact(Artifact artifact) {
-    return _scalaOrganization.equalsIgnoreCase(artifact.getGroupId())
-        && SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId());
+    if (_version.major == 2 || _version.major == 3) {
+      return _scalaOrganization.equalsIgnoreCase(artifact.getGroupId())
+          && (SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId())
+              || SCALA3_DISTRO_ARTIFACTS.contains(artifact.getArtifactId()));
+    } else {
+      return _scalaOrganization.equalsIgnoreCase(artifact.getGroupId());
+    }
   }
 
   @Override
