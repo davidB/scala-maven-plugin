@@ -283,7 +283,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
    * @return a {@link Artifact} for the Scala Compiler.
    */
   final Artifact scalaCompilerArtifact(String scalaVersion) {
-    System.out.println("scalaCompilerArtifact scalaVersion=" + scalaVersion);
     return factory.createArtifact(
         getScalaOrganization(),
         scalaVersion.startsWith("3")

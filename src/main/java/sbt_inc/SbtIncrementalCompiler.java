@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 import sbt.internal.inc.*;
@@ -41,7 +42,6 @@ import sbt.io.AllPassFilter$;
 import sbt.io.IO;
 import sbt.util.Logger;
 import scala.Option;
-import scala.Tuple2;
 import scala_maven.MavenArtifactResolver;
 import scala_maven.VersionNumber;
 import util.FileUtils;
@@ -53,6 +53,7 @@ import xsbti.compile.*;
 public class SbtIncrementalCompiler {
 
   private static final String SBT_GROUP_ID = "org.scala-sbt";
+  private static final String SBT_GROUP_ID_SCALA3 = "org.scala-lang";
   private static final String JAVA_CLASS_VERSION = System.getProperty("java.class.version");
   private static final File DEFAULT_SECONDARY_CACHE_DIR =
       Paths.get(System.getProperty("user.home"), ".sbt", "1.0", "zinc", "org.scala-sbt").toFile();
@@ -111,10 +112,14 @@ public class SbtIncrementalCompiler {
                 }
                 : new URL[] {libraryJar.toURI().toURL(), compilerJar.toURI().toURL()};
 
+    URLClassLoader classLoader =
+        scalaVersion.major == 3
+            ? new URLClassLoader(urls, SbtIncrementalCompiler.class.getClassLoader())
+            : new URLClassLoader(urls);
     ScalaInstance scalaInstance =
         new ScalaInstance(
             scalaVersion.toString(), // version
-            new URLClassLoader(urls), // loader
+            classLoader, // loader
             ClasspathUtil.rootLoader(), // loaderLibraryOnly
             libraryJar, // libraryJar
             compilerJar, // compilerJar
@@ -240,14 +245,16 @@ public class SbtIncrementalCompiler {
       return "compiler-bridge_2.11";
     } else if (scalaVersion.startsWith("2.12.") || scalaVersion.equals("2.13.0-M1")) {
       return "compiler-bridge_2.12";
-    } else {
+    } else if (scalaVersion.startsWith("2.13.")) {
       return "compiler-bridge_2.13";
+    } else {
+      return "scala3-sbt-bridge";
     }
   }
 
-  private static List<Tuple2<File, String>> computeZipEntries(List<Path> paths, Path rootDir) {
+  private static List<Pair<File, String>> computeZipEntries(List<Path> paths, Path rootDir) {
     int rootDirLength = rootDir.toString().length();
-    Stream<Tuple2<File, String>> stream =
+    Stream<Pair<File, String>> stream =
         paths.stream()
             .map(
                 path -> {
@@ -256,7 +263,7 @@ public class SbtIncrementalCompiler {
                   if (Files.isDirectory(path)) {
                     zipPath = zipPath + "/";
                   }
-                  return new Tuple2(path.toFile(), zipPath);
+                  return Pair.of(path.toFile(), zipPath);
                 });
     return stream.collect(Collectors.toList());
   }
@@ -277,18 +284,23 @@ public class SbtIncrementalCompiler {
     String zincVersion = properties.getProperty("version");
     String timestamp = properties.getProperty("timestamp");
 
+    String groupId =
+        scalaInstance.actualVersion().startsWith("3") ? SBT_GROUP_ID_SCALA3 : SBT_GROUP_ID;
+    String version =
+        scalaInstance.actualVersion().startsWith("3") ? scalaInstance.actualVersion() : zincVersion;
+
     String cacheFileName =
-        SBT_GROUP_ID
+        groupId
             + '-'
             + bridgeArtifactId
             + '-'
-            + zincVersion
+            + version
             + "-bin_"
             + scalaInstance.actualVersion()
             + "__"
             + JAVA_CLASS_VERSION
             + '-'
-            + zincVersion
+            + version
             + '_'
             + timestamp
             + ".jar";
@@ -304,12 +316,10 @@ public class SbtIncrementalCompiler {
       // compile and install
       RawCompiler rawCompiler = new RawCompiler(scalaInstance, ClasspathOptionsUtil.auto(), logger);
 
-      File bridgeSources =
-          resolver.getJar(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources").getFile();
+      File bridgeSources = resolver.getJar(groupId, bridgeArtifactId, version, "sources").getFile();
 
       Set<Path> bridgeSourcesDependencies =
-          resolver.getJarAndDependencies(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources")
-              .stream()
+          resolver.getJarAndDependencies(groupId, bridgeArtifactId, version, "sources").stream()
               .filter(
                   artifact ->
                       artifact.getScope() != null && !artifact.getScope().equals("provided"))
@@ -357,15 +367,22 @@ public class SbtIncrementalCompiler {
           manifest.read(is);
         }
 
-        List<Tuple2<File, String>> scalaCompiledClasses =
+        List<Pair<File, String>> scalaCompiledClasses =
             computeZipEntries(FileUtils.listDirectoryContent(classesDir, file -> true), classesDir);
-        List<Tuple2<File, String>> resources =
+        List<Pair<File, String>> resources =
             computeZipEntries(bridgeSourcesNonScalaFiles, sourcesDir);
-        List<Tuple2<File, String>> allZipEntries = new ArrayList<>();
+        List<Pair<File, String>> allZipEntries = new ArrayList<>();
         allZipEntries.addAll(scalaCompiledClasses);
         allZipEntries.addAll(resources);
 
-        IO.jar(IterableHasAsScala(allZipEntries).asScala(), cachedCompiledBridgeJar, manifest);
+        IO.jar(
+            IterableHasAsScala(
+                    allZipEntries.stream()
+                        .map(x -> scala.Tuple2.apply(x.getLeft(), x.getRight()))
+                        .collect(Collectors.toList()))
+                .asScala(),
+            cachedCompiledBridgeJar,
+            manifest);
 
         mavenLogger.info("Compiler bridge installed");
 
