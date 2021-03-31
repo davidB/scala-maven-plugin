@@ -114,7 +114,7 @@ public class SbtIncrementalCompiler {
 
     URLClassLoader classLoader =
         scalaVersion.major == 3
-            ? new URLClassLoader(urls, SbtIncrementalCompiler.class.getClassLoader())
+            ? new scala_maven.Scala3CompilerLoader(urls, xsbti.Reporter.class.getClassLoader())
             : new URLClassLoader(urls);
     ScalaInstance scalaInstance =
         new ScalaInstance(
@@ -274,6 +274,8 @@ public class SbtIncrementalCompiler {
     // org.scala-sbt-compiler-bridge_2.12-1.2.4-bin_2.12.10__52.0-1.2.4_20181015T090407.jar
     String bridgeArtifactId = compilerBridgeArtifactId(scalaInstance.actualVersion());
 
+    Boolean isScala3 = scalaInstance.actualVersion().startsWith("3");
+
     // this file is localed in compiler-interface
     Properties properties = new Properties();
     try (InputStream is =
@@ -284,10 +286,12 @@ public class SbtIncrementalCompiler {
     String zincVersion = properties.getProperty("version");
     String timestamp = properties.getProperty("timestamp");
 
-    String groupId =
-        scalaInstance.actualVersion().startsWith("3") ? SBT_GROUP_ID_SCALA3 : SBT_GROUP_ID;
-    String version =
-        scalaInstance.actualVersion().startsWith("3") ? scalaInstance.actualVersion() : zincVersion;
+    String groupId = isScala3 ? SBT_GROUP_ID_SCALA3 : SBT_GROUP_ID;
+    String version = isScala3 ? scalaInstance.actualVersion() : zincVersion;
+
+    if (isScala3) {
+      return resolver.getJar(groupId, bridgeArtifactId, version, "").getFile();
+    }
 
     String cacheFileName =
         groupId
@@ -316,7 +320,7 @@ public class SbtIncrementalCompiler {
       // compile and install
       RawCompiler rawCompiler = new RawCompiler(scalaInstance, ClasspathOptionsUtil.auto(), logger);
 
-      File bridgeSources = resolver.getJar(groupId, bridgeArtifactId, version, "sources").getFile();
+      File bridgeSources = resolver.getJar(groupId, bridgeArtifactId, version, null).getFile();
 
       Set<Path> bridgeSourcesDependencies =
           resolver.getJarAndDependencies(groupId, bridgeArtifactId, version, "sources").stream()
