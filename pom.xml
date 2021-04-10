@@ -135,13 +135,6 @@
   </prerequisites>
 
   <dependencies>
-    <!-- sbt incremental compiler -->
-    <dependency>
-      <groupId>org.scala-sbt</groupId>
-      <artifactId>zinc_2.13</artifactId>
-      <version>1.4.4</version>
-    </dependency>
-
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-compat</artifactId>
@@ -208,7 +201,12 @@
       <artifactId>maven-invoker</artifactId>
       <version>3.1.0</version>
     </dependency>
-
+    <!-- sbt incremental compiler -->
+    <dependency>
+      <groupId>org.scala-sbt</groupId>
+      <artifactId>zinc_2.13</artifactId>
+      <version>1.5.0</version>
+    </dependency>
 
     <!-- provided -->
     <dependency>
