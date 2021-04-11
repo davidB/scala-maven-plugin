@@ -89,6 +89,7 @@
         <configuration>
           <scalaVersion>${scala3.version}</scalaVersion>
           <scalaClassName>dotty.tools.dotc.Main</scalaClassName>
+          <mainConsole>dotty.tools.dotc.Run</mainConsole>
           <useFsc>true</useFsc>
           <args>
             <arg>-encoding</arg>

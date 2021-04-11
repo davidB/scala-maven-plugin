@@ -22,8 +22,6 @@ import static scala.jdk.FunctionWrappers.FromJavaConsumer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,13 +35,11 @@ import org.apache.maven.plugin.logging.Log;
 import sbt.internal.inc.*;
 import sbt.internal.inc.FileAnalysisStore;
 import sbt.internal.inc.ScalaInstance;
-import sbt.internal.inc.classpath.ClasspathUtil;
 import sbt.io.AllPassFilter$;
 import sbt.io.IO;
 import sbt.util.Logger;
 import scala.Option;
 import scala_maven.MavenArtifactResolver;
-import scala_maven.VersionNumber;
 import util.FileUtils;
 import xsbti.PathBasedFile;
 import xsbti.T2;
@@ -68,18 +64,13 @@ public class SbtIncrementalCompiler {
   private final File secondaryCacheDir;
 
   public SbtIncrementalCompiler(
-      File libraryJar,
-      File reflectJar,
-      File compilerJar,
-      File interfacesJar,
-      VersionNumber scalaVersion,
-      List<File> extraJars,
       Path javaHome,
       MavenArtifactResolver resolver,
       File secondaryCacheDir,
       Log mavenLogger,
       File cacheFile,
-      CompileOrder compileOrder)
+      CompileOrder compileOrder,
+      ScalaInstance scalaInstance)
       throws Exception {
     this.compileOrder = compileOrder;
     this.logger = new SbtLogger(mavenLogger);
@@ -88,44 +79,6 @@ public class SbtIncrementalCompiler {
     this.secondaryCacheDir =
         secondaryCacheDir != null ? secondaryCacheDir : DEFAULT_SECONDARY_CACHE_DIR;
     this.secondaryCacheDir.mkdirs();
-
-    List<File> allJars = new ArrayList<>(extraJars);
-    allJars.add(libraryJar);
-    if (reflectJar != null) {
-      allJars.add(reflectJar);
-    }
-    if (interfacesJar != null) {
-      allJars.add(interfacesJar);
-    }
-    allJars.add(compilerJar);
-
-    URL[] urls =
-        reflectJar != null
-            ? new URL[] {
-              libraryJar.toURI().toURL(), reflectJar.toURI().toURL(), compilerJar.toURI().toURL()
-            }
-            : interfacesJar != null
-                ? new URL[] {
-                  libraryJar.toURI().toURL(),
-                  interfacesJar.toURI().toURL(),
-                  compilerJar.toURI().toURL()
-                }
-                : new URL[] {libraryJar.toURI().toURL(), compilerJar.toURI().toURL()};
-
-    URLClassLoader classLoader =
-        scalaVersion.major == 3
-            ? new scala_maven.Scala3CompilerLoader(urls, xsbti.Reporter.class.getClassLoader())
-            : new URLClassLoader(urls);
-    ScalaInstance scalaInstance =
-        new ScalaInstance(
-            scalaVersion.toString(), // version
-            classLoader, // loader
-            ClasspathUtil.rootLoader(), // loaderLibraryOnly
-            libraryJar, // libraryJar
-            compilerJar, // compilerJar
-            allJars.toArray(new File[] {}), // allJars
-            Option.apply(scalaVersion.toString()) // explicitActual
-            );
 
     File compilerBridgeJar = getCompiledBridgeJar(scalaInstance, mavenLogger);
 

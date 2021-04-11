@@ -1,7 +1,7 @@
 try {
 
-def file = new File(basedir, 'target/classes/TestScalaApp.class')
-//assert file.exists()
+def file = new File(basedir, 'target/classes/Myclass$.class')
+assert file.exists()
 
 return true
 

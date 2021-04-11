@@ -61,14 +61,14 @@ import scala_maven_executions.MainHelper;
 
 public abstract class ScalaMojoSupport extends AbstractMojo {
 
-  private static final String SCALA_LIBRARY_ARTIFACTID = "scala-library";
-  private static final String SCALA_REFLECT_ARTIFACTID = "scala-reflect";
-  private static final String SCALA_COMPILER_ARTIFACTID = "scala-compiler";
+  protected static final String SCALA_LIBRARY_ARTIFACTID = "scala-library";
+  protected static final String SCALA_REFLECT_ARTIFACTID = "scala-reflect";
+  protected static final String SCALA_COMPILER_ARTIFACTID = "scala-compiler";
 
-  private static final String SCALA3_LIBRARY_ARTIFACTID = "scala3-library";
-  private static final String SCALA3_INTERFACES_ARTIFACTID = "scala3-interfaces";
-  private static final String SCALA3_REFLECT_ARTIFACTID = "scala3-reflect";
-  private static final String SCALA3_COMPILER_ARTIFACTID = "scala3-compiler";
+  protected static final String SCALA3_LIBRARY_ARTIFACTID = "scala3-library";
+  protected static final String SCALA3_INTERFACES_ARTIFACTID = "scala3-interfaces";
+  protected static final String SCALA3_REFLECT_ARTIFACTID = "scala3-reflect";
+  protected static final String SCALA3_COMPILER_ARTIFACTID = "scala3-compiler";
 
   /** Constant {@link String} for "pom". Used to specify the Maven POM artifact type. */
   protected static final String POM = "pom";
@@ -282,7 +282,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
    * @param scalaVersion the version of the Scala Compiler/Library we are using for this execution.
    * @return a {@link Artifact} for the Scala Compiler.
    */
-  final Artifact scalaCompilerArtifact(String scalaVersion) {
+  protected final Artifact scalaCompilerArtifact(String scalaVersion) {
     return factory.createArtifact(
         getScalaOrganization(),
         scalaVersion.startsWith("3")
@@ -491,7 +491,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         detectedScalaVersion = findScalaVersionFromDependencies();
       }
       if (StringUtils.isEmpty(detectedScalaVersion)) {
-        if (!ScalaMojoSupport.POM.equals(project.getPackaging().toLowerCase())) {
+        if (!ScalaMojoSupport.POM.equals(project.getPackaging())) {
           String error =
               getScalaOrganization()
                   + ":"
@@ -796,6 +796,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   }
 
   protected File getLibraryJar() throws Exception {
+    return getLibraryJar(findScalaVersion());
+  }
+
+  protected File getLibraryJar(VersionNumber versionNumber) throws Exception {
     String scalaLibrary =
         _scalaVersionN.major == 3
             ? getScala3ArtifactId(SCALA3_LIBRARY_ARTIFACTID)
@@ -804,7 +808,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       File lib = new File(scalaHome, "lib");
       return new File(lib, scalaLibrary + ".jar");
     }
-    return getArtifactJar(getScalaOrganization(), scalaLibrary, findScalaVersion().toString());
+    return getArtifactJar(getScalaOrganization(), scalaLibrary, versionNumber.toString());
   }
 
   protected File getInterfacesJar() throws Exception {
@@ -835,6 +839,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   }
 
   protected File getCompilerJar() throws Exception {
+    return getCompilerJar(findScalaVersion());
+  }
+
+  protected File getCompilerJar(VersionNumber versionNumber) throws Exception {
     String scalaCompile =
         _scalaVersionN.major == 3
             ? getScala3ArtifactId(SCALA3_COMPILER_ARTIFACTID)
@@ -843,7 +851,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       File lib = new File(scalaHome, "lib");
       return new File(lib, scalaCompile + ".jar");
     }
-    return getArtifactJar(getScalaOrganization(), scalaCompile, findScalaVersion().toString());
+    return getArtifactJar(getScalaOrganization(), scalaCompile, versionNumber.toString());
   }
 
   protected List<File> getCompilerDependencies() throws Exception {

@@ -1,2 +1,2 @@
-object happyBirthday extends App:
+object Myclass extends App:
   println("Happy Birthday")

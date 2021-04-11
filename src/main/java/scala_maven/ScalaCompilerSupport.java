@@ -17,12 +17,20 @@
 package scala_maven;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.maven.plugins.annotations.Parameter;
+import sbt.internal.inc.ScalaInstance;
+import sbt.internal.inc.classpath.ClasspathUtil;
 import sbt_inc.SbtIncrementalCompiler;
+import scala.Option;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
 import util.JavaLocator;
@@ -171,10 +179,15 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     for (File f : files) {
       jcmd.addArgs(f.getAbsolutePath());
     }
-    if (jcmd.run(displayCmd, !compileInLoop)) {
-      lastCompilationInfo.setLastSuccessfullTS(t1);
-    } else {
-      compileErrors = true;
+    try {
+      if (jcmd.run(displayCmd, !compileInLoop)) {
+        lastCompilationInfo.setLastSuccessfullTS(t1);
+      } else {
+        compileErrors = true;
+      }
+    } catch (Exception e) {
+      System.out.println("exception compilation error occurred!!!");
+      e.printStackTrace();
     }
     getLog().info(String.format("prepare-compile in %.1f s", (n1 - n0) / 1_000_000_000.0));
     getLog().info(String.format("compile in %.1f s", (System.nanoTime() - n1) / 1_000_000_000.0));
@@ -276,6 +289,104 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
   }
 
+  private ScalaInstance getScalaInstanceForS2(
+      File libraryJar,
+      File reflectJar,
+      File compilerJar,
+      VersionNumber scalaVersion,
+      List<File> extraJars)
+      throws Exception {
+
+    List<File> allJars = new ArrayList<>(extraJars);
+    allJars.add(libraryJar);
+    allJars.add(reflectJar);
+    allJars.add(compilerJar);
+
+    URL[] urls =
+        new URL[] {
+          libraryJar.toURI().toURL(), reflectJar.toURI().toURL(), compilerJar.toURI().toURL()
+        };
+
+    URLClassLoader classLoader = new URLClassLoader(urls);
+    return new ScalaInstance(
+        scalaVersion.toString(), // version
+        classLoader, // loader
+        ClasspathUtil.rootLoader(), // loaderLibraryOnly
+        libraryJar, // libraryJar
+        compilerJar, // compilerJar
+        allJars.toArray(new File[] {}), // allJars
+        Option.apply(scalaVersion.toString()) // explicitActual
+        );
+  }
+
+  private ScalaInstance getScalaInstanceForS3(VersionNumber scalaVersion) throws Exception {
+    String version = scalaVersion.toString();
+    String scalaOrg = getScalaOrganization();
+
+    File[] compilerJars =
+        new File[] {
+          getCompilerJar(scalaVersion),
+          getArtifactJar(scalaOrg, SCALA3_INTERFACES_ARTIFACTID, version),
+          getArtifactJar(scalaOrg, "tasty-core_" + version, version),
+          getArtifactJar("org.scala-lang.modules", "scala-asm", "9.1.0-scala-1"),
+          getArtifactJar("org.scala-sbt", "compiler-interface", "1.3.5"),
+          getArtifactJar("org.jline", "jline-reader", "3.19.0"),
+          getArtifactJar("org.jline", "jline-terminal", "3.19.0"),
+          getArtifactJar("org.jline", "jline-terminal-jna", "3.19.0")
+        };
+
+    URL[] compilerJarUrls =
+        Stream.of(compilerJars)
+            .map(
+                x -> {
+                  try {
+                    return x.toURI().toURL();
+                  } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    return null;
+                  }
+                })
+            .toArray(URL[]::new);
+
+    File[] libraryJars =
+        new File[] {
+          getLibraryJar(scalaVersion), getArtifactJar(scalaOrg, SCALA_LIBRARY_ARTIFACTID, "2.13.5")
+        };
+
+    URL[] libraryJarUrls =
+        Stream.of(libraryJars)
+            .map(
+                x -> {
+                  try {
+                    return x.toURI().toURL();
+                  } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    return null;
+                  }
+                })
+            .toArray(URL[]::new);
+
+    ArrayList<File> allJars = new ArrayList<>();
+    allJars.addAll(Arrays.asList(compilerJars));
+    allJars.addAll(Arrays.asList(libraryJars));
+
+    File[] allJarFiles = allJars.stream().toArray(File[]::new);
+    URLClassLoader loaderLibraryOnly =
+        new Scala3CompilerLoader(libraryJarUrls, xsbti.Reporter.class.getClassLoader());
+    URLClassLoader loaderCompilerOnly = new URLClassLoader(compilerJarUrls, loaderLibraryOnly);
+    URLClassLoader loader = loaderCompilerOnly;
+
+    return new ScalaInstance(
+        scalaVersion.toString(),
+        loader,
+        loaderCompilerOnly,
+        loaderLibraryOnly,
+        libraryJars,
+        compilerJars,
+        allJarFiles,
+        Option.apply(scalaVersion.toString()));
+  }
+
   // Incremental compilation
   private int incrementalCompile(
       Set<String> classpathElements,
@@ -299,20 +410,22 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
       List<File> extraJars = getCompilerDependencies();
       extraJars.remove(libraryJar);
       File javaHome = JavaLocator.findHomeFromToolchain(getToolchain());
+      VersionNumber versionNumber = findScalaVersion();
+      ScalaInstance instance =
+          versionNumber.major == 3
+              ? getScalaInstanceForS3(versionNumber)
+              : getScalaInstanceForS2(
+                  libraryJar, getReflectJar(), getCompilerJar(), findScalaVersion(), extraJars);
+
       incremental =
           new SbtIncrementalCompiler(
-              libraryJar,
-              getReflectJar(),
-              getCompilerJar(),
-              getInterfacesJar(),
-              findScalaVersion(),
-              extraJars,
               javaHome.toPath(),
               new MavenArtifactResolver(factory, session),
               secondaryCacheDir,
               getLog(),
               cacheFile,
-              compileOrder);
+              compileOrder,
+              instance);
     }
 
     classpathElements.remove(outputDir.getAbsolutePath());
