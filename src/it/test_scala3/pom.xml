@@ -63,15 +63,6 @@
             <goals>
               <goal>compile</goal>
             </goals>
-            <configuration>
-              <jvmArgs>
-                <jvmArg>-DwordWithSpace=hello world</jvmArg>
-              </jvmArgs>
-              <args>
-                <arg>-dependencyfile</arg>
-                <arg>${project.build.directory}/.main_scala_dependencies</arg>
-              </args>
-            </configuration>
           </execution>
           <execution>
             <id>ctest</id>
