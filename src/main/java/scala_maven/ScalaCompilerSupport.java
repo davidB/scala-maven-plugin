@@ -312,7 +312,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         scalaVersion.toString(), // version
         classLoader, // loader
         ClasspathUtil.rootLoader(), // loaderLibraryOnly
-        libraryJar, // libraryJar
+        new File[] {libraryJar}, // libraryJar
         compilerJar, // compilerJar
         allJars.toArray(new File[] {}), // allJars
         Option.apply(scalaVersion.toString()) // explicitActual
