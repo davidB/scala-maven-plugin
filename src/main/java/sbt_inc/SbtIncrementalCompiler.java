@@ -273,7 +273,7 @@ public class SbtIncrementalCompiler {
       // compile and install
       RawCompiler rawCompiler = new RawCompiler(scalaInstance, ClasspathOptionsUtil.auto(), logger);
 
-      File bridgeSources = resolver.getJar(groupId, bridgeArtifactId, version, null).getFile();
+      File bridgeSources = resolver.getJar(groupId, bridgeArtifactId, version, "sources").getFile();
 
       Set<Path> bridgeSourcesDependencies =
           resolver.getJarAndDependencies(groupId, bridgeArtifactId, version, "sources").stream()
