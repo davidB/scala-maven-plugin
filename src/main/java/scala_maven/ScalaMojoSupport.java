@@ -92,7 +92,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   @Component RepositorySystem factory;
 
   /** Used to look up Artifacts in the remote repository. */
-  @Component private ArtifactResolver resolver;
+  @Component protected ArtifactResolver resolver;
 
   /** Location of the local repository. */
   @Parameter(property = "localRepository", readonly = true, required = true)
@@ -789,10 +789,17 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     return options;
   }
 
-  private String getScala3ArtifactId(String a) {
-    String _scalaVersionNStr = _scalaVersionN.toString();
-    // int indexOf_ = _scalaVersionNStr.indexOf("-");
-    return _scalaVersionN.major == 3 ? a + "_" + _scalaVersionNStr : a;
+  protected String getScala3ArtifactId(String a) {
+    return _scalaVersionN.major == 3 ? a + "_" + getBinaryVersionForScala3() : a;
+  }
+
+  private String getBinaryVersionForScala3() {
+    return _scalaVersionN.major == 3
+            && _scalaVersionN.minor == 0
+            && _scalaVersionN.bugfix == 0
+            && _scalaVersionN.modifier != null
+        ? _scalaVersionN.toString()
+        : "3";
   }
 
   protected File getLibraryJar() throws Exception {
@@ -809,18 +816,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       return new File(lib, scalaLibrary + ".jar");
     }
     return getArtifactJar(getScalaOrganization(), scalaLibrary, versionNumber.toString());
-  }
-
-  protected File getInterfacesJar() throws Exception {
-    if (_scalaVersionN.major == 3) {
-      String scalaInterfaces = SCALA3_INTERFACES_ARTIFACTID;
-      if (StringUtils.isNotEmpty(scalaHome)) {
-        File lib = new File(scalaHome, "lib");
-        return new File(lib, scalaInterfaces + ".jar");
-      }
-      return getArtifactJar(getScalaOrganization(), scalaInterfaces, findScalaVersion().toString());
-    }
-    return null;
   }
 
   protected File getReflectJar() throws Exception {

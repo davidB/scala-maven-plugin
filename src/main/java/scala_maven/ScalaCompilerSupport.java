@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.annotations.Parameter;
 import sbt.internal.inc.ScalaInstance;
 import sbt.internal.inc.classpath.ClasspathUtil;
@@ -322,19 +323,12 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
   private ScalaInstance getScalaInstanceForS3(VersionNumber scalaVersion) throws Exception {
     String version = scalaVersion.toString();
     String scalaOrg = getScalaOrganization();
-
-    File[] compilerJars =
-        new File[] {
-          getCompilerJar(scalaVersion),
-          getArtifactJar(scalaOrg, SCALA3_INTERFACES_ARTIFACTID, version),
-          getArtifactJar(scalaOrg, "tasty-core_" + version, version),
-          getArtifactJar("org.scala-lang.modules", "scala-asm", "9.1.0-scala-1"),
-          getArtifactJar("org.scala-sbt", "compiler-interface", "1.3.5"),
-          getArtifactJar("org.jline", "jline-reader", "3.19.0"),
-          getArtifactJar("org.jline", "jline-terminal", "3.19.0"),
-          getArtifactJar("org.jline", "jline-terminal-jna", "3.19.0")
-        };
-
+    Set<Artifact> artifactSet =
+        new MavenArtifactResolver(factory, session)
+            .getJarAndDependencies(
+                scalaOrg, getScala3ArtifactId(SCALA3_COMPILER_ARTIFACTID), version, null);
+    Set<Artifact> compilerJarSet = artifactSet.stream().collect(Collectors.toSet());
+    File[] compilerJars = compilerJarSet.stream().map(x -> x.getFile()).toArray(File[]::new);
     URL[] compilerJarUrls =
         Stream.of(compilerJars)
             .map(
@@ -349,9 +343,13 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             .toArray(URL[]::new);
 
     File[] libraryJars =
-        new File[] {
-          getLibraryJar(scalaVersion), getArtifactJar(scalaOrg, SCALA_LIBRARY_ARTIFACTID, "2.13.5")
-        };
+        compilerJarSet.stream()
+            .filter(
+                x ->
+                    x.getArtifactId().contains("scala3-library")
+                        || x.getArtifactId().contains("scala-library"))
+            .map(x -> x.getFile())
+            .toArray(File[]::new);
 
     URL[] libraryJarUrls =
         Stream.of(libraryJars)
