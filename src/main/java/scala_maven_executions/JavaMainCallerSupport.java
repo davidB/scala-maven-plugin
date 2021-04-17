@@ -40,8 +40,7 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
       String mainClassName1,
       String classpath,
       String[] jvmArgs1,
-      String[] args1)
-      throws Exception {
+      String[] args1) {
     this.requester = requester1;
     for (String key : System.getenv().keySet()) {
       env.add(key + "=" + System.getenv(key));
@@ -76,7 +75,6 @@ public abstract class JavaMainCallerSupport implements JavaMainCaller {
       if (isClasspath) {
         item = item + File.pathSeparator + entry.getCanonicalPath();
         jvmArgs.set(i, item);
-        isClasspath = false;
         found = true;
         break;
       }

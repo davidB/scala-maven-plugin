@@ -85,6 +85,12 @@
     <contributor>
       <name>Carlos Rodrigues</name>
     </contributor>
+    <contributor>
+      <name>Rajkumar Natarajan</name>
+    </contributor>
+    <contributor>
+      <name>Adrien Piquerez</name>
+    </contributor>
   </contributors>
 
   <mailingLists>
@@ -339,6 +345,10 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.1</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>com.diffplug.spotless</groupId>
@@ -385,6 +395,8 @@
         <version>3.8.1</version>
         <configuration>
           <compilerArgument>-Xlint:deprecation</compilerArgument>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>

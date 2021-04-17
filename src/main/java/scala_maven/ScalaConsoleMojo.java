@@ -283,7 +283,10 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     final VersionNumber scala2_11_0 = new VersionNumber("2.11.0");
     final VersionNumber scala2_9_0 = new VersionNumber("2.9.0");
 
-    if (scala2_12_0M4.compareTo(scalaVersion) <= 0) {
+    if (scalaVersion.major == 3) {
+      return super.factory.createArtifact(
+          "org.jline", ScalaConsoleMojo.JLINE, "3.19.0", "", ScalaMojoSupport.JAR);
+    } else if (scala2_12_0M4.compareTo(scalaVersion) <= 0) {
       return super.factory.createArtifact(
           ScalaConsoleMojo.JLINE, ScalaConsoleMojo.JLINE, "2.14.1", "", ScalaMojoSupport.JAR);
     } else if (scala2_11_0.compareTo(scalaVersion) <= 0) {
