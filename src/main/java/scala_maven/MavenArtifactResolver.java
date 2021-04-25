@@ -25,6 +25,11 @@ import org.apache.maven.repository.RepositorySystem;
 
 public class MavenArtifactResolver {
 
+  /** Constant {@link String} for "pom". Used to specify the Maven POM artifact type. */
+  public static final String POM = "pom";
+  /** Constant {@link String} for "jar". Used to specify the Maven JAR artifact type. */
+  public static final String JAR = "jar";
+
   private final RepositorySystem repositorySystem;
   private final MavenSession session;
 
@@ -53,9 +58,9 @@ public class MavenArtifactResolver {
   private Artifact createJarArtifact(
       String groupId, String artifactId, String version, String classifier) {
     return classifier == null
-        ? repositorySystem.createArtifact(groupId, artifactId, version, ScalaMojoSupport.JAR)
+        ? repositorySystem.createArtifact(groupId, artifactId, version, JAR)
         : repositorySystem.createArtifactWithClassifier(
-            groupId, artifactId, version, ScalaMojoSupport.JAR, classifier);
+            groupId, artifactId, version, JAR, classifier);
   }
 
   private Set<Artifact> resolve(Artifact artifact, boolean transitively) {

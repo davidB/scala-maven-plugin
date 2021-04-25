@@ -84,6 +84,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     // Force no forking
     final JavaMainCaller jcmd = super.getScalaCommand(false, this.mainConsole);
     // Determine Scala Version
+    final VersionNumber scalaVersion = super.findScalaContext().version();
     final Set<File> classpath = this.setupClassPathForConsole(scalaVersion);
 
     // Log if we are violating the user settings.
@@ -218,15 +219,13 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
    * <p>If the dynamic approach to finding the JLine dependency proves stable, we may drop the
    * fallback in the future.
    *
-   * @param scalaVersion the version of the Scala Compiler/Library we are using for this execution.
    * @param defaultFallback returned if we are unable to resolve JLine against the Scala Compiler's
    *     dependency tree.
    * @return an {@link Artifact} to provide to the runtime of the Scala console conforming the
    *     JLine.
    */
-  private Artifact resolveJLine(final VersionNumber scalaVersion, final Artifact defaultFallback) {
-    final Artifact compilerArtifact = super.scalaCompilerArtifact(scalaVersion.toString());
-    final Set<Artifact> compilerDeps = super.resolveArtifactDependencies(compilerArtifact);
+  private Artifact resolveJLine(final Artifact defaultFallback) throws Exception {
+    final Set<Artifact> compilerDeps = super.findScalaContext().findCompilerAndDependencies();
     for (final Artifact a : compilerDeps) {
       if (this.filterForJline(a)) {
         return a;
@@ -288,23 +287,23 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
 
     if (scalaVersion.major == 3) {
       return super.factory.createArtifact(
-          "org.jline", ScalaConsoleMojo.JLINE, "3.19.0", "", ScalaMojoSupport.JAR);
+          "org.jline", ScalaConsoleMojo.JLINE, "3.19.0", "", MavenArtifactResolver.JAR);
     } else if (scala2_12_0M4.compareTo(scalaVersion) <= 0) {
       return super.factory.createArtifact(
-          ScalaConsoleMojo.JLINE, ScalaConsoleMojo.JLINE, "2.14.1", "", ScalaMojoSupport.JAR);
+          ScalaConsoleMojo.JLINE, ScalaConsoleMojo.JLINE, "2.14.1", "", MavenArtifactResolver.JAR);
     } else if (scala2_11_0.compareTo(scalaVersion) <= 0) {
       return super.factory.createArtifact(
-          ScalaConsoleMojo.JLINE, ScalaConsoleMojo.JLINE, "2.12", "", ScalaMojoSupport.JAR);
+          ScalaConsoleMojo.JLINE, ScalaConsoleMojo.JLINE, "2.12", "", MavenArtifactResolver.JAR);
     } else if (scala2_9_0.compareTo(scalaVersion) <= 0) {
       return super.factory.createArtifact(
           ScalaConsoleMojo.SCALA_ORG_GROUP,
           ScalaConsoleMojo.JLINE,
           scalaVersion.toString(),
           "",
-          ScalaMojoSupport.JAR);
+          MavenArtifactResolver.JAR);
     } else {
       return super.factory.createArtifact(
-          ScalaConsoleMojo.JLINE, ScalaConsoleMojo.JLINE, "0.9.94", "", ScalaMojoSupport.JAR);
+          ScalaConsoleMojo.JLINE, ScalaConsoleMojo.JLINE, "0.9.94", "", MavenArtifactResolver.JAR);
     }
   }
 }

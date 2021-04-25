@@ -26,14 +26,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.annotations.Parameter;
 import sbt.internal.inc.ScalaInstance;
-import sbt.internal.inc.classpath.ClasspathUtil;
 import sbt_inc.SbtIncrementalCompiler;
 import scala.Option;
+import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
-import scala_maven_executions.MainHelper;
+import util.FileUtils;
 import util.JavaLocator;
 import xsbti.compile.CompileOrder;
 
@@ -187,8 +186,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         compileErrors = true;
       }
     } catch (Exception e) {
-      System.out.println("exception compilation error occurred!!!");
-      e.printStackTrace();
+      compileErrors = true;
+      getLog().error("exception compilation error occurred!!!", e);
     }
     getLog().info(String.format("prepare-compile in %.1f s", (n1 - n0) / 1_000_000_000.0));
     getLog().info(String.format("compile in %.1f s", (System.nanoTime() - n1) / 1_000_000_000.0));
@@ -290,45 +289,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
   }
 
-  private ScalaInstance getScalaInstanceForS2(
-      File libraryJar,
-      File reflectJar,
-      File compilerJar,
-      VersionNumber scalaVersion,
-      List<File> extraJars)
-      throws Exception {
-
-    List<File> allJars = new ArrayList<>(extraJars);
-    allJars.add(libraryJar);
-    allJars.add(reflectJar);
-    allJars.add(compilerJar);
-
-    URL[] urls =
-        new URL[] {
-          libraryJar.toURI().toURL(), reflectJar.toURI().toURL(), compilerJar.toURI().toURL()
-        };
-
-    URLClassLoader classLoader = new URLClassLoader(urls);
-    return new ScalaInstance(
-        scalaVersion.toString(), // version
-        classLoader, // loader
-        ClasspathUtil.rootLoader(), // loaderLibraryOnly
-        libraryJar, // libraryJar
-        compilerJar, // compilerJar
-        allJars.toArray(new File[] {}), // allJars
-        Option.apply(scalaVersion.toString()) // explicitActual
-        );
-  }
-
-  private ScalaInstance getScalaInstanceForS3(VersionNumber scalaVersion) throws Exception {
-    String version = scalaVersion.toString();
-    String scalaOrg = getScalaOrganization();
-    Set<Artifact> artifactSet =
-        new MavenArtifactResolver(factory, session)
-            .getJarAndDependencies(
-                scalaOrg, getScala3ArtifactId(SCALA3_COMPILER_ARTIFACTID), version, null);
-    Set<Artifact> compilerJarSet = artifactSet.stream().collect(Collectors.toSet());
-    File[] compilerJars = compilerJarSet.stream().map(x -> x.getFile()).toArray(File[]::new);
+  private ScalaInstance makeScalaInstance(Context sc) throws Exception {
+    File[] compilerJars = sc.findCompilerAndDependencies().toArray(new File[] {});
     URL[] compilerJarUrls =
         Stream.of(compilerJars)
             .map(
@@ -342,15 +304,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
                 })
             .toArray(URL[]::new);
 
-    File[] libraryJars =
-        compilerJarSet.stream()
-            .filter(
-                x ->
-                    x.getArtifactId().contains("scala3-library")
-                        || x.getArtifactId().contains("scala-library"))
-            .map(x -> x.getFile())
-            .toArray(File[]::new);
-
+    File[] libraryJars = new File[] {sc.findLibraryJar()};
     URL[] libraryJarUrls =
         Stream.of(libraryJars)
             .map(
@@ -366,23 +320,23 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     ArrayList<File> allJars = new ArrayList<>();
     allJars.addAll(Arrays.asList(compilerJars));
-    allJars.addAll(Arrays.asList(libraryJars));
+    // allJars.addAll(Arrays.asList(libraryJars));
 
-    File[] allJarFiles = allJars.stream().toArray(File[]::new);
+    File[] allJarFiles = allJars.toArray(new File[] {});
     URLClassLoader loaderLibraryOnly =
         new Scala3CompilerLoader(libraryJarUrls, xsbti.Reporter.class.getClassLoader());
     URLClassLoader loaderCompilerOnly = new URLClassLoader(compilerJarUrls, loaderLibraryOnly);
     URLClassLoader loader = loaderCompilerOnly;
 
     return new ScalaInstance(
-        scalaVersion.toString(),
+        sc.version().toString(),
         loader,
         loaderCompilerOnly,
         loaderLibraryOnly,
         libraryJars,
         compilerJars,
         allJarFiles,
-        Option.apply(scalaVersion.toString()));
+        Option.apply(sc.version().toString()));
   }
 
   // Incremental compilation
@@ -404,16 +358,9 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     if (incremental == null) {
-      File libraryJar = getLibraryJar();
-      List<File> extraJars = getCompilerDependencies();
-      extraJars.remove(libraryJar);
+      Context sc = findScalaContext();
       File javaHome = JavaLocator.findHomeFromToolchain(getToolchain());
-      VersionNumber versionNumber = findScalaVersion();
-      ScalaInstance instance =
-          versionNumber.major == 3
-              ? getScalaInstanceForS3(versionNumber)
-              : getScalaInstanceForS2(
-                  libraryJar, getReflectJar(), getCompilerJar(), findScalaVersion(), extraJars);
+      ScalaInstance instance = makeScalaInstance(sc);
 
       incremental =
           new SbtIncrementalCompiler(

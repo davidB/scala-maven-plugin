@@ -16,14 +16,17 @@
  */
 package scala_maven_dependency;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
-public interface ScalaConstants {
-  List<String> SCALA_DISTRO_ARTIFACTS =
-      Arrays.asList(
-          "scala-library", "scala-swing", "scala-dbc", "scala-compiler", "scalap", "partest");
+public interface ArtifactIds {
+  static Pattern SCALA_LIBRARY_PATTERN = Pattern.compile("scala([0-9]?)-library");
 
-  List<String> SCALA3_DISTRO_ARTIFACTS =
-      Arrays.asList("scala3-library", "scala3-swing", "scala3-dbc", "scala3-compiler");
+  List<String> scalaDistroArtifactIds() throws Exception;
+
+  String scalaLibraryArtifactId() throws Exception;
+
+  String scalaReflectArtifactId() throws Exception;
+
+  String scalaCompilerArtifactId() throws Exception;
 }

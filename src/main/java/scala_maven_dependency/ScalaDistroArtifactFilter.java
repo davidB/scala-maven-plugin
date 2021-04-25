@@ -16,8 +16,6 @@
  */
 package scala_maven_dependency;
 
-import static scala_maven_dependency.ScalaConstants.*;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
@@ -29,17 +27,20 @@ import org.apache.maven.shared.dependency.graph.filter.DependencyNodeFilter;
  * @author JSuereth
  */
 public class ScalaDistroArtifactFilter implements DependencyNodeFilter, ArtifactFilter {
-  private final String scalaOrganization;
+  private final Context scalaContext;
 
-  public ScalaDistroArtifactFilter(String scalaOrganization) {
-    this.scalaOrganization = scalaOrganization;
+  public ScalaDistroArtifactFilter(Context scalaContext) {
+    this.scalaContext = scalaContext;
   }
 
   @Override
   public boolean include(Artifact artifact) {
-    // TODO - Are we checking the right artifacts?
-    return scalaOrganization.equalsIgnoreCase(artifact.getGroupId())
-        && SCALA_DISTRO_ARTIFACTS.contains(artifact.getArtifactId());
+    try {
+      return scalaContext.hasInDistro(artifact);
+    } catch (Exception exc) {
+      exc.printStackTrace();
+      return false;
+    }
   }
 
   @Override

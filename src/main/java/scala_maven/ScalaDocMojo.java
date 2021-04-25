@@ -241,7 +241,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
   protected JavaMainCaller getScalaCommand() throws Exception {
     // This ensures we have a valid scala version...
     checkScalaVersion();
-    VersionNumber sv = findScalaVersion();
+    VersionNumber sv = findScalaContext().version();
     boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(sv) > 0 && !sv.isZero());
     if (StringUtils.isEmpty(scaladocClassName)) {
       if (!isPreviousScala271) {
