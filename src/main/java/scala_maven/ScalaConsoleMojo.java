@@ -25,7 +25,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import scala_maven_executions.JavaMainCaller;
-import scala_maven_executions.MainHelper;
+import util.FileUtils;
 
 /** Run the Scala console with all the classes of the projects (dependencies and built) */
 @Mojo(
@@ -84,8 +84,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     // Force no forking
     final JavaMainCaller jcmd = super.getScalaCommand(false, this.mainConsole);
     // Determine Scala Version
-    final VersionNumber scalaVersion = super.findScalaVersion();
-    final Set<String> classpath = this.setupClassPathForConsole(scalaVersion);
+    final Set<File> classpath = this.setupClassPathForConsole(scalaVersion);
 
     // Log if we are violating the user settings.
     if (super.fork) {
@@ -95,7 +94,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
     // Setup the classpath
 
     // Build the classpath string.
-    final String classpathStr = MainHelper.toMultiPath(classpath.toArray(new String[] {}));
+    final String classpathStr = FileUtils.toMultiPath(classpath);
 
     // Setup the JavaMainCaller
     jcmd.addArgs(super.args);
@@ -139,8 +138,8 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
    *     console.
    * @throws {@link Exception} for many reasons, mostly relating to ad-hoc dependency resolution.
    */
-  private Set<String> setupClassPathForConsole(final VersionNumber scalaVersion) throws Exception {
-    final Set<String> classpath = new HashSet<>();
+  private Set<File> setupClassPathForConsole(final VersionNumber scalaVersion) throws Exception {
+    final Set<File> classpath = new HashSet<>();
 
     classpath.addAll(this.setupProjectClasspaths());
     classpath.addAll(this.setupConsoleClasspaths(scalaVersion));
@@ -164,18 +163,22 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
    *     settings.
    * @throws {@link Exception} for many reasons, mostly relating to ad-hoc dependency resolution.
    */
-  private Set<String> setupProjectClasspaths() throws Exception {
-    final Set<String> classpath = new HashSet<>();
+  private Set<File> setupProjectClasspaths() throws Exception {
+    final Set<File> classpath = new HashSet<>();
 
     super.addCompilerToClasspath(classpath);
     super.addLibraryToClasspath(classpath);
 
     if (this.useTestClasspath) {
-      classpath.addAll(super.project.getTestClasspathElements());
+      for (String s : super.project.getTestClasspathElements()) {
+        classpath.add(new File(s));
+      }
     }
 
     if (this.useRuntimeClasspath) {
-      classpath.addAll(super.project.getRuntimeClasspathElements());
+      for (String s : super.project.getRuntimeClasspathElements()) {
+        classpath.add(new File(s));
+      }
     }
 
     return classpath;
@@ -195,11 +198,11 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
    * @return A {@link Set} of {@link String} of the classpath as defined by
    * @throws {@link Exception} for many reasons, mostly relating to ad-hoc dependency resolution.
    */
-  private Set<String> setupConsoleClasspaths(final VersionNumber scalaVersion) throws Exception {
-    final Set<String> classpath = new HashSet<>();
-
+  private Set<File> setupConsoleClasspaths(final VersionNumber scalaVersion) throws Exception {
+    final Set<File> classpath = new HashSet<>();
+    Artifact a = this.resolveJLine(this.fallbackJLine(scalaVersion));
     addToClasspath(
-        this.resolveJLine(scalaVersion, this.fallbackJLine(scalaVersion)), classpath, true);
+        a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getClassifier(), classpath, true);
 
     return classpath;
   }

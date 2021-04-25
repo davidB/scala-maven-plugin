@@ -18,13 +18,13 @@ package scala_maven;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import scala_maven_executions.JavaMainCaller;
+import util.FileUtils;
 
 /**
  * Compile the main and test scala source directory in continuous (infinite loop). !! This is an
@@ -107,7 +107,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
   protected boolean verbose;
 
   @Override
-  protected Set<String> getClasspathElements() {
+  protected Set<File> getClasspathElements() {
     throw new UnsupportedOperationException("USELESS");
   }
 
@@ -183,7 +183,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
                 mainSourceDirs,
                 mainOutputDir,
                 analysisCacheFile,
-                new HashSet<>(project.getCompileClasspathElements()),
+                FileUtils.fromStrings(project.getCompileClasspathElements()),
                 true);
         // If there are no source files, the compile method returns -1. Thus, to make
         // sure we
@@ -196,7 +196,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
                 testSourceDirs,
                 testOutputDir,
                 testAnalysisCacheFile,
-                new HashSet<>(project.getTestClasspathElements()),
+                FileUtils.fromStrings(project.getTestClasspathElements()),
                 true);
       }
       if (nbFile > 0) {

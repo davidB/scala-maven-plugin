@@ -83,7 +83,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
   protected abstract File getOutputDir() throws Exception;
 
-  protected abstract Set<String> getClasspathElements() throws Exception;
+  protected abstract Set<File> getClasspathElements() throws Exception;
 
   private long _lastCompileAt = -1;
 
@@ -120,7 +120,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
       List<File> sourceRootDirs,
       File outputDir,
       File analysisCacheFile,
-      Set<String> classpathElements,
+      Set<File> classpathElements,
       boolean compileInLoop)
       throws Exception {
     if (!compileInLoop && recompileMode == RecompileMode.incremental) {
@@ -174,7 +174,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     JavaMainCaller jcmd = getScalaCommand();
     jcmd.redirectToLog();
     if (!classpathElements.isEmpty())
-      jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
+      jcmd.addArgs("-classpath", FileUtils.toMultiPath(classpathElements));
     jcmd.addArgs("-d", outputDir.getAbsolutePath());
     // jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
     for (File f : files) {
@@ -387,7 +387,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
   // Incremental compilation
   private int incrementalCompile(
-      Set<String> classpathElements,
+      Set<File> classpathElements,
       List<File> sourceRootDirs,
       File outputDir,
       File cacheFile,
@@ -417,7 +417,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
       incremental =
           new SbtIncrementalCompiler(
-              javaHome.toPath(),
+              javaHome,
               new MavenArtifactResolver(factory, session),
               secondaryCacheDir,
               getLog(),
@@ -432,7 +432,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     try {
       incremental.compile(
-          classpathElements,
+          classpathElements.stream().map(File::toPath).collect(Collectors.toSet()),
           sources.stream().map(File::toPath).collect(Collectors.toList()),
           outputDir.toPath(),
           scalacOptions,

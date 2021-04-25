@@ -25,7 +25,7 @@ import org.apache.maven.toolchain.Toolchain;
 import org.codehaus.plexus.util.StringUtils;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.JavaMainCallerByFork;
-import scala_maven_executions.MainHelper;
+import util.FileUtils;
 
 /** Run a Scala class using the Scala runtime */
 @Mojo(name = "run", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
@@ -88,7 +88,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
           new JavaMainCallerByFork(
               this,
               mainClass,
-              MainHelper.toMultiPath(project.getTestClasspathElements()),
+              FileUtils.toMultiPath(FileUtils.fromStrings(project.getTestClasspathElements())),
               jvmArgs,
               args,
               forceUseArgFile,
@@ -103,7 +103,8 @@ public class ScalaRunMojo extends ScalaMojoSupport {
                 new JavaMainCallerByFork(
                     this,
                     launchers[i].mainClass,
-                    MainHelper.toMultiPath(project.getTestClasspathElements()),
+                    FileUtils.toMultiPath(
+                        FileUtils.fromStrings(project.getTestClasspathElements())),
                     launchers[i].jvmArgs,
                     launchers[i].args,
                     forceUseArgFile,
@@ -116,7 +117,7 @@ public class ScalaRunMojo extends ScalaMojoSupport {
             new JavaMainCallerByFork(
                 this,
                 launchers[0].mainClass,
-                MainHelper.toMultiPath(project.getTestClasspathElements()),
+                FileUtils.toMultiPath(FileUtils.fromStrings(project.getTestClasspathElements())),
                 launchers[0].jvmArgs,
                 launchers[0].args,
                 forceUseArgFile,

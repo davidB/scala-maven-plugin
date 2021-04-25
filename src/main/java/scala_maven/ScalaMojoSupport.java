@@ -742,15 +742,16 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   }
 
   private String getToolClasspath() throws Exception {
-    Set<String> classpath = new LinkedHashSet<>();
+    Set<File> classpath = new LinkedHashSet<>();
     addLibraryToClasspath(classpath);
     addCompilerToClasspath(classpath);
     if (dependencies != null) {
       for (BasicArtifact artifact : dependencies) {
-        addToClasspath(artifact.groupId, artifact.artifactId, artifact.version, classpath);
+        addToClasspath(
+            artifact.groupId, artifact.artifactId, artifact.version, "", classpath, true);
       }
     }
-    return MainHelper.toMultiPath(classpath.toArray(new String[] {}));
+    return FileUtils.toMultiPath(classpath);
   }
 
   protected List<String> getScalaOptions() throws Exception {
@@ -919,8 +920,8 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
   private List<String> getCompilerPluginOptions() throws Exception {
     List<String> options = new ArrayList<>();
-    for (String plugin : getCompilerPlugins()) {
-      options.add("-Xplugin:" + plugin);
+    for (File plugin : getCompilerPlugins()) {
+      options.add("-Xplugin:" + plugin.getPath());
     }
     return options;
   }
@@ -931,17 +932,16 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
    * @return The list of plugins
    * @throws Exception
    */
-  private Set<String> getCompilerPlugins() throws Exception {
-    Set<String> plugins = new HashSet<>();
+  private Set<File> getCompilerPlugins() throws Exception {
+    Set<File> plugins = new HashSet<>();
     if (compilerPlugins != null) {
-      Set<String> ignoreClasspath = new LinkedHashSet<>();
+      Set<File> ignoreClasspath = new LinkedHashSet<>();
       addCompilerToClasspath(ignoreClasspath);
       addLibraryToClasspath(ignoreClasspath);
       for (BasicArtifact artifact : compilerPlugins) {
         getLog().info("compiler plugin: " + artifact.toString());
         // TODO - Ensure proper scala version for plugins
-        Set<String> pluginClassPath = new HashSet<>();
-        // TODO - Pull in transitive dependencies.
+        Set<File> pluginClassPath = new HashSet<>();
         addToClasspath(
             artifact.groupId,
             artifact.artifactId,

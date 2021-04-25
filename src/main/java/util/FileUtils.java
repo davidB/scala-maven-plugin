@@ -16,6 +16,7 @@
  */
 package util;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -23,12 +24,40 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.codehaus.plexus.util.StringUtils;
 
-public final class FileUtils {
+public class FileUtils extends org.codehaus.plexus.util.FileUtils {
 
-  private FileUtils() {}
+  /**
+   * @param canonical Should use CanonicalPath to normalize path (true => getCanonicalPath, false
+   *     =&gt; getAbsolutePath)
+   * @see <a href="https://github.com/davidB/maven-scala-plugin/issues/50">#50</a>
+   */
+  public static String pathOf(File f, boolean canonical) throws Exception {
+    return canonical ? f.getCanonicalPath() : f.getAbsolutePath();
+  }
+
+  /**
+   * @param canonical Should use CanonicalPath to normalize path (true => getCanonicalPath, false
+   *     =&gt; getAbsolutePath)
+   * @see <a href="https://github.com/davidB/maven-scala-plugin/issues/50">#50</a>
+   */
+  public static File fileOf(File f, boolean canonical) throws Exception {
+    return canonical ? f.getCanonicalFile() : f.getAbsoluteFile();
+  }
+
+  public static Set<File> fromStrings(Collection<String> s) {
+    return s.stream().map(File::new).collect(Collectors.toSet());
+  }
+
+  public static String toMultiPath(Collection<File> paths) {
+    return StringUtils.join(paths.iterator(), File.pathSeparator);
+  }
 
   public static List<Path> listDirectoryContent(Path directory, Function<Path, Boolean> filter)
       throws IOException {
