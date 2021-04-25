@@ -309,7 +309,19 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
                 })
             .toArray(URL[]::new);
 
-    File[] libraryJars = new File[] {sc.findLibraryJar()};
+    //    File[] libraryJars = new File[] {sc.findLibraryJar()};
+    File[] libraryJars =
+        sc.findCompilerAndDependencies().stream()
+            .filter(
+                x ->
+                    x.getArtifactId().contains("scala3-library")
+                        || x.getArtifactId().contains("scala-library"))
+            .map(x -> x.getFile())
+            .toArray(File[]::new);
+
+    //    System.err.println(">>> from sc: " + sc.findLibraryJar());
+    //    System.err.println(">>> from finter compiler: " + StringUtils.join(libraryJars, " - "));
+
     URL[] libraryJarUrls =
         Stream.of(libraryJars)
             .map(
