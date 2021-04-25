@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.annotations.Parameter;
 import sbt.internal.inc.ScalaInstance;
 import sbt_inc.SbtIncrementalCompiler;
@@ -290,7 +291,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
   }
 
   private ScalaInstance makeScalaInstance(Context sc) throws Exception {
-    File[] compilerJars = sc.findCompilerAndDependencies().toArray(new File[] {});
+    File[] compilerJars =
+        sc.findCompilerAndDependencies().stream()
+            .map(Artifact::getFile)
+            .collect(Collectors.toList())
+            .toArray(new File[] {});
     URL[] compilerJarUrls =
         Stream.of(compilerJars)
             .map(
@@ -320,7 +325,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     ArrayList<File> allJars = new ArrayList<>();
     allJars.addAll(Arrays.asList(compilerJars));
-    // allJars.addAll(Arrays.asList(libraryJars));
+    allJars.addAll(Arrays.asList(libraryJars));
 
     File[] allJarFiles = allJars.toArray(new File[] {});
     URLClassLoader loaderLibraryOnly =
@@ -373,7 +378,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
               instance);
     }
 
-    classpathElements.remove(outputDir.getAbsolutePath());
+    classpathElements.remove(outputDir);
     List<String> scalacOptions = getScalaOptions();
     List<String> javacOptions = getJavacOptions();
 
