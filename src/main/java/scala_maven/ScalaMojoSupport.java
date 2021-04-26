@@ -21,11 +21,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -35,7 +30,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
@@ -71,17 +65,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
   /** Used to look up Artifacts in the remote repository. */
   @Component RepositorySystem factory;
-
-  /** Used to look up Artifacts in the remote repository. */
-  @Component protected ArtifactResolver resolver;
-
-  /** Location of the local repository. */
-  @Parameter(property = "localRepository", readonly = true, required = true)
-  private ArtifactRepository localRepo;
-
-  /** List of Remote Repositories used by the resolver */
-  @Parameter(property = "project.remoteArtifactRepositories", readonly = true, required = true)
-  private List<ArtifactRepository> remoteRepos;
 
   /**
    * Additional dependencies/jar to add to classpath to run "scalaClassName" (scope and optional
@@ -225,22 +208,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   @Parameter(property = "maven.scala.useCanonicalPath", defaultValue = "true")
   protected boolean useCanonicalPath = true;
 
-  /** Artifact factory, needed to download source jars. */
-  @Component protected MavenProjectBuilder mavenProjectBuilder;
-
-  /** The artifact repository to use. */
-  @Parameter(property = "localRepository", required = true, readonly = true)
-  private ArtifactRepository localRepository;
-
-  /** The artifact factory to use. */
-  @Component private ArtifactFactory artifactFactory;
-
-  /** The artifact metadata source to use. */
-  @Component private ArtifactMetadataSource artifactMetadataSource;
-
-  /** The artifact collector to use. */
-  @Component private ArtifactCollector artifactCollector;
-
   /** The dependency tree builder to use. */
   @Component private DependencyGraphBuilder dependencyGraphBuilder;
 
@@ -256,7 +223,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   public MavenArtifactResolver findMavenArtifactResolver() {
     if (mavenArtifactResolver == null) {
       mavenArtifactResolver = new MavenArtifactResolver(factory, session);
-      // artifactService = new ArtifactService(factory, resolver, localRepo, remoteRepos);
     }
     return mavenArtifactResolver;
   }
