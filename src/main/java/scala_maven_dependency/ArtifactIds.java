@@ -26,7 +26,5 @@ public interface ArtifactIds {
 
   String scalaLibraryArtifactId() throws Exception;
 
-  String scalaReflectArtifactId() throws Exception;
-
   String scalaCompilerArtifactId() throws Exception;
 }

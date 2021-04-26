@@ -16,7 +16,6 @@
  */
 package scala_maven_dependency;
 
-import java.io.File;
 import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import scala_maven.VersionNumber;
@@ -28,11 +27,7 @@ public interface Context {
 
   VersionNumber versionCompat();
 
-  File findLibraryJar() throws Exception;
-
-  File findReflectJar() throws Exception;
-
-  File findCompilerJar() throws Exception;
+  Set<Artifact> findLibraryAndDependencies() throws Exception;
 
   Set<Artifact> findCompilerAndDependencies() throws Exception;
 }

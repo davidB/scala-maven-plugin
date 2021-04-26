@@ -295,7 +295,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
   void addLibraryToClasspath(Set<File> classpath) throws Exception {
     Context sc = findScalaContext();
-    classpath.add(sc.findLibraryJar());
+    for (Artifact dep : sc.findLibraryAndDependencies()) {
+      classpath.add(dep.getFile());
+    }
   }
 
   @Override
@@ -575,7 +577,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   }
 
   private String getToolClasspath() throws Exception {
-    Set<File> classpath = new LinkedHashSet<>();
+    Set<File> classpath = new TreeSet<>();
     addLibraryToClasspath(classpath);
     addCompilerToClasspath(classpath);
     if (dependencies != null) {

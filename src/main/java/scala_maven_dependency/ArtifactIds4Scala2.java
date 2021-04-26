@@ -21,7 +21,6 @@ import java.util.List;
 
 public class ArtifactIds4Scala2 implements ArtifactIds {
   static final String SCALA_LIBRARY_ARTIFACTID = "scala-library";
-  static final String SCALA_REFLECT_ARTIFACTID = "scala-reflect";
   static final String SCALA_COMPILER_ARTIFACTID = "scala-compiler";
   static List<String> SCALA_DISTRO_ARTIFACTS =
       Arrays.asList(
@@ -40,11 +39,6 @@ public class ArtifactIds4Scala2 implements ArtifactIds {
   @Override
   public String scalaLibraryArtifactId() throws Exception {
     return SCALA_LIBRARY_ARTIFACTID;
-  }
-
-  @Override
-  public String scalaReflectArtifactId() throws Exception {
-    return SCALA_REFLECT_ARTIFACTID;
   }
 
   @Override

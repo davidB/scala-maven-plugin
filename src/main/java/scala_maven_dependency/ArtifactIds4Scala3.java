@@ -22,8 +22,6 @@ import scala_maven.VersionNumber;
 
 public class ArtifactIds4Scala3 implements ArtifactIds {
   protected static final String SCALA_LIBRARY_ARTIFACTID = "scala3-library";
-  protected static final String SCALA_INTERFACES_ARTIFACTID = "scala3-interfaces";
-  protected static final String SCALA_REFLECT_ARTIFACTID = "scala3-reflect";
   protected static final String SCALA_COMPILER_ARTIFACTID = "scala3-compiler";
   static final List<String> SCALA_DISTRO_ARTIFACTS =
       Arrays.asList(
@@ -56,11 +54,6 @@ public class ArtifactIds4Scala3 implements ArtifactIds {
   @Override
   public String scalaLibraryArtifactId() throws Exception {
     return getScala3ArtifactId(SCALA_LIBRARY_ARTIFACTID);
-  }
-
-  @Override
-  public String scalaReflectArtifactId() throws Exception {
-    return getScala3ArtifactId(SCALA_REFLECT_ARTIFACTID);
   }
 
   @Override

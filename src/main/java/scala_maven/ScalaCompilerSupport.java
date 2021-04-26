@@ -20,10 +20,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.maven.artifact.Artifact;
@@ -296,54 +293,29 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
             .map(Artifact::getFile)
             .collect(Collectors.toList())
             .toArray(new File[] {});
-    URL[] compilerJarUrls =
-        Stream.of(compilerJars)
-            .map(
-                x -> {
-                  try {
-                    return x.toURI().toURL();
-                  } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    return null;
-                  }
-                })
-            .toArray(URL[]::new);
+    URL[] compilerJarUrls = FileUtils.toUrls(compilerJars);
 
-    //    File[] libraryJars = new File[] {sc.findLibraryJar()};
     File[] libraryJars =
-        sc.findCompilerAndDependencies().stream()
-            .filter(
-                x ->
-                    x.getArtifactId().contains("scala3-library")
-                        || x.getArtifactId().contains("scala-library"))
-            .map(x -> x.getFile())
-            .toArray(File[]::new);
+        sc.findLibraryAndDependencies().stream()
+            .map(Artifact::getFile)
+            .collect(Collectors.toList())
+            .toArray(new File[] {});
+    URL[] libraryJarUrls = FileUtils.toUrls(libraryJars);
 
-    //    System.err.println(">>> from sc: " + sc.findLibraryJar());
-    //    System.err.println(">>> from finter compiler: " + StringUtils.join(libraryJars, " - "));
-
-    URL[] libraryJarUrls =
-        Stream.of(libraryJars)
-            .map(
-                x -> {
-                  try {
-                    return x.toURI().toURL();
-                  } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    return null;
-                  }
-                })
-            .toArray(URL[]::new);
-
-    ArrayList<File> allJars = new ArrayList<>();
+    SortedSet<File> allJars = new TreeSet<>();
     allJars.addAll(Arrays.asList(compilerJars));
     allJars.addAll(Arrays.asList(libraryJars));
-
     File[] allJarFiles = allJars.toArray(new File[] {});
+
     URLClassLoader loaderLibraryOnly =
-        new Scala3CompilerLoader(libraryJarUrls, xsbti.Reporter.class.getClassLoader());
+        new ScalaCompilerLoader(libraryJarUrls, xsbti.Reporter.class.getClassLoader());
     URLClassLoader loaderCompilerOnly = new URLClassLoader(compilerJarUrls, loaderLibraryOnly);
     URLClassLoader loader = loaderCompilerOnly;
+
+    if (getLog().isDebugEnabled()) {
+      getLog().debug("compilerJars: " + FileUtils.toMultiPath(compilerJars));
+      getLog().debug("libraryJars: " + FileUtils.toMultiPath(libraryJars));
+    }
 
     return new ScalaInstance(
         sc.version().toString(),

@@ -16,7 +16,6 @@
  */
 package scala_maven_dependency;
 
-import java.io.File;
 import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import scala_maven.MavenArtifactResolver;
@@ -59,25 +58,10 @@ public class Context4ScalaRemote implements Context {
     return scalaCompatVersion;
   }
 
-  private File findJarFile(String artifactId) throws Exception {
-    return mavenArtifactResolver
-        .getJar(scalaOrganization, artifactId, scalaVersion.toString(), "")
-        .getFile();
-  }
-
   @Override
-  public File findLibraryJar() throws Exception {
-    return findJarFile(aids.scalaLibraryArtifactId());
-  }
-
-  @Override
-  public File findReflectJar() throws Exception {
-    return findJarFile(aids.scalaReflectArtifactId());
-  }
-
-  @Override
-  public File findCompilerJar() throws Exception {
-    return findJarFile(aids.scalaCompilerArtifactId());
+  public Set<Artifact> findLibraryAndDependencies() throws Exception {
+    return mavenArtifactResolver.getJarAndDependencies(
+        scalaOrganization, aids.scalaLibraryArtifactId(), scalaVersion.toString(), null);
   }
 
   @Override
