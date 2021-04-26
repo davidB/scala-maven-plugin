@@ -19,10 +19,10 @@ package scala_maven;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-public class Scala3CompilerLoader extends URLClassLoader {
+public class ScalaCompilerLoader extends URLClassLoader {
   private final ClassLoader sbtLoader;
 
-  public Scala3CompilerLoader(URL[] urls, ClassLoader sbtLoader) {
+  public ScalaCompilerLoader(URL[] urls, ClassLoader sbtLoader) {
     super(urls, null);
     this.sbtLoader = sbtLoader;
   }
