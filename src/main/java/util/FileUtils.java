@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.codehaus.plexus.util.StringUtils;
 
 public class FileUtils extends org.codehaus.plexus.util.FileUtils {
@@ -67,13 +66,13 @@ public class FileUtils extends org.codehaus.plexus.util.FileUtils {
   public static URL[] toUrls(File[] files) throws Exception {
     return Stream.of(files)
         .map(
-          x -> {
-            try {
-              return x.toURI().toURL();
-            } catch (MalformedURLException e) {
-              throw new RuntimeException("failed to convert into url "+ x,e );
-            }
-          })
+            x -> {
+              try {
+                return x.toURI().toURL();
+              } catch (MalformedURLException e) {
+                throw new RuntimeException("failed to convert into url " + x, e);
+              }
+            })
         .toArray(URL[]::new);
   }
 
