@@ -16,6 +16,7 @@
  */
 package scala_maven;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,12 +88,31 @@ public class VersionNumber implements Comparable<VersionNumber> {
     return back;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    VersionNumber that = (VersionNumber) o;
+    return major == that.major && minor == that.minor && bugfix == that.bugfix &&
+      ((modifier ==null && that.modifier == null) || (modifier != null && modifier.equals(that.modifier)));
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(major, minor, bugfix, modifier);
+  }
+
   public boolean isZero() {
     return (major == 0) && (minor == 0) && (bugfix == 0);
   }
 
   String applyScalaArtifactVersioningScheme(String name) {
     return name + '_' + (modifier == null ? (major + "." + minor) : toString());
+  }
+
+  public VersionNumber max(VersionNumber v) {
+    if (this.compareTo(v) < 0) return v;
+    return this;
   }
 }
 

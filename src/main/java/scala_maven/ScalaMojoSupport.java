@@ -381,13 +381,13 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
   // TODO refactor to do only one scan of dependencies to find version
   private String findVersionFromDependencies(String groupId, Pattern artifactId) {
-    String version = null;
+    VersionNumber version = new VersionNumber("0.0.0");
     for (Dependency dep : getDependencies()) {
       if (groupId.equals(dep.getGroupId()) && artifactId.matcher(dep.getArtifactId()).find()) {
-        version = dep.getVersion();
+        version = version.max(new VersionNumber(dep.getVersion()));
       }
     }
-    if (StringUtils.isEmpty(version)) {
+    if (version.major == 0) {
       List<Dependency> deps = new ArrayList<>();
       deps.addAll(project.getModel().getDependencies());
       if (project.getModel().getDependencyManagement() != null) {
@@ -395,11 +395,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       }
       for (Dependency dep : deps) {
         if (groupId.equals(dep.getGroupId()) && artifactId.matcher(dep.getArtifactId()).find()) {
-          version = dep.getVersion();
+          version = version.max(new VersionNumber(dep.getVersion()));
         }
       }
     }
-    return version;
+    return version.major == 0 ? null : version.toString();
   }
 
   void checkScalaVersion() throws Exception {

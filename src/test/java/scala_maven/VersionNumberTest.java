@@ -37,6 +37,20 @@ public class VersionNumberTest {
   }
 
   @Test
+  public void max() throws Exception {
+    assertEquals(new VersionNumber("2.7.1"), new VersionNumber("2.7.1").max(new VersionNumber("1.0")));
+    assertEquals(new VersionNumber("2.7.1"), new VersionNumber("2.7.1").max(new VersionNumber("1.9")));
+    assertEquals(new VersionNumber("2.7.1"), new VersionNumber("2.7.1").max(new VersionNumber("2.0")));
+    assertEquals(new VersionNumber("2.7.1"), new VersionNumber("2.7.1").max(new VersionNumber("2.7")));
+    assertEquals(new VersionNumber("2.7.1"), new VersionNumber("2.7.1").max(new VersionNumber("2.7-rc")));
+    assertEquals(new VersionNumber("2.7.1"), new VersionNumber("2.7.1").max(new VersionNumber("2.7.0")));
+    assertEquals(new VersionNumber("2.7.1"), new VersionNumber("2.7.1").max(new VersionNumber("2.7.1")));
+    assertEquals(new VersionNumber("2.7.2-rc1"), new VersionNumber("2.7.1").max(new VersionNumber("2.7.2-rc1")));
+    assertEquals(new VersionNumber("2.8"), new VersionNumber("2.7.1").max(new VersionNumber("2.8")));
+    assertEquals(new VersionNumber("3.0"), new VersionNumber("2.7.1").max(new VersionNumber("3.0")));
+  }
+
+  @Test
   public void parse() throws Exception {
     assertParseVN("2.7.1", 2, 7, 1, null);
     assertParseVN("2.7", 2, 7, 0, null);
