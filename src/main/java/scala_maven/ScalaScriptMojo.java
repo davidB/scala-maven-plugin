@@ -52,6 +52,7 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
+import util.FileUtils;
 
 /**
  * Run a scala script.
@@ -161,7 +162,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     String baseName = scriptBaseNameOf(scriptFile, _lastScriptIndex.incrementAndGet());
     File destFile = new File(scriptDir, baseName + ".scala");
 
-    Set<String> classpath = new HashSet<String>();
+    Set<File> classpath = new HashSet<>();
     configureClasspath(classpath);
 
     boolean mavenProjectDependency = includeScopes.contains("plugin");
@@ -231,7 +232,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     }
   }
 
-  private URLClassLoader createScriptClassloader(File scriptDir, Set<String> classpath)
+  private URLClassLoader createScriptClassloader(File scriptDir, Set<File> classpath)
       throws Exception {
     ClassWorld w = new ClassWorld("zero", null);
     w.newRealm("mojo", getClass().getClassLoader());
@@ -245,8 +246,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     // add the script directory to the classpath
     rScript.addURL(scriptDir.toURI().toURL());
 
-    for (String string : classpath) {
-      rScript.addURL(new File(string).toURI().toURL());
+    for (File f : classpath) {
+      rScript.addURL(f.toURI().toURL());
     }
     return rScript;
   }
@@ -262,7 +263,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     jcmd.run(displayCmd);
   }
 
-  private void configureClasspath(Set<String> classpath) throws Exception {
+  private void configureClasspath(Set<File> classpath) throws Exception {
     Set<String> includes =
         new TreeSet<>(Arrays.asList(StringUtils.split(includeScopes.toLowerCase(), ",")));
     Set<String> excludes =
@@ -270,7 +271,8 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
 
     for (Artifact a : project.getArtifacts()) {
       if (includes.contains(a.getScope().toLowerCase()) && !excludes.contains(a.getScope())) {
-        addToClasspath(a, classpath, true);
+        addToClasspath(
+            a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getClassifier(), classpath, true);
       }
     }
 
@@ -279,28 +281,42 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
       for (Plugin p : project.getBuildPlugins()) {
         if ("scala-maven-plugin".equals(p.getArtifactId())) {
           for (Dependency d : p.getDependencies()) {
-            addToClasspath(factory.createDependencyArtifact(d), classpath, true);
+            addToClasspath(
+                d.getGroupId(),
+                d.getArtifactId(),
+                d.getVersion(),
+                d.getClassifier(),
+                classpath,
+                true);
           }
         }
       }
       for (Artifact a : project.getPluginArtifacts()) {
         if ("scala-maven-plugin".equals(a.getArtifactId())) {
-          addToClasspath(a, classpath, true);
+          addToClasspath(
+              a.getGroupId(),
+              a.getArtifactId(),
+              a.getVersion(),
+              a.getClassifier(),
+              classpath,
+              true);
         }
       }
     }
 
     if (addToClasspath != null) {
-      classpath.addAll(Arrays.asList(StringUtils.split(addToClasspath, ",")));
+      for (String s : StringUtils.split(addToClasspath, ",")) {
+        classpath.add(new File(s));
+      }
     }
 
     if (removeFromClasspath != null) {
-      ArrayList<String> toRemove = new ArrayList<String>();
+      ArrayList<File> toRemove = new ArrayList<File>();
       String[] jars = StringUtils.split(removeFromClasspath.trim(), ",");
-      for (String string : classpath) {
+      for (File f : classpath) {
         for (String jar : jars) {
-          if (string.contains(jar.trim())) {
-            toRemove.add(string);
+          if (f.getPath().contains(jar.trim())) {
+            toRemove.add(f);
           }
         }
       }
@@ -317,8 +333,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     addLibraryToClasspath(classpath);
     // TODO check that every entry from the classpath exists !
     boolean ok = true;
-    for (String s : classpath) {
-      File f = new File(s);
+    for (File f : classpath) {
       getLog().debug("classpath entry for running and compiling scripts: " + f);
       if (!f.exists()) {
         getLog().error("classpath entry for script not found : " + f);

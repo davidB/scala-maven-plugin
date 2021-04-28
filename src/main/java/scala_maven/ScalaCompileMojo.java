@@ -17,7 +17,6 @@
 package scala_maven;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +25,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import util.FileUtils;
 
 /**
  * Compiles a directory of Scala source. Corresponds roughly to the compile goal of the
@@ -72,17 +72,17 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
   }
 
   @Override
-  protected Set<String> getClasspathElements() throws Exception {
-    final Set<String> back = new HashSet<>(project.getCompileClasspathElements());
-    back.remove(project.getBuild().getOutputDirectory());
+  protected Set<File> getClasspathElements() throws Exception {
+    final Set<File> back = FileUtils.fromStrings(project.getCompileClasspathElements());
+    back.remove(new File(project.getBuild().getOutputDirectory()));
     addAdditionalDependencies(back);
     if (classpath != null && classpath.getAdd() != null) {
       getLog().warn("using 'classpath' is deprecated, use 'additionalDependencies' instead");
       for (File f : classpath.getAdd()) {
-        back.add(f.getAbsolutePath());
+        back.add(f);
       }
     }
-    back.addAll(TychoUtilities.addOsgiClasspathElements(project));
+    back.addAll(FileUtils.fromStrings(TychoUtilities.addOsgiClasspathElements(project)));
     return back;
   }
 

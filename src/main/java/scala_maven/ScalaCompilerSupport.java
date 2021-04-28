@@ -17,23 +17,18 @@
 package scala_maven;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.annotations.Parameter;
 import sbt.internal.inc.ScalaInstance;
-import sbt.internal.inc.classpath.ClasspathUtil;
 import sbt_inc.SbtIncrementalCompiler;
 import scala.Option;
+import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
-import scala_maven_executions.MainHelper;
+import util.FileUtils;
 import util.JavaLocator;
 import xsbti.compile.CompileOrder;
 
@@ -83,7 +78,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
   protected abstract File getOutputDir() throws Exception;
 
-  protected abstract Set<String> getClasspathElements() throws Exception;
+  protected abstract Set<File> getClasspathElements() throws Exception;
 
   private long _lastCompileAt = -1;
 
@@ -120,7 +115,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
       List<File> sourceRootDirs,
       File outputDir,
       File analysisCacheFile,
-      Set<String> classpathElements,
+      Set<File> classpathElements,
       boolean compileInLoop)
       throws Exception {
     if (!compileInLoop && recompileMode == RecompileMode.incremental) {
@@ -174,7 +169,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     JavaMainCaller jcmd = getScalaCommand();
     jcmd.redirectToLog();
     if (!classpathElements.isEmpty())
-      jcmd.addArgs("-classpath", MainHelper.toMultiPath(classpathElements));
+      jcmd.addArgs("-classpath", FileUtils.toMultiPath(classpathElements));
     jcmd.addArgs("-d", outputDir.getAbsolutePath());
     // jcmd.addArgs("-sourcepath", sourceDir.getAbsolutePath());
     for (File f : files) {
@@ -187,8 +182,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
         compileErrors = true;
       }
     } catch (Exception e) {
-      System.out.println("exception compilation error occurred!!!");
-      e.printStackTrace();
+      compileErrors = true;
+      getLog().error("exception compilation error occurred!!!", e);
     }
     getLog().info(String.format("prepare-compile in %.1f s", (n1 - n0) / 1_000_000_000.0));
     getLog().info(String.format("compile in %.1f s", (System.nanoTime() - n1) / 1_000_000_000.0));
@@ -290,104 +285,50 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
   }
 
-  private ScalaInstance getScalaInstanceForS2(
-      File libraryJar,
-      File reflectJar,
-      File compilerJar,
-      VersionNumber scalaVersion,
-      List<File> extraJars)
-      throws Exception {
-
-    List<File> allJars = new ArrayList<>(extraJars);
-    allJars.add(libraryJar);
-    allJars.add(reflectJar);
-    allJars.add(compilerJar);
-
-    URL[] urls =
-        new URL[] {
-          libraryJar.toURI().toURL(), reflectJar.toURI().toURL(), compilerJar.toURI().toURL()
-        };
-
-    URLClassLoader classLoader = new URLClassLoader(urls);
-    return new ScalaInstance(
-        scalaVersion.toString(), // version
-        classLoader, // loader
-        ClasspathUtil.rootLoader(), // loaderLibraryOnly
-        libraryJar, // libraryJar
-        compilerJar, // compilerJar
-        allJars.toArray(new File[] {}), // allJars
-        Option.apply(scalaVersion.toString()) // explicitActual
-        );
-  }
-
-  private ScalaInstance getScalaInstanceForS3(VersionNumber scalaVersion) throws Exception {
-    String version = scalaVersion.toString();
-    String scalaOrg = getScalaOrganization();
-    Set<Artifact> artifactSet =
-        new MavenArtifactResolver(factory, session)
-            .getJarAndDependencies(
-                scalaOrg, getScala3ArtifactId(SCALA3_COMPILER_ARTIFACTID), version, null);
-    Set<Artifact> compilerJarSet = artifactSet.stream().collect(Collectors.toSet());
-    File[] compilerJars = compilerJarSet.stream().map(x -> x.getFile()).toArray(File[]::new);
-    URL[] compilerJarUrls =
-        Stream.of(compilerJars)
-            .map(
-                x -> {
-                  try {
-                    return x.toURI().toURL();
-                  } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    return null;
-                  }
-                })
-            .toArray(URL[]::new);
+  private ScalaInstance makeScalaInstance(Context sc) throws Exception {
+    File[] compilerJars =
+        sc.findCompilerAndDependencies().stream()
+            .map(Artifact::getFile)
+            .collect(Collectors.toList())
+            .toArray(new File[] {});
+    URL[] compilerJarUrls = FileUtils.toUrls(compilerJars);
 
     File[] libraryJars =
-        compilerJarSet.stream()
-            .filter(
-                x ->
-                    x.getArtifactId().contains("scala3-library")
-                        || x.getArtifactId().contains("scala-library"))
-            .map(x -> x.getFile())
-            .toArray(File[]::new);
+        sc.findLibraryAndDependencies().stream()
+            .map(Artifact::getFile)
+            .collect(Collectors.toList())
+            .toArray(new File[] {});
+    URL[] libraryJarUrls = FileUtils.toUrls(libraryJars);
 
-    URL[] libraryJarUrls =
-        Stream.of(libraryJars)
-            .map(
-                x -> {
-                  try {
-                    return x.toURI().toURL();
-                  } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    return null;
-                  }
-                })
-            .toArray(URL[]::new);
-
-    ArrayList<File> allJars = new ArrayList<>();
+    SortedSet<File> allJars = new TreeSet<>();
     allJars.addAll(Arrays.asList(compilerJars));
     allJars.addAll(Arrays.asList(libraryJars));
+    File[] allJarFiles = allJars.toArray(new File[] {});
 
-    File[] allJarFiles = allJars.stream().toArray(File[]::new);
     URLClassLoader loaderLibraryOnly =
-        new Scala3CompilerLoader(libraryJarUrls, xsbti.Reporter.class.getClassLoader());
+        new ScalaCompilerLoader(libraryJarUrls, xsbti.Reporter.class.getClassLoader());
     URLClassLoader loaderCompilerOnly = new URLClassLoader(compilerJarUrls, loaderLibraryOnly);
     URLClassLoader loader = loaderCompilerOnly;
 
+    if (getLog().isDebugEnabled()) {
+      getLog().debug("compilerJars: " + FileUtils.toMultiPath(compilerJars));
+      getLog().debug("libraryJars: " + FileUtils.toMultiPath(libraryJars));
+    }
+
     return new ScalaInstance(
-        scalaVersion.toString(),
+        sc.version().toString(),
         loader,
         loaderCompilerOnly,
         loaderLibraryOnly,
         libraryJars,
         compilerJars,
         allJarFiles,
-        Option.apply(scalaVersion.toString()));
+        Option.apply(sc.version().toString()));
   }
 
   // Incremental compilation
   private int incrementalCompile(
-      Set<String> classpathElements,
+      Set<File> classpathElements,
       List<File> sourceRootDirs,
       File outputDir,
       File cacheFile,
@@ -404,20 +345,13 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     if (incremental == null) {
-      File libraryJar = getLibraryJar();
-      List<File> extraJars = getCompilerDependencies();
-      extraJars.remove(libraryJar);
+      Context sc = findScalaContext();
       File javaHome = JavaLocator.findHomeFromToolchain(getToolchain());
-      VersionNumber versionNumber = findScalaVersion();
-      ScalaInstance instance =
-          versionNumber.major == 3
-              ? getScalaInstanceForS3(versionNumber)
-              : getScalaInstanceForS2(
-                  libraryJar, getReflectJar(), getCompilerJar(), findScalaVersion(), extraJars);
+      ScalaInstance instance = makeScalaInstance(sc);
 
       incremental =
           new SbtIncrementalCompiler(
-              javaHome.toPath(),
+              javaHome,
               new MavenArtifactResolver(factory, session),
               secondaryCacheDir,
               getLog(),
@@ -426,13 +360,13 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
               instance);
     }
 
-    classpathElements.remove(outputDir.getAbsolutePath());
+    classpathElements.remove(outputDir);
     List<String> scalacOptions = getScalaOptions();
     List<String> javacOptions = getJavacOptions();
 
     try {
       incremental.compile(
-          classpathElements,
+          classpathElements.stream().map(File::toPath).collect(Collectors.toSet()),
           sources.stream().map(File::toPath).collect(Collectors.toList()),
           outputDir.toPath(),
           scalacOptions,

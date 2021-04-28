@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Helper methods
@@ -46,14 +45,6 @@ public class MainHelper {
 
   static final String argFilePrefix = "scala-maven-";
   static final String argFileSuffix = ".args";
-
-  public static String toMultiPath(Collection<String> paths) {
-    return StringUtils.join(paths.iterator(), File.pathSeparator);
-  }
-
-  public static String toMultiPath(String[] paths) {
-    return StringUtils.join(paths, File.pathSeparator);
-  }
 
   public static String[] findFiles(File dir, String[] includes, String[] excludes) {
     DirectoryScanner scanner = new DirectoryScanner();

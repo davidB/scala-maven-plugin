@@ -33,7 +33,7 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
 import scala_maven_executions.JavaMainCaller;
-import scala_maven_executions.MainHelper;
+import util.FileUtils;
 
 /** Produces Scala API documentation. */
 @Mojo(name = "doc", requiresDependencyResolution = ResolutionScope.COMPILE)
@@ -241,7 +241,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
   protected JavaMainCaller getScalaCommand() throws Exception {
     // This ensures we have a valid scala version...
     checkScalaVersion();
-    VersionNumber sv = findScalaVersion();
+    VersionNumber sv = findScalaContext().version();
     boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(sv) > 0 && !sv.isZero());
     if (StringUtils.isEmpty(scaladocClassName)) {
       if (!isPreviousScala271) {
@@ -261,14 +261,17 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     }
     // copy the classpathElements to not modify the global project definition see
     // https://github.com/davidB/maven-scala-plugin/issues/60
-    Set<String> paths = new HashSet<>(project.getCompileClasspathElements());
+    Set<File> paths = new HashSet<File>();
+    for (String s : project.getCompileClasspathElements()) {
+      paths.add(new File(s));
+    }
     paths.remove(
         project
             .getBuild()
             .getOutputDirectory()); // remove output to avoid "error for" : error: XXX is
     // already defined as package XXX ... object XXX {
     addAdditionalDependencies(paths);
-    if (!paths.isEmpty()) jcmd.addOption("-classpath", MainHelper.toMultiPath(paths));
+    if (!paths.isEmpty()) jcmd.addOption("-classpath", FileUtils.toMultiPath(paths));
     // jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
 
     boolean isScaladoc2 =

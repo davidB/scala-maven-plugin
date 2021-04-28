@@ -14,16 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package scala_maven_dependency;
+package util;
 
-import java.util.Arrays;
-import java.util.List;
+import org.apache.maven.artifact.Artifact;
 
-public interface ScalaConstants {
-  List<String> SCALA_DISTRO_ARTIFACTS =
-      Arrays.asList(
-          "scala-library", "scala-swing", "scala-dbc", "scala-compiler", "scalap", "partest");
+/** Utilities for making Error messages. */
+public class StringUtil {
 
-  List<String> SCALA3_DISTRO_ARTIFACTS =
-      Arrays.asList("scala3-library", "scala3-swing", "scala3-dbc", "scala3-compiler");
+  /**
+   * Creates a human-readable string for an artifact.
+   *
+   * @param artifact
+   * @return
+   */
+  public static String makeArtifactNameString(Artifact artifact) {
+    // TODO - Handle version ranges...
+    if (artifact == null) {
+      return "<null artifact>";
+    }
+    return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
+  }
 }

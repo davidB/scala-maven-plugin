@@ -64,7 +64,7 @@ public class SbtIncrementalCompiler {
   private final File secondaryCacheDir;
 
   public SbtIncrementalCompiler(
-      Path javaHome,
+      File javaHome,
       MavenArtifactResolver resolver,
       File secondaryCacheDir,
       Log mavenLogger,
@@ -93,7 +93,10 @@ public class SbtIncrementalCompiler {
 
     compilers =
         ZincUtil.compilers(
-            scalaInstance, ClasspathOptionsUtil.boot(), Option.apply(javaHome), scalaCompiler);
+            scalaInstance,
+            ClasspathOptionsUtil.boot(),
+            Option.apply(javaHome.toPath()),
+            scalaCompiler);
 
     PerClasspathEntryLookup lookup =
         new PerClasspathEntryLookup() {
@@ -156,16 +159,14 @@ public class SbtIncrementalCompiler {
   }
 
   public void compile(
-      Set<String> classpathElements,
+      Set<Path> classpathElements,
       List<Path> sources,
       Path classesDirectory,
       List<String> scalacOptions,
       List<String> javacOptions) {
     List<Path> fullClasspath = new ArrayList<>();
     fullClasspath.add(classesDirectory);
-    for (String classpathElement : classpathElements) {
-      fullClasspath.add(Paths.get(classpathElement));
-    }
+    fullClasspath.addAll(classpathElements);
 
     CompileOptions options =
         CompileOptions.of(

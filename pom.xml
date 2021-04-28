@@ -360,6 +360,9 @@
                 <include>src/main/java/**/*.java</include>
                 <include>src/test/java/**/*.java</include>
               </includes>
+              <excludes>
+                <exclude>src/main/java/scala_maven/ScalaCompilerLoader.java</exclude>
+              </excludes>
               <googleJavaFormat />
               <licenseHeader>
                 <file>${project.basedir}/src/etc/header.txt</file>

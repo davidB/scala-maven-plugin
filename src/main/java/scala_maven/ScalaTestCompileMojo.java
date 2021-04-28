@@ -17,7 +17,6 @@
 package scala_maven;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.maven.model.Dependency;
@@ -27,6 +26,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import util.FileUtils;
 
 /**
  * Compile Scala test source into test-classes. Corresponds roughly to testCompile in
@@ -69,8 +69,8 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
   private File testAnalysisCacheFile;
 
   @Override
-  protected Set<String> getClasspathElements() throws Exception {
-    Set<String> back = new HashSet<>(project.getTestClasspathElements());
+  protected Set<File> getClasspathElements() throws Exception {
+    Set<File> back = FileUtils.fromStrings(project.getTestClasspathElements());
     back.remove(project.getBuild().getTestOutputDirectory());
     addAdditionalDependencies(back);
     return back;

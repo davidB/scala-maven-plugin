@@ -16,22 +16,18 @@
  */
 package scala_maven_dependency;
 
+import java.util.Set;
 import org.apache.maven.artifact.Artifact;
+import scala_maven.VersionNumber;
 
-/** Utilities for making Error messages. */
-public class StringUtil {
+public interface Context {
+  boolean hasInDistro(Artifact artifact) throws Exception;
 
-  /**
-   * Creates a human-readable string for an artifact.
-   *
-   * @param artifact
-   * @return
-   */
-  public static String makeArtifactNameString(Artifact artifact) {
-    // TODO - Handle version ranges...
-    if (artifact == null) {
-      return "<null artifact>";
-    }
-    return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
-  }
+  VersionNumber version();
+
+  VersionNumber versionCompat();
+
+  Set<Artifact> findLibraryAndDependencies() throws Exception;
+
+  Set<Artifact> findCompilerAndDependencies() throws Exception;
 }

@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.Parameter;
 import scala_maven_executions.MainHelper;
+import util.FileUtils;
 
 /** @author david.bernard */
 public abstract class ScalaSourceMojoSupport extends ScalaMojoSupport {
@@ -140,10 +141,16 @@ public abstract class ScalaSourceMojoSupport extends ScalaMojoSupport {
     return newCompileSourceRootsList;
   }
 
-  protected void addAdditionalDependencies(Set<String> back) throws Exception {
+  protected void addAdditionalDependencies(Set<File> back) throws Exception {
     if (additionalDependencies != null) {
       for (Dependency dependency : additionalDependencies) {
-        addToClasspath(factory.createDependencyArtifact(dependency), back, false);
+        addToClasspath(
+            dependency.getGroupId(),
+            dependency.getArtifactId(),
+            dependency.getVersion(),
+            dependency.getClassifier(),
+            back,
+            false);
       }
     }
   }
