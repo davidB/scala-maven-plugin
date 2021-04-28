@@ -1,0 +1,28 @@
+name: ci-flow
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - "releases/*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "adopt" # See 'Supported distributions' for available options
+          java-version: "8"
+      - name: Restore Maven cache
+        uses: skjolber/maven-cache-github-action@v1
+        with:
+          step: restore
+      - name: Build hello-world application with Maven
+        run: ./mvnw package integration-test verify javadoc:jar site
+      - name: Save Maven cache
+        uses: skjolber/maven-cache-github-action@v1
+        with:
+          step: save
