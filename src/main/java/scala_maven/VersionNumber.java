@@ -93,8 +93,11 @@ public class VersionNumber implements Comparable<VersionNumber> {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     VersionNumber that = (VersionNumber) o;
-    return major == that.major && minor == that.minor && bugfix == that.bugfix &&
-      ((modifier ==null && that.modifier == null) || (modifier != null && modifier.equals(that.modifier)));
+    return major == that.major
+        && minor == that.minor
+        && bugfix == that.bugfix
+        && ((modifier == null && that.modifier == null)
+            || (modifier != null && modifier.equals(that.modifier)));
   }
 
   @Override
