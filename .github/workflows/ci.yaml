@@ -1,11 +1,11 @@
-name: ci-flow
+# https://docs.github.com/en/actions/guides/building-and-testing-java-with-maven
+name: ci
 
 on:
-  pull_request:
   push:
-    branches:
-      - master
-      - "releases/*"
+    branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
   build:
@@ -16,13 +16,11 @@ jobs:
         with:
           distribution: "adopt" # See 'Supported distributions' for available options
           java-version: "8"
-      - name: Restore Maven cache
-        uses: skjolber/maven-cache-github-action@v1
+      - name: Cache Maven packages
+        uses: actions/cache@v2
         with:
-          step: restore
-      - name: Build hello-world application with Maven
-        run: ./mvnw package integration-test verify javadoc:jar site
-      - name: Save Maven cache
-        uses: skjolber/maven-cache-github-action@v1
-        with:
-          step: save
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build with Maven
+        run: ./mvnw  --batch-mode package integration-test verify javadoc:jar site
