@@ -19,6 +19,8 @@ package scala_maven;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+// based on
+// https://github.com/lampepfl/dotty/blob/96401b68a8bce4c125859806b0c24a1ffe3cbc1e/sbt-bridge/src/xsbt/CompilerClassLoader.java
 public class ScalaCompilerLoader extends URLClassLoader {
   private final ClassLoader sbtLoader;
 
