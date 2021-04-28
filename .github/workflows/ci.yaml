@@ -23,4 +23,6 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build with Maven
-        run: ./mvnw  --batch-mode package integration-test verify javadoc:jar site
+        run: ./mvnw  --batch-mode package javadoc:jar site
+      - name: Run integration-test
+        run: ./mvnw  --batch-mode integration-test verify
