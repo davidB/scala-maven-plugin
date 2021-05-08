@@ -5,11 +5,7 @@
 package scala_maven;
 
 import java.io.File;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -249,14 +245,15 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     }
     // copy the classpathElements to not modify the global project definition see
     // https://github.com/davidB/maven-scala-plugin/issues/60
-    Set<File> paths = new HashSet<File>();
+    Set<File> paths = new TreeSet<>();
     for (String s : project.getCompileClasspathElements()) {
       paths.add(new File(s));
     }
     paths.remove(
-        project
-            .getBuild()
-            .getOutputDirectory()); // remove output to avoid "error for" : error: XXX is
+        new File(
+            project
+                .getBuild()
+                .getOutputDirectory())); // remove output to avoid "error for" : error: XXX is
     // already defined as package XXX ... object XXX {
     addAdditionalDependencies(paths);
     if (!paths.isEmpty()) jcmd.addOption("-classpath", FileUtils.toMultiPath(paths));

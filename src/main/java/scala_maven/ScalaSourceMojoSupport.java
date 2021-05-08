@@ -7,9 +7,9 @@ package scala_maven;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.Parameter;
 import scala_maven_executions.MainHelper;
@@ -31,7 +31,7 @@ public abstract class ScalaSourceMojoSupport extends ScalaMojoSupport {
    *    &lt;/includes&gt;
    * </pre>
    */
-  @Parameter protected Set<String> includes = new HashSet<>();
+  @Parameter protected Set<String> includes = new TreeSet<>();
 
   /**
    * A list of exclusion filters for the compiler. ex :
@@ -42,7 +42,7 @@ public abstract class ScalaSourceMojoSupport extends ScalaMojoSupport {
    *    &lt;/excludes&gt;
    * </pre>
    */
-  @Parameter private Set<String> excludes = new HashSet<>();
+  @Parameter private Set<String> excludes = new TreeSet<>();
 
   /**
    * Additional dependencies to be added to the classpath. This can be useful in situations where a

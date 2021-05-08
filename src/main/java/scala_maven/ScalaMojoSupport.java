@@ -648,15 +648,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
    * @throws Exception
    */
   private Set<File> getCompilerPlugins() throws Exception {
-    Set<File> plugins = new HashSet<>();
+    Set<File> plugins = new TreeSet<>();
     if (compilerPlugins != null) {
-      Set<File> ignoreClasspath = new LinkedHashSet<>();
+      Set<File> ignoreClasspath = new TreeSet<>();
       addCompilerToClasspath(ignoreClasspath);
       addLibraryToClasspath(ignoreClasspath);
       for (BasicArtifact artifact : compilerPlugins) {
         getLog().info("compiler plugin: " + artifact.toString());
         // TODO - Ensure proper scala version for plugins
-        Set<File> pluginClassPath = new HashSet<>();
+        Set<File> pluginClassPath = new TreeSet<>();
         addToClasspath(
             artifact.groupId,
             artifact.artifactId,

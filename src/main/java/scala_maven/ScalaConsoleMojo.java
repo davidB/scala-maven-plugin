@@ -6,8 +6,8 @@ package scala_maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -128,7 +128,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
    * @throws {@link Exception} for many reasons, mostly relating to ad-hoc dependency resolution.
    */
   private Set<File> setupClassPathForConsole(final VersionNumber scalaVersion) throws Exception {
-    final Set<File> classpath = new HashSet<>();
+    final Set<File> classpath = new TreeSet<File>();
 
     classpath.addAll(this.setupProjectClasspaths());
     classpath.addAll(this.setupConsoleClasspaths(scalaVersion));
@@ -153,7 +153,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
    * @throws {@link Exception} for many reasons, mostly relating to ad-hoc dependency resolution.
    */
   private Set<File> setupProjectClasspaths() throws Exception {
-    final Set<File> classpath = new HashSet<>();
+    final Set<File> classpath = new TreeSet<>();
 
     super.addCompilerToClasspath(classpath);
     super.addLibraryToClasspath(classpath);
@@ -188,7 +188,7 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
    * @throws {@link Exception} for many reasons, mostly relating to ad-hoc dependency resolution.
    */
   private Set<File> setupConsoleClasspaths(final VersionNumber scalaVersion) throws Exception {
-    final Set<File> classpath = new HashSet<>();
+    final Set<File> classpath = new TreeSet<File>();
     Artifact a = this.resolveJLine(this.fallbackJLine(scalaVersion));
     addToClasspath(
         a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getClassifier(), classpath, true);

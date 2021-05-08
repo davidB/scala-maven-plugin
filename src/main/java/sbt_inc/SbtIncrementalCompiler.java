@@ -94,10 +94,10 @@ public class SbtIncrementalCompiler {
 
             String analysisStoreFileName = null;
             if (Files.isDirectory(path)) {
-              if (path.getFileName().equals("classes")) {
+              if (path.getFileName().toString().equals("classes")) {
                 analysisStoreFileName = "compile";
 
-              } else if (path.getFileName().equals("test-classes")) {
+              } else if (path.getFileName().toString().equals("test-classes")) {
                 analysisStoreFileName = "test-compile";
               }
             }
@@ -216,7 +216,7 @@ public class SbtIncrementalCompiler {
     // org.scala-sbt-compiler-bridge_2.12-1.2.4-bin_2.12.10__52.0-1.2.4_20181015T090407.jar
     String bridgeArtifactId = compilerBridgeArtifactId(scalaInstance.actualVersion());
 
-    Boolean isScala3 = scalaInstance.actualVersion().startsWith("3");
+    boolean isScala3 = scalaInstance.actualVersion().startsWith("3");
 
     // this file is localed in compiler-interface
     Properties properties = new Properties();

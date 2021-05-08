@@ -18,7 +18,6 @@ import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -150,7 +149,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     String baseName = scriptBaseNameOf(scriptFile, _lastScriptIndex.incrementAndGet());
     File destFile = new File(scriptDir, baseName + ".scala");
 
-    Set<File> classpath = new HashSet<>();
+    Set<File> classpath = new TreeSet<File>();
     configureClasspath(classpath);
 
     boolean mavenProjectDependency = includeScopes.contains("plugin");
