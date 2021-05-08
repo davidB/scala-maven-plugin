@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/davidB/scala-maven-plugin.svg?branch=master)](https://travis-ci.org/davidB/scala-maven-plugin)
 [![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/davidB/scala-maven-plugin.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/davidB/scala-maven-plugin/context:java)
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/davidB/scala-maven-plugin.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/davidB/scala-maven-plugin/alerts)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.alchim31.maven/scala-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.alchim31.maven/scala-maven-plugin)
 
 The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling/testing/running/documenting Scala code in Maven.
 
