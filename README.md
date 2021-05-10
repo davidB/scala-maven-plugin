@@ -1,6 +1,5 @@
 # Scala Maven Plugin
-
-[![Build Status](https://travis-ci.org/davidB/scala-maven-plugin.svg?branch=master)](https://travis-ci.org/davidB/scala-maven-plugin)
+[![ci](https://github.com/davidB/scala-maven-plugin/actions/workflows/ci.yaml/badge.svg)](https://github.com/davidB/scala-maven-plugin/actions/workflows/ci.yaml)
 [![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/davidB/scala-maven-plugin.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/davidB/scala-maven-plugin/context:java)
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/davidB/scala-maven-plugin.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/davidB/scala-maven-plugin/alerts)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.alchim31.maven/scala-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.alchim31.maven/scala-maven-plugin)
