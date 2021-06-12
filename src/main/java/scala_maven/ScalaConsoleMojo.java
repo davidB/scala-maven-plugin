@@ -12,6 +12,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
 import util.FileUtils;
 
@@ -69,8 +70,9 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
 
   @Override
   protected void doExecute() throws Exception {
+    Context sc = findScalaContext();
     // Force no forking
-    final JavaMainCaller jcmd = super.getScalaCommand(false, this.mainConsole);
+    final JavaMainCaller jcmd = super.getScalaCommand(false, sc.consoleMainClassName(mainConsole));
     // Determine Scala Version
     final VersionNumber scalaVersion = super.findScalaContext().version();
     final Set<File> classpath = this.setupClassPathForConsole(scalaVersion);

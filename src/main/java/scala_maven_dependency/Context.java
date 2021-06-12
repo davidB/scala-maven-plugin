@@ -18,4 +18,10 @@ public interface Context {
   Set<Artifact> findLibraryAndDependencies() throws Exception;
 
   Set<Artifact> findCompilerAndDependencies() throws Exception;
+
+  String compilerMainClassName(String override, boolean useFsc) throws Exception;
+
+  String consoleMainClassName(String override) throws Exception;
+
+  String apidocMainClassName(String override) throws Exception;
 }

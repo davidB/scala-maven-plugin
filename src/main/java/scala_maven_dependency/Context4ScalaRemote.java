@@ -9,24 +9,18 @@ import org.apache.maven.artifact.Artifact;
 import scala_maven.MavenArtifactResolver;
 import scala_maven.VersionNumber;
 
-public class Context4ScalaRemote implements Context {
+public class Context4ScalaRemote extends ContextBase implements Context {
   private final String scalaOrganization;
-  private final VersionNumber scalaVersion;
-  private final VersionNumber scalaCompatVersion;
-  //  private final ArtifactService artifactService;
-  private final ArtifactIds aids;
   private final MavenArtifactResolver mavenArtifactResolver;
 
   public Context4ScalaRemote(
       VersionNumber scalaVersion,
-      VersionNumber scalaVersionCompat,
+      VersionNumber scalaCompatVersion,
       ArtifactIds aids,
       String scalaOrganization,
       MavenArtifactResolver mavenArtifactResolver) {
+    super(scalaVersion, scalaCompatVersion, aids);
     this.scalaOrganization = scalaOrganization;
-    this.scalaVersion = scalaVersion;
-    this.scalaCompatVersion = scalaVersionCompat;
-    this.aids = aids;
     this.mavenArtifactResolver = mavenArtifactResolver;
   }
 
@@ -34,16 +28,6 @@ public class Context4ScalaRemote implements Context {
   public boolean hasInDistro(Artifact artifact) throws Exception {
     return scalaOrganization.equalsIgnoreCase(artifact.getGroupId())
         && aids.scalaDistroArtifactIds().contains(artifact.getArtifactId());
-  }
-
-  @Override
-  public VersionNumber version() {
-    return scalaVersion;
-  }
-
-  @Override
-  public VersionNumber versionCompat() {
-    return scalaCompatVersion;
   }
 
   @Override

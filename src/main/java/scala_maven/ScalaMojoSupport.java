@@ -99,11 +99,8 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   @Parameter(property = "addScalacArgs")
   private String addScalacArgs;
 
-  /** className (FQN) of the scala tool to provide as */
-  @Parameter(
-      required = true,
-      property = "maven.scala.className",
-      defaultValue = "scala.tools.nsc.Main")
+  /** override the className (FQN) of the scala tool */
+  @Parameter(required = false, property = "maven.scala.className")
   protected String scalaClassName;
 
   /** Scala 's version to use. (property 'maven.scala.version' replaced by 'scala.version') */
@@ -470,9 +467,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
   protected abstract void doExecute() throws Exception;
 
-  protected JavaMainCaller getScalaCommand() throws Exception {
-    return getScalaCommand(fork, scalaClassName);
-  }
+  //  abstract JavaMainCaller getScalaCommand() throws Exception {
+  //    Context sc = findScalaContext();
+  //    return getScalaCommand(fork, scalaClassName);
+  //  }
 
   /**
    * Get a {@link JavaMainCaller} used invoke a Java process. Typically this will be one of the

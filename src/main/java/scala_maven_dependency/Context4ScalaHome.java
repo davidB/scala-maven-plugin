@@ -20,36 +20,21 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import scala_maven.MavenArtifactResolver;
 import scala_maven.VersionNumber;
 
-public class Context4ScalaHome implements Context {
-  private File scalaHome;
-  private final VersionNumber scalaVersion;
-  private final VersionNumber scalaCompatVersion;
-  private ArtifactIds aids;
+public class Context4ScalaHome extends ContextBase implements Context {
+  private final File scalaHome;
 
   public Context4ScalaHome(
       VersionNumber scalaVersion,
       VersionNumber scalaCompatVersion,
       ArtifactIds aids,
       File scalaHome) {
+    super(scalaVersion, scalaCompatVersion, aids);
     this.scalaHome = scalaHome;
-    this.scalaVersion = scalaVersion;
-    this.scalaCompatVersion = scalaCompatVersion;
-    this.aids = aids;
   }
 
   @Override
   public boolean hasInDistro(Artifact artifact) throws Exception {
     return false;
-  }
-
-  @Override
-  public VersionNumber version() {
-    return scalaVersion;
-  }
-
-  @Override
-  public VersionNumber versionCompat() {
-    return scalaCompatVersion;
   }
 
   @Override

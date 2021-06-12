@@ -37,6 +37,7 @@ import org.codehaus.plexus.classworlds.strategy.SelfFirstStrategy;
 import org.codehaus.plexus.classworlds.strategy.Strategy;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
 import util.FileUtils;
@@ -237,6 +238,11 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
       rScript.addURL(f.toURI().toURL());
     }
     return rScript;
+  }
+
+  protected JavaMainCaller getScalaCommand() throws Exception {
+    Context sc = findScalaContext();
+    return getScalaCommand(fork, sc.compilerMainClassName(scalaClassName, false));
   }
 
   private void compileScript(File scriptDir, File destFile, URLClassLoader loader)

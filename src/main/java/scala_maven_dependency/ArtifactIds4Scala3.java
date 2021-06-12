@@ -48,4 +48,17 @@ public class ArtifactIds4Scala3 implements ArtifactIds {
   public String scalaCompilerArtifactId() throws Exception {
     return getScala3ArtifactId(SCALA_COMPILER_ARTIFACTID);
   }
+
+  public String compilerMainClassName(boolean useFsc) throws Exception {
+    return "dotty.tools.dotc.Main";
+  }
+
+  public String consoleMainClassName() throws Exception {
+    // return "dotty.tools.dotc.Run";
+    return "dotty.tools.repl.Main";
+  }
+
+  public String apidocMainClassName(VersionNumber sv) throws Exception {
+    return "dotty.tools.dotc.Main";
+  }
 }

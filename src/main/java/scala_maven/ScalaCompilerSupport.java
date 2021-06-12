@@ -99,6 +99,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
   }
 
+  protected JavaMainCaller getScalaCommand() throws Exception {
+    Context sc = findScalaContext();
+    return getScalaCommand(fork, sc.compilerMainClassName(scalaClassName, false));
+  }
+
   protected int compile(
       List<File> sourceRootDirs,
       File outputDir,

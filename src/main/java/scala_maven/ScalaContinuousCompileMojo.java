@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
 import util.FileUtils;
 
@@ -116,7 +117,8 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
 
   @Override
   protected JavaMainCaller getScalaCommand() throws Exception {
-    JavaMainCaller jcmd = super.getScalaCommand();
+    Context sc = findScalaContext();
+    JavaMainCaller jcmd = getScalaCommand(fork, sc.compilerMainClassName(scalaClassName, useFsc));
     if (useFsc && verbose) {
       jcmd.addOption("-verbose", true);
     }
@@ -149,7 +151,6 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
 
     if (useFsc && recompileMode != RecompileMode.incremental) {
       getLog().info("use fsc for compilation");
-      scalaClassName = "scala.tools.nsc.CompileClient";
       if (!once) {
         StopServer stopServer = new StopServer();
         stopServer.run();

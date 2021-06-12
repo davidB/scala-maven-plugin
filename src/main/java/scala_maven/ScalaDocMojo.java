@@ -16,6 +16,7 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
+import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
 import util.FileUtils;
 
@@ -221,21 +222,13 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     generate(null, Locale.getDefault());
   }
 
-  @Override
   protected JavaMainCaller getScalaCommand() throws Exception {
     // This ensures we have a valid scala version...
     checkScalaVersion();
-    VersionNumber sv = findScalaContext().version();
+    Context sc = findScalaContext();
+    VersionNumber sv = sc.version();
     boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(sv) > 0 && !sv.isZero());
-    if (StringUtils.isEmpty(scaladocClassName)) {
-      if (!isPreviousScala271) {
-        scaladocClassName = "scala.tools.nsc.ScalaDoc";
-      } else {
-        scaladocClassName = scalaClassName;
-      }
-    }
-
-    JavaMainCaller jcmd = getEmptyScalaCommand(scaladocClassName);
+    JavaMainCaller jcmd = getEmptyScalaCommand(sc.apidocMainClassName(scaladocClassName));
     jcmd.addArgs(args);
     jcmd.addJvmArgs(jvmArgs);
     addCompilerPluginOptions(jcmd);

@@ -6,6 +6,7 @@ package scala_maven;
 
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
 
 /** Display the Scala Compiler help */
@@ -14,6 +15,11 @@ public class ScalaHelpMojo extends ScalaMojoSupport {
   /** Determines if help will only display a version */
   @Parameter(property = "maven.scala.help.versionOnly", defaultValue = "false")
   private boolean versionOnly;
+
+  protected JavaMainCaller getScalaCommand() throws Exception {
+    Context sc = findScalaContext();
+    return getScalaCommand(fork, sc.compilerMainClassName(scalaClassName, false));
+  }
 
   @Override
   public void doExecute() throws Exception {
