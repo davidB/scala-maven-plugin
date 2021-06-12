@@ -11,7 +11,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
@@ -25,52 +24,9 @@ import util.FileUtils;
 @Execute(phase = LifecyclePhase.GENERATE_SOURCES)
 public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport {
 
-  /** Specify window title of generated HTML documentation. [scaladoc, vscaladoc] */
-  @Parameter(property = "windowtitle", defaultValue = "${project.name} ${project.version} API")
-  private String windowtitle;
-
-  /**
-   * Specifies the text to be placed at the bottom of each output file. If you want to use html you
-   * have to put it in a CDATA section, eg. &lt;![CDATA[Copyright 2005, &lt;a
-   * href="http://www.mycompany.com">MyCompany, Inc.&lt;a>]]&gt; [scaladoc, vscaladoc]
-   */
-  @Parameter(
-      property = "bottom",
-      defaultValue =
-          "Copyright (c) {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved.")
-  private String bottom;
-
-  /** Charset for cross-platform viewing of generated documentation. [scaladoc, vscaladoc] */
-  @Parameter(property = "charset", defaultValue = "ISO-8859-1")
-  private String charset;
-
-  /** Include title for the overview page. [scaladoc, scaladoc2, vscaladoc] */
+  /** Include title for the overview page. */
   @Parameter(property = "doctitle", defaultValue = "${project.name} ${project.version} API")
   private String doctitle;
-
-  /** Include footer text for each page. [scaladoc, vscaladoc] */
-  @Parameter(property = "footer")
-  private String footer;
-
-  /** Include header text for each page [scaladoc, vscaladoc] */
-  @Parameter(property = "header")
-  private String header;
-
-  /** Generate source in HTML [scaladoc, vscaladoc] */
-  @Parameter(property = "linksource", defaultValue = "true")
-  private boolean linksource;
-
-  /** Suppress description and tags, generate only declarations [scaladoc, vscaladoc] */
-  @Parameter(property = "nocomment", defaultValue = "false")
-  private boolean nocomment;
-
-  /** File to change style of the generated documentation [scaladoc, vscaladoc] */
-  @Parameter(property = "stylesheetfile")
-  private File stylesheetfile;
-
-  /** Include top text for each page [scaladoc, vscaladoc] */
-  @Parameter(property = "top")
-  private String top;
 
   /** Specifies the destination directory where scalaDoc saves the generated HTML files. */
   @Parameter(defaultValue = "scaladocs", required = true)
@@ -100,24 +56,6 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
   @Parameter(property = "maven.scaladoc.className")
   private String scaladocClassName;
 
-  /**
-   * If you want to use vscaladoc to generate api instead of regular scaladoc, set the version of
-   * vscaladoc you want to use.
-   */
-  @Parameter(property = "maven.scaladoc.vscaladocVersion")
-  private String vscaladocVersion;
-
-  /**
-   * To allow running aggregation only from command line use "-DforceAggregate=true" (avoid using in
-   * pom.xml). [scaladoc, vscaladoc]
-   */
-  @Parameter(property = "forceAggregate", defaultValue = "false")
-  private boolean forceAggregate;
-
-  /** If you want to aggregate only direct sub modules. */
-  @Parameter(property = "maven.scaladoc.aggregateDirectOnly", defaultValue = "true")
-  private boolean aggregateDirectOnly;
-
   /** The directory which contains scala/java source files */
   @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
   private File sourceDir;
@@ -137,13 +75,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
   @Override
   public boolean canGenerateReport() {
-    // there is modules to aggregate
-    boolean back =
-        ((project.isExecutionRoot() || forceAggregate)
-            && canAggregate()
-            && project.getCollectedProjects().size() > 0);
-    back = back || (findSourceFiles().size() != 0);
-    return back;
+    return findSourceFiles().size() != 0;
   }
 
   private List<File> findSourceFiles() {
@@ -155,11 +87,6 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
       }
     }
     return _sourceFiles;
-  }
-
-  private boolean canAggregate() {
-    return StringUtils.isNotEmpty(vscaladocVersion)
-        && (new VersionNumber(vscaladocVersion).compareTo(new VersionNumber("1.1")) >= 0);
   }
 
   @Override
@@ -226,16 +153,11 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     // This ensures we have a valid scala version...
     checkScalaVersion();
     Context sc = findScalaContext();
-    VersionNumber sv = sc.version();
-    boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(sv) > 0 && !sv.isZero());
     JavaMainCaller jcmd = getEmptyScalaCommand(sc.apidocMainClassName(scaladocClassName));
     jcmd.addArgs(args);
     jcmd.addJvmArgs(jvmArgs);
     addCompilerPluginOptions(jcmd);
 
-    if (isPreviousScala271) {
-      jcmd.addArgs("-Ydoc");
-    }
     // copy the classpathElements to not modify the global project definition see
     // https://github.com/davidB/maven-scala-plugin/issues/60
     Set<File> paths = new TreeSet<>();
@@ -252,24 +174,8 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     if (!paths.isEmpty()) jcmd.addOption("-classpath", FileUtils.toMultiPath(paths));
     // jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
 
-    boolean isScaladoc2 =
-        (new VersionNumber("2.8.0").compareTo(sv) <= 0 || sv.isZero())
-            && ("scala.tools.nsc.ScalaDoc".equals(scaladocClassName));
-    if (isScaladoc2) {
-      jcmd.addArgs("-doc-format:html");
-      jcmd.addOption("-doc-title", doctitle);
-    } else {
-      jcmd.addOption("-bottom", getBottomText());
-      jcmd.addOption("-charset", charset);
-      jcmd.addOption("-doctitle", doctitle);
-      jcmd.addOption("-footer", footer);
-      jcmd.addOption("-header", header);
-      jcmd.addOption("-linksource", linksource);
-      jcmd.addOption("-nocomment", nocomment);
-      jcmd.addOption("-stylesheetfile", stylesheetfile);
-      jcmd.addOption("-top", top);
-      jcmd.addOption("-windowtitle", windowtitle);
-    }
+    jcmd.addArgs("-doc-format:html");
+    jcmd.addOption("-doc-title", doctitle);
     return jcmd;
   }
 
@@ -285,14 +191,6 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
       if (!reportOutputDir.exists()) {
         reportOutputDir.mkdirs();
       }
-      if (StringUtils.isNotEmpty(vscaladocVersion)) {
-        scaladocClassName = "org.scala_tools.vscaladoc.Main";
-        BasicArtifact artifact = new BasicArtifact();
-        artifact.artifactId = "vscaladoc";
-        artifact.groupId = "org.scala-tools";
-        artifact.version = vscaladocVersion;
-        dependencies = new BasicArtifact[] {artifact};
-      }
 
       List<File> sources = findSourceFiles();
       if (sources.size() > 0) {
@@ -303,112 +201,10 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
         }
         jcmd.run(displayCmd);
       }
-      if (forceAggregate) {
-        aggregate(project);
-      } else {
-        // Mojo could not be run from parent after all its children
-        // So the aggregation will be run after the last child
-        tryAggregateUpper(project);
-      }
-
     } catch (MavenReportException | RuntimeException exc) {
       throw exc;
     } catch (Exception exc) {
       throw new MavenReportException("wrap: " + exc.getMessage(), exc);
     }
-  }
-
-  private void tryAggregateUpper(MavenProject prj) throws Exception {
-    if (prj != null && prj.hasParent() && canAggregate()) {
-      MavenProject parent = prj.getParent();
-      List<MavenProject> modules = parent.getCollectedProjects();
-      if ((modules.size() > 1) && prj.equals(modules.get(modules.size() - 1))) {
-        aggregate(parent);
-      }
-    }
-  }
-
-  private void aggregate(MavenProject parent) throws Exception {
-    List<MavenProject> modules = parent.getCollectedProjects();
-    File dest =
-        new File(parent.getModel().getReporting().getOutputDirectory() + "/" + outputDirectory);
-    getLog().info("start aggregation into " + dest);
-    StringBuilder mpath = new StringBuilder();
-    for (MavenProject module : modules) {
-      if ("pom".equals(module.getPackaging().toLowerCase())) {
-        continue;
-      }
-      if (aggregateDirectOnly && module.getParent() != parent) {
-        continue;
-      }
-      File subScaladocPath =
-          new File(module.getModel().getReporting().getOutputDirectory() + "/" + outputDirectory)
-              .getAbsoluteFile();
-      // System.out.println(" -> " + project.getModulePathAdjustment(module) +" // " +
-      // subScaladocPath + " // " + module.getBasedir() );
-      if (subScaladocPath.exists()) {
-        mpath.append(subScaladocPath).append(File.pathSeparatorChar);
-      }
-    }
-    if (mpath.length() != 0) {
-      getLog().info("aggregate vscaladoc from : " + mpath);
-      JavaMainCaller jcmd = getScalaCommand();
-      jcmd.addOption("-d", dest.getAbsolutePath());
-      jcmd.addOption("-aggregate", mpath.toString());
-      jcmd.run(displayCmd);
-    } else {
-      getLog().warn("no vscaladoc to aggregate");
-    }
-    tryAggregateUpper(parent);
-  }
-
-  /**
-   * Method that sets the bottom text that will be displayed on the bottom of the javadocs.
-   *
-   * @return a String that contains the text that will be displayed at the bottom of the javadoc
-   */
-  private String getBottomText() {
-    String inceptionYear = project.getInceptionYear();
-    int actualYear = Calendar.getInstance().get(Calendar.YEAR);
-    String year = String.valueOf(actualYear);
-
-    String theBottom = StringUtils.replace(bottom, "{currentYear}", year);
-
-    if (inceptionYear != null) {
-      if (inceptionYear.equals(year)) {
-        theBottom = StringUtils.replace(theBottom, "{inceptionYear}-", "");
-      } else {
-        theBottom = StringUtils.replace(theBottom, "{inceptionYear}", inceptionYear);
-      }
-    } else {
-      theBottom = StringUtils.replace(theBottom, "{inceptionYear}-", "");
-    }
-
-    if (project.getOrganization() == null) {
-      theBottom = StringUtils.replace(theBottom, " {organizationName}", "");
-    } else {
-      if ((project.getOrganization() != null)
-          && (StringUtils.isNotEmpty(project.getOrganization().getName()))) {
-        if (StringUtils.isNotEmpty(project.getOrganization().getUrl())) {
-          theBottom =
-              StringUtils.replace(
-                  theBottom,
-                  "{organizationName}",
-                  "<a href=\""
-                      + project.getOrganization().getUrl()
-                      + "\">"
-                      + project.getOrganization().getName()
-                      + "</a>");
-        } else {
-          theBottom =
-              StringUtils.replace(
-                  theBottom, "{organizationName}", project.getOrganization().getName());
-        }
-      } else {
-        theBottom = StringUtils.replace(theBottom, " {organizationName}", "");
-      }
-    }
-
-    return theBottom;
   }
 }
