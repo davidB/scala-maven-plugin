@@ -10,84 +10,36 @@
   <name>${project.artifactId}</name>
 
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <scala3.version>3.0.0-RC2</scala3.version>
+    <scala.compat.version>3.0.0-RC2</scala.compat.version>
+    <scala.version>3.0.0-RC2</scala.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.scala-lang</groupId>
-      <artifactId>scala3-library_${scala3.version}</artifactId>
-      <version>${scala3.version}</version>
+      <artifactId>scala3-library_${scala.compat.version}</artifactId>
+      <version>${scala.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala3-compiler_${scala3.version}</artifactId>
-      <version>${scala3.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala3-interfaces</artifactId>
-      <version>${scala3.version}</version>
-    </dependency>
-  </dependencies>
+  </dependencies>  
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-        <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>@project.groupId@</groupId>
         <artifactId>@project.artifactId@</artifactId>
         <version>@project.version@</version>
-        <!--version>2.15.2</version-->
-        <!--
-                <executions>
-                  <execution>
-                    <goals>
-                      <goal>compile</goal>
-                      <goal>testCompile</goal>
-                    </goals>
-                  </execution>
-                </executions>
-        -->
         <executions>
           <execution>
-            <id>cmain</id>
             <goals>
               <goal>compile</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>ctest</id>
-            <goals>
               <goal>testCompile</goal>
             </goals>
-            <configuration>
-              <args>
-                <arg>-dependencyfile</arg>
-                <arg>${project.build.directory}/.test_scala_dependencies</arg>
-              </args>
-            </configuration>
           </execution>
         </executions>
         <configuration>
-          <scalaVersion>${scala3.version}</scalaVersion>
-          <scalaClassName>dotty.tools.dotc.Main</scalaClassName>
-          <mainConsole>dotty.tools.dotc.Run</mainConsole>
-          <useFsc>true</useFsc>
           <args>
             <arg>-encoding</arg>
             <arg>UTF8</arg>
           </args>
         </configuration>
-
       </plugin>
     </plugins>
   </build>
