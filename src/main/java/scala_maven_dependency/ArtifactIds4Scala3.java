@@ -58,7 +58,7 @@ public class ArtifactIds4Scala3 implements ArtifactIds {
     return "dotty.tools.repl.Main";
   }
 
-  public String apidocMainClassName(VersionNumber sv) throws Exception {
+  public String apidocMainClassName() throws Exception {
     return "dotty.tools.dotc.Main";
   }
 }

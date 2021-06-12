@@ -6,7 +6,6 @@ package scala_maven_dependency;
 
 import java.util.Arrays;
 import java.util.List;
-import scala_maven.VersionNumber;
 
 public class ArtifactIds4Scala2 implements ArtifactIds {
   static final String SCALA_LIBRARY_ARTIFACTID = "scala-library";
@@ -43,12 +42,7 @@ public class ArtifactIds4Scala2 implements ArtifactIds {
     return "scala.tools.nsc.MainGenericRunner";
   }
 
-  public String apidocMainClassName(VersionNumber sv) throws Exception {
-    boolean isPreviousScala271 = (new VersionNumber("2.7.1").compareTo(sv) > 0 && !sv.isZero());
-    if (!isPreviousScala271) {
-      return "scala.tools.nsc.ScalaDoc";
-    } else {
-      return "scala.tools.nsc.Main";
-    }
+  public String apidocMainClassName() throws Exception {
+    return "scala.tools.nsc.ScalaDoc";
   }
 }

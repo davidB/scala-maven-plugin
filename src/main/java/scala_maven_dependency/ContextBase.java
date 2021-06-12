@@ -50,7 +50,7 @@ abstract class ContextBase implements Context {
   @Override
   public String apidocMainClassName(String override) throws Exception {
     if (StringUtils.isEmpty(override)) {
-      return this.aids.apidocMainClassName(this.scalaVersion);
+      return this.aids.apidocMainClassName();
     } else {
       return override;
     }
