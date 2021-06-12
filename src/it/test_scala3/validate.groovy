@@ -1,6 +1,6 @@
 try {
 
-def file = new File(basedir, 'target/classes/Myclass$.class')
+def file = new File(basedir, 'target/classes/Main.class')
 assert file.exists()
 
 return true

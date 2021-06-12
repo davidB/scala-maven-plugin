@@ -10,8 +10,8 @@
   <name>${project.artifactId}</name>
 
   <properties>
-    <scala.compat.version>3.0.0-RC2</scala.compat.version>
-    <scala.version>3.0.0-RC2</scala.version>
+    <scala.compat.version>3</scala.compat.version>
+    <scala.version>3.0.0</scala.version>
   </properties>
   <dependencies>
     <dependency>
