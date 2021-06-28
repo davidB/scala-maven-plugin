@@ -14,6 +14,7 @@ The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling
 
 * [scalor-maven-plugin](https://github.com/random-maven/scalor-maven-plugin)
 * [sbt-compiler-maven-plugin](https://github.com/sbt-compiler-maven-plugin/sbt-compiler-maven-plugin)
+* [sbt-delegate-maven-plugin](https://github.com/AugustNagro/sbt-delegate-maven-plugin)
 
 ## Build
 
