@@ -10,6 +10,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import sbt.internal.inc.ScalaInstance;
 import sbt_inc.SbtIncrementalCompiler;
@@ -87,6 +88,9 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     int nbFiles =
         compile(
             getSourceDirectories(), outputDir, analysisCacheFile, getClasspathElements(), false);
+    if (hasCompileErrors()) {
+      throw new MojoFailureException("scala compilation failed");
+    }
     switch (nbFiles) {
       case -1:
         getLog().info("No sources to compile");
