@@ -212,6 +212,68 @@
       <groupId>org.scala-sbt</groupId>
       <artifactId>zinc_2.13</artifactId>
       <version>1.5.8</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jline</groupId>
+          <artifactId>jline</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scala-sbt.jline3</groupId>
+          <artifactId>jline-terminal</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jline</groupId>
+          <artifactId>jline-terminal-jna</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jline</groupId>
+          <artifactId>jline-terminal-jansi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scala-sbt.jline</groupId>
+          <artifactId>jline</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scala-lang.modules</groupId>
+          <artifactId>scala-xml_2.13</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scala-sbt</groupId>
+          <artifactId>launcher-interface</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scala-sbt</groupId>
+          <artifactId>sbinary_2.13</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scala-sbt</groupId>
+          <artifactId>zinc-ivy-integration_2.13</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.eed3si9n</groupId>
+          <artifactId>sjson-new-core_2.13</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.eed3si9n</groupId>
+          <artifactId>sjson-new-scalajson_2.13</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.lihaoyi</groupId>
+          <artifactId>fastparse_2.13</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.lmax</groupId>
+          <artifactId>disruptor</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- provided -->
