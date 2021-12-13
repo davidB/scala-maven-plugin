@@ -17,7 +17,6 @@ import java.util.*;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 import sbt.internal.inc.*;
@@ -27,6 +26,7 @@ import sbt.io.AllPassFilter$;
 import sbt.io.IO;
 import sbt.util.Logger;
 import scala.Option;
+import scala.Tuple2;
 import scala_maven.MavenArtifactResolver;
 import util.FileUtils;
 import xsbti.PathBasedFile;
@@ -194,9 +194,9 @@ public class SbtIncrementalCompiler {
     }
   }
 
-  private static List<Pair<File, String>> computeZipEntries(List<Path> paths, Path rootDir) {
+  private static List<Tuple2<File, String>> computeZipEntries(List<Path> paths, Path rootDir) {
     int rootDirLength = rootDir.toString().length();
-    Stream<Pair<File, String>> stream =
+    Stream<Tuple2<File, String>> stream =
         paths.stream()
             .map(
                 path -> {
@@ -205,7 +205,7 @@ public class SbtIncrementalCompiler {
                   if (Files.isDirectory(path)) {
                     zipPath = zipPath + "/";
                   }
-                  return Pair.of(path.toFile(), zipPath);
+                  return new Tuple2(path.toFile(), zipPath);
                 });
     return stream.collect(Collectors.toList());
   }
@@ -313,18 +313,18 @@ public class SbtIncrementalCompiler {
           manifest.read(is);
         }
 
-        List<Pair<File, String>> scalaCompiledClasses =
+        List<Tuple2<File, String>> scalaCompiledClasses =
             computeZipEntries(FileUtils.listDirectoryContent(classesDir, file -> true), classesDir);
-        List<Pair<File, String>> resources =
+        List<Tuple2<File, String>> resources =
             computeZipEntries(bridgeSourcesNonScalaFiles, sourcesDir);
-        List<Pair<File, String>> allZipEntries = new ArrayList<>();
+        List<Tuple2<File, String>> allZipEntries = new ArrayList<>();
         allZipEntries.addAll(scalaCompiledClasses);
         allZipEntries.addAll(resources);
 
         IO.jar(
             IterableHasAsScala(
                     allZipEntries.stream()
-                        .map(x -> scala.Tuple2.apply(x.getLeft(), x.getRight()))
+                        .map(x -> scala.Tuple2.apply(x._1, x._2))
                         .collect(Collectors.toList()))
                 .asScala(),
             cachedCompiledBridgeJar,
