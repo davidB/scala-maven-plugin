@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.alchim31.maven</groupId>
   <artifactId>scala-maven-plugin</artifactId>
-  <version>4.5.5</version>
+  <version>4.5.6-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>scala-maven-plugin</name>
