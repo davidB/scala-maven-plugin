@@ -544,7 +544,7 @@
           <dependency>
             <groupId>org.apache.maven.scm</groupId>
             <artifactId>maven-scm-api</artifactId>
-            <version>1.12.0</version>
+            <version>1.12.2</version>
             <scope>compile</scope>
           </dependency>
           <dependency>
