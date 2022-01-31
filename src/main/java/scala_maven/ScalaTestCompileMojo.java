@@ -45,6 +45,7 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (skip) {
+      getLog().info("Not compiling test sources");
       return;
     }
     super.execute();

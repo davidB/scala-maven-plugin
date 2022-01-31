@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -25,6 +27,13 @@ import util.FileUtils;
     requiresDependencyResolution = ResolutionScope.COMPILE,
     threadSafe = true)
 public class ScalaCompileMojo extends ScalaCompilerSupport {
+
+  /**
+   * Set this to 'true' to bypass compilation of main sources. Its use is NOT RECOMMENDED, but quite
+   * convenient on occasion.
+   */
+  @Parameter(property = "maven.main.skip")
+  private boolean skipMain;
 
   /** The directory in which to place compilation output */
   @Parameter(property = "outputDir", defaultValue = "${project.build.outputDirectory}")
@@ -88,5 +97,14 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
   @Override
   protected File getAnalysisCacheFile() {
     return analysisCacheFile.getAbsoluteFile();
+  }
+
+  @Override
+  public void execute() throws MojoExecutionException, MojoFailureException {
+    if (skipMain) {
+      getLog().info("Not compiling main sources");
+      return;
+    }
+    super.execute();
   }
 }
