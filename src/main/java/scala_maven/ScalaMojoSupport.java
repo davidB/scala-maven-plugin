@@ -221,7 +221,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       VersionNumber scalaVersion = findScalaVersion();
 
       ArtifactIds aids =
-          (scalaVersion.major == 3)
+          scalaVersion.major == 3
               ? new ArtifactIds4Scala3(scalaVersion)
               : new ArtifactIds4Scala2();
       VersionNumber requiredScalaVersion =
@@ -467,20 +467,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
   protected abstract void doExecute() throws Exception;
 
-  //  abstract JavaMainCaller getScalaCommand() throws Exception {
-  //    Context sc = findScalaContext();
-  //    return getScalaCommand(fork, scalaClassName);
-  //  }
-
   /**
-   * Get a {@link JavaMainCaller} used invoke a Java process. Typically this will be one of the
+   * Get a {@link JavaMainCaller} used invoke a Java process. Typically, this will be one of the
    * Scala utilities (Compiler, ScalaDoc, REPL, etc.).
    *
    * <p>This method does some setup on the {@link JavaMainCaller} which is not done by merely
    * invoking {@code new} on one of the implementations. Specifically, it adds any Scala compiler
    * plugin options, JVM options, and Scalac options defined on the plugin.
    *
-   * @param forkOverride override the setting for {@link #fork}. Currently this should only be set
+   * @param forkOverride override the setting for {@link #fork}. Currently, this should only be set
    *     if you are invoking the REPL.
    * @param mainClass the JVM main class to invoke.
    * @return a {@link JavaMainCaller} to use to invoke the given command.
