@@ -71,7 +71,6 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
   @Override
   protected Set<File> getClasspathElements() throws Exception {
     final Set<File> back = FileUtils.fromStrings(project.getCompileClasspathElements());
-    back.remove(new File(project.getBuild().getOutputDirectory()));
     addAdditionalDependencies(back);
     if (classpath != null && classpath.getAdd() != null) {
       getLog().warn("using 'classpath' is deprecated, use 'additionalDependencies' instead");

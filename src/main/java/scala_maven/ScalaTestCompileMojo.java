@@ -60,7 +60,6 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
   @Override
   protected Set<File> getClasspathElements() throws Exception {
     Set<File> back = FileUtils.fromStrings(project.getTestClasspathElements());
-    back.remove(new File(project.getBuild().getTestOutputDirectory()));
     addAdditionalDependencies(back);
     return back;
   }

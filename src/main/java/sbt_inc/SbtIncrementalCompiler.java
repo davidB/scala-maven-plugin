@@ -152,13 +152,10 @@ public class SbtIncrementalCompiler {
       Path classesDirectory,
       List<String> scalacOptions,
       List<String> javacOptions) {
-    List<Path> fullClasspath = new ArrayList<>();
-    fullClasspath.add(classesDirectory);
-    fullClasspath.addAll(classpathElements);
 
     CompileOptions options =
         CompileOptions.of(
-            fullClasspath.stream()
+            classpathElements.stream()
                 .map(PlainVirtualFile::new)
                 .toArray(VirtualFile[]::new), // classpath
             sources.stream().map(PlainVirtualFile::new).toArray(VirtualFile[]::new), // sources
