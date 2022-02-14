@@ -99,15 +99,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   @Parameter(property = "addScalacArgs")
   private String addScalacArgs;
 
-  /** The -target argument for the Scala compiler. */
-  @Parameter(property = "scala.compiler.target")
-  protected String scalacTarget;
-
-  /** The -release argument for the Scala compiler, supported since scala 2.13. */
-  @Parameter(property = "scala.compiler.release")
-  protected String scalacRelease;
-
-
   /** override the className (FQN) of the scala tool */
   @Parameter(required = false, property = "maven.scala.className")
   protected String scalaClassName;
@@ -163,7 +154,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   @Parameter(property = "maven.compiler.target")
   protected String target;
 
-  /** The --release argument for the Java compiler (when using incremental compiler), supported since Java9. */
+  /**
+   * The --release argument for the Java compiler (when using incremental compiler), supported since
+   * Java9.
+   */
   @Parameter(property = "maven.compiler.release")
   protected String release;
 
@@ -591,12 +585,12 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
     options.addAll(getCompilerPluginOptions());
 
-    if (scalacTarget != null && !scalacTarget.isEmpty()) {
-      options.add("-target:" + scalacTarget);
+    if (target != null && !target.isEmpty()) {
+      options.add("-target:" + target);
     }
-    if (scalacRelease != null && !scalacRelease.isEmpty()) {
+    if (release != null && !release.isEmpty()) {
       options.add("-release");
-      options.add(scalacRelease);
+      options.add(release);
     }
 
     return options;
