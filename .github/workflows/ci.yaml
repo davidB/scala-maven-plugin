@@ -17,7 +17,7 @@ jobs:
           distribution: "adopt" # See 'Supported distributions' for available options
           java-version: "8"
       - name: Cache Maven packages
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
