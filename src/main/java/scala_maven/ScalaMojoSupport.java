@@ -228,9 +228,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       VersionNumber scalaVersion = findScalaVersion();
 
       ArtifactIds aids =
-          scalaVersion.major == 3
-              ? new ArtifactIds4Scala3(scalaVersion)
-              : new ArtifactIds4Scala2();
+          scalaVersion.major == 3 ? new ArtifactIds4Scala3(scalaVersion) : new ArtifactIds4Scala2();
       VersionNumber requiredScalaVersion =
           StringUtils.isNotEmpty(scalaCompatVersion)
               ? new VersionNumberMask(scalaCompatVersion)
