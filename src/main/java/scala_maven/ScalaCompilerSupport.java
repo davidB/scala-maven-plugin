@@ -358,7 +358,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
 
     classpathElements.remove(outputDir);
-    List<String> scalacOptions = getScalaOptions();
+    List<String> scalacOptions = getScalacOptions();
     List<String> javacOptions = getJavacOptions();
 
     try {

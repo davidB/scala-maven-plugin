@@ -584,7 +584,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     return FileUtils.toMultiPath(classpath);
   }
 
-  protected List<String> getScalaOptions() throws Exception {
+  protected List<String> getScalacOptions() throws Exception {
     List<String> options = new ArrayList<>();
     if (args != null) Collections.addAll(options, args);
     if (StringUtils.isNotEmpty(addScalacArgs)) {
