@@ -321,7 +321,16 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     return project.getCompileDependencies();
   }
 
+  private VersionNumber detectedScalaVersion = null;
+
   private VersionNumber findScalaVersion() throws Exception {
+    if (detectedScalaVersion == null) {
+      detectedScalaVersion = findScalaVersion0();
+    }
+    return detectedScalaVersion;
+  }
+
+  private VersionNumber findScalaVersion0() throws Exception {
     String detectedScalaVersion = scalaVersion;
     if (StringUtils.isEmpty(detectedScalaVersion)) {
       detectedScalaVersion =
