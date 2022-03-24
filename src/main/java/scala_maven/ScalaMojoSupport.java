@@ -584,6 +584,34 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     return FileUtils.toMultiPath(classpath);
   }
 
+  static String targetOption(String target, VersionNumber scalaVersion) {
+    if (scalaVersion.major == 2) {
+      if (scalaVersion.minor <= 12) {
+        if (target.equals("1.5") || target.equals("5")) {
+          return "jvm-1.5";
+        } else if (target.equals("1.6") || target.equals("6")) {
+          return "jvm-1.6";
+        } else if (target.equals("1.7") || target.equals("7")) {
+          return "jvm-1.7";
+        } else if (target.equals("1.8") || target.equals("8")) {
+          return "jvm-1.8";
+        } else {
+          // invalid or unsupported option, just ignore
+          return null;
+        }
+      } else if (target.equals("1.5")) {
+        return "5";
+      } else if (target.equals("1.6")) {
+        return "6";
+      } else if (target.equals("1.7")) {
+        return "7";
+      } else if (target.equals("1.8")) {
+        return "8";
+      }
+    }
+    return target;
+  }
+
   protected List<String> getScalacOptions() throws Exception {
     List<String> options = new ArrayList<>();
     if (args != null) Collections.addAll(options, args);
@@ -593,7 +621,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     options.addAll(getCompilerPluginOptions());
 
     if (target != null && !target.isEmpty()) {
-      options.add("-target:" + target);
+      String targetOption = targetOption(target, findScalaVersion());
+      if (targetOption != null) {
+        options.add("-target:" + targetOption);
+      }
     }
     if (release != null && !release.isEmpty()) {
       options.add("-release");
