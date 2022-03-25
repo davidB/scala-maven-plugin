@@ -497,11 +497,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   final JavaMainCaller getScalaCommand(final boolean forkOverride, final String mainClass)
       throws Exception {
     JavaMainCaller cmd = getEmptyScalaCommand(mainClass, forkOverride);
-    cmd.addArgs(args);
-    if (StringUtils.isNotEmpty(addScalacArgs)) {
-      cmd.addArgs(StringUtils.split(addScalacArgs, "|"));
+    for (String option : getScalacOptions()) {
+      cmd.addArgs(option);
     }
-    addCompilerPluginOptions(cmd);
     cmd.addJvmArgs(jvmArgs);
     return cmd;
   }
@@ -627,8 +625,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       }
     }
     if (release != null && !release.isEmpty()) {
-      options.add("-release");
-      options.add(release);
+      VersionNumber scalaVersion = findScalaVersion();
+      if (scalaVersion.major > 2 || (scalaVersion.major == 2 && scalaVersion.minor >= 12)) {
+        options.add("-release");
+        options.add(release);
+      }
     }
 
     return options;
