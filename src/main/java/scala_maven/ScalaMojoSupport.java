@@ -497,11 +497,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   final JavaMainCaller getScalaCommand(final boolean forkOverride, final String mainClass)
       throws Exception {
     JavaMainCaller cmd = getEmptyScalaCommand(mainClass, forkOverride);
+    getScalaCommand0(cmd);
+    return cmd;
+  }
+
+  final void getScalaCommand0(final JavaMainCaller cmd) throws Exception {
     for (String option : getScalacOptions()) {
       cmd.addArgs(option);
     }
     cmd.addJvmArgs(jvmArgs);
-    return cmd;
   }
 
   /**
@@ -524,7 +528,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
    *     if you are invoking the REPL.
    * @return a {@link JavaMainCaller} to use to invoke the given command.
    */
-  JavaMainCaller getEmptyScalaCommand(final String mainClass, final boolean forkOverride)
+  private JavaMainCaller getEmptyScalaCommand(final String mainClass, final boolean forkOverride)
       throws Exception {
 
     // If we are deviating from the plugin settings, let the user know

@@ -12,8 +12,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import org.junit.Test;
-import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.JavaMainCallerSupport;
+import scala_maven_executions.SpawnMonitor;
 
 public class ScalaMojoSupportTest {
 
@@ -74,12 +74,7 @@ public class ScalaMojoSupportTest {
     }
 
     public List<String> getScalacOptions() throws Exception {
-      try {
-        return super.getScalacOptions();
-      } catch (final Exception e) {
-        e.printStackTrace();
-        throw e;
-      }
+      return super.getScalacOptions();
     }
 
     public void setScalaVersion(final String v) {
@@ -88,16 +83,11 @@ public class ScalaMojoSupportTest {
 
     @Override
     protected void doExecute() throws Exception {}
-
-    @Override
-    JavaMainCaller getEmptyScalaCommand(final String mainClass, final boolean forkOverride) {
-      return new JavaMainCallerArgs(this);
-    }
   }
 
   static class JavaMainCallerArgs extends JavaMainCallerSupport {
-    public JavaMainCallerArgs(final ScalaMojoSupport mojo) {
-      super(mojo, null, null, null, null);
+    public JavaMainCallerArgs() {
+      super(null, null, null, null, null);
     }
 
     public List<String> getArgs() {
@@ -105,7 +95,7 @@ public class ScalaMojoSupportTest {
     }
 
     @Override
-    public scala_maven_executions.SpawnMonitor spawn(boolean displayCmd) throws Exception {
+    public SpawnMonitor spawn(boolean displayCmd) throws Exception {
       return null;
     }
 
@@ -150,15 +140,13 @@ public class ScalaMojoSupportTest {
   @Test
   public void scala2_12_scala_command_contain_target_and_release() throws Exception {
     mojoWithRelease.setScalaVersion("2.12.0");
-    final JavaMainCaller caller = mojoWithRelease.getScalaCommand(true, "String");
-    assertNotNull(caller);
-    assertTrue(caller instanceof JavaMainCallerArgs);
+    final JavaMainCallerArgs caller = new JavaMainCallerArgs();
+    mojoWithRelease.getScalaCommand0(caller);
 
-    final JavaMainCallerArgs callerJvm = (JavaMainCallerArgs) caller;
-    assertNotNull(callerJvm.getArgs());
-    assertEquals(3, callerJvm.getArgs().size());
-    assertTrue(callerJvm.getArgs().contains("-release"));
-    assertTrue(callerJvm.getArgs().contains("42"));
-    assertTrue(callerJvm.getArgs().contains("-target:jvm-1.8"));
+    assertNotNull(caller.getArgs());
+    assertEquals(3, caller.getArgs().size());
+    assertTrue(caller.getArgs().contains("-release"));
+    assertTrue(caller.getArgs().contains("42"));
+    assertTrue(caller.getArgs().contains("-target:jvm-1.8"));
   }
 }
