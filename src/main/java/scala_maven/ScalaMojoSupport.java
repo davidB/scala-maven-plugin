@@ -105,7 +105,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
   /** Scala 's version to use. (property 'maven.scala.version' replaced by 'scala.version') */
   @Parameter(property = "scala.version")
-  private String scalaVersion;
+  protected String scalaVersion;
 
   /**
    * Organization/group ID of the Scala used in the project. Default value is 'org.scala-lang'. This
@@ -524,7 +524,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
    *     if you are invoking the REPL.
    * @return a {@link JavaMainCaller} to use to invoke the given command.
    */
-  private JavaMainCaller getEmptyScalaCommand(final String mainClass, final boolean forkOverride)
+  JavaMainCaller getEmptyScalaCommand(final String mainClass, final boolean forkOverride)
       throws Exception {
 
     // If we are deviating from the plugin settings, let the user know
