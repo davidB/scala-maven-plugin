@@ -497,11 +497,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   final JavaMainCaller getScalaCommand(final boolean forkOverride, final String mainClass)
       throws Exception {
     JavaMainCaller cmd = getEmptyScalaCommand(mainClass, forkOverride);
-    getScalaCommand0(cmd);
+    populateArgs(cmd);
     return cmd;
   }
 
-  final void getScalaCommand0(final JavaMainCaller cmd) throws Exception {
+  final void populateArgs(final JavaMainCaller cmd) throws Exception {
     for (String option : getScalacOptions()) {
       cmd.addArgs(option);
     }

@@ -141,7 +141,7 @@ public class ScalaMojoSupportTest {
   public void scala2_12_scala_command_contain_target_and_release() throws Exception {
     mojoWithRelease.setScalaVersion("2.12.0");
     final JavaMainCallerArgs caller = new JavaMainCallerArgs();
-    mojoWithRelease.getScalaCommand0(caller);
+    mojoWithRelease.populateArgs(caller);
 
     assertNotNull(caller.getArgs());
     assertEquals(3, caller.getArgs().size());
