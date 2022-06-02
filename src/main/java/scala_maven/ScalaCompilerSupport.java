@@ -302,10 +302,9 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     allJars.addAll(Arrays.asList(libraryJars));
     File[] allJarFiles = allJars.toArray(new File[] {});
 
-    URLClassLoader loaderLibraryOnly =
+    ClassLoader loaderLibraryOnly =
         new ScalaCompilerLoader(libraryJarUrls, xsbti.Reporter.class.getClassLoader());
-    URLClassLoader loaderCompilerOnly = new URLClassLoader(compilerJarUrls, loaderLibraryOnly);
-    URLClassLoader loader = loaderCompilerOnly;
+    ClassLoader loaderCompilerOnly = new URLClassLoader(compilerJarUrls, loaderLibraryOnly);
 
     if (getLog().isDebugEnabled()) {
       getLog().debug("compilerJars: " + FileUtils.toMultiPath(compilerJars));
@@ -314,7 +313,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     return new ScalaInstance(
         sc.version().toString(),
-        loader,
+        loaderCompilerOnly,
         loaderCompilerOnly,
         loaderLibraryOnly,
         libraryJars,
