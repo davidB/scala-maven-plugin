@@ -129,7 +129,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     long n0 = System.nanoTime();
     LastCompilationInfo lastCompilationInfo = LastCompilationInfo.find(sourceRootDirs, outputDir);
     if (_lastCompileAt < 0) {
-      _lastCompileAt = lastCompilationInfo.getLastSuccessfullTS();
+      _lastCompileAt = lastCompilationInfo.getLastSuccessfulTS();
     }
 
     List<File> files = getFilesToCompile(sourceRootDirs, _lastCompileAt);
@@ -153,7 +153,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
           incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, true);
       _lastCompileAt = t1;
       if (retCode == 1) {
-        lastCompilationInfo.setLastSuccessfullTS(t1);
+        lastCompilationInfo.setLastSuccessfulTS(t1);
       }
       return retCode;
     }
@@ -174,7 +174,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     }
     try {
       if (jcmd.run(displayCmd, !compileInLoop)) {
-        lastCompilationInfo.setLastSuccessfullTS(t1);
+        lastCompilationInfo.setLastSuccessfulTS(t1);
       } else {
         compileErrors = true;
       }
@@ -266,7 +266,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
       _outputDir = outputDir;
     }
 
-    long getLastSuccessfullTS() {
+    long getLastSuccessfulTS() {
       long back = -1;
       if (_lastCompileAtFile.exists() && _outputDir.exists() && _outputDir.list().length > 0) {
         back = _lastCompileAtFile.lastModified();
@@ -274,7 +274,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
       return back;
     }
 
-    void setLastSuccessfullTS(long v) throws Exception {
+    void setLastSuccessfulTS(long v) throws Exception {
       if (!_lastCompileAtFile.exists()) {
         FileUtils.fileWrite(_lastCompileAtFile.getAbsolutePath(), ".");
       }
