@@ -169,7 +169,7 @@ public class SbtIncrementalCompiler {
             pos -> pos, // sourcePositionMappers
             compileOrder, // order
             Optional.empty(), // temporaryClassesDirectory
-            Optional.of(PlainVirtualFileConverter.converter()), // _converter
+            Optional.empty(), // _converter
             Optional.empty(), // _stamper
             Optional.empty() // _earlyOutput
             );
