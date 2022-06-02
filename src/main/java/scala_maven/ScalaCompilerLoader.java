@@ -16,6 +16,8 @@
 
 package scala_maven;
 
+import sbt.internal.inc.classpath.ClasspathUtil;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -25,7 +27,7 @@ public class ScalaCompilerLoader extends URLClassLoader {
   private final ClassLoader sbtLoader;
 
   public ScalaCompilerLoader(URL[] urls, ClassLoader sbtLoader) {
-    super(urls, null);
+    super(urls, ClasspathUtil.rootLoader());
     this.sbtLoader = sbtLoader;
   }
 
