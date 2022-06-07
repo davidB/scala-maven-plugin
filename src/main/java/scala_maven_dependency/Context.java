@@ -19,6 +19,8 @@ public interface Context {
 
   Set<Artifact> findCompilerAndDependencies() throws Exception;
 
+  Set<Artifact> findScalaDocAndDependencies() throws Exception;
+
   String compilerMainClassName(String override, boolean useFsc) throws Exception;
 
   String consoleMainClassName(String override) throws Exception;

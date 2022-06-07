@@ -219,7 +219,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     return mavenArtifactResolver;
   }
 
-  private Context scalaContext;
+  protected Context scalaContext;
 
   public Context findScalaContext() throws Exception {
     // reuse/lazy scalaContext creation (doesn't need to be Thread safe, scalaContext should be
@@ -286,6 +286,13 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   void addLibraryToClasspath(Set<File> classpath) throws Exception {
     Context sc = findScalaContext();
     for (Artifact dep : sc.findLibraryAndDependencies()) {
+      classpath.add(dep.getFile());
+    }
+  }
+
+  void addScalaDocToClasspath(Set<File> classpath) throws Exception {
+    Context sc = findScalaContext();
+    for (Artifact dep : sc.findScalaDocAndDependencies()) {
       classpath.add(dep.getFile());
     }
   }

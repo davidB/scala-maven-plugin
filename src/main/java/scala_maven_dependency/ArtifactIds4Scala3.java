@@ -11,6 +11,7 @@ import scala_maven.VersionNumber;
 public class ArtifactIds4Scala3 implements ArtifactIds {
   protected static final String SCALA_LIBRARY_ARTIFACTID = "scala3-library";
   protected static final String SCALA_COMPILER_ARTIFACTID = "scala3-compiler";
+  protected static final String SCALA_DOC_ARTIFACTID = "scaladoc";
   static final List<String> SCALA_DISTRO_ARTIFACTS =
       Arrays.asList(
           SCALA_LIBRARY_ARTIFACTID, "scala3-swing", "scala3-dbc", SCALA_COMPILER_ARTIFACTID);
@@ -49,6 +50,11 @@ public class ArtifactIds4Scala3 implements ArtifactIds {
     return getScala3ArtifactId(SCALA_COMPILER_ARTIFACTID);
   }
 
+  @Override
+  public String scalaDocArtifactId() throws Exception {
+    return getScala3ArtifactId(SCALA_DOC_ARTIFACTID);
+  }
+
   public String compilerMainClassName(boolean useFsc) throws Exception {
     return "dotty.tools.dotc.Main";
   }
@@ -59,6 +65,6 @@ public class ArtifactIds4Scala3 implements ArtifactIds {
   }
 
   public String apidocMainClassName() throws Exception {
-    return "dotty.tools.dotc.Main";
+    return "dotty.tools.scaladoc.Main";
   }
 }
