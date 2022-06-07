@@ -6,6 +6,7 @@ package scala_maven;
 
 import java.io.File;
 import java.util.*;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -17,11 +18,12 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
 import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
+import scala_maven_executions.ScalaDoc3Caller;
 import util.FileUtils;
 
 /** Produces Scala API documentation. */
 @Mojo(name = "doc", requiresDependencyResolution = ResolutionScope.COMPILE)
-@Execute(phase = LifecyclePhase.GENERATE_SOURCES)
+@Execute(phase = LifecyclePhase.COMPILE)
 public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport {
 
   /** Include title for the overview page. */
@@ -147,11 +149,25 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     generate(null, Locale.getDefault());
   }
 
+  void addScalaDocToClasspath(Set<File> classpath) throws Exception {
+    Context sc = findScalaContext();
+    for (Artifact dep : sc.findScalaDocAndDependencies()) {
+      classpath.add(dep.getFile());
+    }
+  }
+
   protected JavaMainCaller getScalaCommand() throws Exception {
     // This ensures we have a valid scala version...
     checkScalaVersion();
     Context sc = findScalaContext();
-    JavaMainCaller jcmd = getEmptyScalaCommand(sc.apidocMainClassName(scaladocClassName));
+    String apidocMainClassName = sc.apidocMainClassName(scaladocClassName);
+    JavaMainCaller jcmd;
+    if (sc.version().major < 3) {
+      jcmd = getEmptyScalaCommand(apidocMainClassName);
+    } else {
+      String targetClassesDir = project.getModel().getBuild().getOutputDirectory();
+      jcmd = new ScalaDoc3Caller(this, apidocMainClassName, targetClassesDir);
+    }
     jcmd.addArgs(args);
     jcmd.addJvmArgs(jvmArgs);
     addCompilerPluginOptions(jcmd);
@@ -169,11 +185,20 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
                 .getOutputDirectory())); // remove output to avoid "error for" : error: XXX is
     // already defined as package XXX ... object XXX {
     addAdditionalDependencies(paths);
-    if (!paths.isEmpty()) jcmd.addOption("-classpath", FileUtils.toMultiPath(paths));
+    addScalaDocToClasspath(paths);
+
+    if (!paths.isEmpty()) {
+      jcmd.addOption("-classpath", FileUtils.toMultiPath(paths));
+    }
     // jcmd.addOption("-sourcepath", sourceDir.getAbsolutePath());
 
     jcmd.addArgs("-doc-format:html");
-    jcmd.addOption("-doc-title", doctitle);
+    boolean docTitleAlreadyConfigured =
+        args != null
+            && Arrays.stream(args).anyMatch(a -> a.equals("-doc-title") || a.equals("-project"));
+    if (!docTitleAlreadyConfigured) {
+      jcmd.addOption("-doc-title", doctitle);
+    }
     return jcmd;
   }
 
@@ -194,8 +219,17 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
       if (sources.size() > 0) {
         JavaMainCaller jcmd = getScalaCommand();
         jcmd.addOption("-d", reportOutputDir.getAbsolutePath());
-        for (File x : sources) {
-          jcmd.addArgs(FileUtils.pathOf(x, useCanonicalPath));
+        if (jcmd instanceof ScalaDoc3Caller) {
+          if (hasCustomSourceFilters()) {
+            getLog()
+                .warn(
+                    "Scala 3 scaladoc processes the whole compiled output directory; "
+                        + "configured <includes>/<excludes> filters are ignored.");
+          }
+        } else {
+          for (File x : sources) {
+            jcmd.addArgs(FileUtils.pathOf(x, useCanonicalPath));
+          }
         }
         jcmd.run(displayCmd);
       }

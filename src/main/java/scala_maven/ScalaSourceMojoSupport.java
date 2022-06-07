@@ -61,13 +61,28 @@ public abstract class ScalaSourceMojoSupport extends ScalaMojoSupport {
   protected abstract List<File> getSourceDirectories() throws Exception;
 
   private boolean _filterPrinted = false;
+  private boolean _customSourceFiltersChecked = false;
+  private boolean _hasCustomSourceFilters = false;
 
   /** Finds all source files in a set of directories with a given extension. */
   List<File> findSourceWithFilters() throws Exception {
     return findSourceWithFilters(getSourceDirectories());
   }
 
+  /**
+   * Whether the user configured {@code <includes>}/{@code <excludes>}, captured before defaults are
+   * applied by {@link #initFilters()}.
+   */
+  protected boolean hasCustomSourceFilters() throws Exception {
+    initFilters();
+    return _hasCustomSourceFilters;
+  }
+
   private void initFilters() throws Exception {
+    if (!_customSourceFiltersChecked) {
+      _hasCustomSourceFilters = !includes.isEmpty() || !excludes.isEmpty();
+      _customSourceFiltersChecked = true;
+    }
     if (includes.isEmpty()) {
       includes.add("**/*.scala");
       if (sendJavaToScalac && isJavaSupportedByCompiler()) {

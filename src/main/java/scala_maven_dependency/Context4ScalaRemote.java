@@ -4,6 +4,7 @@
  */
 package scala_maven_dependency;
 
+import java.util.Collections;
 import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import scala_maven.MavenArtifactResolver;
@@ -40,5 +41,17 @@ public class Context4ScalaRemote extends ContextBase implements Context {
   public Set<Artifact> findCompilerAndDependencies() throws Exception {
     return mavenArtifactResolver.getJarAndDependencies(
         scalaOrganization, aids.scalaCompilerArtifactId(), scalaVersion.toString(), null);
+  }
+
+  @Override
+  public Set<Artifact> findScalaDocAndDependencies() throws Exception {
+    Set<Artifact> scaladocAndDependencies = Collections.emptySet();
+    if (aids.scalaDocArtifactId() != null) {
+      scaladocAndDependencies =
+          mavenArtifactResolver.getJarAndDependencies(
+              scalaOrganization, aids.scalaDocArtifactId(), scalaVersion.toString(), null);
+    }
+
+    return scaladocAndDependencies;
   }
 }
