@@ -290,13 +290,6 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
   }
 
-  void addScalaDocToClasspath(Set<File> classpath) throws Exception {
-    Context sc = findScalaContext();
-    for (Artifact dep : sc.findScalaDocAndDependencies()) {
-      classpath.add(dep.getFile());
-    }
-  }
-
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     try {

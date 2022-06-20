@@ -6,6 +6,7 @@ package scala_maven;
 
 import java.io.File;
 import java.util.*;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -150,6 +151,13 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     generate(null, Locale.getDefault());
   }
 
+  void addScalaDocToClasspath(Set<File> classpath) throws Exception {
+    Context sc = findScalaContext();
+    for (Artifact dep : sc.findScalaDocAndDependencies()) {
+      classpath.add(dep.getFile());
+    }
+  }
+
   protected JavaMainCaller getScalaCommand() throws Exception {
     // This ensures we have a valid scala version...
     checkScalaVersion();
@@ -179,9 +187,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
                 .getOutputDirectory())); // remove output to avoid "error for" : error: XXX is
     // already defined as package XXX ... object XXX {
     addAdditionalDependencies(paths);
-    if (sc.version().major == 3) {
-      addScalaDocToClasspath(paths);
-    }
+    addScalaDocToClasspath(paths);
 
     if (!paths.isEmpty()) {
       jcmd.addOption("-classpath", FileUtils.toMultiPath(paths));
