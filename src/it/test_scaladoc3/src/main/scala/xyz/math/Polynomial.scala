@@ -1,7 +1,11 @@
-package de.christofreichardt.scala.math
+/*
+ * This is free and unencumbered software released into the public domain.
+ * See UNLICENSE.
+ */
+package xyz.math
 
 import de.christofreichardt.diagnosis.{AbstractTracer, TracerFactory}
-import de.christofreichardt.scala.diagnosis.Tracing
+import xyz.diagnosis.Tracing
 
 /**
  * Defines a polynomial in its canonical form.
