@@ -29,8 +29,6 @@ import scala.Option;
 import scala.Tuple2;
 import scala_maven.MavenArtifactResolver;
 import util.FileUtils;
-import util.JavaVersion;
-import xsbti.FileConverter;
 import xsbti.PathBasedFile;
 import xsbti.T2;
 import xsbti.VirtualFile;
@@ -118,7 +116,9 @@ public class SbtIncrementalCompiler {
 
           @Override
           public DefinesClass definesClass(VirtualFile classpathEntry) {
-            return Locate.definesClass(classpathEntry);
+            return classpathEntry.name().equals("rt.jar")
+                ? className -> false
+                : Locate.definesClass(classpathEntry);
           }
         };
 
@@ -158,11 +158,6 @@ public class SbtIncrementalCompiler {
     fullClasspath.add(classesDirectory);
     fullClasspath.addAll(classpathElements);
 
-    Optional<FileConverter> fileConverter =
-        JavaVersion.JAVA_MAJOR_VERSION >= 9
-            ? Optional.empty()
-            : Optional.of(PlainVirtualFileConverter.converter());
-
     CompileOptions options =
         CompileOptions.of(
             fullClasspath.stream()
@@ -176,7 +171,7 @@ public class SbtIncrementalCompiler {
             pos -> pos, // sourcePositionMappers
             compileOrder, // order
             Optional.empty(), // temporaryClassesDirectory
-            fileConverter, // _converter
+            Optional.empty(), // _converter
             Optional.empty(), // _stamper
             Optional.empty() // _earlyOutput
             );
