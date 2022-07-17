@@ -18,7 +18,7 @@ import org.apache.maven.toolchain.Toolchain;
 public class JavaLocator {
 
   private static final boolean IS_WINDOWS =
-    System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
+    System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("windows");
 
   // inspired from org.codehaus.plexus.compiler.javac.JavacCompiler#getJavacExecutable
   public static String findExecutableFromToolchain(Toolchain toolchain) throws IOException {
