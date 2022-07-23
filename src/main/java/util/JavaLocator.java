@@ -37,10 +37,11 @@ public class JavaLocator {
       if (javaHomeSystemProperty.endsWith(File.separator + "jre")) {
         // Old JDK versions contain a JRE. We might be pointing to that.
         // We want to try to use the JDK instead as we need javac in order to compile mixed Java-Scala projects.
-        File javaExecFile = new File(javaHomeSystemProperty + File.separator + ".." + File.separator + "bin", javaCommand);
+        File jdkParentDir = new File(javaHomeSystemProperty).getParentFile();
+        File javaExecFile = new File(jdkParentDir.getPath() + File.separator + "bin", javaCommand);
         if (javaExecFile.isFile()) {
-          // getCanonicalPath to get rid of ".."
-          return javaExecFile.getCanonicalPath();
+          // get absolute path
+          return javaExecFile.getAbsolutePath();
         }
       }
 
