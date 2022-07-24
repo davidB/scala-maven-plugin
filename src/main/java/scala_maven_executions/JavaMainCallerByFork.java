@@ -43,8 +43,7 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
       String[] jvmArgs1,
       String[] args1,
       boolean forceUseArgFile,
-      Toolchain toolchain)
-      throws Exception {
+      Toolchain toolchain) {
     super(requester1, mainClassName1, classpath, jvmArgs1, args1);
     for (String key : System.getenv().keySet()) {
       env.add(key + "=" + System.getenv(key));

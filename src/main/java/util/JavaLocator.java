@@ -5,7 +5,8 @@
 package util;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 
 import org.apache.maven.toolchain.Toolchain;
@@ -21,7 +22,7 @@ public class JavaLocator {
     System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("windows");
 
   // inspired from org.codehaus.plexus.compiler.javac.JavacCompiler#getJavacExecutable
-  public static String findExecutableFromToolchain(Toolchain toolchain) throws IOException {
+  public static String findExecutableFromToolchain(Toolchain toolchain) {
 
     if (toolchain != null) {
       String fromToolChain = toolchain.findTool("java");
@@ -34,20 +35,22 @@ public class JavaLocator {
 
     String javaHomeSystemProperty = System.getProperty("java.home");
     if (javaHomeSystemProperty != null) {
-      if (javaHomeSystemProperty.endsWith(File.separator + "jre")) {
+      Path javaHomePath = Paths.get(javaHomeSystemProperty);
+
+      if (javaHomePath.endsWith("jre")) {
         // Old JDK versions contain a JRE. We might be pointing to that.
-        // We want to try to use the JDK instead as we need javac in order to compile mixed Java-Scala projects.
-        File javaExecFile = new File(javaHomeSystemProperty + File.separator + ".." + File.separator + "bin", javaCommand);
-        if (javaExecFile.isFile()) {
-          // getCanonicalPath to get rid of ".."
-          return javaExecFile.getCanonicalPath();
+        // We want to try to use the JDK instead as we need javac in order to compile mixed
+        // Java-Scala projects.
+        Path javaExecPath = javaHomePath.resolveSibling("bin").resolve(javaCommand);
+        if (javaExecPath.toFile().isFile()) {
+          return javaExecPath.toString();
         }
       }
 
       // old standalone JRE or modern JDK
-      File javaExecFile = new File(javaHomeSystemProperty + File.separator + "bin", javaCommand);
-      if (javaExecFile.isFile()) {
-        return javaExecFile.getAbsolutePath();
+      Path javaExecPath = javaHomePath.resolve("bin").resolve(javaCommand);
+      if (javaExecPath.toFile().isFile()) {
+        return javaExecPath.toString();
       } else {
         throw new IllegalStateException("Couldn't locate java in defined java.home system property.");
       }
@@ -59,15 +62,15 @@ public class JavaLocator {
       throw new IllegalStateException("Couldn't locate java, try setting JAVA_HOME environment variable.");
     }
 
-    File javaExecFile = new File(javaHomeEnvVar + File.separator + "bin", javaCommand);
-    if (javaExecFile.isFile()) {
-      return javaExecFile.getAbsolutePath();
+    Path javaExecPath = Paths.get(javaHomeEnvVar).resolve("bin").resolve(javaCommand);
+    if (javaExecPath.toFile().isFile()) {
+      return javaExecPath.toString();
     } else {
       throw new IllegalStateException("Couldn't locate java in defined JAVA_HOME environment variable.");
     }
   }
 
-  public static File findHomeFromToolchain(Toolchain toolchain) throws IOException {
+  public static File findHomeFromToolchain(Toolchain toolchain) {
     String executable = findExecutableFromToolchain(toolchain);
     File executableParent = new File(executable).getParentFile();
     if (executableParent == null) {

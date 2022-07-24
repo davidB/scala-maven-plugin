@@ -7,7 +7,6 @@ package util;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.IOException;
 import org.apache.maven.toolchain.Toolchain;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,19 +17,19 @@ public class JavaLocatorTest {
   @Rule public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
   @Test
-  public void shouldReturnNotNullWhenJavaIsNotAvailableOnCommandLineAndJavaHomeIsPresent() throws IOException {
+  public void shouldReturnNotNullWhenJavaIsNotAvailableOnCommandLineAndJavaHomeIsPresent() {
     Toolchain toolchain = new ReturningToolChain(null);
     assertNotNull(JavaLocator.findExecutableFromToolchain(toolchain));
   }
 
   @Test
-  public void shouldReturnPathToJavaWhenJavaIsPresent() throws Exception {
+  public void shouldReturnPathToJavaWhenJavaIsPresent() {
     Toolchain toolchain = new ReturningToolChain("my-path-to-java");
     assertEquals("my-path-to-java", JavaLocator.findExecutableFromToolchain(toolchain));
   }
 
   @Test
-  public void shouldThrowExceptionWhenNothingCouldBeFound() throws IOException {
+  public void shouldThrowExceptionWhenNothingCouldBeFound() {
     Toolchain toolchain = new ReturningToolChain(null);
     System.clearProperty("java.home");
     environmentVariables.set("JAVA_HOME", null);
@@ -44,13 +43,14 @@ public class JavaLocatorTest {
   }
 
   @Test
-  public void shouldReturnParentOfChildOfJavaHomeFolder() throws IOException {
-    File home = JavaLocator.findHomeFromToolchain(new ReturningToolChain("parent/child/my-path-to-java"));
+  public void shouldReturnParentOfChildOfJavaHomeFolder() {
+    File home =
+        JavaLocator.findHomeFromToolchain(new ReturningToolChain("parent/child/my-path-to-java"));
     assertEquals("parent", home.getPath());
   }
 
   @Test
-  public void shouldReturnNullWhenFileIsNotPresent() throws IOException {
+  public void shouldReturnNullWhenFileIsNotPresent() {
     File home = JavaLocator.findHomeFromToolchain(new ReturningToolChain("my-path-to-java"));
     assertNull(home);
   }
