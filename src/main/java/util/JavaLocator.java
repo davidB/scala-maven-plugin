@@ -8,7 +8,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
-
 import org.apache.maven.toolchain.Toolchain;
 
 /**
@@ -19,7 +18,7 @@ import org.apache.maven.toolchain.Toolchain;
 public class JavaLocator {
 
   private static final boolean IS_WINDOWS =
-    System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("windows");
+      System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("windows");
 
   // inspired from org.codehaus.plexus.compiler.javac.JavacCompiler#getJavacExecutable
   public static String findExecutableFromToolchain(Toolchain toolchain) {
@@ -52,21 +51,24 @@ public class JavaLocator {
       if (javaExecPath.toFile().isFile()) {
         return javaExecPath.toString();
       } else {
-        throw new IllegalStateException("Couldn't locate java in defined java.home system property.");
+        throw new IllegalStateException(
+            "Couldn't locate java in defined java.home system property.");
       }
     }
 
     // fallback: try to resolve from JAVA_HOME
     String javaHomeEnvVar = System.getenv("JAVA_HOME");
     if (javaHomeEnvVar == null) {
-      throw new IllegalStateException("Couldn't locate java, try setting JAVA_HOME environment variable.");
+      throw new IllegalStateException(
+          "Couldn't locate java, try setting JAVA_HOME environment variable.");
     }
 
     Path javaExecPath = Paths.get(javaHomeEnvVar).resolve("bin").resolve(javaCommand);
     if (javaExecPath.toFile().isFile()) {
       return javaExecPath.toString();
     } else {
-      throw new IllegalStateException("Couldn't locate java in defined JAVA_HOME environment variable.");
+      throw new IllegalStateException(
+          "Couldn't locate java in defined JAVA_HOME environment variable.");
     }
   }
 
