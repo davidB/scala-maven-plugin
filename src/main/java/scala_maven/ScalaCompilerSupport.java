@@ -35,6 +35,10 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
   /** Keeps track of if we get compile errors in incremental mode */
   private boolean compileErrors;
 
+  /** The directory in which to place compilation output */
+  @Parameter(property = "outputDir", defaultValue = "${project.build.outputDirectory}")
+  private File outputDir;
+
   /**
    * Recompile mode to use when sources were previously compiled and there is at least one change,
    * see {@link RecompileMode}.
@@ -64,8 +68,6 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
    */
   @Parameter(property = "secondaryCacheDir")
   private File secondaryCacheDir;
-
-  protected abstract File getOutputDir() throws Exception;
 
   protected abstract Set<File> getClasspathElements() throws Exception;
 
@@ -377,4 +379,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     return 1;
   }
+  protected File getOutputDir() {
+    return outputDir.getAbsoluteFile();
+  }
+
 }

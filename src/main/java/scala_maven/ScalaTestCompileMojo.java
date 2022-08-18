@@ -72,7 +72,11 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
 
   @Override
   protected File getOutputDir() {
-    return testOutputDir.getAbsoluteFile();
+    //return only if it's overwrite the standard parameter
+    if(!testOutputDir.equals(super.getOutputDir())) {
+      return testOutputDir.getAbsoluteFile();
+    }
+    return super.getOutputDir();
   }
 
   @Override

@@ -472,7 +472,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
   }
 
-  /** @return A filter to only extract artifacts deployed from scala distributions */
+  /**
+   * @return A filter to only extract artifacts deployed from scala distributions
+   */
   private DependencyNodeFilter createScalaDistroDependencyFilter() throws Exception {
     List<DependencyNodeFilter> filters = new ArrayList<>();
     filters.add(new ScalaDistroArtifactFilter(findScalaContext()));

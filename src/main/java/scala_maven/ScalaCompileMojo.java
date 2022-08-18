@@ -35,10 +35,6 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
   @Parameter(property = "maven.main.skip")
   private boolean skipMain;
 
-  /** The directory in which to place compilation output */
-  @Parameter(property = "outputDir", defaultValue = "${project.build.outputDirectory}")
-  private File outputDir;
-
   /** The directory which contains scala/java source files */
   @Parameter(defaultValue = "${project.build.sourceDirectory}/../scala")
   private File sourceDir;
@@ -87,11 +83,6 @@ public class ScalaCompileMojo extends ScalaCompilerSupport {
   @Deprecated
   protected List<Dependency> getDependencies() {
     return project.getCompileDependencies();
-  }
-
-  @Override
-  protected File getOutputDir() {
-    return outputDir.getAbsoluteFile();
   }
 
   @Override
