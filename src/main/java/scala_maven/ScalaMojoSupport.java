@@ -370,10 +370,10 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       if (!scalaVersion.equals(detectedScalaVersion)) {
         getLog()
             .warn(
-                "scala library version define in dependencies doesn't match the scalaVersion of the plugin");
+                "scala library version defined in dependencies doesn't match the scalaVersion of the plugin");
       }
       // getLog().info("suggestion: remove the scalaVersion from pom.xml");
-      // //scalaVersion could be define in a parent pom where lib is not required
+      // //scalaVersion could be defined in a parent pom where lib is not required
     }
     return new VersionNumber(detectedScalaVersion);
   }
@@ -618,18 +618,33 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     }
     options.addAll(getCompilerPluginOptions());
 
-    if (target != null && !target.isEmpty()) {
-      String targetOption = targetOption(target, findScalaVersion());
+    VersionNumber scalaVersion = findScalaVersion();
+
+    boolean targetIsDefined = StringUtils.isNotEmpty(target);
+    boolean releaseIsDefined = StringUtils.isNotEmpty(release);
+    boolean targetIsDeprecated = scalaVersion.compareTo(new VersionNumber("2.13.9")) >= 0;
+    boolean releaseIsSupported = scalaVersion.compareTo(new VersionNumber("2.12.0")) >= 0;
+
+    // target's default is "maven.compiler.target"'s default, which is 1.8
+    if (targetIsDefined) {
+      String targetOption = targetOption(target, scalaVersion);
       if (targetOption != null) {
-        options.add("-target:" + targetOption);
+        if (!targetIsDeprecated) {
+          options.add("-target:" + targetOption);
+        } else if (!releaseIsDefined) {
+          // -target is deprecated in favor of -release
+          // no user-defined release specified
+          // set release instead, so we don't get a deprecation warning
+          options.add("-release");
+          options.add(targetOption);
+        }
       }
     }
-    if (release != null && !release.isEmpty()) {
-      VersionNumber scalaVersion = findScalaVersion();
-      if (scalaVersion.major > 2 || (scalaVersion.major == 2 && scalaVersion.minor >= 12)) {
-        options.add("-release");
-        options.add(release);
-      }
+
+    // release's default is "maven.compiler.release"'s default, which is null
+    if (releaseIsDefined && releaseIsSupported) {
+      options.add("-release");
+      options.add(release);
     }
 
     return options;
@@ -646,15 +661,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     if (javacGenerateDebugSymbols) {
       options.add("-g");
     }
-    if (release != null && !release.isEmpty()) {
+    if (StringUtils.isNotEmpty(release)) {
       options.add("--release");
       options.add(release);
     } else {
-      if (target != null && !target.isEmpty()) {
+      if (StringUtils.isNotEmpty(target)) {
         options.add("-target");
         options.add(target);
       }
-      if (source != null && !source.isEmpty()) {
+      if (StringUtils.isNotEmpty(source)) {
         options.add("-source");
         options.add(source);
       }
