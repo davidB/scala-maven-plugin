@@ -9,6 +9,7 @@ import static scala.jdk.FunctionWrappers.FromJavaConsumer;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,7 +49,6 @@ public class SbtIncrementalCompiler {
   private final Compilers compilers;
   private final Setup setup;
   private final AnalysisStore analysisStore;
-  private final MavenArtifactResolver resolver;
   private final File secondaryCacheDir;
 
   public SbtIncrementalCompiler(
@@ -63,12 +63,11 @@ public class SbtIncrementalCompiler {
     this.compileOrder = compileOrder;
     this.logger = new SbtLogger(mavenLogger);
     mavenLogger.info("Using incremental compilation using " + compileOrder + " compile order");
-    this.resolver = resolver;
     this.secondaryCacheDir =
         secondaryCacheDir != null ? secondaryCacheDir : DEFAULT_SECONDARY_CACHE_DIR;
     this.secondaryCacheDir.mkdirs();
 
-    File compilerBridgeJar = getCompiledBridgeJar(scalaInstance, mavenLogger);
+    File compilerBridgeJar = getCompiledBridgeJar(scalaInstance, resolver, mavenLogger);
 
     ScalaCompiler scalaCompiler =
         new AnalyzingCompiler(
@@ -212,14 +211,31 @@ public class SbtIncrementalCompiler {
     return stream.collect(Collectors.toList());
   }
 
-  private File getCompiledBridgeJar(ScalaInstance scalaInstance, Log mavenLogger) throws Exception {
-
+  private File getCompiledBridgeJar(
+      ScalaInstance scalaInstance, MavenArtifactResolver resolver, Log mavenLogger)
+      throws Exception {
     // eg
     // org.scala-sbt-compiler-bridge_2.12-1.2.4-bin_2.12.10__52.0-1.2.4_20181015T090407.jar
     String bridgeArtifactId = compilerBridgeArtifactId(scalaInstance.actualVersion());
 
-    boolean isScala3 = scalaInstance.actualVersion().startsWith("3");
+    return scalaInstance.actualVersion().startsWith("3")
+        ? getScala3CompilerBridgeJar(scalaInstance, bridgeArtifactId, resolver)
+        : getScala2CompilerBridgeJar(scalaInstance, bridgeArtifactId, resolver, mavenLogger);
+  }
 
+  private File getScala3CompilerBridgeJar(
+      ScalaInstance scalaInstance, String bridgeArtifactId, MavenArtifactResolver resolver) {
+    return resolver
+        .getJar(SBT_GROUP_ID_SCALA3, bridgeArtifactId, scalaInstance.actualVersion(), "")
+        .getFile();
+  }
+
+  private File getScala2CompilerBridgeJar(
+      ScalaInstance scalaInstance,
+      String bridgeArtifactId,
+      MavenArtifactResolver resolver,
+      Log mavenLogger)
+      throws IOException {
     // this file is localed in compiler-interface
     Properties properties = new Properties();
     try (InputStream is =
@@ -230,25 +246,18 @@ public class SbtIncrementalCompiler {
     String zincVersion = properties.getProperty("version");
     String timestamp = properties.getProperty("timestamp");
 
-    String groupId = isScala3 ? SBT_GROUP_ID_SCALA3 : SBT_GROUP_ID;
-    String version = isScala3 ? scalaInstance.actualVersion() : zincVersion;
-
-    if (isScala3) {
-      return resolver.getJar(groupId, bridgeArtifactId, version, "").getFile();
-    }
-
     String cacheFileName =
-        groupId
+        SBT_GROUP_ID
             + '-'
             + bridgeArtifactId
             + '-'
-            + version
+            + zincVersion
             + "-bin_"
             + scalaInstance.actualVersion()
             + "__"
             + JAVA_CLASS_VERSION
             + '-'
-            + version
+            + zincVersion
             + '_'
             + timestamp
             + ".jar";
@@ -264,10 +273,12 @@ public class SbtIncrementalCompiler {
       // compile and install
       RawCompiler rawCompiler = new RawCompiler(scalaInstance, ClasspathOptionsUtil.auto(), logger);
 
-      File bridgeSources = resolver.getJar(groupId, bridgeArtifactId, version, "sources").getFile();
+      File bridgeSources =
+          resolver.getJar(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources").getFile();
 
       Set<Path> bridgeSourcesDependencies =
-          resolver.getJarAndDependencies(groupId, bridgeArtifactId, version, "sources").stream()
+          resolver.getJarAndDependencies(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources")
+              .stream()
               .filter(
                   artifact ->
                       artifact.getScope() != null && !artifact.getScope().equals("provided"))

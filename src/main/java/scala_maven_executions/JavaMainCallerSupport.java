@@ -18,10 +18,10 @@ import org.codehaus.plexus.util.StringUtils;
 public abstract class JavaMainCallerSupport implements JavaMainCaller {
 
   protected AbstractMojo requester;
-  protected List<String> env = new ArrayList<String>();
+  protected List<String> env = new ArrayList<>();
   protected String mainClassName;
-  protected List<String> jvmArgs = new ArrayList<String>();
-  protected List<String> args = new ArrayList<String>();
+  protected List<String> jvmArgs = new ArrayList<>();
+  protected List<String> args = new ArrayList<>();
 
   protected JavaMainCallerSupport(
       AbstractMojo requester1,
