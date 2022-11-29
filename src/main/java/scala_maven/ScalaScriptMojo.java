@@ -40,7 +40,6 @@ import org.codehaus.plexus.util.StringUtils;
 import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.MainHelper;
-import util.FileUtils;
 
 /**
  * Run a scala script.
@@ -150,7 +149,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
     String baseName = scriptBaseNameOf(scriptFile, _lastScriptIndex.incrementAndGet());
     File destFile = new File(scriptDir, baseName + ".scala");
 
-    Set<File> classpath = new TreeSet<File>();
+    Set<File> classpath = new TreeSet<>();
     configureClasspath(classpath);
 
     boolean mavenProjectDependency = includeScopes.contains("plugin");
@@ -355,7 +354,7 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
         reader = new BufferedReader(new StringReader(script));
       }
 
-      String baseName = FileUtils.basename(destFile.getName(), ".scala");
+      String baseName = org.codehaus.plexus.util.FileUtils.basename(destFile.getName(), ".scala");
       if (mavenProjectDependency) {
         // out.println("import scala.collection.jcl.Conversions._");
         out.println(

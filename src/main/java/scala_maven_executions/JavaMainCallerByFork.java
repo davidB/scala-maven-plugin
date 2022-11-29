@@ -14,12 +14,10 @@ import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.OS;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 import scala_maven_executions.LogProcessorUtils.LevelState;
-import util.JavaLocator;
 
 /**
  * forked java commands.
@@ -32,24 +30,24 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
   private boolean _forceUseArgFile;
 
   /** Location of java executable. */
-  private String _javaExec;
+  private final File _javaExec;
 
   private boolean _redirectToLog;
 
   public JavaMainCallerByFork(
-      AbstractMojo requester1,
+      Log mavenLogger,
       String mainClassName1,
       String classpath,
       String[] jvmArgs1,
       String[] args1,
       boolean forceUseArgFile,
-      Toolchain toolchain) {
-    super(requester1, mainClassName1, classpath, jvmArgs1, args1);
+      File javaExec) {
+    super(mavenLogger, mainClassName1, classpath, jvmArgs1, args1);
     for (String key : System.getenv().keySet()) {
       env.add(key + "=" + System.getenv(key));
     }
 
-    _javaExec = JavaLocator.findExecutableFromToolchain(toolchain);
+    _javaExec = javaExec;
     _forceUseArgFile = forceUseArgFile;
   }
 
@@ -74,14 +72,13 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
                     _previous = LogProcessorUtils.levelStateOf(line, _previous);
                     switch (_previous.level) {
                       case ERROR:
-                        requester.getLog().error(line);
+                        mavenLogger.error(line);
                         break;
                       case WARNING:
-                        requester.getLog().warn(line);
+                        mavenLogger.warn(line);
                         break;
                       default:
-                        requester.getLog().info(line);
-                        break;
+                        mavenLogger.info(line);
                     }
                   } catch (Exception e) {
                     e.printStackTrace();
@@ -147,22 +144,22 @@ public class JavaMainCallerByFork extends JavaMainCallerSupport {
 
   private void displayCmd(boolean displayCmd, List<String> cmd) {
     if (displayCmd) {
-      requester.getLog().info("cmd: " + " " + StringUtils.join(cmd.iterator(), " "));
-    } else if (requester.getLog().isDebugEnabled()) {
-      requester.getLog().debug("cmd: " + " " + StringUtils.join(cmd.iterator(), " "));
+      mavenLogger.info("cmd: " + " " + StringUtils.join(cmd.iterator(), " "));
+    } else if (mavenLogger.isDebugEnabled()) {
+      mavenLogger.debug("cmd: " + " " + StringUtils.join(cmd.iterator(), " "));
     }
   }
 
   private List<String> buildCommand() throws Exception {
-    ArrayList<String> back = new ArrayList<>(2 + jvmArgs.size() + args.size());
-    back.add(_javaExec);
+    List<String> back = new ArrayList<>(2 + jvmArgs.size() + args.size());
+    back.add(_javaExec.getPath());
     if (!_forceUseArgFile && (lengthOf(args, 1) + lengthOf(jvmArgs, 1) < 400)) {
       back.addAll(jvmArgs);
       back.add(mainClassName);
       back.addAll(args);
     } else {
       File jarPath = new File(MainHelper.locateJar(MainHelper.class));
-      requester.getLog().debug("plugin jar to add :" + jarPath);
+      mavenLogger.debug("plugin jar to add :" + jarPath);
       addToClasspath(jarPath);
       back.addAll(jvmArgs);
       back.add(MainWithArgsInFile.class.getName());

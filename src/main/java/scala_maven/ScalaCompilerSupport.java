@@ -5,16 +5,13 @@
 package scala_maven;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
-import sbt.internal.inc.ScalaInstance;
 import sbt_inc.SbtIncrementalCompiler;
-import scala.Option;
+import sbt_inc.SbtIncrementalCompilers;
 import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
 import util.FileUtils;
@@ -216,8 +213,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     List<File> files = new ArrayList<>(sourceFiles.size());
     if (_lastCompileAt > 0
         || (recompileMode != RecompileMode.all && (lastSuccessfulCompileTime > 0))) {
-      ArrayList<File> modifiedScalaFiles = new ArrayList<>(sourceFiles.size());
-      ArrayList<File> modifiedJavaFiles = new ArrayList<>(sourceFiles.size());
+      List<File> modifiedScalaFiles = new ArrayList<>(sourceFiles.size());
+      List<File> modifiedJavaFiles = new ArrayList<>(sourceFiles.size());
       for (File f : sourceFiles) {
         if (f.lastModified() >= lastSuccessfulCompileTime) {
           if (f.getName().endsWith(".java")) {
@@ -276,50 +273,10 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     void setLastSuccessfulTS(long v) throws Exception {
       if (!_lastCompileAtFile.exists()) {
-        FileUtils.fileWrite(_lastCompileAtFile.getAbsolutePath(), ".");
+        org.codehaus.plexus.util.FileUtils.fileWrite(_lastCompileAtFile.getAbsolutePath(), ".");
       }
       _lastCompileAtFile.setLastModified(v);
     }
-  }
-
-  private ScalaInstance makeScalaInstance(Context sc) throws Exception {
-    File[] compilerJars =
-        sc.findCompilerAndDependencies().stream()
-            .map(Artifact::getFile)
-            .collect(Collectors.toList())
-            .toArray(new File[] {});
-    URL[] compilerJarUrls = FileUtils.toUrls(compilerJars);
-
-    File[] libraryJars =
-        sc.findLibraryAndDependencies().stream()
-            .map(Artifact::getFile)
-            .collect(Collectors.toList())
-            .toArray(new File[] {});
-    URL[] libraryJarUrls = FileUtils.toUrls(libraryJars);
-
-    SortedSet<File> allJars = new TreeSet<>();
-    allJars.addAll(Arrays.asList(compilerJars));
-    allJars.addAll(Arrays.asList(libraryJars));
-    File[] allJarFiles = allJars.toArray(new File[] {});
-
-    ClassLoader loaderLibraryOnly =
-        new ScalaCompilerLoader(libraryJarUrls, xsbti.Reporter.class.getClassLoader());
-    ClassLoader loaderCompilerOnly = new URLClassLoader(compilerJarUrls, loaderLibraryOnly);
-
-    if (getLog().isDebugEnabled()) {
-      getLog().debug("compilerJars: " + FileUtils.toMultiPath(compilerJars));
-      getLog().debug("libraryJars: " + FileUtils.toMultiPath(libraryJars));
-    }
-
-    return new ScalaInstance(
-        sc.version().toString(),
-        loaderCompilerOnly,
-        loaderCompilerOnly,
-        loaderLibraryOnly,
-        libraryJars,
-        compilerJars,
-        allJarFiles,
-        Option.apply(sc.version().toString()));
   }
 
   // Incremental compilation
@@ -343,30 +300,30 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     if (incremental == null) {
       Context sc = findScalaContext();
       File javaHome = JavaLocator.findHomeFromToolchain(getToolchain());
-      ScalaInstance instance = makeScalaInstance(sc);
 
       incremental =
-          new SbtIncrementalCompiler(
+          SbtIncrementalCompilers.make(
               javaHome,
               new MavenArtifactResolver(factory, session),
               secondaryCacheDir,
               getLog(),
               cacheFile,
               compileOrder,
-              instance);
+              sc.version(),
+              sc.findCompilerAndDependencies().stream()
+                  .map(Artifact::getFile)
+                  .collect(Collectors.toList()),
+              sc.findLibraryAndDependencies().stream()
+                  .map(Artifact::getFile)
+                  .collect(Collectors.toList()),
+              jvmArgs,
+              JavaLocator.findExecutableFromToolchain(getToolchain()),
+              pluginArtifacts.stream().map(Artifact::getFile).collect(Collectors.toList()));
     }
-
-    classpathElements.remove(outputDir);
-    List<String> scalacOptions = getScalacOptions();
-    List<String> javacOptions = getJavacOptions();
 
     try {
       incremental.compile(
-          classpathElements.stream().map(File::toPath).collect(Collectors.toSet()),
-          sources.stream().map(File::toPath).collect(Collectors.toList()),
-          outputDir.toPath(),
-          scalacOptions,
-          javacOptions);
+          classpathElements, sources, outputDir, getScalacOptions(), getJavacOptions());
     } catch (xsbti.CompileFailed e) {
       if (compileInLoop) {
         compileErrors = true;

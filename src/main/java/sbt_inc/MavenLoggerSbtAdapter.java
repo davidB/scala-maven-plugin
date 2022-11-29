@@ -10,11 +10,11 @@ import sbt.util.Logger;
 import scala.Enumeration;
 import scala.Function0;
 
-public class SbtLogger extends Logger {
+public class MavenLoggerSbtAdapter extends Logger {
 
   private final Log log;
 
-  SbtLogger(Log l) {
+  MavenLoggerSbtAdapter(Log l) {
     this.log = l;
   }
 

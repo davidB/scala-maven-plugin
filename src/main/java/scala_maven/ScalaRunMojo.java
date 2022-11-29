@@ -4,16 +4,17 @@
  */
 package scala_maven;
 
+import java.io.File;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.toolchain.Toolchain;
 import org.codehaus.plexus.util.StringUtils;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.JavaMainCallerByFork;
 import util.FileUtils;
+import util.JavaLocator;
 
 /** Run a Scala class using the Scala runtime */
 @Mojo(name = "run", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
@@ -70,17 +71,17 @@ public class ScalaRunMojo extends ScalaMojoSupport {
   @Override
   protected void doExecute() throws Exception {
     JavaMainCaller jcmd = null;
-    Toolchain toolchain = toolchainManager.getToolchainFromBuildContext("jdk", session);
+    File javaExec = JavaLocator.findExecutableFromToolchain(getToolchain());
     if (StringUtils.isNotEmpty(mainClass)) {
       jcmd =
           new JavaMainCallerByFork(
-              this,
+              getLog(),
               mainClass,
               FileUtils.toMultiPath(FileUtils.fromStrings(project.getTestClasspathElements())),
               jvmArgs,
               args,
               forceUseArgFile,
-              toolchain);
+              javaExec);
     } else if ((launchers != null) && (launchers.length > 0)) {
       if (StringUtils.isNotEmpty(launcher)) {
         for (int i = 0; (i < launchers.length) && (jcmd == null); i++) {
@@ -89,27 +90,27 @@ public class ScalaRunMojo extends ScalaMojoSupport {
                 .info("launcher '" + launchers[i].id + "' selected => " + launchers[i].mainClass);
             jcmd =
                 new JavaMainCallerByFork(
-                    this,
+                    getLog(),
                     launchers[i].mainClass,
                     FileUtils.toMultiPath(
                         FileUtils.fromStrings(project.getTestClasspathElements())),
                     launchers[i].jvmArgs,
                     launchers[i].args,
                     forceUseArgFile,
-                    toolchain);
+                    javaExec);
           }
         }
       } else {
         getLog().info("launcher '" + launchers[0].id + "' selected => " + launchers[0].mainClass);
         jcmd =
             new JavaMainCallerByFork(
-                this,
+                getLog(),
                 launchers[0].mainClass,
                 FileUtils.toMultiPath(FileUtils.fromStrings(project.getTestClasspathElements())),
                 launchers[0].jvmArgs,
                 launchers[0].args,
                 forceUseArgFile,
-                toolchain);
+                javaExec);
       }
     }
     if (jcmd != null) {
