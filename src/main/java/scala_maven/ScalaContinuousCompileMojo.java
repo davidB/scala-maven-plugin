@@ -226,7 +226,7 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
     jcmd.addJvmArgs(jvmArgs);
     jcmd.addArgs(args);
     jcmd.spawn(displayCmd);
-    FileUtils.fileWrite(serverTagFile.getAbsolutePath(), ".");
+    org.codehaus.plexus.util.FileUtils.fileWrite(serverTagFile.getAbsolutePath(), ".");
     Thread.sleep(1000); // HACK To wait startup time of server (avoid first fsc command to failed to
     // contact server)
   }

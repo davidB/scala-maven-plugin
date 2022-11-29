@@ -7,7 +7,7 @@ package scala_maven_executions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -17,19 +17,15 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public abstract class JavaMainCallerSupport implements JavaMainCaller {
 
-  protected AbstractMojo requester;
+  protected Log mavenLogger;
   protected List<String> env = new ArrayList<>();
   protected String mainClassName;
   protected List<String> jvmArgs = new ArrayList<>();
   protected List<String> args = new ArrayList<>();
 
   protected JavaMainCallerSupport(
-      AbstractMojo requester1,
-      String mainClassName1,
-      String classpath,
-      String[] jvmArgs1,
-      String[] args1) {
-    this.requester = requester1;
+      Log mavenLogger, String mainClassName1, String classpath, String[] jvmArgs1, String[] args1) {
+    this.mavenLogger = mavenLogger;
     for (String key : System.getenv().keySet()) {
       env.add(key + "=" + System.getenv(key));
     }

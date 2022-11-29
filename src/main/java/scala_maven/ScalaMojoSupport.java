@@ -36,6 +36,7 @@ import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.JavaMainCallerByFork;
 import scala_maven_executions.JavaMainCallerInProcess;
 import util.FileUtils;
+import util.JavaLocator;
 
 public abstract class ScalaMojoSupport extends AbstractMojo {
 
@@ -204,11 +205,11 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   @Component private DependencyGraphBuilder dependencyGraphBuilder;
 
   /** The toolchain manager to use. */
-  @Component protected ToolchainManager toolchainManager;
+  @Component private ToolchainManager toolchainManager;
 
   /** List of artifacts to run plugin */
   @Parameter(defaultValue = "${plugin.artifacts}")
-  private List<Artifact> pluginArtifacts;
+  protected List<Artifact> pluginArtifacts;
 
   private MavenArtifactResolver mavenArtifactResolver;
 
@@ -263,8 +264,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       String version,
       String classifier,
       Set<File> classpath,
-      boolean addDependencies)
-      throws Exception {
+      boolean addDependencies) {
     MavenArtifactResolver mar = findMavenArtifactResolver();
     if (addDependencies) {
       for (Artifact a : mar.getJarAndDependencies(groupId, artifactId, version, classifier)) {
@@ -346,8 +346,8 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         throw new UnsupportedOperationException(error);
       }
     } else {
-      // grappy hack to retrieve the SNAPSHOT version without timestamp,...
-      // because if version is -SNAPSHOT and artifact is deploy with uniqueValue then
+      // crappy hack to retrieve the SNAPSHOT version without timestamp,...
+      // because if version is -SNAPSHOT and artifact is deployed with uniqueValue then
       // the version
       // get from dependency is with the timestamp and a build number (the resolved
       // version)
@@ -555,12 +555,18 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       getLog().debug("use java command with args in file forced : " + forceUseArgFile);
       cmd =
           new JavaMainCallerByFork(
-              this, mainClass, cp, null, null, forceUseArgFile, getToolchain());
+              getLog(),
+              mainClass,
+              cp,
+              null,
+              null,
+              forceUseArgFile,
+              JavaLocator.findExecutableFromToolchain(getToolchain()));
       if (bootcp) {
         cmd.addJvmArgs("-Xbootclasspath/a:" + toolcp);
       }
     } else {
-      cmd = new JavaMainCallerInProcess(this, mainClass, toolcp, null, null);
+      cmd = new JavaMainCallerInProcess(getLog(), mainClass, toolcp, null, null);
     }
     return cmd;
   }
@@ -682,8 +688,8 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   }
 
   /**
-   * @return This returns whether or not the scala version can support having java sent into the
-   *     compiler
+   * @return This returns whether the scala version can support having java sent into the compiler
+   *     or not
    */
   protected boolean isJavaSupportedByCompiler() throws Exception {
     return findScalaVersion().compareTo(new VersionNumber("2.7.2")) >= 0;

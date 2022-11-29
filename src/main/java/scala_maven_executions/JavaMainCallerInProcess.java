@@ -9,7 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -23,13 +23,9 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
   private ClassLoader _cl;
 
   public JavaMainCallerInProcess(
-      AbstractMojo requester,
-      String mainClassName,
-      String classpath,
-      String[] jvmArgs,
-      String[] args)
+      Log mavenLogger, String mainClassName, String classpath, String[] jvmArgs, String[] args)
       throws Exception {
-    super(requester, mainClassName, "", jvmArgs, args);
+    super(mavenLogger, mainClassName, "", jvmArgs, args);
 
     // Pull out classpath and create class loader
     ArrayList<URL> urls = new ArrayList<>();
@@ -38,7 +34,7 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
         urls.add(new File(path).toURI().toURL());
       } catch (MalformedURLException e) {
         // TODO - Do something usefull here...
-        requester.getLog().error(e);
+        mavenLogger.error(e);
       }
     }
     _cl = new URLClassLoader(urls.toArray(new URL[] {}), null);
@@ -49,7 +45,7 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
     // TODO - Ignore classpath
     if (args0 != null) {
       for (String arg : args0) {
-        requester.getLog().warn("jvmArgs are ignored when run in process :" + arg);
+        mavenLogger.warn("jvmArgs are ignored when run in process :" + arg);
       }
     }
   }
@@ -87,15 +83,13 @@ public class JavaMainCallerInProcess extends JavaMainCallerSupport {
   private void runInternal(boolean displayCmd) throws Exception {
     String[] argArray = args.toArray(new String[] {});
     if (displayCmd) {
-      requester
-          .getLog()
-          .info("cmd : " + mainClassName + "(" + StringUtils.join(argArray, ",") + ")");
+      mavenLogger.info("cmd : " + mainClassName + "(" + StringUtils.join(argArray, ",") + ")");
     }
     MainHelper.runMain(mainClassName, args, _cl);
   }
 
   @Override
   public void redirectToLog() {
-    requester.getLog().warn("redirection to log is not supported for 'inProcess' mode");
+    mavenLogger.warn("redirection to log is not supported for 'inProcess' mode");
   }
 }

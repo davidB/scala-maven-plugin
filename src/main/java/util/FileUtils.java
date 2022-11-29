@@ -6,8 +6,6 @@ package util;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,10 +14,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.codehaus.plexus.util.StringUtils;
 
-public class FileUtils extends org.codehaus.plexus.util.FileUtils {
+public class FileUtils {
 
   /**
    * @param canonical Should use CanonicalPath to normalize path (true => getCanonicalPath, false
@@ -44,24 +40,7 @@ public class FileUtils extends org.codehaus.plexus.util.FileUtils {
   }
 
   public static String toMultiPath(Collection<File> paths) {
-    return StringUtils.join(paths.iterator(), File.pathSeparator);
-  }
-
-  public static String toMultiPath(File[] paths) {
-    return StringUtils.join(paths, File.pathSeparator);
-  }
-
-  public static URL[] toUrls(File[] files) throws Exception {
-    return Stream.of(files)
-        .map(
-            x -> {
-              try {
-                return x.toURI().toURL();
-              } catch (MalformedURLException e) {
-                throw new RuntimeException("failed to convert into url " + x, e);
-              }
-            })
-        .toArray(URL[]::new);
+    return paths.stream().map(File::getPath).collect(Collectors.joining(File.pathSeparator));
   }
 
   public static List<Path> listDirectoryContent(Path directory, Function<Path, Boolean> filter)

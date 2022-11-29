@@ -25,7 +25,7 @@ public class JavaLocatorTest {
   @Test
   public void shouldReturnPathToJavaWhenJavaIsPresent() {
     Toolchain toolchain = new ReturningToolChain("my-path-to-java");
-    assertEquals("my-path-to-java", JavaLocator.findExecutableFromToolchain(toolchain));
+    assertEquals("my-path-to-java", JavaLocator.findExecutableFromToolchain(toolchain).getPath());
   }
 
   @Test

@@ -21,12 +21,12 @@ public class JavaLocator {
       System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("windows");
 
   // inspired from org.codehaus.plexus.compiler.javac.JavacCompiler#getJavacExecutable
-  public static String findExecutableFromToolchain(Toolchain toolchain) {
+  public static File findExecutableFromToolchain(Toolchain toolchain) {
 
     if (toolchain != null) {
       String fromToolChain = toolchain.findTool("java");
       if (fromToolChain != null) {
-        return fromToolChain;
+        return new File(fromToolChain);
       }
     }
 
@@ -40,16 +40,16 @@ public class JavaLocator {
         // Old JDK versions contain a JRE. We might be pointing to that.
         // We want to try to use the JDK instead as we need javac in order to compile mixed
         // Java-Scala projects.
-        Path javaExecPath = javaHomePath.resolveSibling("bin").resolve(javaCommand);
-        if (javaExecPath.toFile().isFile()) {
-          return javaExecPath.toString();
+        File javaExecPath = javaHomePath.resolveSibling("bin").resolve(javaCommand).toFile();
+        if (javaExecPath.isFile()) {
+          return javaExecPath;
         }
       }
 
       // old standalone JRE or modern JDK
-      Path javaExecPath = javaHomePath.resolve("bin").resolve(javaCommand);
-      if (javaExecPath.toFile().isFile()) {
-        return javaExecPath.toString();
+      File javaExecPath = javaHomePath.resolve("bin").resolve(javaCommand).toFile();
+      if (javaExecPath.isFile()) {
+        return javaExecPath;
       } else {
         throw new IllegalStateException(
             "Couldn't locate java in defined java.home system property.");
@@ -63,9 +63,9 @@ public class JavaLocator {
           "Couldn't locate java, try setting JAVA_HOME environment variable.");
     }
 
-    Path javaExecPath = Paths.get(javaHomeEnvVar).resolve("bin").resolve(javaCommand);
-    if (javaExecPath.toFile().isFile()) {
-      return javaExecPath.toString();
+    File javaExecPath = Paths.get(javaHomeEnvVar).resolve("bin").resolve(javaCommand).toFile();
+    if (javaExecPath.isFile()) {
+      return javaExecPath;
     } else {
       throw new IllegalStateException(
           "Couldn't locate java in defined JAVA_HOME environment variable.");
@@ -73,8 +73,8 @@ public class JavaLocator {
   }
 
   public static File findHomeFromToolchain(Toolchain toolchain) {
-    String executable = findExecutableFromToolchain(toolchain);
-    File executableParent = new File(executable).getParentFile();
+    File executable = findExecutableFromToolchain(toolchain);
+    File executableParent = executable.getParentFile();
     if (executableParent == null) {
       return null;
     }
