@@ -215,17 +215,17 @@ public class ScalaConsoleMojo extends ScalaMojoSupport {
    *     JLine.
    */
   private Artifact resolveJLine(final Artifact defaultFallback) throws Exception {
-    final Set<Artifact> compilerDeps = super.findScalaContext().findCompilerAndDependencies();
+    final Set<Artifact> compilerDeps = findScalaContext().findCompilerAndDependencies();
     for (final Artifact a : compilerDeps) {
-      if (this.filterForJline(a)) {
+      if (filterForJline(a)) {
         return a;
       }
     }
 
-    super.getLog()
+    getLog()
         .warn(
             "Unable to determine the required Jline dependency from the POM. Falling back to hard-coded defaults.");
-    super.getLog()
+    getLog()
         .warn(
             "If you get an InvocationTargetException, then this probably means we guessed the wrong version for JLine");
     super.getLog().warn(String.format("Guessed JLine: %s", defaultFallback.toString()));
