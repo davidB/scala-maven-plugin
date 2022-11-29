@@ -18,7 +18,6 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +45,7 @@ public class MainHelper {
 
   public static String toClasspathString(ClassLoader cl) {
     StringBuilder back = new StringBuilder();
-    List<String> cps = new LinkedList<>();
+    List<String> cps = new ArrayList<>();
     appendUrlToClasspathCollection(cl, cps);
     for (String cp : cps) {
       if (back.length() != 0) {
