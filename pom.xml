@@ -134,6 +134,8 @@
     <maven.version>3.3.9</maven.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
+    <last.scala2_12.release>2.12.12</last.scala2_12.release>
+    <last.scala2_13.release>2.13.3</last.scala2_13.release>
   </properties>
 
   <prerequisites>
@@ -683,7 +685,7 @@
                 </goals>
                 <configuration>
                   <properties>
-                    <scala.version.lastrelease>2.12.12</scala.version.lastrelease>
+                    <scala.version.lastrelease>${last.scala2_12.release}</scala.version.lastrelease>
                     <recompileMode>all</recompileMode>
                   </properties>
                 </configuration>
@@ -697,7 +699,7 @@
                 </goals>
                 <configuration>
                   <properties>
-                    <scala.version.lastrelease>2.12.12</scala.version.lastrelease>
+                    <scala.version.lastrelease>${last.scala2_12.release}</scala.version.lastrelease>
                     <recompileMode>incremental</recompileMode>
                   </properties>
                 </configuration>
@@ -711,7 +713,7 @@
                 </goals>
                 <configuration>
                   <properties>
-                    <scala.version.lastrelease>2.13.3</scala.version.lastrelease>
+                    <scala.version.lastrelease>${last.scala2_13.release}</scala.version.lastrelease>
                     <recompileMode>all</recompileMode>
                   </properties>
                 </configuration>
@@ -724,7 +726,7 @@
                 </goals>
                 <configuration>
                   <properties>
-                    <scala.version.lastrelease>2.13.3</scala.version.lastrelease>
+                    <scala.version.lastrelease>${last.scala2_13.release}</scala.version.lastrelease>
                     <recompileMode>incremental</recompileMode>
                   </properties>
                 </configuration>
