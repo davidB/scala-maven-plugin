@@ -6,6 +6,7 @@ package scala_maven;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.execution.MavenSession;
@@ -62,6 +63,8 @@ public class MavenArtifactResolver {
             .setProxies(session.getRequest().getProxies())
             .setLocalRepository(session.getLocalRepository())
             .setRemoteRepositories(session.getCurrentProject().getRemoteArtifactRepositories());
-    return repositorySystem.resolve(request).getArtifacts();
+    return repositorySystem.resolve(request).getArtifacts().stream()
+        .filter(art -> !Artifact.SCOPE_TEST.equals(art.getScope()))
+        .collect(Collectors.toSet());
   }
 }
