@@ -106,7 +106,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
 
   /** Scala 's version to use. (property 'maven.scala.version' replaced by 'scala.version') */
   @Parameter(property = "scala.version")
-  private String scalaVersion;
+  protected String scalaVersion;
 
   /**
    * Organization/group ID of the Scala used in the project. Default value is 'org.scala-lang'. This
@@ -497,11 +497,15 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   final JavaMainCaller getScalaCommand(final boolean forkOverride, final String mainClass)
       throws Exception {
     JavaMainCaller cmd = getEmptyScalaCommand(mainClass, forkOverride);
+    populateArgs(cmd);
+    return cmd;
+  }
+
+  final void populateArgs(final JavaMainCaller cmd) throws Exception {
     for (String option : getScalacOptions()) {
       cmd.addArgs(option);
     }
     cmd.addJvmArgs(jvmArgs);
-    return cmd;
   }
 
   /**
