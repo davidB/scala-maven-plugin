@@ -385,7 +385,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.4.1</version>
+          <version>3.5.0</version>
           <configuration>
             <minmemory>128m</minmemory>
             <maxmemory>512m</maxmemory>
