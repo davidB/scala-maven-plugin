@@ -4,8 +4,8 @@
  */
 package scala_maven;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -13,51 +13,103 @@ public class ScalaMojoSupportTest {
 
   @Test
   public void scala2_11_should_generate_prefixed_target() {
-    assertEquals("jvm-1.5", ScalaMojoSupport.targetOption("1.5", new VersionNumber("2.11.12")));
-    assertEquals("jvm-1.5", ScalaMojoSupport.targetOption("5", new VersionNumber("2.11.12")));
-    assertEquals("jvm-1.6", ScalaMojoSupport.targetOption("1.6", new VersionNumber("2.11.12")));
-    assertEquals("jvm-1.6", ScalaMojoSupport.targetOption("6", new VersionNumber("2.11.12")));
-    assertEquals("jvm-1.7", ScalaMojoSupport.targetOption("1.7", new VersionNumber("2.11.12")));
-    assertEquals("jvm-1.7", ScalaMojoSupport.targetOption("7", new VersionNumber("2.11.12")));
-    assertEquals("jvm-1.8", ScalaMojoSupport.targetOption("1.8", new VersionNumber("2.11.12")));
-    assertEquals("jvm-1.8", ScalaMojoSupport.targetOption("8", new VersionNumber("2.11.12")));
+    assertEquals(
+        asList("-target:jvm-1.5"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.5", null, new VersionNumber("2.11.12")));
+    assertEquals(
+        asList("-target:jvm-1.5"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("5", null, new VersionNumber("2.11.12")));
+    assertEquals(
+        asList("-target:jvm-1.6"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.6", null, new VersionNumber("2.11.12")));
+    assertEquals(
+        asList("-target:jvm-1.6"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("6", null, new VersionNumber("2.11.12")));
+    assertEquals(
+        asList("-target:jvm-1.7"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.7", null, new VersionNumber("2.11.12")));
+    assertEquals(
+        asList("-target:jvm-1.7"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("7", null, new VersionNumber("2.11.12")));
+    assertEquals(
+        asList("-target:jvm-1.8"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", null, new VersionNumber("2.11.12")));
+    assertEquals(
+        asList("-target:jvm-1.8"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("8", null, new VersionNumber("2.11.12")));
   }
 
   @Test
-  public void scala2_11_should_generate_null_for_unsupported_java_versions() {
-    assertNull(ScalaMojoSupport.targetOption("11", new VersionNumber("2.11.12")));
-    assertNull(ScalaMojoSupport.targetOption("17", new VersionNumber("2.11.12")));
+  public void scala2_11_should_generate_nothing_for_unsupported_java_versions() {
+    assertTrue(
+        ScalaMojoSupport.computeBytecodeVersionOptions("11", null, new VersionNumber("2.11.12"))
+            .isEmpty());
+    assertTrue(
+        ScalaMojoSupport.computeBytecodeVersionOptions("17", null, new VersionNumber("2.11.12"))
+            .isEmpty());
   }
 
   @Test
-  public void scala2_12_should_generate_prefixed_target() {
-    assertEquals("jvm-1.5", ScalaMojoSupport.targetOption("1.5", new VersionNumber("2.12.11")));
-    assertEquals("jvm-1.5", ScalaMojoSupport.targetOption("5", new VersionNumber("2.12.11")));
-    assertEquals("jvm-1.6", ScalaMojoSupport.targetOption("1.6", new VersionNumber("2.12.11")));
-    assertEquals("jvm-1.6", ScalaMojoSupport.targetOption("6", new VersionNumber("2.12.11")));
-    assertEquals("jvm-1.7", ScalaMojoSupport.targetOption("1.7", new VersionNumber("2.12.11")));
-    assertEquals("jvm-1.7", ScalaMojoSupport.targetOption("7", new VersionNumber("2.12.11")));
-    assertEquals("jvm-1.8", ScalaMojoSupport.targetOption("1.8", new VersionNumber("2.12.11")));
-    assertEquals("jvm-1.8", ScalaMojoSupport.targetOption("8", new VersionNumber("2.12.11")));
+  public void scala2_12_should_generate_release() {
+    assertEquals(
+        asList("-release", "8"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", null, new VersionNumber("2.12.11")));
+    assertEquals(
+        asList("-release", "8"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "8", new VersionNumber("2.12.11")));
+    assertEquals(
+        asList("-release", "11"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "11", new VersionNumber("2.12.11")));
+    assertEquals(
+        asList("-release", "17"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "17", new VersionNumber("2.12.11")));
   }
 
   @Test
-  public void scala2_12_should_generate_null_for_unsupported_java_versions() {
-    assertNull(ScalaMojoSupport.targetOption("11", new VersionNumber("2.12.11")));
-    assertNull(ScalaMojoSupport.targetOption("17", new VersionNumber("2.12.11")));
+  public void scala2_13_should_generate_release() {
+    assertEquals(
+        asList("-release", "8"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", null, new VersionNumber("2.13.10")));
+    assertEquals(
+        asList("-release", "8"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "8", new VersionNumber("2.13.10")));
+    assertEquals(
+        asList("-release", "11"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "11", new VersionNumber("2.13.10")));
+    assertEquals(
+        asList("-release", "17"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "17", new VersionNumber("2.13.10")));
   }
 
   @Test
-  public void scala2_13_should_generate_non_prefixed_target() {
-    assertEquals("5", ScalaMojoSupport.targetOption("1.5", new VersionNumber("2.13.8")));
-    assertEquals("5", ScalaMojoSupport.targetOption("5", new VersionNumber("2.13.8")));
-    assertEquals("6", ScalaMojoSupport.targetOption("1.6", new VersionNumber("2.13.8")));
-    assertEquals("6", ScalaMojoSupport.targetOption("6", new VersionNumber("2.13.8")));
-    assertEquals("7", ScalaMojoSupport.targetOption("1.7", new VersionNumber("2.13.8")));
-    assertEquals("7", ScalaMojoSupport.targetOption("7", new VersionNumber("2.13.8")));
-    assertEquals("8", ScalaMojoSupport.targetOption("1.8", new VersionNumber("2.13.8")));
-    assertEquals("8", ScalaMojoSupport.targetOption("8", new VersionNumber("2.13.8")));
-    assertEquals("11", ScalaMojoSupport.targetOption("11", new VersionNumber("2.13.8")));
-    assertEquals("17", ScalaMojoSupport.targetOption("17", new VersionNumber("2.13.8")));
+  public void scala3_1_1_should_generate_release() {
+    assertEquals(
+        asList("-release", "8"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", null, new VersionNumber("3.1.1")));
+    assertEquals(
+        asList("-release", "8"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "8", new VersionNumber("3.1.1")));
+    assertEquals(
+        asList("-release", "11"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "11", new VersionNumber("3.1.1")));
+    assertEquals(
+        asList("-release", "17"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "17", new VersionNumber("3.1.1")));
+  }
+
+  @Test
+  public void scala3_1_2_should_generate_java_output_version() {
+    assertEquals(
+        asList("-java-output-version", "8"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", null, new VersionNumber("3.1.2")));
+    assertEquals(
+        asList("-java-output-version", "8"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "8", new VersionNumber("3.1.2")));
+    assertEquals(
+        asList("-java-output-version", "11"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "11", new VersionNumber("3.1.2")));
+    assertEquals(
+        asList("-java-output-version", "17"),
+        ScalaMojoSupport.computeBytecodeVersionOptions("1.8", "17", new VersionNumber("3.1.2")));
   }
 }
