@@ -668,6 +668,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     if (javacGenerateDebugSymbols) {
       options.add("-g");
     }
+
+    // Check for default Java version on system
+    String defaultJavaVersion = System.getProperty("java.version").substring(0, 3);
     if (StringUtils.isNotEmpty(release)) {
       options.add("--release");
       options.add(release);
@@ -675,10 +678,16 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       if (StringUtils.isNotEmpty(target)) {
         options.add("-target");
         options.add(target);
+      } else {
+        options.add("-target");
+        options.add(defaultJavaVersion);
       }
       if (StringUtils.isNotEmpty(source)) {
         options.add("-source");
         options.add(source);
+      } else {
+        options.add("-source");
+        options.add(defaultJavaVersion);
       }
     }
     if (encoding != null) {
