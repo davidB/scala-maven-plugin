@@ -57,7 +57,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
   private String classifier;
 
   /** Specifies whether to skip generating scaladoc. */
-  @Parameter(property = "skip", defaultValue = "false")
+  @Parameter(property = "maven.scaladoc.skip", defaultValue = "false")
   private boolean skip;
 
   /** Specifies the directory where the generated jar file will be put. */
