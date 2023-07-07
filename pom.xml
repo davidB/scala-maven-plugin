@@ -134,8 +134,8 @@
     <maven.version>3.3.9</maven.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
-    <last.scala2_12.release>2.12.12</last.scala2_12.release>
-    <last.scala2_13.release>2.13.3</last.scala2_13.release>
+    <last.scala2_12.release>2.12.18</last.scala2_12.release>
+    <last.scala2_13.release>2.13.11</last.scala2_13.release>
   </properties>
 
   <prerequisites>
@@ -183,7 +183,7 @@
     <dependency>
       <groupId>org.scala-sbt</groupId>
       <artifactId>zinc_2.13</artifactId>
-      <version>1.8.1</version>
+      <version>1.9.2</version>
       <exclusions>
         <exclusion>
           <groupId>org.jline</groupId>
