@@ -105,7 +105,6 @@
     <connection>scm:git:git://github.com/davidB/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:davidB/${project.artifactId}.git</developerConnection>
     <url>http://github.com/davidB/${project.artifactId}/</url>
-    <tag>4.5.5</tag>
   </scm>
 
   <issueManagement>
@@ -352,16 +351,40 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.2.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.11.0</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>3.5.0</version>
         </plugin>
         <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>3.0.0</version>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>3.1.1</version>
         </plugin>
         <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.12.1</version>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>3.1.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-invoker-plugin</artifactId>
+          <version>3.5.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.3.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
@@ -372,81 +395,115 @@
           <version>3.4.3</version>
         </plugin>
         <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.1.1</version>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>3.0.0</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.scm</groupId>
+              <artifactId>maven-scm-api</artifactId>
+              <version>2.0.1</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.maven.scm</groupId>
+              <artifactId>maven-scm-provider-gitexe</artifactId>
+              <version>2.0.1</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>3.1.1</version>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.12.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
           <version>3.2.1</version>
         </plugin>
         <plugin>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.5.0</version>
-          <configuration>
-            <minmemory>128m</minmemory>
-            <maxmemory>512m</maxmemory>
-            <useStandardDocletOptions>true</useStandardDocletOptions>
-            <charset>${encoding}</charset>
-            <encoding>${encoding}</encoding>
-            <docencoding>${encoding}</docencoding>
-            <docfilessubdirs>true</docfilessubdirs>
-            <breakiterator>true</breakiterator>
-            <version>true</version>
-            <author>true</author>
-            <keywords>true</keywords>
-            <attach>false</attach>
-            <doclint>-missing</doclint>
-            <links>
-              <link>http://java.sun.com/j2se/${maven.compiler.source}/docs/api/</link>
-              <link>http://slf4j.org/api/</link>
-              <link>http://commons.apache.org/lang/api-release/</link>
-              <link>http://commons.apache.org/io/api-release/</link>
-              <link>http://junit.sourceforge.net/javadoc/</link>
-            </links>
-            <!-- additionalparam>-nopackagediagram</additionalparam-->
-            <!-- additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam-->
-            <!-- -sourceclasspath ${project.build.outputDirectory} -->
-            <excludePackageNames>${project.groupId}.example*:${project.groupId}.util.internal*</excludePackageNames>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.11.0</version>
-          <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
-          </configuration>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <groupId>com.diffplug.spotless</groupId>
           <artifactId>spotless-maven-plugin</artifactId>
           <version>2.27.2</version>
-          <configuration>
-            <java>
-              <includes>
-                <include>src/main/java/**/*.java</include>
-                <include>src/test/java/**/*.java</include>
-              </includes>
-              <excludes>
-                <exclude>src/main/java/scala_maven/ScalaCompilerLoader.java</exclude>
-              </excludes>
-              <googleJavaFormat />
-              <licenseHeader>
-                <file>${project.basedir}/src/etc/header.txt</file>
-              </licenseHeader>
-            </java>
-          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.github.github</groupId>
+          <artifactId>site-maven-plugin</artifactId>
+          <version>0.12</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>animal-sniffer-maven-plugin</artifactId>
+          <version>1.22</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>1.6.13</version>
         </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <minmemory>128m</minmemory>
+          <maxmemory>512m</maxmemory>
+          <useStandardDocletOptions>true</useStandardDocletOptions>
+          <charset>${encoding}</charset>
+          <encoding>${encoding}</encoding>
+          <docencoding>${encoding}</docencoding>
+          <docfilessubdirs>true</docfilessubdirs>
+          <breakiterator>true</breakiterator>
+          <version>true</version>
+          <author>true</author>
+          <keywords>true</keywords>
+          <attach>false</attach>
+          <doclint>-missing</doclint>
+          <links>
+            <link>http://java.sun.com/j2se/${maven.compiler.source}/docs/api/</link>
+            <link>http://slf4j.org/api/</link>
+            <link>http://commons.apache.org/lang/api-release/</link>
+            <link>http://commons.apache.org/io/api-release/</link>
+            <link>http://junit.sourceforge.net/javadoc/</link>
+          </links>
+          <!-- additionalparam>-nopackagediagram</additionalparam-->
+          <!-- additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam-->
+          <!-- -sourceclasspath ${project.build.outputDirectory} -->
+          <excludePackageNames>${project.groupId}.example*:${project.groupId}.util.internal*</excludePackageNames>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgument>-Xlint:deprecation</compilerArgument>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
+        <configuration>
+          <java>
+            <includes>
+              <include>src/main/java/**/*.java</include>
+              <include>src/test/java/**/*.java</include>
+            </includes>
+            <excludes>
+              <exclude>src/main/java/scala_maven/ScalaCompilerLoader.java</exclude>
+            </excludes>
+            <googleJavaFormat />
+            <licenseHeader>
+              <file>${project.basedir}/src/etc/header.txt</file>
+            </licenseHeader>
+          </java>
+        </configuration>
         <executions>
           <execution>
             <id>spotless-apply</id>
@@ -465,17 +522,7 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
-        <configuration>
-          <compilerArgument>-Xlint:deprecation</compilerArgument>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.12.1</version>
         <executions>
           <execution>
             <id>default-site</id>
@@ -507,7 +554,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.22</version>
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
@@ -519,7 +565,6 @@
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.13</version>
         <extensions>true</extensions>
         <configuration>
           <serverId>sonatype-nexus-snapshots</serverId>
@@ -529,7 +574,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.2.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -541,21 +585,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
-        <version>3.0.0</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.scm</groupId>
-            <artifactId>maven-scm-api</artifactId>
-            <version>2.0.1</version>
-            <scope>compile</scope>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.maven.scm</groupId>
-            <artifactId>maven-scm-provider-gitexe</artifactId>
-            <version>2.0.1</version>
-            <scope>compile</scope>
-          </dependency>
-        </dependencies>
         <configuration>
           <releaseProfiles>release</releaseProfiles>
           <goals>install animal-sniffer:check site deploy nexus-staging:release</goals>
@@ -563,43 +592,6 @@
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <tagNameFormat>@{project.version}</tagNameFormat>
         </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>3.2.0</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.3.1</version>
-        <executions>
-          <execution>
-            <id>default-testResources</id>
-            <phase>process-test-resources</phase>
-            <goals>
-              <goal>testResources</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>default-resources</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>resources</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.3.0</version>
-        <executions>
-          <execution>
-            <id>default-jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-plugin-plugin</artifactId>
@@ -616,23 +608,6 @@
             <phase>process-classes</phase>
             <goals>
               <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.1.0</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>3.1.1</version>
-        <executions>
-          <execution>
-            <id>default-install</id>
-            <phase>install</phase>
-            <goals>
-              <goal>install</goal>
             </goals>
           </execution>
         </executions>
@@ -674,7 +649,6 @@
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>3.5.1</version>
             <executions>
               <execution>
                 <phase>integration-test</phase>
@@ -768,7 +742,6 @@
         <plugins>
           <plugin>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>3.1.0</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
@@ -785,7 +758,6 @@
           <plugin>
             <groupId>com.github.github</groupId>
             <artifactId>site-maven-plugin</artifactId>
-            <version>0.12</version>
             <executions>
               <execution>
                 <phase>site</phase>
