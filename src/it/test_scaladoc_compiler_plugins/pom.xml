@@ -49,7 +49,7 @@
             <compilerPlugin>
               <groupId>org.typelevel</groupId>
               <artifactId>kind-projector_${scala.version.lastrelease}</artifactId>
-              <version>0.11.0</version>
+              <version>0.13.2</version>
             </compilerPlugin>
           </compilerPlugins>
         </configuration>
