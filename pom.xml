@@ -401,7 +401,7 @@
             <attach>false</attach>
             <doclint>-missing</doclint>
             <links>
-              <link>http://java.sun.com/j2se/${maven.compiler.source}/docs/api/</link>
+              <link>https://docs.oracle.com/javase/8/docs/api/</link>
               <link>http://slf4j.org/api/</link>
               <link>http://commons.apache.org/lang/api-release/</link>
               <link>http://commons.apache.org/io/api-release/</link>

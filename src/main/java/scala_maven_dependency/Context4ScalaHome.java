@@ -6,6 +6,7 @@ package scala_maven_dependency;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -60,6 +61,11 @@ public class Context4ScalaHome extends ContextBase implements Context {
       }
     }
     return d;
+  }
+
+  @Override
+  public Set<Artifact> findScalaDocAndDependencies() throws Exception {
+    return Collections.emptySet();
   }
 }
 

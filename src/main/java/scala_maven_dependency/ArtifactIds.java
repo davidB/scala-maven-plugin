@@ -16,6 +16,8 @@ public interface ArtifactIds {
 
   String scalaCompilerArtifactId() throws Exception;
 
+  String scalaDocArtifactId() throws Exception;
+
   String compilerMainClassName(boolean useFsc) throws Exception;
 
   String consoleMainClassName() throws Exception;

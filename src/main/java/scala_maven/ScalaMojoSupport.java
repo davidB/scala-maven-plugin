@@ -220,7 +220,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
     return mavenArtifactResolver;
   }
 
-  private Context scalaContext;
+  protected Context scalaContext;
 
   public Context findScalaContext() throws Exception {
     // reuse/lazy scalaContext creation (doesn't need to be Thread safe, scalaContext should be
