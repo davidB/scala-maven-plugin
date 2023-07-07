@@ -450,6 +450,14 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgument>-Xlint:deprecation</compilerArgument>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <minmemory>128m</minmemory>
@@ -477,13 +485,72 @@
           <!-- -sourceclasspath ${project.build.outputDirectory} -->
           <excludePackageNames>${project.groupId}.example*:${project.groupId}.util.internal*</excludePackageNames>
         </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-addPluginArtifactMetadata</id>
+            <phase>package</phase>
+            <goals>
+              <goal>addPluginArtifactMetadata</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-descriptor</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-site</id>
+            <phase>site</phase>
+            <goals>
+              <goal>site</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-deploy</id>
+            <phase>site-deploy</phase>
+            <goals>
+              <goal>deploy</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
         <configuration>
-          <compilerArgument>-Xlint:deprecation</compilerArgument>
-          <source>1.8</source>
-          <target>1.8</target>
+          <releaseProfiles>release</releaseProfiles>
+          <goals>install animal-sniffer:check site deploy nexus-staging:release</goals>
+          <useReleaseProfile>false</useReleaseProfile>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <tagNameFormat>@{project.version}</tagNameFormat>
         </configuration>
       </plugin>
       <plugin>
@@ -522,36 +589,6 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-site</id>
-            <phase>site</phase>
-            <goals>
-              <goal>site</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>default-deploy</id>
-            <phase>site-deploy</phase>
-            <goals>
-              <goal>deploy</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
         <configuration>
@@ -572,56 +609,14 @@
           <autoReleaseAfterClose>false</autoReleaseAfterClose>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <releaseProfiles>release</releaseProfiles>
-          <goals>install animal-sniffer:check site deploy nexus-staging:release</goals>
-          <useReleaseProfile>false</useReleaseProfile>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <tagNameFormat>@{project.version}</tagNameFormat>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-addPluginArtifactMetadata</id>
-            <phase>package</phase>
-            <goals>
-              <goal>addPluginArtifactMetadata</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>default-descriptor</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <reporting>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <reportSets>
           <reportSet>
