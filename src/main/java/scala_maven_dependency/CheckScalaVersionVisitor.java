@@ -45,7 +45,7 @@ public class CheckScalaVersionVisitor implements DependencyNodeVisitor {
     try {
       if (_scalaContext.hasInDistro(artifact) && artifact.getVersion() != null) {
         VersionNumber originalVersion = new VersionNumber(artifact.getVersion());
-        if (_scalaContext.version().compareTo(originalVersion)
+        if (_scalaContext.versionCompat().compareTo(originalVersion)
             != 0) { // _version can be a VersionNumberMask
           _failed = true;
         }
