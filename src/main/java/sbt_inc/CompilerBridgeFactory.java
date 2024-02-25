@@ -140,7 +140,8 @@ public final class CompilerBridgeFactory {
           resolver.getJar(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources").getFile();
 
       Set<Path> bridgeSourcesDependencies =
-          resolver.getJarAndDependencies(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources")
+          resolver
+              .getJarAndDependencies(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources")
               .stream()
               .filter(
                   artifact ->

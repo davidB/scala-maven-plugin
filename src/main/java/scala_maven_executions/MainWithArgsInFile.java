@@ -17,7 +17,9 @@ import java.util.List;
  */
 public class MainWithArgsInFile {
 
-  /** @param args */
+  /**
+   * @param args
+   */
   public static void main(String[] args) {
     try {
       String mainClassName = args[0];

@@ -17,7 +17,9 @@ import org.codehaus.plexus.classworlds.strategy.Strategy;
 import org.codehaus.plexus.util.StringUtils;
 import org.junit.Test;
 
-/** @author david bernard */
+/**
+ * @author david bernard
+ */
 public class MiscTest {
 
   // TODO not use String.split, it is not consistent across jdk version

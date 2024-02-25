@@ -15,7 +15,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import scala_maven_executions.MainHelper;
 import util.FileUtils;
 
-/** @author david.bernard */
+/**
+ * @author david.bernard
+ */
 public abstract class ScalaSourceMojoSupport extends ScalaMojoSupport {
 
   /** Enables/Disables sending java source to the scala compiler. */
