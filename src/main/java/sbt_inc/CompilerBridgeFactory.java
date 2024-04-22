@@ -130,88 +130,101 @@ public final class CompilerBridgeFactory {
     }
 
     if (!cachedCompiledBridgeJar.exists()) {
-      mavenLogger.info("Compiler bridge file is not installed yet");
-      // compile and install
-      RawCompiler rawCompiler =
-          new RawCompiler(
-              scalaInstance, ClasspathOptionsUtil.auto(), new MavenLoggerSbtAdapter(mavenLogger));
+      // Install the compiler in a synchronized block to prevent multithreaded compiles to corrupt
+      // the installer.
+      synchronized (CompilerBridgeFactory.class) {
+        boolean compiledWasInstalledWhileThisThreadWasWaiting = cachedCompiledBridgeJar.exists();
 
-      File bridgeSources =
-          resolver.getJar(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources").getFile();
-
-      Set<Path> bridgeSourcesDependencies =
-          resolver
-              .getJarAndDependencies(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources")
-              .stream()
-              .filter(
-                  artifact ->
-                      artifact.getScope() != null && !artifact.getScope().equals("provided"))
-              .map(Artifact::getFile)
-              .map(File::toPath)
-              .collect(Collectors.toSet());
-
-      bridgeSourcesDependencies.addAll(
-          Arrays.stream(scalaInstance.allJars())
-              .sequential()
-              .map(File::toPath)
-              .collect(Collectors.toList()));
-
-      Path sourcesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-sources");
-      Path classesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-classes");
-
-      IO.unzip(bridgeSources, sourcesDir.toFile(), AllPassFilter$.MODULE$, true);
-
-      List<Path> bridgeSourcesScalaFiles =
-          FileUtils.listDirectoryContent(
-              sourcesDir,
-              file ->
-                  Files.isRegularFile(file) && file.getFileName().toString().endsWith(".scala"));
-      List<Path> bridgeSourcesNonScalaFiles =
-          FileUtils.listDirectoryContent(
-              sourcesDir,
-              file ->
-                  Files.isRegularFile(file)
-                      && !file.getFileName().toString().endsWith(".scala")
-                      && !file.getFileName().toString().equals("MANIFEST.MF"));
-
-      try {
-        rawCompiler.apply(
-            IterableHasAsScala(bridgeSourcesScalaFiles).asScala().toSeq(), // sources:Seq[File]
-            IterableHasAsScala(bridgeSourcesDependencies).asScala().toSeq(), // classpath:Seq[File],
-            classesDir, // outputDirectory:Path,
-            IterableHasAsScala(Collections.<String>emptyList())
-                .asScala()
-                .toSeq() // options:Seq[String]
-            );
-
-        Manifest manifest = new Manifest();
-        Path sourcesManifestFile = sourcesDir.resolve("META-INF").resolve("MANIFEST.MF");
-        try (InputStream is = Files.newInputStream(sourcesManifestFile)) {
-          manifest.read(is);
+        if(compiledWasInstalledWhileThisThreadWasWaiting){
+          return cachedCompiledBridgeJar;
         }
 
-        List<Tuple2<File, String>> scalaCompiledClasses =
-            computeZipEntries(FileUtils.listDirectoryContent(classesDir, file -> true), classesDir);
-        List<Tuple2<File, String>> resources =
-            computeZipEntries(bridgeSourcesNonScalaFiles, sourcesDir);
-        List<Tuple2<File, String>> allZipEntries = new ArrayList<>();
-        allZipEntries.addAll(scalaCompiledClasses);
-        allZipEntries.addAll(resources);
+        mavenLogger.info("Compiler bridge file is not installed yet");
+        // compile and install
+        RawCompiler rawCompiler =
+            new RawCompiler(
+                scalaInstance, ClasspathOptionsUtil.auto(), new MavenLoggerSbtAdapter(mavenLogger));
 
-        IO.jar(
-            IterableHasAsScala(
-                    allZipEntries.stream()
-                        .map(x -> scala.Tuple2.apply(x._1, x._2))
-                        .collect(Collectors.toList()))
-                .asScala(),
-            cachedCompiledBridgeJar,
-            manifest);
+        File bridgeSources =
+            resolver.getJar(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources").getFile();
 
-        mavenLogger.info("Compiler bridge installed");
+        Set<Path> bridgeSourcesDependencies =
+            resolver
+                .getJarAndDependencies(SBT_GROUP_ID, bridgeArtifactId, zincVersion, "sources")
+                .stream()
+                .filter(
+                    artifact ->
+                        artifact.getScope() != null && !artifact.getScope().equals("provided"))
+                .map(Artifact::getFile)
+                .map(File::toPath)
+                .collect(Collectors.toSet());
 
-      } finally {
-        FileUtils.deleteDirectory(sourcesDir);
-        FileUtils.deleteDirectory(classesDir);
+        bridgeSourcesDependencies.addAll(
+            Arrays.stream(scalaInstance.allJars())
+                .sequential()
+                .map(File::toPath)
+                .collect(Collectors.toList()));
+
+        Path sourcesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-sources");
+        Path classesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-classes");
+
+        IO.unzip(bridgeSources, sourcesDir.toFile(), AllPassFilter$.MODULE$, true);
+
+        List<Path> bridgeSourcesScalaFiles =
+            FileUtils.listDirectoryContent(
+                sourcesDir,
+                file ->
+                    Files.isRegularFile(file) && file.getFileName().toString().endsWith(".scala"));
+        List<Path> bridgeSourcesNonScalaFiles =
+            FileUtils.listDirectoryContent(
+                sourcesDir,
+                file ->
+                    Files.isRegularFile(file)
+                        && !file.getFileName().toString().endsWith(".scala")
+                        && !file.getFileName().toString().equals("MANIFEST.MF"));
+
+        try {
+          rawCompiler.apply(
+              IterableHasAsScala(bridgeSourcesScalaFiles).asScala().toSeq(), // sources:Seq[File]
+              IterableHasAsScala(bridgeSourcesDependencies)
+                  .asScala()
+                  .toSeq(), // classpath:Seq[File],
+              classesDir, // outputDirectory:Path,
+              IterableHasAsScala(Collections.<String>emptyList())
+                  .asScala()
+                  .toSeq() // options:Seq[String]
+              );
+
+          Manifest manifest = new Manifest();
+          Path sourcesManifestFile = sourcesDir.resolve("META-INF").resolve("MANIFEST.MF");
+          try (InputStream is = Files.newInputStream(sourcesManifestFile)) {
+            manifest.read(is);
+          }
+
+          List<Tuple2<File, String>> scalaCompiledClasses =
+              computeZipEntries(
+                  FileUtils.listDirectoryContent(classesDir, file -> true), classesDir);
+          List<Tuple2<File, String>> resources =
+              computeZipEntries(bridgeSourcesNonScalaFiles, sourcesDir);
+          List<Tuple2<File, String>> allZipEntries = new ArrayList<>();
+          allZipEntries.addAll(scalaCompiledClasses);
+          allZipEntries.addAll(resources);
+
+          IO.jar(
+              IterableHasAsScala(
+                      allZipEntries.stream()
+                          .map(x -> scala.Tuple2.apply(x._1, x._2))
+                          .collect(Collectors.toList()))
+                  .asScala(),
+              cachedCompiledBridgeJar,
+              manifest);
+
+          mavenLogger.info("Compiler bridge installed");
+
+        } finally {
+          FileUtils.deleteDirectory(sourcesDir);
+          FileUtils.deleteDirectory(classesDir);
+        }
       }
     }
 
