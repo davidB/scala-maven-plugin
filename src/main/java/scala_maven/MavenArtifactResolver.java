@@ -16,6 +16,7 @@ public class MavenArtifactResolver {
 
   /** Constant {@link String} for "pom". Used to specify the Maven POM artifact type. */
   public static final String POM = "pom";
+
   /** Constant {@link String} for "jar". Used to specify the Maven JAR artifact type. */
   public static final String JAR = "jar";
 

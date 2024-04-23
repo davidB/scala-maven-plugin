@@ -135,7 +135,7 @@ public final class CompilerBridgeFactory {
       synchronized (CompilerBridgeFactory.class) {
         boolean compiledWasInstalledWhileThisThreadWasWaiting = cachedCompiledBridgeJar.exists();
 
-        if(compiledWasInstalledWhileThisThreadWasWaiting){
+        if (compiledWasInstalledWhileThisThreadWasWaiting) {
           return cachedCompiledBridgeJar;
         }
 

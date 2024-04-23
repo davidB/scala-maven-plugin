@@ -34,6 +34,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
 
   private static final String[] DEFAULT_INCLUDES = new String[] {"**/**"};
   private static final String[] DEFAULT_EXCLUDES = new String[] {};
+
   /** The Jar archiver. */
   @Component(role = Archiver.class, hint = "jar")
   private JarArchiver jarArchiver;
