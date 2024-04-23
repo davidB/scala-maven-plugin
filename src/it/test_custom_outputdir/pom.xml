@@ -73,21 +73,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <reportPlugins>
-            <plugin>
-              <groupId>@project.groupId@</groupId>
-              <artifactId>@project.artifactId@</artifactId>
-              <version>@project.version@</version>
-            </plugin>
-          </reportPlugins>
-        </configuration>
+        <version>3.12.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.13.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -95,4 +86,13 @@
       </plugin>
     </plugins>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
+        <version>@project.version@</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

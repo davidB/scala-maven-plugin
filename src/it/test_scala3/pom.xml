@@ -11,7 +11,7 @@
 
   <properties>
     <scala.compat.version>3</scala.compat.version>
-    <scala.version>3.0.0</scala.version>
+    <scala.version>3.4.1</scala.version>
   </properties>
   <dependencies>
     <dependency>
@@ -19,7 +19,7 @@
       <artifactId>scala3-library_${scala.compat.version}</artifactId>
       <version>${scala.version}</version>
     </dependency>
-  </dependencies>  
+  </dependencies>
   <build>
     <plugins>
       <plugin>

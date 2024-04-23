@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>scaladocTest</groupId>
   <artifactId>scaladocTest</artifactId>
@@ -20,7 +20,6 @@
       <artifactId>scala-library</artifactId>
       <version>${scala.version}</version>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -36,29 +35,34 @@
           <execution>
             <id>compile</id>
             <phase>compile</phase>
-            <goals><goal>compile</goal></goals>
+            <goals>
+              <goal>compile</goal>
+            </goals>
           </execution>
           <execution>
             <id>test-compile</id>
             <phase>test-compile</phase>
-            <goals><goal>testCompile</goal></goals>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
           </execution>
           <execution>
             <id>process-resources</id>
             <phase>process-resources</phase>
-            <goals><goal>compile</goal></goals>
+            <goals>
+              <goal>compile</goal>
+            </goals>
           </execution>
         </executions>
-		<configuration>
-		  <launchers>
-			  <launcher>
-				 <id>myLauncher</id>
-				 <mainClass>HelloScala</mainClass>
-			  </launcher>
-		   </launchers>
-		</configuration>
+        <configuration>
+          <launchers>
+            <launcher>
+              <id>myLauncher</id>
+              <mainClass>HelloScala</mainClass>
+            </launcher>
+          </launchers>
+        </configuration>
       </plugin>
-
       <!-- Compiler plugin enforces Java 1.8 compatibility -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -71,5 +75,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>
