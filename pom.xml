@@ -133,8 +133,8 @@
     <maven.version>3.3.9</maven.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
-    <last.scala2_12.release>2.12.18</last.scala2_12.release>
-    <last.scala2_13.release>2.13.13</last.scala2_13.release>
+    <last.scala2_12.release>2.12.19</last.scala2_12.release>
+    <last.scala2_13.release>2.13.14</last.scala2_13.release>
   </properties>
 
   <prerequisites>
