@@ -128,8 +128,7 @@
   <properties>
     <encoding>UTF-8</encoding>
     <github.global.server>github</github.global.server>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.release>8</maven.compiler.release>
     <maven.reporting.version>3.1.1</maven.reporting.version>
     <maven.version>3.3.9</maven.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
