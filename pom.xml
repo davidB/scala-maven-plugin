@@ -389,6 +389,10 @@
           <version>3.5.0</version>
         </plugin>
         <plugin>
+          <artifactId>maven-plugin-report-plugin</artifactId>
+          <version>3.13.0</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-release-plugin</artifactId>
           <version>3.0.1</version>
           <dependencies>
@@ -622,6 +626,9 @@
             </reports>
           </reportSet>
         </reportSets>
+      </plugin>
+      <plugin>
+        <artifactId>maven-plugin-report-plugin</artifactId>
       </plugin>
     </plugins>
   </reporting>
