@@ -372,7 +372,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.6.3</version>
+          <version>3.8.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
