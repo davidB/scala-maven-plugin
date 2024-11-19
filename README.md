@@ -1,7 +1,6 @@
 # Scala Maven Plugin
+
 [![ci](https://github.com/davidB/scala-maven-plugin/actions/workflows/ci.yaml/badge.svg)](https://github.com/davidB/scala-maven-plugin/actions/workflows/ci.yaml)
-[![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/davidB/scala-maven-plugin.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/davidB/scala-maven-plugin/context:java)
-[![Total Alerts](https://img.shields.io/lgtm/alerts/g/davidB/scala-maven-plugin.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/davidB/scala-maven-plugin/alerts)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.alchim31.maven/scala-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.alchim31.maven/scala-maven-plugin)
 
 The **scala-maven-plugin** (previously maven-scala-plugin) is used for compiling/testing/running/documenting Scala code in Maven.
@@ -34,12 +33,12 @@ Currently, you need Maven 3.x & JDK 8 to build the plugin, create the site, and 
   * `./mvnw release:clean && ./mvnw release:prepare && ./mvnw release:perform` : to publish on staging repository via plugin
   * `./mvnw release:clean && ./mvnw release:prepare -Darguments="-DskipTests -Dmaven.test.skip=true" && ./mvnw release:perform -Darguments="-DskipTests -Dmaven.test.skip=true"` to publish without tests (integration test require 30min on CI)
   * `./mvnw site package source:jar javadoc:jar install:install gpg:sign deploy:deploy changes:announcement-generate -Dmaven.test.skip=true -DperformRelease=true` : manual
-  * connect to http://oss.sonatype.org/ close and release the request(about scala-maven-plugin) in staging repositories
+  * connect to <http://oss.sonatype.org/> close and release the request(about scala-maven-plugin) in staging repositories
   * browse the updated [mvnsite](https://davidb.github.io/scala-maven-plugin/) (check version into samples, ...)
 
 ## TODO
 
-* close issues from https://github.com/davidB/scala-maven-plugin/issues/
+* close issues from <https://github.com/davidB/scala-maven-plugin/issues/>
 * refactor :
   * reduce copy-paste
   * file path management can be improved (a lot)
