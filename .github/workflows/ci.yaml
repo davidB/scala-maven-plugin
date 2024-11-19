@@ -25,4 +25,4 @@ jobs:
       - name: Build with Maven
         run: ./mvnw  --batch-mode package javadoc:jar site
       - name: Run integration-test
-        run: ./mvnw  --batch-mode integration-test verify
+        run: ./mvnw  --batch-mode verify # verify includes integration-test
