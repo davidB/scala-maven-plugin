@@ -130,7 +130,8 @@
     <github.global.server>github</github.global.server>
     <maven.compiler.release>8</maven.compiler.release>
     <maven.reporting.version>3.1.1</maven.reporting.version>
-    <maven.version>3.3.9</maven.version>
+    <maven.version.min>3.8.1</maven.version.min>
+    <maven.version.max>3.9</maven.version.max>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
     <last.scala2_12.release>2.12.19</last.scala2_12.release>
@@ -138,7 +139,8 @@
   </properties>
 
   <prerequisites>
-    <maven>${maven.version}</maven>
+    <!-- takes a minimum version number -->
+    <maven>${maven.version.min}</maven>
   </prerequisites>
 
   <dependencies>
@@ -251,7 +253,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>${maven.version}</version>
+      <version>[${maven.version.min},${maven.version.max})</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -263,7 +265,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>${maven.version}</version>
+      <version>[${maven.version.min},${maven.version.max})</version>
       <scope>provided</scope>
     </dependency>
     <!-- for scala:cctest -->
@@ -276,13 +278,13 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>${maven.version}</version>
+      <version>[${maven.version.min},${maven.version.max})</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.15.0</version>
+      <version>3.15.1</version>
       <scope>provided</scope>
     </dependency>
 
@@ -340,7 +342,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.3.2</version>
+          <version>3.4.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -376,15 +378,15 @@
         </plugin>
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.15.0</version>
+          <version>3.15.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.8.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-plugin-report-plugin</artifactId>
-          <version>3.13.0</version>
+          <version>3.15.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
@@ -412,7 +414,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.2.1</version>
+          <version>3.3.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
@@ -504,6 +506,9 @@
             </goals>
           </execution>
         </executions>
+        <!--configuration>
+          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+        </configuration-->
       </plugin>
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
