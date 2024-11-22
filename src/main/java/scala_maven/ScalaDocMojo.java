@@ -159,7 +159,7 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
     addCompilerPluginOptions(jcmd);
 
     // copy the classpathElements to not modify the global project definition see
-    // https://github.com/davidB/maven-scala-plugin/issues/60
+    // https://github.com/davidB/scala-maven-plugin/issues/60
     Set<File> paths = new TreeSet<>();
     for (String s : project.getCompileClasspathElements()) {
       paths.add(new File(s));
