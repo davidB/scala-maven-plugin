@@ -129,7 +129,7 @@
     <encoding>UTF-8</encoding>
     <github.global.server>github</github.global.server>
     <maven.compiler.release>8</maven.compiler.release>
-    <maven.reporting.version>3.1.1</maven.reporting.version>
+    <maven.reporting.version>4.0.0</maven.reporting.version>
     <maven.version.min>3.8.1</maven.version.min>
     <maven.version.max>3.9</maven.version.max>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
