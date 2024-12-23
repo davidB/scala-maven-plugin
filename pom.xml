@@ -184,7 +184,7 @@
     <dependency>
       <groupId>org.scala-sbt</groupId>
       <artifactId>zinc_2.13</artifactId>
-      <version>1.10.5</version>
+      <version>1.10.7</version>
       <exclusions>
         <exclusion>
           <groupId>org.jline</groupId>
