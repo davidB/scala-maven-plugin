@@ -6,6 +6,7 @@ package sbt_inc;
 
 import java.io.File;
 import java.util.Collection;
+import xsbti.compile.CompileOrder;
 
 public interface SbtIncrementalCompiler {
 
@@ -14,5 +15,7 @@ public interface SbtIncrementalCompiler {
       Collection<File> sources,
       File classesDirectory,
       Collection<String> scalacOptions,
-      Collection<String> javacOptions);
+      Collection<String> javacOptions,
+      CompileOrder compileOrder,
+      File cacheFile);
 }
