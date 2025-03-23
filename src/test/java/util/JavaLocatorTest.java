@@ -10,11 +10,11 @@ import java.io.File;
 import org.apache.maven.toolchain.Toolchain;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import uk.org.webcompere.systemstubs.rules.EnvironmentVariablesRule;
 
 public class JavaLocatorTest {
 
-  @Rule public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
+  @Rule public final EnvironmentVariablesRule environmentVariables = new EnvironmentVariablesRule();
 
   @Test
   public void shouldReturnNotNullWhenJavaIsNotAvailableOnCommandLineAndJavaHomeIsPresent() {
