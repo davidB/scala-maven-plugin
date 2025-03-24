@@ -2,9 +2,7 @@
 <document>
   <properties>
     <title>scala-maven-plugin</title>
-    <authors>
-      <person name="Josh Suereth" />
-    </authors>
+    <author>Josh Suereth</author>
   </properties>
   <body>
     <h1>Mixed Java/Scala Projects</h1>
@@ -29,105 +27,94 @@
         <source>src/test/scala</source>
       </p>
       <p>Make your pom file look similar to the following (this is what we use for integration testing):
-       <source>
-          <![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
-
+       <source><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>sandbox</groupId>
-	<artifactId>testJavaAndScala</artifactId>
-	<version>1.0-SNAPSHOT</version>
-	<name>Test for Java + Scala compilation</name>
-	<description>Test for Java + Scala compilation</description>
+  <groupId>sandbox</groupId>
+  <artifactId>testJavaAndScala</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>Test for Java + Scala compilation</name>
+  <description>Test for Java + Scala compilation</description>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-library</artifactId>
-			<version>2.7.2</version>
-		</dependency>
-	</dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.7.2</version>
+    </dependency>
+  </dependencies>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>${project.artifactId}</artifactId>
-					<version>${project.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.1</version>
-					<configuration>
-                      <source>1.8</source>
-                      <target>1.8</target>
-                    </configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>${project.artifactId}</artifactId>
-				<executions>
-					<execution>
-						<id>scala-compile-first</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>add-source</goal>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>scala-test-compile</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-                  <source>1.8</source>
-                  <target>1.8</target>
-                </configuration>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
-</project>
-
-          ]]>
-       </source>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}</artifactId>
+          <version>${project.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>${project.artifactId}</artifactId>
+        <executions>
+          <execution>
+            <id>scala-compile-first</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>add-source</goal>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>scala-test-compile</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>]]></source>
       </p>
       <p>
         Then use the standard maven phases :
-        <source>
-          <![CDATA[
-# compile only
+        <source><![CDATA[# compile only
 mvn compile
 # or compile and test
 mvn test
 # or compile, test and package
-mvn package
-       ]]>
-        </source>
+mvn package]]></source>
       </p>
 
     </section>

@@ -2,9 +2,7 @@
 <document>
   <properties>
     <title>Example</title>
-    <authors>
-      <person name="Brice Lambi"/>
-    </authors>
+    <author>Brice Lambi</author>
   </properties>
   <body>
     <h1>Running a "main(args: Array[String])"</h1>
@@ -28,30 +26,28 @@
         <li>want to store, some configuration for later user, or for sharing with other</li>
         </ul>
         </p>
-      <source><![CDATA[
-  <plugin>
-    <groupId>maven</groupId>
-    <artifactId>scala-maven-plugin</artifactId>
-    <configuration>
-      <launchers>
-        <launcher>
-          <id>foo</id>
-          <mainClass>org.example.MyClass</mainClass>
-          <!-- args are optional -->
-          <args>
-            <arg>arg1</arg>
-          </args>
-          <!-- jvmArgs are optional -->
-          <jvmArgs>
-            <jvmArg>-Xmx128m</jvmArg>
-            <jvmArg>-Djava.library.path=...</jvmArg>
-          </jvmArgs>
-        </launcher>
-        <!-- you could define other launcher -->
-      </launchers>
-    </configuration>
-  </plugin>]]>
-      </source>
+      <source><![CDATA[<plugin>
+  <groupId>maven</groupId>
+  <artifactId>scala-maven-plugin</artifactId>
+  <configuration>
+    <launchers>
+      <launcher>
+        <id>foo</id>
+        <mainClass>org.example.MyClass</mainClass>
+        <!-- args are optional -->
+        <args>
+          <arg>arg1</arg>
+        </args>
+        <!-- jvmArgs are optional -->
+        <jvmArgs>
+          <jvmArg>-Xmx128m</jvmArg>
+          <jvmArg>-Djava.library.path=...</jvmArg>
+        </jvmArgs>
+      </launcher>
+      <!-- you could define other launcher -->
+    </launchers>
+  </configuration>
+</plugin>]]></source>
       <p>Now you can run the following command to run your launcher (the classpath used is the test classpath).</p>
       <source>mvn scala:run -Dlauncher=foo</source>
       <p>If you don't specify launcher or mainClass then the first launcher is used, in your case, the example below is equivalent to the example above.</p>

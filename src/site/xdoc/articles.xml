@@ -2,9 +2,7 @@
 <document>
     <properties>
         <title>scala-maven-plugin : Articles</title>
-        <authors>
-            <person name="David Bernard"/>
-        </authors>
+        <author>David Bernard</author>
     </properties>
     <body>
         <section name="Articles...">

@@ -2,9 +2,7 @@
 <document>
   <properties>
     <title>Execute Script</title>
-    <authors>
-      <person name="Jesse Eichar" />
-    </authors>
+    <author>Jesse Eichar</author>
   </properties>
   <body>
     <h1>Running a scala script</h1>
@@ -12,25 +10,24 @@
       <p>
       This goal allows you to execute a scala script defined in the pom.
       </p>
-      <source><![CDATA[
-  <plugin>
-    <groupId>${project.groupId}</groupId>
-    <artifactId>${project.artifactId}</artifactId>
-    <version>${project.version}</version>
-    <executions>
-      <execution>
-        <phase>package</phase>
-        <goals>
-          <goal>script</goal>
-        </goals>
-      </execution>
-    </executions>
-    <configuration>
-      <script>
-        println ("Hello from pom script :-)")
-     </script>
-    </configuration>
-  </plugin>]]></source>
+      <source><![CDATA[<plugin>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+  <executions>
+    <execution>
+      <phase>package</phase>
+      <goals>
+        <goal>script</goal>
+      </goals>
+    </execution>
+  </executions>
+  <configuration>
+    <script>
+      println ("Hello from pom script :-)")
+   </script>
+  </configuration>
+</plugin>]]></source>
       </section>
     <section name="Running from a Script File">
       <p>
@@ -41,36 +38,34 @@
     </section>
     <section name="Running a script as part of a build">
       <p>Executing a script as part of the build process.</p>
-      <source><![CDATA[
-  <plugin>
-    <groupId>${project.groupId}</groupId>
-    <artifactId>${project.artifactId}</artifactId>
-    <version>${project.version}</version>
-    <executions>
-      <execution>
-        <phase>package</phase>
-        <goals>
-          <goal>script</goal>
-        </goals>
-      </execution>
-    </executions>
-    <configuration>
-      <scriptFile>package.scala</scriptFile>
-    </configuration>
-  </plugin>]]></source>
+      <source><![CDATA[<plugin>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+  <executions>
+    <execution>
+      <phase>package</phase>
+      <goals>
+        <goal>script</goal>
+      </goals>
+    </execution>
+  </executions>
+  <configuration>
+    <scriptFile>package.scala</scriptFile>
+  </configuration>
+</plugin>]]></source>
     </section>
     <section name="Predefining a script file">
       <p>Adding the script configuration to your plugin
         definition.</p>
-      <source><![CDATA[
-  <plugin>
-    <groupId>${project.groupId}</groupId>
-    <artifactId>${project.artifactId}</artifactId>
-    <version>${project.version}</version>
-    <configuration>
-      <scriptFile>pathToScript/MyScript</scriptFile>
-    </configuration>
-  </plugin>]]></source>
+      <source><![CDATA[<plugin>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+  <configuration>
+    <scriptFile>pathToScript/MyScript</scriptFile>
+  </configuration>
+</plugin>]]></source>
       <p>Now you can run the following command to run your scala app.
       </p>
       <source>mvn scala:script</source>
@@ -97,43 +92,41 @@
                   that the java.util collections can be treated as Scala collections.
                 </p>
               <p>Here is an example script using the project</p>
-              <source><![CDATA[
-        <executions>
-          <execution>
-            <id>generate-hello</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>script</goal>
-            </goals>
-            <configuration>
-              <scalaVersion>2.7.7</scalaVersion>
-              <keepGeneratedScript>true</keepGeneratedScript>
-              <script>
-              &lt;![CDATA[
-                println("hello from scala script constructor")
+              <source><![CDATA[<executions>
+  <execution>
+    <id>generate-hello</id>
+    <phase>generate-sources</phase>
+    <goals>
+      <goal>script</goal>
+    </goals>
+    <configuration>
+      <scalaVersion>2.7.7</scalaVersion>
+      <keepGeneratedScript>true</keepGeneratedScript>
+      <script>
+      &lt;![CDATA[
+        println("hello from scala script constructor")
 
-                def run() {
-                  import java.io.PrintWriter
-                  import scala.collection.jcl.Conversions._
+        def run() {
+          import java.io.PrintWriter
+          import scala.collection.jcl.Conversions._
 
-                  println("hello from scala script run method")
-                  log.info( project("scala.version") )
-                  val fo = new PrintWriter("target/hello.txt")
-                  try {
-                    fo.println(project.getArtifactId())
-                    for( d <- project.getDependencies() ) {
-                      fo.println (d.getArtifactId)
-                    }
-                  } finally {
-                    fo.close()
-                  }
-                }
-              ]]&gt;
-              </script>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>]]></source>
+          println("hello from scala script run method")
+          log.info( project("scala.version") )
+          val fo = new PrintWriter("target/hello.txt")
+          try {
+            fo.println(project.getArtifactId())
+            for( d <- project.getDependencies() ) {
+              fo.println (d.getArtifactId)
+            }
+          } finally {
+            fo.close()
+          }
+        }
+      ]]&gt;
+      </script>
+    </configuration>
+  </execution>
+</executions>]]></source>
     </section>
     <section name="Technical details">
         <p>

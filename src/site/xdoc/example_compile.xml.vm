@@ -2,9 +2,7 @@
 <document>
   <properties>
     <title>scala-maven-plugin</title>
-    <authors>
-      <person name="David Bernard" />
-    </authors>
+    <author>David Bernard</author>
   </properties>
   <body>
     <h1>Compiling Scala sources</h1>
@@ -22,38 +20,26 @@
       </p>
       <p>
         Then use the standard maven phases :
-        <source>
-          <![CDATA[
-# compile only
+        <source><![CDATA[# compile only
 mvn compile
 # or compile and test
 mvn test
 # or compile, test and package
-mvn package
-       ]]>
-        </source>
+mvn package]]></source>
       </p>
       <p>
         Or the plugin specifics goal :
-        <source>
-          <![CDATA[
-# compile source
+        <source><![CDATA[# compile source
 mvn scala:compile
 # compile test
-mvn scala:testCompile
-       ]]>
-        </source>
+mvn scala:testCompile]]></source>
       </p>
       <p>
         Or if you want to compile only source (from main and test) without calling previous phases like check resources, generate-sources,... :
-        <source>
-          <![CDATA[
-# compile source and test with fsc
+        <source><![CDATA[# compile source and test with fsc
 mvn scala:cc -Donce=true
 # compile source and test with scalac
-mvn scala:cc -Donce=true -Dfsc=false
-       ]]>
-        </source>
+mvn scala:cc -Donce=true -Dfsc=false]]></source>
         WARNING:
         <ul>
         <li>This feature is provide for integration with editor.</li>
@@ -62,9 +48,7 @@ mvn scala:cc -Donce=true -Dfsc=false
       </p>
     </section>
     <section name="Increasing memory">
-      <source>
-        <![CDATA[
-<project>
+      <source><![CDATA[<project>
   ...
       <plugin>
         <groupId>${project.groupId}</groupId>
@@ -86,28 +70,23 @@ mvn scala:cc -Donce=true -Dfsc=false
         </configuration>
       </plugin>
   ...
-</project>
-            ]]>
-      </source>
+</project>]]></source>
     </section>
     <section name="Emacs user">
       <p>If you are an emacs user, you can run the compilation with "-DemacsMode=true", then compilation error will be displayed without [WARNING] at the beginning of the line like :
-      <source><![CDATA[
-[INFO] Compiling 1 source files to /home/dwayne/work/oss/scala-tools/vscaladoc/target/classes
+      <source><![CDATA[[INFO] Compiling 1 source files to /home/dwayne/work/oss/scala-tools/vscaladoc/target/classes
 [WARNING] Compilation failure
 
 /project/src/main/scala/org/example/Main.scala:12: error: expected class or object definition
 foo()
 ^
-one error found
-       ]]></source>
+one error found]]></source>
        </p>
 	</section>
 
     <section name="Compiler Arguments">
         <p>It is common to wish to send arguments to the scalac compiler during compilation of your project.  To do so, make use of the args configuration parameter like so:</p>
-        <source><![CDATA[
-<project>
+        <source><![CDATA[<project>
   ...
   <plugin>
     <groupId>${project.groupId}</groupId>
@@ -122,8 +101,7 @@ one error found
     </configuration>
   </plugin>
   ...
-</project>
-                ]]></source>
+</project>]]></source>
     </section>
     <section name="Use local scala's jar">
         <p>If you want to try to compile with a local installation of scala for any reason like :

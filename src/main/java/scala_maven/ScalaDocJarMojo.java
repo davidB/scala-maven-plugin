@@ -67,7 +67,7 @@ public class ScalaDocJarMojo extends ScalaDocMojo {
 
   /**
    * The archive configuration to use. See <a
-   * href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
+   * href="https://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
    */
   @Parameter private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 

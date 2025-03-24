@@ -2,17 +2,13 @@
 <document>
   <properties>
     <title>Using the plugin</title>
-    <authors>
-      <person name="David Bernard" />
-    </authors>
+    <author>David Bernard</author>
   </properties>
   <body>
     <h1>Using the plugin (common)</h1>
     <section name="Configuration">
       <p>to use the plugin you need to add into your pom.xml (the first time you use the plugin, if you don't specify the version like in the following example, call maven with the "-U" option)</p>
-      <source>
-        <![CDATA[
-<project>
+      <source><![CDATA[<project>
   ...
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
@@ -31,9 +27,7 @@
     ...
   </build>
   ...
-</project>
-            ]]>
-      </source>
+</project>]]></source>
     </section>
 
     <section name="Displaying scala help and version">
@@ -43,9 +37,7 @@
     <section name="Displaying the command line used">
       <p>To display command used when process is spawned set the property displayCmd to true.
         (In the incremental mode no process is spawned, so example below overrides default of recompileMode to all).</p>
-      <source>
-        <![CDATA[
-$> mvn scala:compile -DdisplayCmd=true -DrecompileMode=all
+      <source><![CDATA[$> mvn scala:compile -DdisplayCmd=true -DrecompileMode=all
 
 [INFO] Scanning for projects...
 [INFO] Searching repository for plugin with prefix: 'scala'.
@@ -62,34 +54,29 @@ $> mvn scala:compile -DdisplayCmd=true -DrecompileMode=all
 [INFO] Finished at: Sat Nov 10 22:28:54 GMT+01:00 2007
 [INFO] Final Memory: 7M/63M
 [INFO] ------------------------------------------------------------------------
-      ]]>
-      </source>
+]]></source>
     </section>
 
     <section name="Changing the scala version">
       <p>
         Since version 2.7 of the plugin, the scala version to use is detected from dependency to scala-library. So it suggested to not use scalaVersion configuration.
         But if you want to define explicitly the version of scala used to compile,... use 'scalaVersion', ex:
-        <source>
-          <![CDATA[
-      <plugin>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>${project.artifactId}</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-              <goal>testCompile</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <scalaVersion>${scala.version}</scalaVersion>
-        </configuration>
-      </plugin>
-    ]]>
-        </source>
+        <source><![CDATA[<plugin>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+  <executions>
+    <execution>
+      <goals>
+        <goal>compile</goal>
+        <goal>testCompile</goal>
+      </goals>
+    </execution>
+  </executions>
+  <configuration>
+    <scalaVersion>${scala.version}</scalaVersion>
+  </configuration>
+</plugin>]]></source>
       </p>
     </section>
 
