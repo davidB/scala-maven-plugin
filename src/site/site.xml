@@ -1,27 +1,29 @@
-<?xml version="1.0"?>
-<project name="${project.name}">
-  <bannerLeft>
-    <name>${project.name}</name>
-    <href>${project.url}</href>
-  </bannerLeft>
-  <bannerRight>
-    <name>Scala-lang</name>
-    <href>http://www.scala-lang.org/</href>
-    <src>images/logos/scala.svg</src>
-    <width>30</width>
-    <height>49</height>
+<site xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd"
+  name="${project.name}">
+  <bannerLeft name="${project.name}" href="${project.url}"/>
+  <bannerRight name="Scala-lang" href="https://www.scala-lang.org/">
+    <image src="images/logos/scala.svg" height="49px" width="30px" />
   </bannerRight>
   <publishDate position="left" format="yyyy-MM-dd HH:mm" />
   <version position="left"/>
   <poweredBy>
-    <logo name="Build with Maven" href="http://maven.apache.org" img="http://maven.apache.org/images/logos/maven-feather.png" />
+    <logo name="Build with Maven" href="https://maven.apache.org" >
+      <image src="https://maven.apache.org/images/logos/maven-feather.png" />
+    </logo>
   </poweredBy>
+
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>2.1.0</version>
+  </skin>
 
   <body>
     <links>
-      <item name="Wiki" href="http://github.com/davidB/scala-maven-plugin/wiki"/>
-      <item name="FAQ" href="http://github.com/davidB/scala-maven-plugin/wiki/frequently-asked-questions"/>
-      <item name="Mailing-list" href="http://groups.google.com/group/maven-and-scala"/>
+      <item name="Wiki" href="https://github.com/davidB/scala-maven-plugin/wiki"/>
+      <item name="FAQ" href="https://github.com/davidB/scala-maven-plugin/wiki/frequently-asked-questions"/>
+      <item name="Mailing-list" href="https://groups.google.com/group/maven-and-scala"/>
     </links>
     <menu name="Overview">
       <item name="Introduction" href="index.html" />
@@ -45,4 +47,4 @@
     <menu ref="reports" />
     <menu ref="modules" />
   </body>
-</project>
+</site>

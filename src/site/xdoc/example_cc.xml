@@ -2,39 +2,25 @@
 <document>
   <properties>
     <title>scala-maven-plugin</title>
-    <authors>
-      <person name="David Bernard" />
-    </authors>
+    <author>David Bernard</author>
   </properties>
   <body>
     <h1>Continuous Compilation of Scala sources</h1>
 
     <span>Prerequis : <a href="usage.html">common usages</a></span>
 
-    <section>
+    <section name="Continuous Compilation">
       <p>
         If you want a continuous compilation of sources under src/main and src/test (compilation when file are saved) :
-        <source>
-          <![CDATA[
-mvn scala:cc
-       ]]>
-        </source>
+        <source>mvn scala:cc</source>
       </p>
       <ul>
       <li>Compilation runs in a infinite loop and compiles only modified files (non-stop), so use Ctrl+C to stop it</li>
       <li>If you want to compile without FSC (with regular scalac like non-continuous compilation) :
-        <source>
-          <![CDATA[
-mvn scala:cc -Dfsc=false
-       ]]>
-        </source>
+        <source>mvn scala:cc -Dfsc=false</source>
       </li>
       <li>If you want to display command used to run scala :
-        <source>
-          <![CDATA[
-mvn scala:cc -DdisplayCmd=true
-       ]]>
-        </source>
+        <source>mvn scala:cc -DdisplayCmd=true</source>
       </li>
       <li style="color:red">WARNING : continuous compilation is an infinite loop so, avoid call the goal "cc" in pom.xml or to connect it to a lifecycle's phase.</li>
       </ul>

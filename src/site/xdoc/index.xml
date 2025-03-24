@@ -2,9 +2,7 @@
 <document>
     <properties>
         <title>scala-maven-plugin</title>
-        <authors>
-            <person name="David Bernard"/>
-        </authors>
+        <author>David Bernard</author>
     </properties>
     <body>
         <section name="scala-maven-plugin">
@@ -15,7 +13,7 @@
             <ul>
                 <li>Maven 3.0+</li>
                 <li>JDK 1.5</li>
-                <li><bold>No need to install <a href="http://scala-lang.org">scala</a> !</bold></li>
+                <li><strong>No need to install <a href="https://scala-lang.org">scala</a> !</strong></li>
             </ul>
         </section>
     </body>

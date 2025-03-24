@@ -2,9 +2,7 @@
 <document>
   <properties>
     <title>Example</title>
-    <authors>
-      <person name="David Bernard"/>
-    </authors>
+    <author>David Bernard</author>
   </properties>
   <body>
     <h1>Running a scala console</h1>
@@ -20,8 +18,7 @@
           <source>mvn scala:console</source>
         </li>
         <li>when the scala prompt is shown, play :
-      <source><![CDATA[
-...
+      <source><![CDATA[...
 [INFO] [scala:console]
 Welcome to Scala version 2.6.0-final.
 Type in expressions to have them evaluated.
@@ -30,8 +27,7 @@ Type :help for more information.
 scala> print("hello")
 hello
 scala> new bootstrap.liftweb.Boot().boot
-...
-      ]]></source>
+...]]></source>
         </li>
         </ol>
       </p>
@@ -42,18 +38,15 @@ scala> new bootstrap.liftweb.Boot().boot
     <p>I'll show an example with the LiftConsole. A good pratice is to put this class in the test directory (it's not part of the main code ;) )</p>
     <ol>
     <li>add into the pom.xml the jar with the scala 's console
-    <source><![CDATA[
-      <dependency>
-        <groupId>org.scala-lang</groupId>
-        <artifactId>scala-compiler</artifactId>
-        <version>${scala.version}</version>
-        <scope>test</scope>
-      </dependency>
-      ]]></source>
+    <source><![CDATA[<dependency>
+  <groupId>org.scala-lang</groupId>
+  <artifactId>scala-compiler</artifactId>
+  <version>${scala.version}</version>
+  <scope>test</scope>
+</dependency>]]></source>
      </li>
     <li>create the scala file src/test/scala/LiftConsole.scala (based on liftrepl)
-    <source><![CDATA[
-import bootstrap.liftweb.Boot
+    <source><![CDATA[import bootstrap.liftweb.Boot
 import scala.tools.nsc.MainGenericRunner
 
 object LiftConsole {
@@ -67,23 +60,20 @@ object LiftConsole {
      // After the repl exits, then exit the scala script
      exit(0)
    }
-}
-      ]]></source>
+}]]></source>
      </li>
      <li>compile: <source><![CDATA[mvn test]]></source></li>
      <li>run : <source><![CDATA[mvn scala:console -DmainConsole=LiftConsole]]></source></li>
      <li>if you don't want to always need to set "-DmainConsole=LiftConsole",
       then edit your pom.xml and add to the configuration of the plugin :
-    <source><![CDATA[
-      <plugin>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>${project.artifactId}</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <mainConsole>LiftConsole</mainConsole>
-        </configuration>
-      </plugin>
-      ]]></source>
+    <source><![CDATA[<plugin>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+  <configuration>
+    <mainConsole>LiftConsole</mainConsole>
+  </configuration>
+</plugin>]]></source>
       </li>
   </ol>
 
@@ -96,16 +86,14 @@ object LiftConsole {
      <li>call the console with the option define where is the javarebel.jar:
        <source>mvn scala:console -Djavarebel.jar.path=[path_of_javarebel.jar]</source>
        or through the pom.xml
-    <source><![CDATA[
-      <plugin>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>${project.artifactId}</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <javaRebelPath>${user.home}/lib/java/javarebel/javarebel.jar</javaRebelPath>
-        </configuration>
-      </plugin>
-      ]]></source>
+    <source><![CDATA[<plugin>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+  <configuration>
+    <javaRebelPath>${user.home}/lib/java/javarebel/javarebel.jar</javaRebelPath>
+  </configuration>
+</plugin>]]></source>
     </li>
     <li><b>NOTE</b> - Forking is currently disabled in the plugin due to cross-platform issues with jline and process indirection.
         If you wish to use JRebel with the console, please set your maven opts in your environment:

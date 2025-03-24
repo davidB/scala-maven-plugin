@@ -2,9 +2,7 @@
 <document>
   <properties>
     <title>Generating API with ScalaDoc</title>
-    <authors>
-      <person name="David Bernard" />
-    </authors>
+    <author>David Bernard</author>
   </properties>
   <body>
     <h1>Generating API with ScalaDoc</h1>
@@ -14,8 +12,7 @@
     <section name="Configuration">
       <p>to generate apidocs / scaladoc for your scala sources, add this to your pom.xml</p>
       <h2>with maven 2.x</h2>
-      <source><![CDATA[
-<project>
+      <source><![CDATA[<project>
   ...
   <reporting>
     <plugins>
@@ -31,8 +28,7 @@
   ...
 </project>]]></source>
       <h2>with maven 3.x</h2>
-      <source><![CDATA[
-<project>
+      <source><![CDATA[<project>
   ...
   <build>
     ...
@@ -76,29 +72,20 @@
       </p>
       <p>
         Then use the standard maven phases :
-        <source>
-          <![CDATA[
-# generate a site
-mvn site
-       ]]>
-        </source>
+        <source><![CDATA[# generate a site
+mvn site]]></source>
       </p>
       <p>
         Or the plugin specifics goal :
-        <source>
-          <![CDATA[
-# generate only the doc
-mvn scala:doc
-        ]]>
-        </source>
+        <source><![CDATA[# generate only the doc
+mvn scala:doc]]></source>
       </p>
       <p>See the result under target/site/scaladocs/</p>
     </section>
     <section name="To use a custom api generator">
       <p>
         You need to declare the main class to call (with the same parameter as scaladoc). And you need to list the additional artifact(jar) to use :
-        <source><![CDATA[
-<configuration>
+        <source><![CDATA[<configuration>
   <scaladocClassName>org.scala_tools.vscaladoc.Main</scaladocClassName>
   <scalaJars>
     <scalaJar>
@@ -107,48 +94,36 @@ mvn scala:doc
       <version>1.0</version>
     </scalaJar>
   </scalaJars>
-</configuration>
-        ]]></source>
+</configuration>]]></source>
       </p>
       <p>
         Then use the standard maven phases :
-        <source>
-          <![CDATA[
-# generate a site
+        <source><![CDATA[# generate a site
 mvn site
 # or generate only the doc
-mvn scala:doc
-       ]]>
-        </source>
+mvn scala:doc]]></source>
       </p>
       <p>See the result under target/site/scaladocs/</p>
     </section>
     <section name="To use vscaladoc">
       <p>
         vscaladoc have a shortcut way to use it (instead of using the custom way describe above) :
-        <source><![CDATA[
-<configuration>
+        <source><![CDATA[<configuration>
   <vscalaVersion>1.0</vscalaVersion>
-</configuration>
-        ]]></source>
+</configuration>]]></source>
       </p>
       <p>
         Then use the standard maven phases :
-        <source>
-          <![CDATA[
-# generate a site
+        <source><![CDATA[# generate a site
 mvn site
 # or generate only the doc
-mvn scala:doc
-       ]]>
-        </source>
+mvn scala:doc]]></source>
       </p>
       <p>See the result under target/site/scaladocs/</p>
     </section>
     <section name="Attaching Scaladoc">
       <p>to attach scaladoc JAR files with your project</p>
-      <source><![CDATA[
-<project>
+      <source><![CDATA[<project>
   ...
   <build>
     <plugins>

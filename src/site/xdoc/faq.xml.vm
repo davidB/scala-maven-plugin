@@ -2,9 +2,7 @@
 <document>
 	<properties>
 		<title>Maven Scala Plugin Frequently Asked Questions</title>
-		<authors>
-			<person name="Josh Suereth" />
-		</authors>
+		<author>Josh Suereth</author>
 	</properties>
 	<body>
 		<h1>Frequently Asked Questions</h1>
@@ -45,35 +43,33 @@
 				<dt>Why does the mvn eclipse:eclipse not add the src/main/scala directory as a source path</dt>
 				<dd>The maven-eclipse-plugin is not maintained/integrated with the scala-maven-plugin.
 				If you would like to have the src/main/scala directory added as a source path in eclipse, you must configure it using the <a href="http://mojo.codehaus.org/build-helper-maven-plugin/howto.html">maven-build-helper-plugin's add-source goal</a>
-				Example: <pre>
-&lt;project&gt;
-
+				Example:
+				<source><![CDATA[<project>
   ...
-  &lt;build&gt;
-   &lt;plugins&gt;
-     &lt;plugin&gt;
-        &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
-        &lt;artifactId&gt;build-helper-maven-plugin&lt;/artifactId&gt;
-        &lt;executions&gt;
-          &lt;execution&gt;
-            &lt;id&gt;add-source&lt;/id&gt;
-            &lt;phase&gt;generate-sources&lt;/phase&gt;
-            &lt;goals&gt;
-              &lt;goal&gt;add-source&lt;/goal&gt;
-            &lt;/goals&gt;
-            &lt;configuration&gt;
-              &lt;sources&gt;
-                &lt;source&gt;src/main/scala&lt;/source&gt;
+  <build>
+   <plugins>
+     <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/main/scala</source>
                 ...
-              &lt;/sources&gt;
-            &lt;/configuration&gt;
-          &lt;/execution&gt;
-        &lt;/executions&gt;
-      &lt;/plugin&gt;
-    &lt;/plugins&gt;
-  &lt;/build&gt;
-&lt;/project&gt;
-				</pre>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>]]></source>
 				</dd>
 				<dt>Can you synchronize eclipse configuration with the scalac plugin pom configuration?</dt>
 				<dd>Not Currently</dd>

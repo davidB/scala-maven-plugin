@@ -20,9 +20,7 @@
         the `recompileMode` configuration to `all` to disable the
         incremental comiler. For example:
       </p>
-      <source>
-        <![CDATA[
-<project>
+      <source><![CDATA[<project>
   ...
   <plugin>
     <groupId>${project.groupId}</groupId>
@@ -33,9 +31,7 @@
     </configuration>
   </plugin>
   ...
-</project>
-        ]]>
-      </source>
+</project>]]></source>
     </section>
 
     <section name="Increasing Memory">
@@ -65,9 +61,7 @@
         configuration option, similar to the "args" option for scalac options.
         For example:
       </p>
-      <source>
-        <![CDATA[
-<project>
+      <source><![CDATA[<project>
   ...
   <plugin>
     <groupId>${project.groupId}</groupId>
@@ -82,9 +76,7 @@
     </configuration>
   </plugin>
   ...
-</project>
-        ]]>
-      </source>
+</project>]]></source>
       <p>
         The incremental compiler will by default handle mixed compile order for
         Scala and Java sources. That is, Scala and Java sources can depend on each
@@ -106,9 +98,7 @@
         "analysisCacheFile" and "testAnalysisCacheFile" configuration options.
         For example:
       </p>
-      <source>
-        <![CDATA[
-<project>
+      <source><![CDATA[<project>
   ...
   <plugin>
     <groupId>${project.groupId}</groupId>
@@ -121,9 +111,7 @@
     </configuration>
   </plugin>
   ...
-</project>
-        ]]>
-      </source>
+</project>]]></source>
     </section>
 
   </body>

@@ -33,7 +33,7 @@ Currently, you need Maven 3.x & JDK 8 to build the plugin, create the site, and 
   * `./mvnw release:clean && ./mvnw release:prepare && ./mvnw release:perform` : to publish on staging repository via plugin
   * `./mvnw release:clean && ./mvnw release:prepare -Darguments="-DskipTests -Dmaven.test.skip=true" && ./mvnw release:perform -Darguments="-DskipTests -Dmaven.test.skip=true"` to publish without tests (integration test require 30min on CI)
   * `./mvnw site package source:jar javadoc:jar install:install gpg:sign deploy:deploy changes:announcement-generate -Dmaven.test.skip=true -DperformRelease=true` : manual
-  * connect to <http://oss.sonatype.org/> close and release the request(about scala-maven-plugin) in staging repositories
+  * connect to <https://oss.sonatype.org/> close and release the request(about scala-maven-plugin) in staging repositories
   * browse the updated [mvnsite](https://davidb.github.io/scala-maven-plugin/) (check version into samples, ...)
 
 ## TODO
