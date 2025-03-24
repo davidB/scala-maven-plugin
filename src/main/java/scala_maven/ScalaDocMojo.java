@@ -64,12 +64,10 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
 
   @Override
   protected List<File> getSourceDirectories() throws Exception {
-    List<String> sources = project.getCompileSourceRoots();
     // Quick fix in case the user has not added the "add-source" goal.
     String scalaSourceDir = FileUtils.pathOf(sourceDir, useCanonicalPath);
-    if (!sources.contains(scalaSourceDir)) {
-      sources.add(scalaSourceDir);
-    }
+    project.addCompileSourceRoot(scalaSourceDir);
+    List<String> sources = project.getCompileSourceRoots();
     return normalize(sources);
   }
 

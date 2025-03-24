@@ -77,11 +77,9 @@ public class ScalaTestCompileMojo extends ScalaCompilerSupport {
 
   @Override
   protected List<File> getSourceDirectories() throws Exception {
-    List<String> sources = project.getTestCompileSourceRoots();
     String scalaSourceDir = testSourceDir.getAbsolutePath();
-    if (!sources.contains(scalaSourceDir)) {
-      sources.add(scalaSourceDir);
-    }
+    project.addTestCompileSourceRoot(scalaSourceDir);
+    List<String> sources = project.getTestCompileSourceRoots();
     return normalize(sources);
   }
 

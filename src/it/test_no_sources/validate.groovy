@@ -1,11 +1,11 @@
-try {
-
 def file = new File(basedir, 'target')
-assert !file.exists()
+
+if (file.exists()){
+  def targetEmpty = file.listFiles()
+          .findAll { it.name != "project-local-repo" }
+          .isEmpty()
+
+  return targetEmpty
+}
 
 return true
-
-} catch(Throwable e) {
-  e.printStackTrace()
-  return false
-}
