@@ -14,9 +14,9 @@
   <properties>
     <scala.version.major>2.12</scala.version.major>
     <scala.compat.version>${scala.version.major}</scala.compat.version>
-    <scala.version.minor>14</scala.version.minor>
+    <scala.version.minor>20</scala.version.minor>
     <scala.version>${scala.version.major}.${scala.version.minor}</scala.version>
-    <spark.version>3.5.1</spark.version>
+    <spark.version>3.5.5</spark.version>
   </properties>
 
   <dependencies>
