@@ -22,43 +22,9 @@
     <url>ANYTHING</url>
     <name>ANYTHING</name>
   </organization>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>@project.groupId@</groupId>
-        <artifactId>@project.artifactId@</artifactId>
-        <version>@project.version@</version>
-        <configuration>
-          <doctitle>Hello</doctitle>
-          <args>
-            <arg>-doc-root-content</arg>
-            <arg>src/main/scala/rootdoc.txt</arg>
-          </args>
-          <jvmArgs>
-            <jvmArg>-Xms1024m</jvmArg>
-            <jvmArg>-Xmx4096m</jvmArg>
-          </jvmArgs>
-        </configuration>
-      </plugin>
-
-    </plugins>
-  </reporting>
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.12.1</version>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-project-info-reports-plugin</artifactId>
