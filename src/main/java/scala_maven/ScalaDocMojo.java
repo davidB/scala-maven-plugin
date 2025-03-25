@@ -6,6 +6,7 @@ package scala_maven;
 
 import java.io.File;
 import java.util.*;
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -13,7 +14,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
 import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;

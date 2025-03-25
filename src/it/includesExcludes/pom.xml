@@ -16,6 +16,26 @@
       <version>${scala.version.lastrelease}</version>
     </dependency>
   </dependencies>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          <includes>
+            <include>**/*.scala</include>
+            <include>**/TestClass.java</include>
+          </includes>
+          <excludes>
+            <exclude>bad.scala</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
   <build>
     <plugins>
       <plugin>
@@ -43,25 +63,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <reportPlugins>
-            <plugin>
-              <groupId>@project.groupId@</groupId>
-              <artifactId>@project.artifactId@</artifactId>
-              <version>@project.version@</version>
-              <configuration>
-                <includes>
-                  <include>**/*.scala</include>
-                  <include>**/TestClass.java</include>
-                </includes>
-                <excludes>
-                  <exclude>bad.scala</exclude>
-                </excludes>
-              </configuration>
-            </plugin>
-          </reportPlugins>
-        </configuration>
+        <version>3.21.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
