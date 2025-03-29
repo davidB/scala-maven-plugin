@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>it.scala-maven-plugin</groupId>
+  <artifactId>mismatchedScalaVersions</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>Test for Mismatched Scala versions and error message output!</name>
+  <description>Test for Java + Scala compilation</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.13.13</version>
+    </dependency>
+    <dependency>
+      <groupId>net.liftweb</groupId>
+      <artifactId>lift-util_2.13</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openid4java</groupId>
+      <artifactId>openid4java</artifactId>
+      <version>0.9.3</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>@project.groupId@</groupId>
+          <artifactId>@project.artifactId@</artifactId>
+          <version>@project.version@</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
+        <executions>
+          <execution>
+            <id>scala-compile-first</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>add-source</goal>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>scala-test-compile</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <fork>false</fork>
+          <failOnMultipleScalaVersions>false</failOnMultipleScalaVersions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
