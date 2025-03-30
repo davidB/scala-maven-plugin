@@ -7,7 +7,7 @@
 
   <name>scala-maven-plugin</name>
   <description>The scala-maven-plugin (previously maven-scala-plugin) is used for compiling/testing/running/documenting scala code of any maven project.</description>
-  <url>https://github.com/davidB/${project.artifactId}</url>
+  <url>https://github.com/davidB/scala-maven-plugin</url>
   <inceptionYear>2012</inceptionYear>
   <licenses>
     <license>
@@ -102,15 +102,15 @@
   </mailingLists>
 
   <scm>
-    <connection>scm:git:git://github.com/davidB/${project.artifactId}.git</connection>
-    <developerConnection>scm:git:git@github.com:davidB/${project.artifactId}.git</developerConnection>
-    <url>https://github.com/davidB/${project.artifactId}/</url>
+    <connection>scm:git:git://github.com/davidB/scala-maven-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:davidB/scala-maven-plugin.git</developerConnection>
+    <url>https://github.com/davidB/scala-maven-plugin/</url>
     <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
     <system>github</system>
-    <url>https://github.com/davidB/${project.artifactId}/issues#issue/</url>
+    <url>https://github.com/davidB/scala-maven-plugin/issues#issue/</url>
   </issueManagement>
 
   <properties>
