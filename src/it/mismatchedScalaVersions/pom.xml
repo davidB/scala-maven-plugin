@@ -19,13 +19,8 @@
     </dependency>
     <dependency>
       <groupId>net.liftweb</groupId>
-      <artifactId>lift-util_2.13</artifactId>
+      <artifactId>lift-util_2.12</artifactId>
       <version>3.5.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openid4java</groupId>
-      <artifactId>openid4java</artifactId>
-      <version>0.9.3</version>
     </dependency>
   </dependencies>
 
