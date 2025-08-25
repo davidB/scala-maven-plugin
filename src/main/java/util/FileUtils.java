@@ -36,9 +36,7 @@ public class FileUtils {
   }
 
   public static Set<File> fromStrings(Collection<String> s) {
-    return s.stream().map(File::new).collect(
-      Collectors.toCollection(LinkedHashSet::new)
-    );
+    return s.stream().map(File::new).collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   public static String toMultiPath(Collection<File> paths) {
