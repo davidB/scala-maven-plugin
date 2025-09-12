@@ -436,7 +436,6 @@
           <version>true</version>
           <author>true</author>
           <keywords>true</keywords>
-          <attach>false</attach>
           <doclint>-missing</doclint>
           <links>
             <!--link>http://java.sun.com/j2se/${maven.compiler.source}/docs/api/</link-->
