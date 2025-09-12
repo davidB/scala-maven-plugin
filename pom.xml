@@ -439,7 +439,6 @@
           <doclint>-missing</doclint>
           <links>
             <!--link>http://java.sun.com/j2se/${maven.compiler.source}/docs/api/</link-->
-            <link>https://slf4j.org/api/</link>
             <link>https://commons.apache.org/proper/commons-lang/javadocs/api-release/</link>
             <link>https://commons.apache.org/proper/commons-io/javadocs/api-release/</link>
             <link>https://junit.org/junit4/javadoc/latest/</link>
