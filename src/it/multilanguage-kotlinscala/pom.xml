@@ -10,12 +10,20 @@
   <description>Test cross compilation kotlin/scala</description>
   <packaging>jar</packaging>
 
+  <properties>
+      <kotlin.version>2.2.20</kotlin.version>
+  </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
       <version>${scala.version.lastrelease}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib</artifactId>
+      <version>${kotlin.version}</version>
     </dependency>
   </dependencies>
   <url>http://sandbox/</url>
@@ -25,7 +33,7 @@
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
-        <version>1.9.23</version>
+        <version>${kotlin.version}</version>
         <executions>
           <execution>
             <id>compile</id>
