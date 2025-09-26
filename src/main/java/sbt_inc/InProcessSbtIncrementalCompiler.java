@@ -5,34 +5,56 @@
 package sbt_inc;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import sbt.internal.inc.*;
+import sbt.internal.inc.FileAnalysisStore;
+import sbt.internal.inc.ScalaInstance;
+import scala.Option;
+import scala.jdk.FunctionWrappers;
 import xsbti.Logger;
+import xsbti.PathBasedFile;
+import xsbti.T2;
 import xsbti.VirtualFile;
 import xsbti.compile.*;
 
 public final class InProcessSbtIncrementalCompiler implements SbtIncrementalCompiler {
   private final Compilers compilers;
-  private final AnalysisStore analysisStore;
-  private final Setup setup;
-
   private final IncrementalCompiler compiler;
-  private final CompileOrder compileOrder;
   private final Logger sbtLogger;
 
   public InProcessSbtIncrementalCompiler(
-      Compilers compilers,
-      AnalysisStore analysisStore,
-      Setup setup,
-      IncrementalCompiler compiler,
-      CompileOrder compileOrder,
-      Logger sbtLogger) {
-    this.compilers = compilers;
-    this.analysisStore = analysisStore;
-    this.setup = setup;
-    this.compiler = compiler;
-    this.compileOrder = compileOrder;
+      File javaHome,
+      File compilerBridgeJar,
+      Logger sbtLogger,
+      String scalaVersion,
+      Collection<File> compilerAndDependencies,
+      Collection<File> libraryAndDependencies) {
+
     this.sbtLogger = sbtLogger;
+
+    ScalaInstance scalaInstance =
+        ScalaInstances.makeScalaInstance(
+            scalaVersion, compilerAndDependencies, libraryAndDependencies);
+
+    compilers = makeCompilers(scalaInstance, javaHome, compilerBridgeJar);
+    compiler = ZincUtil.defaultIncrementalCompiler();
+  }
+
+  private static Compilers makeCompilers(
+      ScalaInstance scalaInstance, File javaHome, File compilerBridgeJar) {
+    ScalaCompiler scalaCompiler =
+        new AnalyzingCompiler(
+            scalaInstance, // scalaInstance
+            ZincCompilerUtil.constantBridgeProvider(scalaInstance, compilerBridgeJar), // provider
+            ClasspathOptionsUtil.auto(), // classpathOptions
+            new FunctionWrappers.FromJavaConsumer<>(noop -> {}), // onArgsHandler
+            Option.apply(null) // classLoaderCache
+            );
+
+    return ZincUtil.compilers(
+        scalaInstance, ClasspathOptionsUtil.boot(), Option.apply(javaHome.toPath()), scalaCompiler);
   }
 
   @Override
@@ -41,7 +63,9 @@ public final class InProcessSbtIncrementalCompiler implements SbtIncrementalComp
       Collection<File> sources,
       File classesDirectory,
       Collection<String> scalacOptions,
-      Collection<String> javacOptions) {
+      Collection<String> javacOptions,
+      CompileOrder compileOrder,
+      File cacheFile) {
 
     // incremental compiler needs to add the output dir in the classpath for Java + Scala
     Collection<File> fullClasspathElements = new ArrayList<>(classpathElements);
@@ -67,13 +91,65 @@ public final class InProcessSbtIncrementalCompiler implements SbtIncrementalComp
             Optional.empty() // _earlyOutput
             );
 
-    Inputs inputs = Inputs.of(compilers, options, setup, previousResult());
+    AnalysisStore analysisStore = AnalysisStore.getCachedStore(FileAnalysisStore.binary(cacheFile));
+    Inputs inputs =
+        Inputs.of(
+            compilers, options, makeSetup(cacheFile, sbtLogger), previousResult(analysisStore));
 
     CompileResult newResult = compiler.compile(inputs, sbtLogger);
+
     analysisStore.set(AnalysisContents.create(newResult.analysis(), newResult.setup()));
   }
 
-  private PreviousResult previousResult() {
+  private static Setup makeSetup(File cacheFile, xsbti.Logger sbtLogger) {
+    PerClasspathEntryLookup lookup =
+        new PerClasspathEntryLookup() {
+          @Override
+          public Optional<CompileAnalysis> analysis(VirtualFile classpathEntry) {
+            Path path = ((PathBasedFile) classpathEntry).toPath();
+
+            String analysisStoreFileName = null;
+            if (Files.isDirectory(path)) {
+              if (path.getFileName().toString().equals("classes")) {
+                analysisStoreFileName = "compile";
+
+              } else if (path.getFileName().toString().equals("test-classes")) {
+                analysisStoreFileName = "test-compile";
+              }
+            }
+
+            if (analysisStoreFileName != null) {
+              File analysisStoreFile =
+                  path.getParent().resolve("analysis").resolve(analysisStoreFileName).toFile();
+              if (analysisStoreFile.exists()) {
+                return AnalysisStore.getCachedStore(FileAnalysisStore.binary(analysisStoreFile))
+                    .get()
+                    .map(AnalysisContents::getAnalysis);
+              }
+            }
+            return Optional.empty();
+          }
+
+          @Override
+          public DefinesClass definesClass(VirtualFile classpathEntry) {
+            return classpathEntry.name().equals("rt.jar")
+                ? className -> false
+                : Locate.definesClass(classpathEntry);
+          }
+        };
+
+    return Setup.of(
+        lookup, // lookup
+        false, // skip
+        cacheFile, // cacheFile
+        CompilerCache.fresh(), // cache
+        IncOptions.of(), // incOptions
+        new LoggedReporter(100, sbtLogger, pos -> pos), // reporter
+        Optional.empty(), // optionProgress
+        new T2[] {});
+  }
+
+  private PreviousResult previousResult(AnalysisStore analysisStore) {
     Optional<AnalysisContents> analysisContents = analysisStore.get();
     if (analysisContents.isPresent()) {
       AnalysisContents analysisContents0 = analysisContents.get();
