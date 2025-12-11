@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.Parameter;
-import scala_maven_executions.MainHelper;
+import org.codehaus.plexus.util.DirectoryScanner;
 import util.FileUtils;
 
 /**
@@ -102,8 +102,7 @@ public abstract class ScalaSourceMojoSupport extends ScalaMojoSupport {
     // for existence here...
     for (File dir : sourceRootDirs) {
       String[] tmpFiles =
-          MainHelper.findFiles(
-              dir, includes.toArray(new String[] {}), excludes.toArray(new String[] {}));
+          findFiles(dir, includes.toArray(new String[] {}), excludes.toArray(new String[] {}));
       for (String tmpLocalFile : tmpFiles) {
         File tmpAbsFile = FileUtils.fileOf(new File(dir, tmpLocalFile), useCanonicalPath);
         sourceFiles.add(tmpAbsFile);
@@ -114,6 +113,16 @@ public abstract class ScalaSourceMojoSupport extends ScalaMojoSupport {
     // sort files by path (OS dependent) to guarantee reproducible command line.
     Collections.sort(sourceFiles);
     return sourceFiles;
+  }
+
+  private static String[] findFiles(File dir, String[] includes, String[] excludes) {
+    DirectoryScanner scanner = new DirectoryScanner();
+    scanner.setBasedir(dir);
+    scanner.setIncludes(includes);
+    scanner.setExcludes(excludes);
+    scanner.addDefaultExcludes();
+    scanner.scan();
+    return scanner.getIncludedFiles();
   }
 
   /** This limits the source directories to only those that exist for real. */

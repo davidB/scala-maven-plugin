@@ -14,12 +14,11 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
@@ -39,7 +38,6 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
-import scala_maven_executions.MainHelper;
 
 /**
  * Run a scala script.
@@ -247,12 +245,45 @@ public class ScalaScriptMojo extends ScalaMojoSupport {
   private void compileScript(File scriptDir, File destFile, URLClassLoader loader)
       throws Exception {
     JavaMainCaller jcmd = getScalaCommand();
-    jcmd.addArgs("-classpath", MainHelper.toClasspathString(loader));
+    jcmd.addArgs("-classpath", toClasspathString(loader));
     jcmd.addArgs("-d", scriptDir.getAbsolutePath());
     jcmd.addArgs("-sourcepath", scriptDir.getAbsolutePath());
     jcmd.addArgs(destFile.getAbsolutePath());
 
     jcmd.run(displayCmd);
+  }
+
+  private static String toClasspathString(ClassLoader cl) {
+    StringBuilder back = new StringBuilder();
+    List<String> cps = new ArrayList<>();
+    appendUrlToClasspathCollection(cl, cps);
+    for (String cp : cps) {
+      if (back.length() != 0) {
+        back.append(File.pathSeparatorChar);
+      }
+      back.append(cp);
+    }
+    return back.toString();
+  }
+
+  private static void appendUrlToClasspathCollection(ClassLoader cl, Collection<String> classpath) {
+    if (cl == null) {
+      cl = Thread.currentThread().getContextClassLoader();
+    }
+    while (cl != null) {
+      if (cl instanceof URLClassLoader) {
+        URLClassLoader ucl = (URLClassLoader) cl;
+        URL[] urls = ucl.getURLs();
+        for (URL url : urls) {
+          try {
+            classpath.add(new File(url.toURI()).getAbsolutePath());
+          } catch (URISyntaxException e) {
+            throw new RuntimeException("Unable to convert URL to file: " + url, e);
+          }
+        }
+      }
+      cl = cl.getParent();
+    }
   }
 
   private void configureClasspath(Set<File> classpath) throws Exception {

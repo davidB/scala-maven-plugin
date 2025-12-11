@@ -14,14 +14,11 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.codehaus.plexus.util.DirectoryScanner;
 
 /**
  * Helper methods
@@ -32,45 +29,6 @@ public class MainHelper {
 
   static final String argFilePrefix = "scala-maven-";
   static final String argFileSuffix = ".args";
-
-  public static String[] findFiles(File dir, String[] includes, String[] excludes) {
-    DirectoryScanner scanner = new DirectoryScanner();
-    scanner.setBasedir(dir);
-    scanner.setIncludes(includes);
-    scanner.setExcludes(excludes);
-    scanner.addDefaultExcludes();
-    scanner.scan();
-    return scanner.getIncludedFiles();
-  }
-
-  public static String toClasspathString(ClassLoader cl) {
-    StringBuilder back = new StringBuilder();
-    List<String> cps = new ArrayList<>();
-    appendUrlToClasspathCollection(cl, cps);
-    for (String cp : cps) {
-      if (back.length() != 0) {
-        back.append(File.pathSeparatorChar);
-      }
-      back.append(cp);
-    }
-    return back.toString();
-  }
-
-  private static void appendUrlToClasspathCollection(ClassLoader cl, Collection<String> classpath) {
-    if (cl == null) {
-      cl = Thread.currentThread().getContextClassLoader();
-    }
-    while (cl != null) {
-      if (cl instanceof URLClassLoader) {
-        URLClassLoader ucl = (URLClassLoader) cl;
-        URL[] urls = ucl.getURLs();
-        for (URL url : urls) {
-          classpath.add(url.getFile());
-        }
-      }
-      cl = cl.getParent();
-    }
-  }
 
   /**
    * Escapes arguments as necessary so the StringTokenizer for scala arguments pulls in filenames
