@@ -69,8 +69,7 @@ public class LogProcessorUtilsTest {
   }
 
   private LevelState assertLevelState(
-      String input, LevelState previous, Level expectedLevel, String expectedUntilContains)
-      throws Exception {
+      String input, LevelState previous, Level expectedLevel, String expectedUntilContains) {
     LevelState back = LogProcessorUtils.levelStateOf(input, previous);
     assertEquals(expectedLevel, back.level);
     assertEquals(expectedUntilContains, back.untilContains);
