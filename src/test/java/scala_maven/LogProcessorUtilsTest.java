@@ -68,6 +68,25 @@ public class LogProcessorUtilsTest {
             null);
   }
 
+  @Test
+  public void severityDeterminedByMarkerNotFilenameOrTextContent() throws Exception {
+    LevelState previous = new LevelState();
+    previous =
+        assertLevelState(
+            "/path/to/Errors.scala:88: warning: match may not be exhaustive.",
+            previous,
+            Level.WARNING,
+            "^");
+    previous =
+        assertLevelState("/path/to/Warning.scala:12: error: boom", previous, Level.ERROR, "^");
+    previous =
+        assertLevelState(
+            "/path/to/FooBar.scala:3657: warning: a type was inferred to be `Any`; this may indicate a programming error.",
+            previous,
+            Level.WARNING,
+            "^");
+  }
+
   private LevelState assertLevelState(
       String input, LevelState previous, Level expectedLevel, String expectedUntilContains) {
     LevelState back = LogProcessorUtils.levelStateOf(input, previous);
