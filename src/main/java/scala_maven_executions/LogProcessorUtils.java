@@ -19,9 +19,7 @@ public class LogProcessorUtils {
     public String untilContains = null;
   }
 
-  /**
-   * Matches "warning" or "warnings" as complete words, but not filenames e.g. "Warnings.scala".
-   */
+  /** Matches "warning" or "warnings" as complete words, but not filenames e.g. "Warnings.scala". */
   private static final Pattern WARNING_WORD = Pattern.compile("\\bwarnings?\\b(?!\\.scala)");
 
   /** Matches "error" or "errors" as complete words, but not filenames e.g. "Errors.scala". */
