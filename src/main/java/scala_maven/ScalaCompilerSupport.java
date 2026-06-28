@@ -307,8 +307,6 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
               new MavenArtifactResolver(factory, session),
               secondaryCacheDir,
               getLog(),
-              cacheFile,
-              compileOrder,
               sc.version(),
               sc.findCompilerAndDependencies().stream()
                   .map(Artifact::getFile)
@@ -323,7 +321,13 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     try {
       incremental.compile(
-          classpathElements, sources, outputDir, getScalacOptions(), getJavacOptions());
+          classpathElements,
+          sources,
+          outputDir,
+          getScalacOptions(),
+          getJavacOptions(),
+          compileOrder,
+          cacheFile);
     } catch (xsbti.CompileFailed e) {
       if (compileInLoop) {
         compileErrors = true;

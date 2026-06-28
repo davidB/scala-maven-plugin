@@ -8,7 +8,6 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import sbt.internal.inc.ScalaInstance;
 import sbt.util.Level;
 import sbt.util.Logger;
 import scala.Enumeration;
@@ -165,26 +164,22 @@ public final class ForkedSbtIncrementalCompilerMain {
           public void trace(Function0<Throwable> t) {}
         };
 
-    ScalaInstance scalaInstance =
-        ScalaInstances.makeScalaInstance(
-            parsedArgs.scalaVersion,
-            parsedArgs.compilerAndDependencies,
-            parsedArgs.libraryAndDependencies);
-
     SbtIncrementalCompiler incrementalCompiler =
         SbtIncrementalCompilers.makeInProcess(
             parsedArgs.javaHome,
-            parsedArgs.cacheFile,
-            parsedArgs.compileOrder,
-            scalaInstance,
             parsedArgs.compilerBridgeJar,
-            sbtLogger);
+            sbtLogger,
+            parsedArgs.scalaVersion,
+            parsedArgs.compilerAndDependencies,
+            parsedArgs.libraryAndDependencies);
 
     incrementalCompiler.compile(
         parsedArgs.classpathElements,
         parsedArgs.sources,
         parsedArgs.classesDirectory,
         parsedArgs.scalacOptions,
-        parsedArgs.javacOptions);
+        parsedArgs.javacOptions,
+        parsedArgs.compileOrder,
+        parsedArgs.cacheFile);
   }
 }
