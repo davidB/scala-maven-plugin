@@ -7,9 +7,11 @@ package scala_maven_executions;
 import java.io.File;
 
 /**
- * This interface is used to create a call on a main method of a java class.
+ * Invokes a Scala tool's entry point.
  *
- * <p>The important implementations are JavaCommand and ReflectionJavaCaller
+ * <p>{@link JavaMainCallerByFork} runs it as {@code main} in a forked JVM; {@link
+ * JavaMainCallerInProcess} runs it in the current JVM, calling either {@code main} or the
+ * non-exiting {@code process} entry point per its {@link JavaMainCallerInProcess.EntryPoint}.
  *
  * @author J. Suereth
  */

@@ -14,6 +14,7 @@ import sbt_inc.SbtIncrementalCompiler;
 import sbt_inc.SbtIncrementalCompilers;
 import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
+import scala_maven_executions.JavaMainCallerInProcess.EntryPoint;
 import util.FileUtils;
 import util.JavaLocator;
 import xsbti.compile.CompileOrder;
@@ -103,6 +104,15 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
   protected JavaMainCaller getScalaCommand() throws Exception {
     Context sc = findScalaContext();
     return getScalaCommand(fork, sc.compilerMainClassName(scalaClassName, false));
+  }
+
+  /**
+   * Compilation uses the compiler's non-exiting {@link EntryPoint#PROCESS} entry point so that an
+   * in-process reactor build is not killed by the {@code System.exit} that {@code main} would call.
+   */
+  @Override
+  protected EntryPoint inProcessEntryPoint() {
+    return EntryPoint.PROCESS;
   }
 
   protected int compile(

@@ -38,6 +38,10 @@ public class ArtifactIds4Scala2 implements ArtifactIds {
     return useFsc ? "scala.tools.nsc.CompileClient" : "scala.tools.nsc.Main";
   }
 
+  public String compilerDriverClassName() throws Exception {
+    return "scala.tools.nsc.MainClass";
+  }
+
   public String consoleMainClassName() throws Exception {
     return "scala.tools.nsc.MainGenericRunner";
   }

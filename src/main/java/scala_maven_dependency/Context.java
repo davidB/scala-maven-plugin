@@ -21,6 +21,8 @@ public interface Context {
 
   String compilerMainClassName(String override, boolean useFsc) throws Exception;
 
+  String compilerDriverClassName() throws Exception;
+
   String consoleMainClassName(String override) throws Exception;
 
   String apidocMainClassName(String override) throws Exception;
