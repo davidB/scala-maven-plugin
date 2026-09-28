@@ -35,6 +35,7 @@ import scala_maven_dependency.*;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.JavaMainCallerByFork;
 import scala_maven_executions.JavaMainCallerInProcess;
+import scala_maven_executions.JavaMainCallerInProcess.EntryPoint;
 import util.FileUtils;
 import util.JavaLocator;
 
@@ -175,6 +176,13 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   /** Forks the execution of scalac into a separate process. */
   @Parameter(defaultValue = "true")
   protected boolean fork = true;
+
+  /**
+   * When compiling in-process ({@code fork=false}), reuse the loaded Scala compiler across modules
+   * to keep it JIT-warm instead of loading a fresh one per module.
+   */
+  @Parameter(property = "reuseInProcessCompiler", defaultValue = "true")
+  protected boolean reuseInProcessCompiler = true;
 
   /** Force the use of an external ArgFile to run any forked process. */
   @Parameter(defaultValue = "false")
@@ -507,6 +515,14 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
   }
 
   /**
+   * The {@link EntryPoint} this goal invokes for in-process execution. Defaults to {@link
+   * EntryPoint#MAIN}; subclasses may override to select a different entry point.
+   */
+  protected EntryPoint inProcessEntryPoint() {
+    return EntryPoint.MAIN;
+  }
+
+  /**
    * Get a {@link JavaMainCaller} used invoke a Java process. Typically this will be one of the
    * Scala utilities (Compiler, ScalaDoc, REPL, etc.).
    *
@@ -568,7 +584,16 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
         cmd.addJvmArgs("-Xbootclasspath/a:" + toolcp);
       }
     } else {
-      cmd = new JavaMainCallerInProcess(getLog(), mainClass, toolcp, null, null);
+      cmd =
+          new JavaMainCallerInProcess(
+              getLog(),
+              mainClass,
+              toolcp,
+              null,
+              null,
+              inProcessEntryPoint(),
+              reuseInProcessCompiler,
+              findScalaContext().compilerDriverClassName());
     }
     return cmd;
   }

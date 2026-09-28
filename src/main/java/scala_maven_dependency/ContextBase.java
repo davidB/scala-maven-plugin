@@ -39,6 +39,11 @@ abstract class ContextBase implements Context {
   }
 
   @Override
+  public String compilerDriverClassName() throws Exception {
+    return this.aids.compilerDriverClassName();
+  }
+
+  @Override
   public String consoleMainClassName(String override) throws Exception {
     if (StringUtils.isEmpty(override)) {
       return this.aids.consoleMainClassName();

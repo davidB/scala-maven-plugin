@@ -18,6 +18,9 @@ public interface ArtifactIds {
 
   String compilerMainClassName(boolean useFsc) throws Exception;
 
+  /** The concrete compiler driver class exposing an instance {@code process(String[])}. */
+  String compilerDriverClassName() throws Exception;
+
   String consoleMainClassName() throws Exception;
 
   String apidocMainClassName() throws Exception;

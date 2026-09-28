@@ -53,6 +53,10 @@ public class ArtifactIds4Scala3 implements ArtifactIds {
     return "dotty.tools.dotc.Main";
   }
 
+  public String compilerDriverClassName() throws Exception {
+    return "dotty.tools.dotc.Driver";
+  }
+
   public String consoleMainClassName() throws Exception {
     // return "dotty.tools.dotc.Run";
     return "dotty.tools.repl.Main";
