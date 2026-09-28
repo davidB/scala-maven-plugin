@@ -34,6 +34,11 @@ public class ArtifactIds4Scala2 implements ArtifactIds {
     return SCALA_COMPILER_ARTIFACTID;
   }
 
+  @Override
+  public String scalaDocArtifactId() throws Exception {
+    return null;
+  }
+
   public String compilerMainClassName(boolean useFsc) throws Exception {
     return useFsc ? "scala.tools.nsc.CompileClient" : "scala.tools.nsc.Main";
   }

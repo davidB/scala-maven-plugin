@@ -6,6 +6,7 @@ package scala_maven_dependency;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -59,6 +60,19 @@ public class Context4ScalaHome extends ContextBase implements Context {
                 "local", name.substring(0, name.length() - 4), scalaVersion.toString(), f));
       }
     }
+    return d;
+  }
+
+  @Override
+  public Set<Artifact> findScalaDocAndDependencies() throws Exception {
+    String scalaDocArtifactId = aids.scalaDocArtifactId();
+    if (scalaDocArtifactId == null) {
+      return Collections.emptySet();
+    }
+    File lib = new File(scalaHome, "lib");
+    File f = new File(lib, scalaDocArtifactId + ".jar");
+    Set<Artifact> d = new TreeSet<>();
+    d.add(new LocalFileArtifact("local", scalaDocArtifactId, scalaVersion.toString(), f));
     return d;
   }
 }

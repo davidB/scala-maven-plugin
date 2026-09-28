@@ -16,6 +16,8 @@ public interface ArtifactIds {
 
   String scalaCompilerArtifactId() throws Exception;
 
+  String scalaDocArtifactId() throws Exception;
+
   String compilerMainClassName(boolean useFsc) throws Exception;
 
   /** The concrete compiler driver class exposing an instance {@code process(String[])}. */
