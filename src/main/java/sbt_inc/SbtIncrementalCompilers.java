@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.maven.plugin.logging.Log;
@@ -28,6 +29,25 @@ import xsbti.VirtualFile;
 import xsbti.compile.*;
 
 public final class SbtIncrementalCompilers {
+
+  // Cache the (compiler bridge jar, Compilers) pair by Scala version/classpath so that building
+  // it - the expensive "cold start" step (resolving/compiling the compiler bridge) - happens once
+  // per reactor instead of once per module. Safe to share across concurrent (-T) builds: Compilers
+  // is stateless compiler wiring, while all per-module state (AnalysisStore, Setup, cacheFile) is
+  // still built fresh for every module in makeInProcess/makeForkedProcess.
+  private static final Map<String, CompilerBridge> COMPILER_BRIDGE_CACHE =
+      new ConcurrentHashMap<>();
+
+  private static final class CompilerBridge {
+    final File compilerBridgeJar;
+    final Compilers compilers;
+
+    CompilerBridge(File compilerBridgeJar, Compilers compilers) {
+      this.compilerBridgeJar = compilerBridgeJar;
+      this.compilers = compilers;
+    }
+  }
+
   public static SbtIncrementalCompiler make(
       File javaHome,
       MavenArtifactResolver resolver,
@@ -40,31 +60,38 @@ public final class SbtIncrementalCompilers {
       Collection<File> libraryAndDependencies,
       String[] jvmArgs,
       File javaExec,
-      List<File> forkBootClasspath)
+      List<File> forkBootClasspath,
+      boolean reuseCompilerBridge)
       throws Exception {
 
-    ScalaInstance scalaInstance =
-        ScalaInstances.makeScalaInstance(
-            scalaVersion.toString(), compilerAndDependencies, libraryAndDependencies);
-
-    File compilerBridgeJar =
-        CompilerBridgeFactory.getCompiledBridgeJar(
-            scalaVersion, scalaInstance, secondaryCacheDir, resolver, mavenLogger);
+    CompilerBridge bridge =
+        reuseCompilerBridge
+            ? getOrBuildCompilerBridge(
+                javaHome,
+                resolver,
+                secondaryCacheDir,
+                mavenLogger,
+                scalaVersion,
+                compilerAndDependencies,
+                libraryAndDependencies)
+            : buildCompilerBridge(
+                javaHome,
+                resolver,
+                secondaryCacheDir,
+                mavenLogger,
+                scalaVersion,
+                compilerAndDependencies,
+                libraryAndDependencies);
 
     if (jvmArgs == null || jvmArgs.length == 0) {
       return makeInProcess(
-          javaHome,
-          cacheFile,
-          compileOrder,
-          scalaInstance,
-          compilerBridgeJar,
-          new MavenLoggerSbtAdapter(mavenLogger));
+          cacheFile, compileOrder, bridge.compilers, new MavenLoggerSbtAdapter(mavenLogger));
     } else {
       return makeForkedProcess(
           javaHome,
           cacheFile,
           compileOrder,
-          compilerBridgeJar,
+          bridge.compilerBridgeJar,
           scalaVersion,
           compilerAndDependencies,
           libraryAndDependencies,
@@ -75,15 +102,86 @@ public final class SbtIncrementalCompilers {
     }
   }
 
-  static SbtIncrementalCompiler makeInProcess(
+  private static CompilerBridge getOrBuildCompilerBridge(
       File javaHome,
-      File cacheFile,
-      CompileOrder compileOrder,
-      ScalaInstance scalaInstance,
-      File compilerBridgeJar,
-      Logger sbtLogger) {
+      MavenArtifactResolver resolver,
+      File secondaryCacheDir,
+      Log mavenLogger,
+      VersionNumber scalaVersion,
+      Collection<File> compilerAndDependencies,
+      Collection<File> libraryAndDependencies) {
+    String key = cacheKey(javaHome, scalaVersion, compilerAndDependencies, libraryAndDependencies);
+    boolean[] wasCached = {true};
+    CompilerBridge bridge =
+        COMPILER_BRIDGE_CACHE.computeIfAbsent(
+            key,
+            k -> {
+              wasCached[0] = false;
+              return buildCompilerBridge(
+                  javaHome,
+                  resolver,
+                  secondaryCacheDir,
+                  mavenLogger,
+                  scalaVersion,
+                  compilerAndDependencies,
+                  libraryAndDependencies);
+            });
+    if (mavenLogger.isInfoEnabled()) {
+      mavenLogger.info(
+          wasCached[0]
+              ? "Reusing cached Scala " + scalaVersion + " compiler bridge"
+              : "Built Scala "
+                  + scalaVersion
+                  + " compiler bridge: "
+                  + bridge.compilerBridgeJar.getAbsolutePath());
+    }
+    return bridge;
+  }
 
-    Compilers compilers = makeCompilers(scalaInstance, javaHome, compilerBridgeJar);
+  private static String cacheKey(
+      File javaHome,
+      VersionNumber scalaVersion,
+      Collection<File> compilerAndDependencies,
+      Collection<File> libraryAndDependencies) {
+    StringBuilder key = new StringBuilder();
+    key.append(scalaVersion).append('|').append(javaHome.getAbsolutePath());
+    appendSortedPaths(key, compilerAndDependencies);
+    appendSortedPaths(key, libraryAndDependencies);
+    return key.toString();
+  }
+
+  private static void appendSortedPaths(StringBuilder key, Collection<File> files) {
+    key.append('|');
+    files.stream().map(File::getAbsolutePath).sorted().forEach(p -> key.append(p).append(';'));
+  }
+
+  private static CompilerBridge buildCompilerBridge(
+      File javaHome,
+      MavenArtifactResolver resolver,
+      File secondaryCacheDir,
+      Log mavenLogger,
+      VersionNumber scalaVersion,
+      Collection<File> compilerAndDependencies,
+      Collection<File> libraryAndDependencies) {
+    try {
+      ScalaInstance scalaInstance =
+          ScalaInstances.makeScalaInstance(
+              scalaVersion.toString(), compilerAndDependencies, libraryAndDependencies);
+
+      File compilerBridgeJar =
+          CompilerBridgeFactory.getCompiledBridgeJar(
+              scalaVersion, scalaInstance, secondaryCacheDir, resolver, mavenLogger);
+
+      Compilers compilers = makeCompilers(scalaInstance, javaHome, compilerBridgeJar);
+      return new CompilerBridge(compilerBridgeJar, compilers);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  static SbtIncrementalCompiler makeInProcess(
+      File cacheFile, CompileOrder compileOrder, Compilers compilers, Logger sbtLogger) {
+
     AnalysisStore analysisStore = AnalysisStore.getCachedStore(FileAnalysisStore.binary(cacheFile));
     Setup setup = makeSetup(cacheFile, sbtLogger);
     IncrementalCompiler compiler = ZincUtil.defaultIncrementalCompiler();
@@ -181,7 +279,7 @@ public final class SbtIncrementalCompilers {
     };
   }
 
-  private static Compilers makeCompilers(
+  static Compilers makeCompilers(
       ScalaInstance scalaInstance, File javaHome, File compilerBridgeJar) {
     ScalaCompiler scalaCompiler =
         new AnalyzingCompiler(
