@@ -63,6 +63,14 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
   @Parameter(property = "secondaryCacheDir")
   private File secondaryCacheDir;
 
+  /**
+   * Reuse the sbt incremental compiler bridge (and its underlying compiler wiring) across modules
+   * of the same Scala version instead of rebuilding it for every module. Each module still gets its
+   * own analysis store/cache file, so this is safe for parallel (-T) builds.
+   */
+  @Parameter(property = "reuseCompilerBridge", defaultValue = "true")
+  private boolean reuseCompilerBridge;
+
   protected abstract File getOutputDir() throws Exception;
 
   protected abstract Set<File> getClasspathElements() throws Exception;
@@ -328,7 +336,8 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
                   .collect(Collectors.toList()),
               jvmArgs,
               JavaLocator.findExecutableFromToolchain(getToolchain()),
-              pluginArtifacts.stream().map(Artifact::getFile).collect(Collectors.toList()));
+              pluginArtifacts.stream().map(Artifact::getFile).collect(Collectors.toList()),
+              reuseCompilerBridge);
     }
 
     try {

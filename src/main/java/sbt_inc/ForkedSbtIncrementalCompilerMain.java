@@ -171,14 +171,13 @@ public final class ForkedSbtIncrementalCompilerMain {
             parsedArgs.compilerAndDependencies,
             parsedArgs.libraryAndDependencies);
 
+    Compilers compilers =
+        SbtIncrementalCompilers.makeCompilers(
+            scalaInstance, parsedArgs.javaHome, parsedArgs.compilerBridgeJar);
+
     SbtIncrementalCompiler incrementalCompiler =
         SbtIncrementalCompilers.makeInProcess(
-            parsedArgs.javaHome,
-            parsedArgs.cacheFile,
-            parsedArgs.compileOrder,
-            scalaInstance,
-            parsedArgs.compilerBridgeJar,
-            sbtLogger);
+            parsedArgs.cacheFile, parsedArgs.compileOrder, compilers, sbtLogger);
 
     incrementalCompiler.compile(
         parsedArgs.classpathElements,
