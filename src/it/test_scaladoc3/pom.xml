@@ -13,7 +13,6 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <encoding>UTF-8</encoding>
-    <scala-maven-plugin.version>4.6.3-EXPERIMENTAL</scala-maven-plugin.version>
     <displayCmd>false</displayCmd>
   </properties>
 
