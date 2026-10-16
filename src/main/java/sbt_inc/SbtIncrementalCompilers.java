@@ -295,6 +295,13 @@ public final class SbtIncrementalCompilers {
   }
 
   private static Setup makeSetup(File cacheFile, xsbti.Logger sbtLogger) {
+    // One DefinesClass per classpath entry for the lifetime of this compile.
+    // Zinc's Locate.entry calls definesClass(entry) for every class name it looks up, and
+    // IncrementalCommon.isLibraryModified runs those lookups in parallel (one worker per core).
+    // Without this cache every lookup re-opens the jars and reads all their entries, and
+    // concurrent first opens of the same jar each load its central directory (like sbt's
+    // VirtualFileValueCache.definesClassCache, see sbt Defaults.classpathEntryDefinesClassVF).
+    final Map<Path, DefinesClass> definesClassCache = new ConcurrentHashMap<>();
     PerClasspathEntryLookup lookup =
         new PerClasspathEntryLookup() {
           @Override
@@ -325,9 +332,12 @@ public final class SbtIncrementalCompilers {
 
           @Override
           public DefinesClass definesClass(VirtualFile classpathEntry) {
-            return classpathEntry.name().equals("rt.jar")
-                ? className -> false
-                : Locate.definesClass(classpathEntry);
+            if (classpathEntry.name().equals("rt.jar")) {
+              return className -> false;
+            }
+            Path path = ((PathBasedFile) classpathEntry).toPath();
+            return definesClassCache.computeIfAbsent(
+                path, p -> Locate.definesClass(classpathEntry));
           }
         };
 
