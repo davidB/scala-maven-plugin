@@ -68,4 +68,7 @@ jobs:
           args=()
           if [ -n "${RELEASE_VERSION}" ]; then args+=("-DreleaseVersion=${RELEASE_VERSION}"); fi
           if [ -n "${DEVELOPMENT_VERSION}" ]; then args+=("-DdevelopmentVersion=${DEVELOPMENT_VERSION}"); fi
-          ./mvnw --batch-mode "${args[@]}" release:prepare release:perform
+          # release:prepare's `clean verify` runs the tests and integration tests on the
+          # release commit; release:perform rebuilds that same commit from the tag, so skip them there
+          ./mvnw --batch-mode "${args[@]}" release:prepare
+          ./mvnw --batch-mode release:perform -Darguments=-Dmaven.test.skip=true

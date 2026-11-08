@@ -513,7 +513,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
           <releaseProfiles>release</releaseProfiles>
-          <goals>install animal-sniffer:check deploy</goals>
+          <goals>deploy</goals>
           <useReleaseProfile>false</useReleaseProfile>
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <tagNameFormat>@{project.version}</tagNameFormat>
@@ -564,6 +564,14 @@
             <version>1.0</version>
           </signature>
         </configuration>
+        <executions>
+          <execution>
+            <id>check-java18</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
         <plugin>
           <groupId>org.sonatype.central</groupId>
