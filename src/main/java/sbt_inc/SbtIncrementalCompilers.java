@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -295,13 +296,17 @@ public final class SbtIncrementalCompilers {
   }
 
   private static Setup makeSetup(File cacheFile, xsbti.Logger sbtLogger) {
-    // One DefinesClass per classpath entry for the lifetime of this compile.
+    // One DefinesClass per classpath entry, captured by the anonymous lookup below.
     // Zinc's Locate.entry calls definesClass(entry) for every class name it looks up, and
     // IncrementalCommon.isLibraryModified runs those lookups in parallel (one worker per core).
     // Without this cache every lookup re-opens the jars and reads all their entries, and
     // concurrent first opens of the same jar each load its central directory (like sbt's
     // VirtualFileValueCache.definesClassCache, see sbt Defaults.classpathEntryDefinesClassVF).
-    final Map<Path, DefinesClass> definesClassCache = new ConcurrentHashMap<>();
+    // The Setup (and so this cache) can outlive a single compile: the mojo reuses its compiler
+    // across compile() calls, e.g. for every iteration of scala:cc. Entries are therefore
+    // stamped with the file's last modified time and size, and recomputed when a classpath
+    // entry is rebuilt in place (e.g. a reinstalled SNAPSHOT jar).
+    final Map<Path, StampedDefinesClass> definesClassCache = new ConcurrentHashMap<>();
     PerClasspathEntryLookup lookup =
         new PerClasspathEntryLookup() {
           @Override
@@ -336,8 +341,19 @@ public final class SbtIncrementalCompilers {
               return className -> false;
             }
             Path path = ((PathBasedFile) classpathEntry).toPath();
-            return definesClassCache.computeIfAbsent(
-                path, p -> Locate.definesClass(classpathEntry));
+            long[] stamp = stamp(path);
+            StampedDefinesClass cached = definesClassCache.get(path);
+            if (cached != null && cached.matches(stamp)) {
+              return cached.definesClass;
+            }
+            // re-check under the entry's lock so concurrent callers scan the jar only once
+            return definesClassCache.compute(
+                    path,
+                    (p, current) ->
+                        current != null && current.matches(stamp)
+                            ? current
+                            : new StampedDefinesClass(stamp, Locate.definesClass(classpathEntry)))
+                .definesClass;
           }
         };
 
@@ -350,5 +366,31 @@ public final class SbtIncrementalCompilers {
         new LoggedReporter(100, sbtLogger, pos -> pos), // reporter
         Optional.empty(), // optionProgress
         new T2[] {});
+  }
+
+  /** Last modified time and size of a classpath entry, or {-1, -1} if it can't be read. */
+  private static long[] stamp(Path path) {
+    try {
+      BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+      return new long[] {attrs.lastModifiedTime().toMillis(), attrs.size()};
+    } catch (IOException e) {
+      return new long[] {-1L, -1L};
+    }
+  }
+
+  private static final class StampedDefinesClass {
+    final long lastModified;
+    final long size;
+    final DefinesClass definesClass;
+
+    StampedDefinesClass(long[] stamp, DefinesClass definesClass) {
+      this.lastModified = stamp[0];
+      this.size = stamp[1];
+      this.definesClass = definesClass;
+    }
+
+    boolean matches(long[] stamp) {
+      return lastModified == stamp[0] && size == stamp[1];
+    }
   }
 }
