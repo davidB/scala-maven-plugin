@@ -77,7 +77,11 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
   private long _lastCompileAt = -1;
 
-  private SbtIncrementalCompiler incremental;
+  /**
+   * Incremental compilers, by analysis cache file: cc compiles both main and test sources with the
+   * same mojo instance, and each must use its own analysis.
+   */
+  private final Map<File, SbtIncrementalCompiler> incrementalCompilers = new HashMap<>();
 
   /** Analysis cache file for incremental recompilation. */
   protected abstract File getAnalysisCacheFile() throws Exception;
@@ -315,6 +319,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
       outputDir.mkdirs();
     }
 
+    SbtIncrementalCompiler incremental = incrementalCompilers.get(cacheFile);
     if (incremental == null) {
       Context sc = findScalaContext();
       File javaHome = JavaLocator.findHomeFromToolchain(getToolchain());
@@ -338,6 +343,7 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
               JavaLocator.findExecutableFromToolchain(getToolchain()),
               pluginArtifacts.stream().map(Artifact::getFile).collect(Collectors.toList()),
               reuseCompilerBridge);
+      incrementalCompilers.put(cacheFile, incremental);
     }
 
     try {
