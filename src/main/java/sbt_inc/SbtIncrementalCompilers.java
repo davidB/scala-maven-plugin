@@ -12,6 +12,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.maven.plugin.logging.Log;
 import sbt.internal.inc.*;
@@ -274,10 +275,35 @@ public final class SbtIncrementalCompilers {
                 super.close();
               }
             });
+      } catch (ExecuteException e) {
+        if (e.getExitValue() == ForkedSbtIncrementalCompilerMain.COMPILE_FAILED_EXIT_CODE) {
+          throw new ForkedCompileFailed(e);
+        }
+        throw new RuntimeException(e);
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
     };
+  }
+
+  /**
+   * Compilation failure in a forked JVM, whose errors have already been logged, so callers handle
+   * it like an in-process one.
+   */
+  private static final class ForkedCompileFailed extends xsbti.CompileFailed {
+    ForkedCompileFailed(Throwable cause) {
+      super(cause);
+    }
+
+    @Override
+    public String[] arguments() {
+      return new String[0];
+    }
+
+    @Override
+    public xsbti.Problem[] problems() {
+      return new xsbti.Problem[0];
+    }
   }
 
   static Compilers makeCompilers(
