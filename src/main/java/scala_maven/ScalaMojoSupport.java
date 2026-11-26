@@ -568,9 +568,9 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
           bootcp = bootcp && !"-nobootcp".equals(arg);
         }
       }
-      String cp = bootcp ? "" : toolcp;
       bootcp =
           bootcp && !(StringUtils.isNotEmpty(addScalacArgs) && addScalacArgs.contains("-nobootcp"));
+      String cp = bootcp ? "" : toolcp;
       // scalac with args in files
       // * works only since 2.8.0
       // * is buggy (don't manage space in path on windows)
