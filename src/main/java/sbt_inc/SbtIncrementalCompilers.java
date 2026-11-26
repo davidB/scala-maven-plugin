@@ -234,46 +234,45 @@ public final class SbtIncrementalCompilers {
                 args,
                 javaExec);
 
-        fork.run(
-            new LogOutputStream() {
-              private final ForkLogger forkLogger =
-                  new ForkLogger() {
-                    @Override
-                    public void onException(Exception t) {
-                      mavenLogger.error(t);
-                    }
-
-                    @Override
-                    public void onError(String content) {
-                      mavenLogger.error(content);
-                    }
-
-                    @Override
-                    public void onWarn(String content) {
-                      mavenLogger.warn(content);
-                    }
-
-                    @Override
-                    public void onInfo(String content) {
-                      mavenLogger.info(content);
-                    }
-
-                    @Override
-                    public void onDebug(String content) {
-                      mavenLogger.debug(content);
-                    }
-                  };
+        ForkLogger forkLogger =
+            new ForkLogger() {
+              @Override
+              public void onException(Exception t) {
+                mavenLogger.error(t);
+              }
 
               @Override
-              protected void processLine(String line, int level) {
-                forkLogger.processLine(line);
+              public void onError(String content) {
+                mavenLogger.error(content);
               }
 
-              public void close() throws IOException {
-                forkLogger.forceNextLineToFlush();
-                super.close();
+              @Override
+              public void onWarn(String content) {
+                mavenLogger.warn(content);
               }
-            });
+
+              @Override
+              public void onInfo(String content) {
+                mavenLogger.info(content);
+              }
+
+              @Override
+              public void onDebug(String content) {
+                mavenLogger.debug(content);
+              }
+            };
+
+        try {
+          fork.run(
+              new LogOutputStream() {
+                @Override
+                protected void processLine(String line, int level) {
+                  forkLogger.processLine(line);
+                }
+              });
+        } finally {
+          forkLogger.flush();
+        }
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
