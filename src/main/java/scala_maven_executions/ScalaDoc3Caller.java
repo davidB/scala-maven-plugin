@@ -43,11 +43,14 @@ public class ScalaDoc3Caller implements JavaMainCaller {
           .toString();
   final List<String> args = new ArrayList<>();
   final String targetClassesDir;
+  final File javaExecutable;
 
-  public ScalaDoc3Caller(AbstractMojo mojo, String apidocMainClassName, String targetClassesDir) {
+  public ScalaDoc3Caller(
+      AbstractMojo mojo, String apidocMainClassName, String targetClassesDir, File javaExecutable) {
     this.requester = mojo;
     this.apidocMainClassName = apidocMainClassName;
     this.targetClassesDir = targetClassesDir;
+    this.javaExecutable = javaExecutable;
   }
 
   @Override
@@ -109,7 +112,7 @@ public class ScalaDoc3Caller implements JavaMainCaller {
   @Override
   public boolean run(boolean displayCmd, boolean throwFailure) throws MojoFailureException {
     List<String> commands = new ArrayList<>();
-    commands.add("java");
+    commands.add(this.javaExecutable.getAbsolutePath());
     commands.addAll(this.jvmArgs);
     if (Objects.nonNull(this.classPath)) {
       commands.add("-classpath");
