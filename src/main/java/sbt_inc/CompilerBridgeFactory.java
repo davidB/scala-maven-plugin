@@ -9,9 +9,12 @@ import static scala.jdk.CollectionConverters.IterableHasAsScala;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
@@ -167,6 +170,7 @@ public final class CompilerBridgeFactory {
 
         Path sourcesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-sources");
         Path classesDir = Files.createTempDirectory("scala-maven-plugin-compiler-bridge-classes");
+        Path tmpBridgeJar = null;
 
         IO.unzip(bridgeSources, sourcesDir.toFile(), AllPassFilter$.MODULE$, true);
 
@@ -210,25 +214,44 @@ public final class CompilerBridgeFactory {
           allZipEntries.addAll(scalaCompiledClasses);
           allZipEntries.addAll(resources);
 
+          // Write to a temporary file first, then atomically move it to its final name, so that
+          // other threads or processes never see a partially written jar in the cache.
+          tmpBridgeJar =
+              Files.createTempFile(
+                  secondaryCacheDir.toPath(), cachedCompiledBridgeJar.getName(), ".tmp");
           IO.jar(
               IterableHasAsScala(
                       allZipEntries.stream()
                           .map(x -> scala.Tuple2.apply(x._1, x._2))
                           .collect(Collectors.toList()))
                   .asScala(),
-              cachedCompiledBridgeJar,
+              tmpBridgeJar.toFile(),
               manifest);
+          moveAtomically(tmpBridgeJar, cachedCompiledBridgeJar.toPath());
 
           mavenLogger.info("Compiler bridge installed");
 
         } finally {
           FileUtils.deleteDirectory(sourcesDir);
           FileUtils.deleteDirectory(classesDir);
+          if (tmpBridgeJar != null) {
+            Files.deleteIfExists(tmpBridgeJar);
+          }
         }
       }
     }
 
     return cachedCompiledBridgeJar;
+  }
+
+  private static void moveAtomically(Path source, Path target) throws IOException {
+    try {
+      Files.move(source, target, StandardCopyOption.ATOMIC_MOVE);
+    } catch (AtomicMoveNotSupportedException e) {
+      Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+    } catch (FileAlreadyExistsException e) {
+      // installed concurrently by another process: keep the existing one
+    }
   }
 
   private static List<Tuple2<File, String>> computeZipEntries(List<Path> paths, Path rootDir) {
