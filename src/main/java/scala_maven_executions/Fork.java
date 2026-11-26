@@ -25,9 +25,6 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 public final class Fork {
 
-  private static final boolean IS_WINDOWS =
-      System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("windows");
-
   private static final String BOOTER_JAR_NAME = "scala-maven-plugin-booter";
   private final File javaExecutable;
   private final String mainClassName;
@@ -50,38 +47,10 @@ public final class Fork {
     this.javaExecutable = javaExecutable;
   }
 
-  private static String toWindowsShortName(String value) {
-    if (IS_WINDOWS) {
-      int programFilesIndex = value.indexOf("Program Files");
-      if (programFilesIndex >= 0) {
-        // Could be "Program Files" or "Program Files (x86)"
-        int firstSeparatorAfterProgramFiles =
-            value.indexOf(File.separator, programFilesIndex + "Program Files".length());
-        File longNameDir =
-            firstSeparatorAfterProgramFiles < 0
-                ? new File(value)
-                : // C:\\Program Files with
-                // trailing separator
-                new File(value.substring(0, firstSeparatorAfterProgramFiles)); // chop child
-        // Some other sibling dir could be PrograXXX and might shift short name index
-        // so, we can't be sure "Program Files" is "Progra~1" and "Program Files (x86)"
-        // is "Progra~2"
-        for (int i = 0; i < 10; i++) {
-          File shortNameDir = new File(longNameDir.getParent(), "Progra~" + i);
-          if (shortNameDir.equals(longNameDir)) {
-            return shortNameDir.toString();
-          }
-        }
-      }
-    }
-
-    return value;
-  }
-
   public void run(OutputStream os) throws Exception {
     File booterJar = createBooterJar(classpath, ForkMain.class.getName(), args);
 
-    CommandLine command = new CommandLine(toWindowsShortName(javaExecutable.getCanonicalPath()));
+    CommandLine command = new CommandLine(javaExecutable.getCanonicalPath());
     command.addArguments(jvmArgs, false);
     command.addArgument("-jar");
     command.addArgument(booterJar.getCanonicalPath());
