@@ -21,8 +21,8 @@ public final class ForkMain {
       String[] argsFromFile = readArgFile(cl);
       runMain(cl, args[0], argsFromFile);
     } catch (Throwable t) {
-      PrintWriter stacktrace = new PrintWriter(new StringWriter());
-      t.printStackTrace(stacktrace);
+      StringWriter stacktrace = new StringWriter();
+      t.printStackTrace(new PrintWriter(stacktrace));
       System.out.println(ForkLogLevel.ERROR.addHeader(stacktrace.toString()));
       System.out.flush();
       System.exit(-1);
