@@ -6,7 +6,6 @@ package scala_maven_executions;
 
 public abstract class ForkLogger {
   private final StringBuilder buffer = new StringBuilder();
-  private boolean forceFlush;
   private ForkLogLevel currentLogLevel = null;
 
   public abstract void onException(Exception t);
@@ -49,15 +48,20 @@ public abstract class ForkLogger {
       } else {
         buffer.append(System.lineSeparator()).append(line);
       }
-      if (forceFlush) {
-        flushBuffer();
-      }
     } catch (Exception e) {
       onException(e);
     }
   }
 
-  public final void forceNextLineToFlush() {
-    forceFlush = true;
+  /**
+   * Logs the buffered message, if any. A message is only logged when the next one starts, so this
+   * must be called once the forked process output is complete, or the last message is lost.
+   */
+  public final void flush() {
+    try {
+      flushBuffer();
+    } catch (Exception e) {
+      onException(e);
+    }
   }
 }
