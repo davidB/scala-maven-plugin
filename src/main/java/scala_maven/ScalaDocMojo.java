@@ -20,6 +20,7 @@ import scala_maven_dependency.Context;
 import scala_maven_executions.JavaMainCaller;
 import scala_maven_executions.ScalaDoc3Caller;
 import util.FileUtils;
+import util.JavaLocator;
 
 /** Produces Scala API documentation. */
 @Mojo(name = "doc", requiresDependencyResolution = ResolutionScope.COMPILE)
@@ -166,7 +167,12 @@ public class ScalaDocMojo extends ScalaSourceMojoSupport implements MavenReport 
       jcmd = getEmptyScalaCommand(apidocMainClassName);
     } else {
       String targetClassesDir = project.getModel().getBuild().getOutputDirectory();
-      jcmd = new ScalaDoc3Caller(this, apidocMainClassName, targetClassesDir);
+      jcmd =
+          new ScalaDoc3Caller(
+              this,
+              apidocMainClassName,
+              targetClassesDir,
+              JavaLocator.findExecutableFromToolchain(getToolchain()));
     }
     jcmd.addArgs(args);
     jcmd.addJvmArgs(jvmArgs);
