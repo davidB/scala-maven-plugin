@@ -304,7 +304,7 @@ public abstract class ScalaMojoSupport extends AbstractMojo {
       String oldWay = System.getProperty("maven.scala.version");
       if (oldWay != null) {
         getLog().warn("using 'maven.scala.version' is deprecated, use 'scala.version' instead");
-        if (scalaVersion != null) {
+        if (scalaVersion == null) {
           scalaVersion = oldWay;
         }
       }
