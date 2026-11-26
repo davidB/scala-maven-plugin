@@ -18,6 +18,12 @@ import xsbti.compile.*;
 
 public final class ForkedSbtIncrementalCompilerMain {
 
+  /**
+   * Exit code of the forked JVM when compilation failed, as opposed to any other failure, so the
+   * caller can report it as a compile failure.
+   */
+  static final int COMPILE_FAILED_EXIT_CODE = 2;
+
   public static final class Args {
     public final File javaHome;
     public final File cacheFile;
@@ -179,11 +185,17 @@ public final class ForkedSbtIncrementalCompilerMain {
         SbtIncrementalCompilers.makeInProcess(
             parsedArgs.cacheFile, parsedArgs.compileOrder, compilers, sbtLogger);
 
-    incrementalCompiler.compile(
-        parsedArgs.classpathElements,
-        parsedArgs.sources,
-        parsedArgs.classesDirectory,
-        parsedArgs.scalacOptions,
-        parsedArgs.javacOptions);
+    try {
+      incrementalCompiler.compile(
+          parsedArgs.classpathElements,
+          parsedArgs.sources,
+          parsedArgs.classesDirectory,
+          parsedArgs.scalacOptions,
+          parsedArgs.javacOptions);
+    } catch (xsbti.CompileFailed e) {
+      // compilation errors have already been logged
+      System.out.flush();
+      System.exit(COMPILE_FAILED_EXIT_CODE);
+    }
   }
 }
