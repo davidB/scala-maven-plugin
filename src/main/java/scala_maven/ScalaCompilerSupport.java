@@ -164,12 +164,17 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
 
     if (compileInLoop && recompileMode == RecompileMode.incremental) {
       // if compileInLoop, do not invoke incrementalCompile when there's no change
+      // compileErrors may already be set by a previous compile in this loop iteration: reset it to
+      // know if this compile failed, then restore it
+      boolean previousCompileErrors = compileErrors;
+      compileErrors = false;
       int retCode =
           incrementalCompile(classpathElements, sourceRootDirs, outputDir, analysisCacheFile, true);
       _lastCompileAt = t1;
-      if (retCode == 1) {
+      if (retCode == 1 && !compileErrors) {
         lastCompilationInfo.setLastSuccessfulTS(t1);
       }
+      compileErrors |= previousCompileErrors;
       return retCode;
     }
 
