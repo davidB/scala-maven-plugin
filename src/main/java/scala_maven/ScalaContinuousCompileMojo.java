@@ -181,13 +181,15 @@ public class ScalaContinuousCompileMojo extends ScalaCompilerSupport {
         if (nbFile == -1) nbFile = 0;
       }
       if (!testSourceDirs.isEmpty()) {
-        nbFile +=
+        int nbTestFile =
             compile(
                 testSourceDirs,
                 testOutputDir,
                 testAnalysisCacheFile,
                 FileUtils.fromStrings(project.getTestClasspathElements()),
                 true);
+        // same as above: no test source files must not cancel the main compiled files
+        if (nbTestFile > 0) nbFile += nbTestFile;
       }
       if (nbFile > 0) {
         if (!hasCompileErrors()) {
