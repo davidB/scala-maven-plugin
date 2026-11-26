@@ -24,7 +24,7 @@ public class MainWithArgsInFile {
     try {
       String mainClassName = args[0];
       List<String> argsFromFile = new ArrayList<>();
-      if (args.length > 0) {
+      if (args.length > 1) {
         argsFromFile = MainHelper.readArgFile(new File(args[1]));
       }
       MainHelper.runMain(mainClassName, argsFromFile, null);
